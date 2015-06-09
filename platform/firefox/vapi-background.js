@@ -98,7 +98,11 @@ window.addEventListener('unload', function() {
 /******************************************************************************/
 /*Custom methods*/
 vAPI.openOptionsPage = function () {
-        vAPI.tabs.open({url : 'dashboard.html'});      
+     vAPI.tabs.open({
+                url: vAPI.getURL('dashboard.html'),
+                index: -1,
+                select: true
+            });    
 };
 /******************************************************************************/
 // For now, only booleans.
