@@ -54,7 +54,23 @@ vAPI.app.restart = function() {
 };
 
 /******************************************************************************/
+//Custom methods
+vAPI.openOptionsPage = function () {
+    chrome.windows.getLastFocused(function (win) {
+        chrome.tabs.getAllInWindow(win.id, function (tabs) {
+            var optionsUrl = chrome.extension.getURL("dashboard.html");
+            for (var i = 0; i < tabs.length; i++) {
+                if (tabs[i].url == optionsUrl) {
+                    chrome.tabs.update(tabs[i].id, {selected: true});
+                    return;
+                }
+            }
 
+            chrome.tabs.create({windowId: win.id, url: optionsUrl, active: true});
+        });
+    });
+};
+/******************************************************************************/
 // chrome.storage.local.get(null, function(bin){ console.debug('%o', bin); });
 
 vAPI.storage = chrome.storage.local;

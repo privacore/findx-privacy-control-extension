@@ -96,7 +96,11 @@ window.addEventListener('unload', function() {
 });
 
 /******************************************************************************/
-
+/*Custom methods*/
+vAPI.openOptionsPage = function () {
+        vAPI.tabs.open({url : 'dashboard.html'});      
+};
+/******************************************************************************/
 // For now, only booleans.
 
 vAPI.browserSettings = {
@@ -1857,7 +1861,7 @@ vAPI.toolbarButton.init = function() {
     this.styleURI = [
         '#' + this.id + ' {',
             'list-style-image: url(',
-                vAPI.getURL('img/browsericons/icon16-off.svg'),
+                vAPI.getURL('img/browsericons/icon16-off.png'),
             ');',
         '}',
         '#' + this.viewId + ', #' + this.viewId + ' > iframe {',
@@ -2084,7 +2088,7 @@ vAPI.toolbarButton.updateState = function(win, tabId) {
         icon = '';
     }
     else {
-        icon = 'url(' + vAPI.getURL('img/browsericons/icon16.svg') + ')';
+        icon = 'url(' + vAPI.getURL('img/browsericons/icon16.png') + ')';
     }
 
     button.style.listStyleImage = icon;
@@ -2175,7 +2179,7 @@ vAPI.contextMenu.register = function(doc) {
     var menuitem = doc.createElement('menuitem');
     menuitem.setAttribute('id', this.menuItemId);
     menuitem.setAttribute('label', this.menuLabel);
-    menuitem.setAttribute('image', vAPI.getURL('img/browsericons/icon16.svg'));
+    menuitem.setAttribute('image', vAPI.getURL('img/browsericons/icon16.png'));
     menuitem.setAttribute('class', 'menuitem-iconic');
     menuitem.addEventListener('command', this.onCommand);
     contextMenu.addEventListener('popupshowing', this.displayMenuItem);

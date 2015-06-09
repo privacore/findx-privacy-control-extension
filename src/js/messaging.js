@@ -145,6 +145,9 @@ var onMessage = function(request, sender, callback) {
     case 'userSettings':
         response = µb.changeUserSettings(request.name, request.value);
         break;
+    case 'openOptionsPage':
+        vAPI.openOptionsPage();
+        break;
 
     default:
         return vAPI.messaging.UNHANDLED;

@@ -29,7 +29,7 @@
 
 /******************************************************************************/
 
-var userListName = vAPI.i18n('1pPageName');
+var userListName = "Your own filter";//vAPI.i18n('1pPageName');
 var listDetails = {};
 var cosmeticSwitch = true;
 var externalLists = '';
@@ -88,70 +88,70 @@ var renderFilterLists = function() {
         }
         return listTitle;
     };
-
-    var liFromListEntry = function(listKey) {
-        var entry = listDetails.available[listKey];
-        var li = listEntryTemplate.clone();
-
-        if ( entry.off !== true ) {
-            li.descendants('input').attr('checked', '');
-        }
-
-        var elem = li.descendants('a:nth-of-type(1)');
-        elem.attr('href', 'asset-viewer.html?url=' + encodeURI(listKey));
-        elem.attr('type', 'text/html');
-        elem.attr('data-listkey', listKey);
-        elem.text(listNameFromListKey(listKey) + '\u200E');
-
-        if ( entry.supportName ) {
-            elem = li.descendants('a:nth-of-type(2)');
-            elem.attr('href', entry.supportURL);
-            elem.text('(' + entry.supportName + ')');
-            elem.css('display', '');
-        }
-
-        elem = li.descendants('span:nth-of-type(1)');
-        var text = listStatsTemplate
-            .replace('{{used}}', renderNumber(!entry.off && !isNaN(+entry.entryUsedCount) ? entry.entryUsedCount : 0))
-            .replace('{{total}}', !isNaN(+entry.entryCount) ? renderNumber(entry.entryCount) : '?');
-        elem.text(text);
-
-        // https://github.com/gorhill/uBlock/issues/78
-        // Badge for non-secure connection
-        var remoteURL = listKey;
-        if ( remoteURL.lastIndexOf('http:', 0) !== 0 ) {
-            remoteURL = entry.homeURL || '';
-        }
-        if ( remoteURL.lastIndexOf('http:', 0) === 0 ) {
-            li.descendants('span.status.unsecure').css('display', '');
-        }
-
-        // https://github.com/chrisaljoudi/uBlock/issues/104
-        var asset = listDetails.cache[listKey] || {};
-
-        // Badge for update status
-        if ( entry.off !== true ) {
-            if ( asset.repoObsolete ) {
-                li.descendants('span.status.new').css('display', '');
-                needUpdate = true;
-            } else if ( asset.cacheObsolete ) {
-                li.descendants('span.status.obsolete').css('display', '');
-                needUpdate = true;
-            } else if ( entry.external && !asset.cached ) {
-                li.descendants('span.status.obsolete').css('display', '');
-                needUpdate = true;
-            }
-        }
-
-        // In cache
-        if ( asset.cached ) {
-            elem = li.descendants('span.status.purge');
-            elem.css('display', '');
-            elem.attr('title', lastUpdateString.replace('{{ago}}', renderElapsedTimeToString(asset.lastModified)));
-            hasCachedContent = true;
-        }
-        return li;
-    };
+//
+//    var liFromListEntry = function(listKey) {
+//        var entry = listDetails.available[listKey];
+//        var li = listEntryTemplate.clone();
+//
+//        if ( entry.off !== true ) {
+//            li.descendants('input').attr('checked', '');
+//        }
+//
+//        var elem = li.descendants('a:nth-of-type(1)');
+//        elem.attr('href', 'asset-viewer.html?url=' + encodeURI(listKey));
+//        elem.attr('type', 'text/html');
+//        elem.attr('data-listkey', listKey);
+//        elem.text(listNameFromListKey(listKey) + '\u200E');
+//
+//        if ( entry.supportName ) {
+//            elem = li.descendants('a:nth-of-type(2)');
+//            elem.attr('href', entry.supportURL);
+//            elem.text('(' + entry.supportName + ')');
+//            elem.css('display', '');
+//        }
+//
+//        elem = li.descendants('span:nth-of-type(1)');
+//        var text = listStatsTemplate
+//            .replace('{{used}}', renderNumber(!entry.off && !isNaN(+entry.entryUsedCount) ? entry.entryUsedCount : 0))
+//            .replace('{{total}}', !isNaN(+entry.entryCount) ? renderNumber(entry.entryCount) : '?');
+//        elem.text(text);
+//
+//        // https://github.com/gorhill/uBlock/issues/78
+//        // Badge for non-secure connection
+//        var remoteURL = listKey;
+//        if ( remoteURL.lastIndexOf('http:', 0) !== 0 ) {
+//            remoteURL = entry.homeURL || '';
+//        }
+//        if ( remoteURL.lastIndexOf('http:', 0) === 0 ) {
+//            li.descendants('span.status.unsecure').css('display', '');
+//        }
+//
+//        // https://github.com/chrisaljoudi/uBlock/issues/104
+//        var asset = listDetails.cache[listKey] || {};
+//
+//        // Badge for update status
+//        if ( entry.off !== true ) {
+//            if ( asset.repoObsolete ) {
+//                li.descendants('span.status.new').css('display', '');
+//                needUpdate = true;
+//            } else if ( asset.cacheObsolete ) {
+//                li.descendants('span.status.obsolete').css('display', '');
+//                needUpdate = true;
+//            } else if ( entry.external && !asset.cached ) {
+//                li.descendants('span.status.obsolete').css('display', '');
+//                needUpdate = true;
+//            }
+//        }
+//
+//        // In cache
+//        if ( asset.cached ) {
+//            elem = li.descendants('span.status.purge');
+//            elem.css('display', '');
+//            elem.attr('title', lastUpdateString.replace('{{ago}}', renderElapsedTimeToString(asset.lastModified)));
+//            hasCachedContent = true;
+//        }
+//        return li;
+//    };
 
     var listEntryCountFromGroup = function(listKeys) {
         if ( Array.isArray(listKeys) === false ) {
@@ -227,34 +227,153 @@ var renderFilterLists = function() {
             'regions',
             'custom'
         ];
-        for ( i = 0; i < groupKeys.length; i++ ) {
-            groupKey = groupKeys[i];
-            liGroup = liFromListGroup(groupKey, groups[groupKey]);
-            liGroup.toggleClass(
-                'collapsed',
-                vAPI.localStorage.getItem('collapseGroup' + (i + 1)) === 'y'
-            );
-            ulLists.append(liGroup);
-            delete groups[groupKey];
-        }
-        // For all groups not covered above (if any left)
-        groupKeys = Object.keys(groups);
-        for ( i = 0; i < groupKeys.length; i++ ) {
-            groupKey = groupKeys[i];
-            ulLists.append(liFromListGroup(groupKey, groups[groupKey]));
-        }
-
-        uDom('#listsOfBlockedHostsPrompt').text(
-            vAPI.i18n('3pListsOfBlockedHostsPrompt')
-                .replace('{{netFilterCount}}', renderNumber(details.netFilterCount))
-                .replace('{{cosmeticFilterCount}}', renderNumber(details.cosmeticFilterCount))
-        );
-        uDom('#autoUpdate').prop('checked', listDetails.autoUpdate === true);
-        uDom('#parseCosmeticFilters').prop('checked', listDetails.cosmetic === true);
-
-        renderWidgets();
-        renderBusyOverlay(details.manualUpdate, details.manualUpdateProgress);
+         fillFiltersList(getSelectedFilters(listDetails));
+//        for ( i = 0; i < groupKeys.length; i++ ) {
+//            groupKey = groupKeys[i];
+//            liGroup = liFromListGroup(groupKey, groups[groupKey]);
+//            liGroup.toggleClass(
+//                'collapsed',
+//                vAPI.localStorage.getItem('collapseGroup' + (i + 1)) === 'y'
+//            );
+//            ulLists.append(liGroup);
+//            delete groups[groupKey];
+//        }
+//        // For all groups not covered above (if any left)
+//        groupKeys = Object.keys(groups);
+//        for ( i = 0; i < groupKeys.length; i++ ) {
+//            groupKey = groupKeys[i];
+//            ulLists.append(liFromListGroup(groupKey, groups[groupKey]));
+//        }
+//
+//        uDom('#listsOfBlockedHostsPrompt').text(
+//            vAPI.i18n('3pListsOfBlockedHostsPrompt')
+//                .replace('{{netFilterCount}}', renderNumber(details.netFilterCount))
+//                .replace('{{cosmeticFilterCount}}', renderNumber(details.cosmeticFilterCount))
+//        );
+//        uDom('#autoUpdate').prop('checked', listDetails.autoUpdate === true);
+//        uDom('#parseCosmeticFilters').prop('checked', listDetails.cosmetic === true);
+//
+//        renderWidgets();
+//        renderBusyOverlay(details.manualUpdate, details.manualUpdateProgress);
     };
+    
+    //Custom methods
+    /**************************************************************************/
+    var fillFiltersList = function (filtersList) {
+            var filtersContainer = $("#filterLists");
+            filtersContainer.html("");
+            var fragment = document.createDocumentFragment();
+            for (var path in filtersList) {
+                try {
+                    var data = filtersList[path];
+                    data.path = path;
+                    var filter = createFilterItem(data);
+                    filter._data = data;
+                    fragment.appendChild(filter);
+                }
+                catch (exception) {
+                    console.error("Exception in 'fillFiltersList' (3p-filters.js) :\n\t", exception);
+                }
+            }
+            filtersContainer.html(fragment);
+            // Remove а possibility of default filters opening.
+            $(filtersContainer).find('.subscription .subscriptionTitle[ href="#"]').on('click', function (e) {
+                e.preventDefault();
+            });
+            $('.subscriptionRemoveButton ').on('click', rmSubscriptionBtnClick);
+            $('.default-enabling-control').on('click', defaultOffBtnClick);
+            $('.subscriptionInUse').on('change', inUseCheckboxChange);
+        };
+        
+        var rmSubscriptionBtnClick = function (ev) {
+            var data = getFilterData(ev.currentTarget);
+            updateSubscriptions(data.path || "", !data.off, data.inUse, data.defaultOff);
+        };
+        
+        var defaultOffBtnClick = function (ev) {
+            try {
+                var data = getFilterData(ev.currentTarget);
+                if (data.defaultOff) {
+                    ev.currentTarget.classList.remove("disabled");
+                }
+                else {
+                    ev.currentTarget.classList.add("disabled");
+                }
+
+                updateSubscriptions(data.path || "", data.off, data.inUse, !data.defaultOff);
+            }
+            catch (exception) {
+                console.error("Exception in 'defaultOffBtnClick' (3p-filters.js) :\n\t", exception);
+            }
+        };
+        
+        var inUseCheckboxChange = function (ev) {
+            try {
+                var data = getFilterData(ev.currentTarget);
+                updateSubscriptions(data.path || "", data.off, !data.inUse, data.defaultOff);
+            }
+            catch (exception) {
+                console.error("Exception in 'defaultOffBtnClick' (3p-filters.js) :\n\t", exception);
+            }
+        };
+        
+        var getSelectedFilters = function (listDetails) {
+            var selectedFilters = {};
+            for (var path in listDetails.current) {
+                try {
+                    var current = listDetails.current[path];
+                    var available = listDetails.available[path];
+                    if ((typeof current.off == "boolean" && !current.off)
+                            || (typeof available.off == "boolean" && !available.off))
+                    {
+                        selectedFilters[path] = current;
+                        if (!selectedFilters[path].title)
+                            selectedFilters[path].title = listNameFromListKey(path);
+                        if (listDetails.cache[path] && listDetails.cache[path].lastModified)
+                            selectedFilters[path].lastModified = listDetails.cache[path].lastModified;
+                    }
+                }
+                catch (exception) {
+                    console.error("Exception in 'getSelectedFilters' (3p-filters.js) :\n\t", exception);
+                }
+            }
+            return selectedFilters;
+        };
+        
+        var createFilterItem = function (data) {
+            try {
+                var template = $("#filter_template").html();
+                template = template.replace(new RegExp('{{delete_possibility}}', 'g'), (data.path === listDetails.userFiltersPath ? "disabled" : ""));
+                template = template.replace(new RegExp('{{path}}', 'g'), data.path);
+                template = template.replace(new RegExp('{{inuse_checked}}', 'g'), (data.inUse ? "checked" : ""));
+                template = template.replace(new RegExp('{{default_disabled}}', 'g'), data.defaultOff ? "disabled" : "");
+                template = template.replace(new RegExp("{{title}}", 'g'), data.title || "");
+                template = template.replace(new RegExp("{{url}}", 'g'), data.homeURL || "#");
+                template = template.replace(new RegExp("{{group}}", 'g'), data.group || "");
+                if (data.error) {
+                    template = template.replace(new RegExp("{{last_update}}", 'g'), data.error);
+                    template = template.replace(new RegExp("{{error}}", 'g'), "error");
+                }
+                else {
+                    var date = new Date(data.lastModified);
+                    var dateString = !(date instanceof Date && isFinite(date)) ? "" :
+                            (date.getFullYear() + "-" +
+                                    ("0" + date.getMonth()).slice(-2) + "-" +
+                                    ("0" + date.getDate()).slice(-2) + "  " +
+                                    ("0" + date.getHours()).slice(-2) + ":" +
+                                    ("0" + date.getMinutes()).slice(-2));
+                    template = template.replace(new RegExp("{{last_update}}", 'g'), dateString);
+                    template = template.replace(new RegExp("{{error}}", 'g'), "");
+                }
+                return $(template)[0];
+            }
+            catch (exception) {
+                console.error("Exception in 'createFilterItem' (3p-filters.js) :\n\t", exception);
+                return null;
+            }
+        }
+    
+    /**************************************************************************/
 
     messager.send({ what: 'getLists' }, onListsReceived);
 };

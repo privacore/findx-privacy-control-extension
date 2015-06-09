@@ -53,11 +53,11 @@ var defaultExternalLists = [
 
 return {
     userSettings: {
-        advancedUserEnabled: false,
+        advancedUserEnabled: true,
         autoUpdate: true,
         collapseBlocked: true,
         colorBlindFriendly: false,
-        contextMenuEnabled: true,
+        contextMenuEnabled: false,
         dynamicFilteringEnabled: false,
         experimentalEnabled: false,
         externalLists: defaultExternalLists,
@@ -114,20 +114,28 @@ return {
     permanentLists: {
         // User
         'assets/user/filters.txt': {
-            group: 'default'
+            group: 'default',
+            off: false,
+            inUse: true
         },
         // uBlock
         'assets/ublock/filters.txt': {
             title: 'uBlock filters',
-            group: 'default'
+            group: 'default',
+            off: true,
+            inUse: false
         },
         'assets/ublock/privacy.txt': {
             title: 'uBlock filters – Privacy',
-            group: 'default'
+            group: 'default',
+            off: true,
+            inUse: false
         },
         'assets/ublock/unbreak.txt': {
             title: 'uBlock filters – Unbreak',
-            group: 'default'
+            group: 'default',
+            off: true,
+            inUse: false
         }
     },
 

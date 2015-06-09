@@ -1,63 +1,156 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>uBlock — Ubiquitous rules</title>
-<link rel="stylesheet" type="text/css" href="css/common.css">
-<link rel="stylesheet" type="text/css" href="css/dashboard-common.css">
-<link rel="stylesheet" type="text/css" href="css/3p-filters.css">
-</head>
+    <head>
+        <meta charset="utf-8">
+        <title>Filters lists</title>
+        <link type="text/css" href="lib/jquery-ui/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
 
-<body>
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" type="text/css" href="css/dashboard-common.css">
+        <link rel="stylesheet" type="text/css" href="css/3p-filters.css">
+    </head>
 
-<button id="buttonApply" class="important disabled" data-i18n="3pApplyChanges"></button>
-<ul id="options">
-    <li><input type="checkbox" id="autoUpdate"><label data-i18n="3pAutoUpdatePrompt1" for="autoUpdate"></label>&ensp;
-        <button class="important disabled" id="buttonUpdate" data-i18n="3pUpdateNow"></button>
-        <button id="buttonPurgeAll" class="custom disabled" data-i18n="3pPurgeAll"></button>
-    <li><input type="checkbox" id="parseCosmeticFilters"><label data-i18n="3pParseAllABPHideFiltersPrompt1" for="parseCosmeticFilters"></label>
-    <button class="whatisthis"></button>
-    <div class="whatisthis-expandable para" data-i18n="3pParseAllABPHideFiltersInfo"></div>
-    <li><p id="listsOfBlockedHostsPrompt"></p>
-</ul>
-<ul id="lists"></ul>
+    <body>
 
-<div id="externalListsDiv">
-<p data-i18n="3pExternalListsHint" style="margin: 0 0 0.25em 0; font-size: 13px;"></p>
-<textarea id="externalLists" dir="ltr" spellcheck="false"></textarea>
-<p style="margin: 0.25em 0 0 0"><button id="externalListsApply" class="important" disabled="true" data-i18n="3pExternalListsApply"></button></p>
-</div>
+        <p>
+            <label>Enable only the filter lists you need. Too many can make your browser unresponsive.</label>
+        </p>
 
-<div id="busyOverlay">
-    <div></div>
-    <!-- progress bar widget -->
-    <div><div></div><div></div></div>
-</div>
+        <p>
+            <label>Out-of-date lists are updated periodically.</label>
+            <button id="updateFilterLists" class="refreshButton">
+                <span data-i18n="3pUpdateNow"></span>
+            </button>
+            <button id="buttonPurgeAll" class="custom disabled" data-i18n="3pPurgeAll"></button>
+            <br/>
+        </p>
 
-<div id="templates" style="display: none;">
-    <ul>
-        <li class="groupEntry"><span class="geName"></span> <span class="geCount dim"></span>
-            <ul></ul>
-            </li>
-        <li class="listEntry">
-            <input type="checkbox">
-            <a type="text/plain" target="_blank" href=""></a>
-            <a href="" style="display: none;" target="_blank"></a>: <!--
-         --><span class="dim"></span><!--
-         --><span class="status unsecure" style="display: none;">http</span><!--
-         --><span class="status new" style="display: none;" data-i18n="3pExternalListNew"></span><!--
-         --><span class="status obsolete" style="display: none;" data-i18n="3pExternalListObsolete"></span><!--
-         --><span class="status purge" style="display: none;" data-i18n="3pExternalListPurge"></span>
-            </li>
-        </ul>
-    </div>
 
-<script src="js/vapi-common.js"></script>
-<script src="js/vapi-client.js"></script>
-<script src="js/udom.js"></script>
-<script src="js/i18n.js"></script>
-<script src="js/dashboard-common.js"></script>
-<script src="js/3p-filters.js"></script>
+        <!-- Titles of list columns -->
+        <div id="filterListsHeader">
+            <div class="deleteColumn listColumn">Delete</div>
+            <div class="inUseColumn listColumn">In Use</div>
+            <div class="onOffColumn listColumn">Default on/off</div>
+            <div class="nameColumn listColumn">Name</div>
+            <div class="groupColumn listColumn">Group</div>
+            <div class="updateColumn listColumn">Latest update</div>
+        </div>
 
-</body>
+        <div id="filterLists"></div>
+        <ul id="lists"></ul>
+        <br/>
+
+
+        <!-- Placeholder for user's filter list URLs -->
+        <div id="userFilterLists" style="margin-bottom: 8px"></div>
+
+
+        <p id="addSubscriptionButton">
+            <button id="startSubscriptionSelection" class="addButton">
+                <span>Add filter subscription</span>
+            </button>
+        </p>
+
+        <div id="addSubscriptionContainer">
+            <span>Please choose a filter subscription from the list:</span><br/>
+
+            <select id="subscriptionSelector" style="width:500px"></select>
+
+            <button id="addSubscription" class="addButton">
+                <span>Add</span>
+            </button>
+        </div>
+
+        <div id="customSubscriptionContainer">
+            <p>
+                <span>Title:</span><br/>
+                <input type="text" id="customSubscriptionTitle" style="width:500px"/>
+            </p>
+
+            <p>
+                <span>Group:</span><br/>
+                <input type="text" id="customSubscriptionGroup" style="width:500px"/>
+            </p>
+
+            <p>
+                <span>Location:</span><br/>
+                <input type="text" id="customSubscriptionLocation" style="width:500px"/>
+            </p>
+        </div>
+
+
+        <div id="showBlockedWrap">
+            <input type="checkbox" id="icon-badge"/>
+            <label>Show number of blocked trackers/ads in icon</label>
+        </div>
+
+
+
+        <!-- Subscription entry template -->
+        <script id="filter_template" type="text/html">
+            <div id="{{path}}" class="subscription listRow">
+                <div class="deleteColumn listColumn">
+                    <div class="subscriptionRemoveButton {{delete_possibility}}" title="delete"
+                         data-path="{{path}}"></div>
+                </div>
+                <div class="inUseColumn listColumn">
+                    <input class="subscriptionInUse" type="checkbox" {{inuse_checked}}/>
+                </div>
+                <div class="onOffColumn listColumn">
+                    <div class="default-enabling-control {{default_disabled}}">
+                        <div class="default-enabling-icon"></div>
+                    </div>
+                </div>
+                <div class="nameColumn listColumn">
+                    <a class="subscriptionTitle" title="{{title}}" href="{{url}}" target="_blank">{{title}}</a>
+                </div>
+                <div class="groupColumn listColumn">
+                    <input class="groupField" type="text" readonly="true" placeholder="group"
+                           title="{{group}}" value="{{group}}">
+                </div>
+                <div class="updateColumn listColumn">
+                    <div class="subscriptionUpdate listColumn">{{last_update}}</div>
+                </div>
+            </div>
+        </script>
+
+
+
+
+        <!--<button id="buttonApply" class="custom reloadAll disabled" data-i18n="3pApplyChanges"></button>-->
+        <!--<ul id="options">-->
+        <!--<li><input type="checkbox" id="autoUpdate"><label data-i18n="3pAutoUpdatePrompt1" for="autoUpdate"></label>-->
+        <!--<button class="custom reloadAll disabled" id="buttonUpdate" data-i18n="3pUpdateNow"></button>-->
+        <!--<button id="buttonPurgeAll" class="custom disabled" data-i18n="3pPurgeAll"></button>-->
+        <!--<li><input type="checkbox" id="parseCosmeticFilters"><label data-i18n="3pParseAllABPHideFiltersPrompt1" for="parseCosmeticFilters"></label>-->
+        <!--<button class="whatisthis"></button>-->
+        <!--<div class="whatisthis-expandable para" data-i18n="3pParseAllABPHideFiltersInfo"></div>-->
+        <!--<li><p id="listsOfBlockedHostsPrompt"></p>-->
+        <!--</ul>-->
+        <!--<ul id="lists">-->
+        <!--</ul>-->
+
+        <!--<div id="externalListsDiv">-->
+        <!--<p data-i18n="3pExternalListsHint" style="margin: 0 0 0.25em 0; font-size: 13px;"></p>-->
+        <!--<textarea id="externalLists" dir="ltr" spellcheck="false"></textarea>-->
+
+        <!--<p style="margin: 0.25em 0 0 0">-->
+        <!--<button id="externalListsApply" disabled="true" data-i18n="3pExternalListsApply"></button>-->
+        <!--</p>-->
+        <!--</div>-->
+
+        <!--<div id="busyOverlay"></div>-->
+
+
+        <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+        <script src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
+
+        <script src="js/vapi-common.js"></script>
+        <script src="js/vapi-client.js"></script>
+        <script src="js/udom.js"></script>
+        <script src="js/i18n.js"></script>
+        <script src="js/dashboard-common.js"></script>
+        <script src="js/3p-filters.js"></script>
+
+    </body>
 </html>

@@ -1,21 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>uBlock — Your filters</title>
-<link rel="stylesheet" type="text/css" href="css/common.css">
-<link rel="stylesheet" type="text/css" href="css/dashboard-common.css">
-<link rel="stylesheet" type="text/css" href="css/1p-filters.css">
+    <meta charset="utf-8">
+    <title>µBlock — Your filters</title>
+
+    <link type="text/css" href="lib/jquery-ui/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/dashboard-common.css">
+    <link rel="stylesheet" type="text/css" href="css/1p-filters.css">
 </head>
 
 <body>
 
-<p data-i18n="1pFormatHint"></p>
-<p><button id="userFiltersApply" class="important" type="button" disabled="true" data-i18n="1pApplyChanges"></button></p>
-<textarea class="userFilters" id="userFilters" dir="auto" spellcheck="false"></textarea>
-<p><button id="importUserFiltersFromFile" data-i18n="1pImport"></button> &emsp;
-   <button id="exportUserFiltersToFile" data-i18n="1pExport"></button>
-   <input id="importFilePicker" type="file" accept="text/plain" class="hiddenFileInput"></p>
+<div>
+    <p data-i18n="1pFormatHint"></p>
+    <a href="https://www.incognitor.com/filter-redirect.php?link=filterdoc&amp;lang=en-US"
+       target="_blank">Incognitor TrackerBlock filter syntax</a>
+
+    <p>
+        <button id="userFiltersApply" disabled="true" data-i18n="1pApplyChanges"></button>
+    </p>
+    <textarea class="userFilters" id="userFilters" dir="auto" spellcheck="false"></textarea>
+
+    <p>
+        <button id="importUserFiltersFromFile" data-i18n="1pImport"></button> &emsp;
+        <button id="exportUserFiltersToFile" data-i18n="1pExport"></button>
+        <input id="importFilePicker" type="file" accept="text/plain" class="hiddenFileInput"></p>
+</div>
+
+<script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+<script src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
 
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-client.js"></script>

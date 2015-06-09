@@ -40,25 +40,25 @@ var dfPaneVisibleStored = vAPI.localStorage.getItem('popupFirewallPane') === 'tr
 // dictate the height of the popup. The right pane dictates the height
 // of the popup, and the left pane will have a scrollbar if ever its
 // height is more than what is available.
-document.querySelector('#panes > div:nth-of-type(2)').style.setProperty(
-    'height',
-    document.querySelector('#panes > div:nth-of-type(1)').offsetHeight + 'px'
-);
+//document.querySelector('#panes > div:nth-of-type(2)').style.setProperty(
+//    'height',
+//    document.querySelector('#panes > div:nth-of-type(1)').offsetHeight + 'px'
+//);
 
 // The padlock/eraser must be manually positioned:
 // - Its vertical position depends on the height of the popup title bar
 // - Its horizontal position depends on whether there is a vertical scrollbar.
-document.getElementById('rulesetTools').style.setProperty(
-    'top',
-    (document.getElementById('gotoPrefs').getBoundingClientRect().bottom + 3) + 'px'
-);
+//document.getElementById('rulesetTools').style.setProperty(
+//    'top',
+//    (document.getElementById('gotoPrefs').getBoundingClientRect().bottom + 3) + 'px'
+//);
 
-var positionRulesetTools = function() {
-    document.getElementById('rulesetTools').style.setProperty(
-        'left',
-        (document.getElementById('firewallContainer').getBoundingClientRect().left + 3) + 'px'
-    );
-};
+//var positionRulesetTools = function() {
+//    document.getElementById('rulesetTools').style.setProperty(
+//        'left',
+//        (document.getElementById('firewallContainer').getBoundingClientRect().left + 3) + 'px'
+//    );
+//};
 
 // https://github.com/chrisaljoudi/uBlock/issues/996
 // Experimental: mitigate glitchy popup UI: immediately set the firewall pane
@@ -812,7 +812,11 @@ var onShowTooltip = function() {
 var onHideTooltip = function() {
     uDom('#tooltip').removeClass('show');
 };
-
+/*Custom methods*/
+/*******************************************************************************/
+var openOptionsPage = function () {
+        messager.send({what: 'openOptionsPage'});
+    };
 /******************************************************************************/
 
 // Make menu only when popup html is fully loaded
@@ -828,19 +832,21 @@ uDom.onLoad(function () {
         tabId = matches[1];
     }
     getPopupData(tabId);
-
-    uDom('#switch').on('click', toggleNetFilteringSwitch);
-    uDom('#gotoPick').on('click', gotoPick);
-    uDom('a[href]').on('click', gotoURL);
-    uDom('h2').on('click', toggleFirewallPane);
-    uDom('#refresh').on('click', reloadTab);
-    uDom('.hnSwitch').on('click', toggleHostnameSwitch);
-    uDom('#saveRules').on('click', saveFirewallRules);
-    uDom('#revertRules').on('click', revertFirewallRules);
-    uDom('[data-i18n="popupAnyRulePrompt"]').on('click', toggleMinimize);
-
-    uDom('body').on('mouseenter', '[data-tip]', onShowTooltip)
-                .on('mouseleave', '[data-tip]', onHideTooltip);
+    uDom('.close-button').on('click', vAPI.closePopup);
+    uDom('.options-button').on('click', openOptionsPage);
+//  uDom('#switch').on('click', toggleNetFilteringSwitch);
+//    uDom('#gotoPick').on('click', gotoPick);
+//    uDom('a[href]').on('click', gotoURL);
+//    uDom('h2').on('click', toggleFirewallPane);
+//    uDom('#refresh').on('click', reloadTab);
+//    uDom('.hnSwitch').on('click', toggleHostnameSwitch);
+//    uDom('#saveRules').on('click', saveFirewallRules);
+//    uDom('#revertRules').on('click', revertFirewallRules);
+//    uDom('[data-i18n="popupAnyRulePrompt"]').on('click', toggleMinimize);
+//
+//    uDom('body').on('mouseenter', '[data-tip]', onShowTooltip)
+//                .on('mouseleave', '[data-tip]', onHideTooltip);
+//  
 });
 
 /******************************************************************************/

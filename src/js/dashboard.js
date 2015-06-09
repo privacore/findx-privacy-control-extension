@@ -29,11 +29,7 @@
 
 /******************************************************************************/
 
-var resizeFrame = function() {
-    var navRect = document.getElementById('dashboard-nav').getBoundingClientRect();
-    var viewRect = document.documentElement.getBoundingClientRect();
-    document.getElementById('iframe').style.setProperty('height', (viewRect.height - navRect.height) + 'px');
-};
+
 
 /******************************************************************************/
 
@@ -43,9 +39,9 @@ var loadDashboardPanel = function(tab, q) {
         return;
     }
     q = q || '';
-    uDom('iframe').attr('src', tab + q);
-    uDom('.tabButton').toggleClass('selected', false);
-    tabButton.toggleClass('selected', true);
+    uDom('div:not(.ui-tabs-hide) iframe').attr('src', tab + ".html" + q);
+    //uDom('.tabButton').toggleClass('selected', false);
+    //tabButton.toggleClass('selected', true);
 };
 
 /******************************************************************************/
@@ -58,8 +54,10 @@ var onTabClickHandler = function(e) {
 /******************************************************************************/
 
 uDom.onLoad(function() {
-    window.addEventListener('resize', resizeFrame);
-    resizeFrame();
+    // Display jQuery UI elements
+    $("#tabs").tabs();
+    $("button").button();
+//    window.addEventListener('resize', resizeFrame);
 
     var matches = window.location.search.slice(1).match(/\??(tab=([^&]+))?(.*)$/);
     var tab = '', q = '';
@@ -71,9 +69,10 @@ uDom.onLoad(function() {
         }
     }
     if ( !tab ) {
+//        tab = '3p-filters';
         tab = 'settings';
     }
-    loadDashboardPanel(tab + '.html', q);
+    loadDashboardPanel(tab, q);
     uDom('.tabButton').on('click', onTabClickHandler);
 });
 
