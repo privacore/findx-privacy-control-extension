@@ -1,0 +1,546 @@
+body {
+    background-color: white;
+    border: 0;
+    box-sizing: border-box;
+    color: black;
+    -moz-box-sizing: border-box;
+    margin: 0;
+    overflow-x: hidden;
+    padding: 0;
+    width: 100%;
+    }
+#toolbar {
+    background-color: white;
+    border: 0;
+    box-sizing: border-box;
+    left: 0;
+    margin: 0;
+    padding: 0.5em 1em;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    }
+#toolbar .button {
+    background-color: white;
+    border: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 150%;
+    margin: 0;
+    padding: 8px;
+    }
+#toolbar .button.disabled {
+    opacity: 0.2;
+    pointer-events: none;
+    }
+#toolbar .button:hover {
+    background-color: #eee;
+    }
+#toolbar > div {
+    white-space: nowrap;
+    }
+#toolbar > div:first-of-type {
+    font-size: 120%;
+    }
+#toolbar > div > * {
+    vertical-align: middle;
+    }
+#pageSelector {
+    width: 28em;
+    padding: 0.2em 0;
+    }
+body #compactViewToggler.button:before {
+    content: '\f102';
+    }
+body.compactView #compactViewToggler.button:before {
+    content: '\f103';
+    }
+#filterButton {
+    opacity: 0.25;
+    }
+body.f #filterButton {
+    opacity: 1;
+    }
+#filterInput.bad {
+    background-color: #fee;
+    }
+#maxEntries {
+    margin: 0 2em;
+    }
+input:focus {
+    background-color: #ffe;
+    }
+#content {
+    font: 13px sans-serif;
+    width: 100%;
+    }
+
+#content table {
+    border: 0;
+    border-collapse: collapse;
+    direction: ltr;
+    table-layout: fixed;
+    width: 100%;
+    }
+#content table > colgroup > col:nth-of-type(1) {
+    width: 5em;
+    }
+#content table > colgroup > col:nth-of-type(2) {
+    width: 2.5em;
+    }
+#content table > colgroup > col:nth-of-type(3) {
+    width: 20%;
+    }
+#content table > colgroup > col:nth-of-type(4) {
+    width: 2.5em;
+    }
+#content table > colgroup > col:nth-of-type(5) {
+    width: 6em;
+    }
+#content table > colgroup > col:nth-of-type(6) {
+    width: calc(100% - 16em - 20%);
+    }
+body.f #content table tr.f {
+    display: none;
+    }
+
+#content tr.cat_info {
+    color: #00f;
+    }
+#content tr.blocked {
+    background-color: rgba(192, 0, 0, 0.1);
+    }
+body.colorBlind #content tr.blocked {
+    background-color: rgba(0, 19, 110, 0.1);
+    }
+#content tr.nooped {
+    background-color: rgba(108, 108, 108, 0.1);
+    }
+body.colorBlind #content tr.nooped {
+    background-color: rgba(96, 96, 96, 0.1);
+    }
+#content tr.allowed {
+    background-color: rgba(0, 160, 0, 0.1);
+    }
+body.colorBlind #content tr.allowed {
+    background-color: rgba(255, 194, 57, 0.1)
+    }
+#content tr.cb {
+    background-color: rgba(255, 255, 0, 0.1);
+    }
+#content tr.maindoc {
+    background-color: #666;
+    color: white;
+    text-align: center;
+    }
+
+body #content td {
+    border: 1px solid #ccc;
+    border-top: none;
+    min-width: 0.5em;
+    padding: 3px;
+    vertical-align: top;
+    white-space: normal;
+    word-break: break-all;
+    word-wrap: break-word;
+    }
+#content tr td {
+    border-top: 1px solid #ccc;
+    }
+#content tr td:first-of-type {
+    border-left: none;
+    }
+#content tr td:last-of-type {
+    border-right: none;
+    }
+body.compactView #content td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+
+#content tr td:nth-of-type(1) {
+    text-align: right;
+    white-space: nowrap;
+    }
+#content tr td:nth-of-type(2) {
+    text-align: center;
+    white-space: nowrap;
+    }
+#content tr.tab_bts > td:nth-of-type(2):before {
+    content: '\f070';
+    font: 1em FontAwesome;
+    }
+#content tr.tab:not(.canMtx) {
+    opacity: 0.3;
+    }
+#content tr.tab:not(.canMtx):hover {
+    opacity: 0.7;
+    }
+#content tr.tab:not(.canMtx) > td:nth-of-type(2):before {
+    content: '\f00d';
+    font: 1em FontAwesome;
+    }
+body:not(.popupOn) #content tr.canMtx td:nth-of-type(2) {
+    cursor: zoom-in;
+    }
+body:not(.popupOn) #content tr.canMtx td:nth-of-type(2):hover {
+    background: #ccc;
+    }
+#content tr.cat_net td:nth-of-type(4),
+#content tr.cat_cosmetic td:nth-of-type(4) {
+    font: 12px monospace;
+    text-align: center;
+    white-space: nowrap;
+    }
+#content tr.cat_net td:nth-of-type(4) {
+    cursor: pointer;
+    position: relative;
+    }
+#content tr.cat_net td:nth-of-type(4):hover {
+    background: #ccc;
+    }
+#content tr.cat_net td:nth-of-type(6) > span > b {
+    font-weight: bold;
+    }
+#content tr td:nth-of-type(6) b {
+    font-weight: normal;
+    }
+#content tr.blocked td:nth-of-type(6) b {
+    background-color: rgba(192, 0, 0, 0.2);
+    }
+body.colorBlind #content tr.blocked td:nth-of-type(6) b {
+    background-color: rgba(0, 19, 110, 0.2);
+    }
+#content tr.nooped td:nth-of-type(6) b {
+    background-color: rgba(108, 108, 108, 0.2);
+    }
+body.colorBlind #content tr.nooped td:nth-of-type(6) b {
+    background-color: rgba(96, 96, 96, 0.2);
+    }
+#content tr.allowed td:nth-of-type(6) b {
+    background-color: rgba(0, 160, 0, 0.2);
+    }
+body.colorBlind #content tr.allowed td:nth-of-type(6) b {
+    background-color: rgba(255, 194, 57, 0.2);
+    }
+
+#popupContainer {
+    background: white;
+    border: 1px solid gray;
+    border-radius: 3px;
+    box-sizing: border-box;
+    display: none;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 200;
+    }
+body.popupOn #popupContainer {
+    display: block;
+    }
+#popupContainer > div {
+    background: #aaa;
+    border: 0;
+    }
+body[dir="ltr"] #popupContainer > div {
+    text-align: right;
+    }
+body[dir="rtl"] #popupContainer > div {
+    text-align: left;
+    }
+#popupContainer > div > span {
+    color: #eee;
+    cursor: pointer;
+    display: inline-block;
+    font: 14px FontAwesome;
+    padding: 0 3px;
+    }
+#popupContainer > div > span:hover {
+    color: white;
+    }
+#popupContainer > iframe {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    }
+#popupContainer.hide {
+    width: 6em !important;
+    }
+#popupContainer.hide > iframe {
+    display: none;
+    }
+
+#urlFilteringMenu {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 400;
+    }
+
+#urlFilteringMenu .dialog {
+    background-color: white;
+    border: 2px solid white;
+    left: 10%;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    transform-style: preserve-3d;
+    width: 80%;
+    }
+
+#urlFilteringMenu .dialog p {
+    line-height: 2em;
+    }
+
+#urlFilteringMenu .dialog select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    max-width: 75%;
+    outline: none;
+    padding: 0.2em;
+}
+
+#urlFilteringMenu .dialog > div.preview {
+    /* http://lea.verou.me/css3patterns/ */
+    background-color: #aaa;
+    background-image:
+        linear-gradient(
+            45deg,
+            #666 25%,
+            transparent 25%,
+            transparent 75%,
+            #666 75%,
+            #666
+        ),
+        linear-gradient(
+            45deg,
+            #666 25%,
+            transparent 25%,
+            transparent 75%,
+            #666 75%,
+            #666
+        );
+    background-position:0 0, 9px 9px;
+    background-size: 18px 18px;
+    text-align: center;
+    }
+#urlFilteringMenu .dialog > div.preview > * {
+    max-width: 100%;
+    max-height: 40vh;
+    }
+
+#urlFilteringMenu .dialog table {
+    border: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    }
+#urlFilteringMenu .dialog table > colgroup > col:nth-of-type(1) {
+    width: 3.8em;
+    }
+#urlFilteringMenu .dialog table > colgroup > col:nth-of-type(2) {
+    }
+
+#urlFilteringMenu .dialog td {
+    border: 0;
+    padding: 0;
+    vertical-align: middle;
+    }
+#urlFilteringMenu .dialog > div.headers {
+    border-bottom: 1px solid #888;
+    position: relative;
+    }
+#urlFilteringMenu .dialog > div.headers > span.header {
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-bottom: 1px solid #888;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    color: #888;
+    cursor: pointer;
+    display: inline-block;
+    font-size: small;
+    line-height: 2em;
+    margin-left: 0.5em;
+    padding: 0 1em;
+    position: relative;
+    text-align: center;
+    top: 1px;
+    }
+#urlFilteringMenu .dialog > div.headers > span.header.selected {
+    background-color: white;
+    border-color: #888;
+    border-bottom: 1px solid white;
+    color: black;
+    }
+#urlFilteringMenu .dialog > div.headers > span.tools {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    }
+body[dir="ltr"] #urlFilteringMenu .dialog > div.headers > span.tools {
+    right: 0;
+    }
+body[dir="rtl"] #urlFilteringMenu .dialog > div.headers > span.tools {
+    left: 0;
+    }
+#urlFilteringMenu .dialog > div.headers > span.tools > span {
+    cursor: pointer;
+    font-size: 1.2em;
+    text-align: center;
+    }
+#urlFilteringMenu .dialog > div.containers {
+    height: 40vh;
+    overflow: hidden;
+    overflow-y: auto;
+    }
+#urlFilteringMenu .dialog > div.containers > div {
+    display: none;
+    }
+#urlFilteringMenu .dialog > div.containers > div.selected {
+    display: block;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic > table.toolbar select {
+    font: 14px;
+    height: 2em;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic > table.toolbar #saveRules {
+    background-color: #ffe;
+    border: 1px solid #ddc;
+    border-radius: 4px;
+    color: #888;
+    font-size: 1.8em;
+    margin: 0.1em;
+    padding: 0.25em 0.5em;
+    visibility: hidden;
+    }
+body.dirty #urlFilteringMenu .dialog > div.containers > div.dynamic > table.toolbar #saveRules {
+    visibility: visible;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic > table.toolbar #saveRules:hover {
+    color: black;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic > table.toolbar tr.entry {
+    display: none;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry {
+    background-color: #e6e6e6;
+    border: 0;
+    border-bottom: 1px solid white;
+    font-size: 13px;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry:hover {
+    background-color: #f0f0f0;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td:first-of-type {
+    border: 0;
+    border-right: 1px solid white;
+    text-align: center;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    height: 2em;
+    width: 100%;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action > span {
+    background-color: transparent;
+    border: 0;
+    display: inline-block;
+    height: 100%;
+    opacity: 0.2;
+    visibility: hidden;
+    width: 33.33%;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.allow {
+    background-color: rgba(0, 160, 0, 0.3);
+    }
+body.colorBlind #urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.allow {
+    background-color: rgba(255, 194, 57, 0.4);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.noop {
+    background-color: rgba(108, 108, 108, 0.3);
+    }
+body.colorBlind #urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.noop {
+    background-color: rgba(96, 96, 96, 0.4);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.block {
+    background-color: rgba(192, 0, 0, 0.3);
+    }
+body.colorBlind #urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.block {
+    background-color: rgba(0, 19, 110, 0.4);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.own.allow {
+    background-color: rgba(0, 160, 0, 1);
+    }
+body.colorBlind #urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.own.allow {
+    background-color: rgba(255, 194, 57, 1);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.own.noop {
+    background-color: rgba(108, 108, 108, 1);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.own.block {
+    background-color: rgba(192, 0, 0, 1);
+    }
+body.colorBlind #urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action.own.block {
+    background-color: rgba(0, 19, 110, 1);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action:not(.own):hover > span {
+    opacity: 0.2;
+    visibility: visible;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action:not(.own):hover > span:hover {
+    opacity: 0.75;
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action > span.allow {
+    background-color: rgb(0, 160, 0);
+    }
+body.colorBlind  #urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action > span.allow {
+    background-color: rgb(255, 194, 57);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action > span.noop {
+    background-color: rgb(108, 108, 108);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action > span.block {
+    background-color: rgb(192, 0, 0);
+    }
+body.colorBlind  #urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td > div.action > span.block {
+    background-color: rgb(0, 19, 110);
+    }
+#urlFilteringMenu .dialog > div.containers > div.dynamic tr.entry > td.url {
+    overflow: hidden;
+    padding-left: 4px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+#urlFilteringMenu .dialog > div.containers > div.static > p {
+    margin: 0.75em 0;
+    }
+#urlFilteringMenu .dialog > div.containers > div.static textarea {
+    box-sizing: border-box;
+    direction: ltr;
+    height: 6em;
+    resize: none;
+    width: 100%;
+    }
+#urlFilteringMenu .dialog > div.containers > div.static > p:nth-of-type(2) {
+    text-align: center;
+    }
+.hide {
+    display: none;
+    }
