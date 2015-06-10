@@ -263,12 +263,32 @@
             ) {
                 availableEntry.title = storedEntry.title;
             }
+            if (storedEntry.hasOwnProperty("defaultOff")) {
+                availableEntry.defaultOff = storedEntry.defaultOff;
+            }
+            else if (location.indexOf("assets/user/filters.txt") !== -1
+                && storedEntry.group === "default")
+            {// first loaded user-filter set to default enabled
+                availableEntry.defaultOff = false;
+            }
+            else {// all other filters set to off by default
+                availableEntry.defaultOff = true;
+            }
+
+            if (storedEntry.hasOwnProperty("inUse")) {
+                availableEntry.inUse = storedEntry.inUse;
+            }
+            else {// all other filters not used by default
+                availableEntry.inUse = true;
+            }
+            
         }
         callback(availableLists);
     };
 
     // built-in lists
     var onBuiltinListsLoaded = function(details) {
+        
         var location, locations;
         try {
             locations = JSON.parse(details.content);
@@ -289,7 +309,6 @@
             }
             availableLists[location] = entry;
         }
-
         // Now get user's selection of lists
         vAPI.storage.get(
             { 'remoteBlacklists': availableLists },
@@ -794,6 +813,47 @@
         onPSLReady();
     }
 };
+
+/*Custom methods*/
+µBlock.reloadPresetBlacklists = function (switches, update) {
+        var µb = µBlock;
+        var onFilterListsReady = function () {
+            µb.loadUpdatableAssets({update: update, psl: update});
+        };
+        // Toggle switches, if any
+        if (switches !== undefined) {
+            var filterLists = this.remoteBlacklists;
+            var i = switches.length;
+            while (i--) {
+                if (filterLists.hasOwnProperty(switches[i].location) === false) {
+                    continue;
+                }
+                filterLists[switches[i].location].off = !!switches[i].off;
+                filterLists[switches[i].location].defaultOff = !!switches[i].defaultOff;
+                filterLists[switches[i].location].inUse = !!switches[i].inUse;
+            }
+            // Save switch states
+            vAPI.storage.set({'remoteBlacklists': filterLists}, onFilterListsReady);
+        } else {
+            onFilterListsReady();
+        }
+    };
+    
+     µBlock.loadUpdatableAssets = function (details) {
+        var µb = this;
+        details = details || {};
+        var update = details.update !== false;
+        this.assets.autoUpdate = update || this.userSettings.autoUpdate;
+        this.assets.autoUpdateDelay = this.updateAssetsEvery;
+        var onPSLReady = function () {
+            µb.loadFilterLists();
+        };
+        if (details.psl !== false) {
+            this.loadPublicSuffixList(onPSLReady);
+        } else {
+            this.loadFilterLists();
+        }
+    };
 
 /******************************************************************************/
 

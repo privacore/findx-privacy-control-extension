@@ -815,7 +815,9 @@ var onHideTooltip = function() {
 /*Custom methods*/
 /*******************************************************************************/
 var openOptionsPage = function () {
+       
         messager.send({what: 'openOptionsPage'});
+//         vAPI.closePopup();
     };
 /******************************************************************************/
 

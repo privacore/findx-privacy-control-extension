@@ -227,7 +227,8 @@ var renderFilterLists = function() {
             'regions',
             'custom'
         ];
-         fillFiltersList(getSelectedFilters(listDetails));
+        fillFiltersList(getSelectedFilters(listDetails));
+        fillAvailableFiltersList();
 //        for ( i = 0; i < groupKeys.length; i++ ) {
 //            groupKey = groupKeys[i];
 //            liGroup = liFromListGroup(groupKey, groups[groupKey]);
@@ -285,6 +286,69 @@ var renderFilterLists = function() {
             $('.subscriptionInUse').on('change', inUseCheckboxChange);
         };
         
+        var fillAvailableFiltersList = function () {
+            var selectorContainer = $("#subscriptionSelector");
+            selectorContainer.change(updateSubscriptionSelection);
+
+            selectorContainer.html("");
+            var fragment = document.createDocumentFragment();
+
+            var groups = groupsFromLists(listDetails.available);
+
+            for (var group in groups) {
+                var groupTitle = createTitleOption(group);
+                var filterOptions = createFilterOptions(groups[group]);
+
+                fragment.appendChild(groupTitle);
+                fragment.appendChild(filterOptions);
+            }
+            fragment.appendChild(createCustomFilterOption());
+            selectorContainer.html(fragment);
+        };
+        
+
+        var createTitleOption = function (text) {
+            var option = new Option(text.toUpperCase());
+            option.disabled = true;
+            return option;
+        };
+        var createCustomFilterOption = function () {
+            var option = new Option("Add a different filter...");
+            option._data = null;
+            return option;
+        };
+
+        var updateSubscriptionSelection = function () {
+            var list = document.querySelector("#subscriptionSelector");
+            var data = list.options[list.selectedIndex]._data;
+            if (data)
+                $("#customSubscriptionContainer").hide();
+            else {
+                $("#customSubscriptionContainer").show();
+                $("#customSubscriptionTitle").focus();
+            }
+        };
+
+        var createFilterOptions = function (filtersNames) {
+            var fragment = document.createDocumentFragment();
+
+            var filter = null;
+            for (var i = 0; i < filtersNames.length; i++) {
+                filter = listDetails.available[filtersNames[i]];
+                filter.path = filtersNames[i];
+                var option = new Option(listNameFromListKey(filtersNames[i]));
+                option._data = filter;
+
+
+                if (!filter.off || (listDetails.current[filtersNames[i]] && !listDetails.current[filtersNames[i]].off))
+                    option.classList.add("selected");
+
+                fragment.appendChild(option);
+            }
+            return fragment;
+        };
+        
+        
         var rmSubscriptionBtnClick = function (ev) {
             var data = getFilterData(ev.currentTarget);
             updateSubscriptions(data.path || "", !data.off, data.inUse, data.defaultOff);
@@ -317,6 +381,16 @@ var renderFilterLists = function() {
             }
         };
         
+         var getFilterData = function (clickedElement) {
+            try {
+                return $(clickedElement).closest(".subscription")[0]._data;
+            }
+            catch (exception) {
+                console.error("Exception in 'getFilterData' (3p-filters.js) :\n\t", exception);
+            }
+        };
+        
+        
         var getSelectedFilters = function (listDetails) {
             var selectedFilters = {};
             for (var path in listDetails.current) {
@@ -326,6 +400,8 @@ var renderFilterLists = function() {
                     if ((typeof current.off == "boolean" && !current.off)
                             || (typeof available.off == "boolean" && !available.off))
                     {
+                       
+                        
                         selectedFilters[path] = current;
                         if (!selectedFilters[path].title)
                             selectedFilters[path].title = listNameFromListKey(path);
@@ -520,27 +596,8 @@ var selectFilterLists = function(callback) {
     }, callback);
 };
 
-/******************************************************************************/
-
-var buttonApplyHandler = function() {
-    uDom('#buttonApply').removeClass('enabled');
-
-    renderBusyOverlay(true);
-
-    var onSelectionDone = function() {
-        messager.send({ what: 'reloadAllFilters' });
-    };
-
-    selectFilterLists(onSelectionDone);
-
-    cacheWasPurged = false;
-};
-
-/******************************************************************************/
-
 var buttonUpdateHandler = function() {
     uDom('#buttonUpdate').removeClass('enabled');
-
     if ( needUpdate ) {
         renderBusyOverlay(true);
 
@@ -556,18 +613,6 @@ var buttonUpdateHandler = function() {
 
 /******************************************************************************/
 
-var buttonPurgeAllHandler = function() {
-    uDom('#buttonPurgeAll').removeClass('enabled');
-
-    renderBusyOverlay(true);
-
-    var onCompleted = function() {
-        cacheWasPurged = true;
-        renderFilterLists();
-    };
-
-    messager.send({ what: 'purgeAllCaches' }, onCompleted);
-};
 
 /******************************************************************************/
 
@@ -619,7 +664,6 @@ var externalListsApplyHandler = function() {
 };
 
 /******************************************************************************/
-
 var groupEntryClickHandler = function() {
     var li = uDom(this).ancestors('.groupEntry');
     li.toggleClass('collapsed');
@@ -631,19 +675,98 @@ var groupEntryClickHandler = function() {
     }
 };
 
+ function startSubscriptionSelection(title, group, url) {
+        var list = document.querySelector("#subscriptionSelector");
+        $("#addSubscriptionContainer").show();
+        $("#addSubscriptionButton").hide();
+        $("#subscriptionSelector").focus();
+        if (typeof url != "undefined") {
+            list.selectedIndex = list.length - 1;
+            document.getElementById("customSubscriptionTitle").value = title;
+            document.getElementById("customSubscriptionGroup").value = group;
+            document.getElementById("customSubscriptionLocation").value = url;
+        }
+        updateSubscriptionSelection();
+        document.getElementById("addSubscriptionContainer").scrollIntoView(true);
+    }
+    
+    
+    var updateSubscriptionSelection = function () {
+        var list = document.querySelector("#subscriptionSelector");
+        var data = list.options[list.selectedIndex]._data;
+        if (data)
+            $("#customSubscriptionContainer").hide();
+        else {
+            $("#customSubscriptionContainer").show();
+            $("#customSubscriptionTitle").focus();
+        }
+    };
+    
+    var addSubscriptionBtnClick = function () {
+        var list = document.querySelector("#subscriptionSelector");
+        var data = list.options[list.selectedIndex]._data;
+
+        var result = true;
+
+        if (data) {
+            updateSubscriptions(data.path || "", false, true, true);
+        }
+        else {
+            result = addExternal();
+        }
+
+        if (result) {
+            $("#addSubscriptionContainer").hide();
+            $("#customSubscriptionContainer").hide();
+            $("#addSubscriptionButton").show();
+        }
+    };
+      /**
+         * Update subscriptions after some changes like default on/off changing or in use selecting.
+         * @param {string} path - path to the file, need to search filter in "availableFilters" list by key
+         * @param {boolean} off - new state value
+         * @param {boolean} inUse - new state value
+         * @param {boolean} defaultOff - new state value
+         */
+        var updateSubscriptions = function (path, off, inUse, defaultOff) {
+            // Reload blacklists
+            var switches = [];
+            switches.push({
+                location: path,
+                defaultOff: defaultOff,
+                inUse: inUse,
+                off: off
+            });
+            messager.send({
+                what: 'updateAndReloadAllFilters',
+                switches: switches,
+                update: true
+            });
+        };
+
+
 /******************************************************************************/
 
 uDom.onLoad(function() {
-    uDom('#autoUpdate').on('change', autoUpdateCheckboxChanged);
-    uDom('#parseCosmeticFilters').on('change', cosmeticSwitchChanged);
-    uDom('#buttonApply').on('click', buttonApplyHandler);
-    uDom('#buttonUpdate').on('click', buttonUpdateHandler);
-    uDom('#buttonPurgeAll').on('click', buttonPurgeAllHandler);
-    uDom('#lists').on('change', '.listEntry > input', onListCheckboxChanged);
-    uDom('#lists').on('click', 'span.purge', onPurgeClicked);
-    uDom('#externalLists').on('input', externalListsChangeHandler);
-    uDom('#externalListsApply').on('click', externalListsApplyHandler);
-    uDom('#lists').on('click', '.groupEntry > span', groupEntryClickHandler);
+    //*************************************************************
+        uDom('#updateFilterLists').on('click', buttonUpdateHandler);
+        uDom("#startSubscriptionSelection").on("click", startSubscriptionSelection);
+        uDom('#addSubscription').on('click', addSubscriptionBtnClick);
+    //*************************************************************
+//    uDom('#autoUpdate').on('change', autoUpdateCheckboxChanged);
+//    uDom('#parseCosmeticFilters').on('change', cosmeticSwitchChanged);
+//    uDom('#buttonApply').on('click', buttonApplyHandler);
+//    uDom('#buttonUpdate').on('click', buttonUpdateHandler);
+//    uDom('#buttonPurgeAll').on('click', buttonPurgeAllHandler);
+//    uDom('#lists').on('change', '.listEntry > input', onListCheckboxChanged);
+//    uDom('#lists').on('click', 'span.purge', onPurgeClicked);
+//    uDom('#externalLists').on('input', externalListsChangeHandler);
+//    uDom('#externalListsApply').on('click', externalListsApplyHandler);
+//    uDom('#lists').on('click', '.groupEntry > span', groupEntryClickHandler);
+    $("button").button();
+    $(".refreshButton").button("option", "icons", {primary: "ui-icon-refresh"});
+    $(".addButton").button("option", "icons", {primary: "ui-icon-plus"});
+    $(".removeButton").button("option", "icons", {primary: "ui-icon-minus"});
 
     renderFilterLists();
     renderExternalLists();

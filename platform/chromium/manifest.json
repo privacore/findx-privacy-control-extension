@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
 
-    "name": "uBlock Origin",
+    "name": "IncognitorTrackerBlock",
     "version": "0.9.8.7",
 
     "default_locale": "en",
@@ -16,11 +16,11 @@
             "19": "img/browsericons/icon19.png",
             "38": "img/browsericons/icon38.png"
         },
-        "default_title": "uBlock Origin",
+        "default_title": "IncognitorTrackerBlock",
         "default_popup": "popup.html"
     },
 
-    "author": "All uBlock Origin contributors",
+    "author": "All IncognitorTrackerBlock contributors",
     "background": {
         "page": "background.html"
     },
@@ -65,5 +65,5 @@
         "http://*/*",
         "https://*/*"
     ],
-    "short_name": "uBlock₀"
+    "short_name": "IncognitorTrackerBlock"
 }

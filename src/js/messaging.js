@@ -145,9 +145,15 @@ var onMessage = function(request, sender, callback) {
     case 'userSettings':
         response = µb.changeUserSettings(request.name, request.value);
         break;
+        /*Custom messages*/
     case 'openOptionsPage':
         vAPI.openOptionsPage();
         break;
+    case 'updateAndReloadAllFilters':
+        µb.reloadPresetBlacklists(request.switches, request.update);
+        µb.reloadAllFilters(callback);
+        return;
+        /**********************************/
 
     default:
         return vAPI.messaging.UNHANDLED;

@@ -79,12 +79,6 @@
         </div>
 
 
-        <div id="showBlockedWrap">
-            <input type="checkbox" id="icon-badge"/>
-            <label>Show number of blocked trackers/ads in icon</label>
-        </div>
-
-
 
         <!-- Subscription entry template -->
         <script id="filter_template" type="text/html">
@@ -109,7 +103,7 @@
                            title="{{group}}" value="{{group}}">
                 </div>
                 <div class="updateColumn listColumn">
-                    <div class="subscriptionUpdate listColumn">{{last_update}}</div>
+                    <div class="subscriptionUpdate listColumn" {{error}}>{{last_update}}</div>
                 </div>
             </div>
         </script>
@@ -139,7 +133,7 @@
         <!--</p>-->
         <!--</div>-->
 
-        <!--<div id="busyOverlay"></div>-->
+        <div id="busyOverlay"></div>
 
 
         <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
