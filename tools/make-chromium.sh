@@ -2,10 +2,10 @@
 #
 # This script assumes a linux environment
 
-echo "*** uBlock0.chromium: Creating web store package"
-echo "*** uBlock0.chromium: Copying files"
+echo "*** IncognitorTrackerBlock.ch: Creating web store package"
+echo "*** IncognitorTrackerBlock.ch: Copying files"
 
-DES=dist/build/uBlock0.chromium
+DES=dist/build/IncognitorTrackerBlock.ch
 rm -rf $DES
 mkdir -p $DES
 
@@ -31,4 +31,4 @@ if [ "$1" = all ]; then
     popd
 fi
 
-echo "*** uBlock0.chromium: Package done."
+echo "*** IncognitorTrackerBlock.ch: Package done."

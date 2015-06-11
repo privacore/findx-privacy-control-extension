@@ -2274,7 +2274,7 @@ vAPI.contextMenu.remove = function() {
 /******************************************************************************/
 
 var optionsObserver = {
-    addonId: 'uBlock0@raymondhill.net',
+    addonId: 'incognitortrackerblock@itb.net',
 
     register: function() {
         Services.obs.addObserver(this, 'addon-options-displayed', false);
