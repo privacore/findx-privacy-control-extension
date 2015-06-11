@@ -6,24 +6,33 @@
         <link type="text/css" href="lib/jquery-ui/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
 
         <link rel="stylesheet" type="text/css" href="css/common.css">
-        <link rel="stylesheet" type="text/css" href="css/dashboard-common.css">
-        <link rel="stylesheet" type="text/css" href="css/3p-filters.css">
+        <link rel="stylesheet" type="text/css" href="css/dashboard-common-incognito.css">
+        <link rel="stylesheet" type="text/css" href="css/3p-filters-incognito.css">
     </head>
 
     <body>
 
         <p>
-            <label>Enable only the filter lists you need. Too many can make your browser unresponsive.</label>
+            <!--<label>Enable only the filter lists you need. Too many can make your browser unresponsive.</label>-->
         </p>
 
-        <p>
-            <label>Out-of-date lists are updated periodically.</label>
-            <button id="updateFilterLists" class="refreshButton">
-                <span data-i18n="3pUpdateNow"></span>
-            </button>
-            <button id="buttonPurgeAll" class="custom disabled" data-i18n="3pPurgeAll"></button>
-            <br/>
-        </p>
+        <!--<p>-->
+        <label>Out-of-date lists are updated periodically.</label>
+        <ul id="options">
+            <li><input type="checkbox" id="autoUpdate"><label data-i18n="3pAutoUpdatePrompt1" for="autoUpdate"></label>&ensp;
+                <button class="important disabled" id="buttonUpdate" data-i18n="3pUpdateNow"></button>
+                <button id="buttonPurgeAll" class="custom disabled" data-i18n="3pPurgeAll"></button>
+<!--            <li><input type="checkbox" id="parseCosmeticFilters"><label data-i18n="3pParseAllABPHideFiltersPrompt1" for="parseCosmeticFilters"></label>
+                <button class="whatisthis"></button>
+                <div class="whatisthis-expandable para" data-i18n="3pParseAllABPHideFiltersInfo"></div>
+            <li><p id="listsOfBlockedHostsPrompt"></p>-->
+        </ul>
+        <!--            <button id="updateFilterLists" class="refreshButton">
+                        <span data-i18n="3pUpdateNow"></span>
+                    </button>
+                    <button id="buttonPurgeAll" class="custom disabled" data-i18n="3pPurgeAll"></button>
+                    <br/>
+        <!--</p>-->
 
 
         <!-- Titles of list columns -->
@@ -133,7 +142,11 @@
         <!--</p>-->
         <!--</div>-->
 
-        <div id="busyOverlay"></div>
+        <div id="busyOverlay">
+            <div></div>
+            <!-- progress bar widget -->
+            <div><div></div><div></div></div>
+        </div>
 
 
         <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>

@@ -89,69 +89,69 @@ var renderFilterLists = function() {
         return listTitle;
     };
 //
-//    var liFromListEntry = function(listKey) {
-//        var entry = listDetails.available[listKey];
-//        var li = listEntryTemplate.clone();
-//
-//        if ( entry.off !== true ) {
-//            li.descendants('input').attr('checked', '');
-//        }
-//
-//        var elem = li.descendants('a:nth-of-type(1)');
-//        elem.attr('href', 'asset-viewer.html?url=' + encodeURI(listKey));
-//        elem.attr('type', 'text/html');
-//        elem.attr('data-listkey', listKey);
-//        elem.text(listNameFromListKey(listKey) + '\u200E');
-//
-//        if ( entry.supportName ) {
-//            elem = li.descendants('a:nth-of-type(2)');
-//            elem.attr('href', entry.supportURL);
-//            elem.text('(' + entry.supportName + ')');
-//            elem.css('display', '');
-//        }
-//
-//        elem = li.descendants('span:nth-of-type(1)');
-//        var text = listStatsTemplate
-//            .replace('{{used}}', renderNumber(!entry.off && !isNaN(+entry.entryUsedCount) ? entry.entryUsedCount : 0))
-//            .replace('{{total}}', !isNaN(+entry.entryCount) ? renderNumber(entry.entryCount) : '?');
-//        elem.text(text);
-//
-//        // https://github.com/gorhill/uBlock/issues/78
-//        // Badge for non-secure connection
-//        var remoteURL = listKey;
-//        if ( remoteURL.lastIndexOf('http:', 0) !== 0 ) {
-//            remoteURL = entry.homeURL || '';
-//        }
-//        if ( remoteURL.lastIndexOf('http:', 0) === 0 ) {
-//            li.descendants('span.status.unsecure').css('display', '');
-//        }
-//
-//        // https://github.com/chrisaljoudi/uBlock/issues/104
-//        var asset = listDetails.cache[listKey] || {};
-//
-//        // Badge for update status
-//        if ( entry.off !== true ) {
-//            if ( asset.repoObsolete ) {
-//                li.descendants('span.status.new').css('display', '');
-//                needUpdate = true;
-//            } else if ( asset.cacheObsolete ) {
-//                li.descendants('span.status.obsolete').css('display', '');
-//                needUpdate = true;
-//            } else if ( entry.external && !asset.cached ) {
-//                li.descendants('span.status.obsolete').css('display', '');
-//                needUpdate = true;
-//            }
-//        }
-//
-//        // In cache
-//        if ( asset.cached ) {
-//            elem = li.descendants('span.status.purge');
-//            elem.css('display', '');
-//            elem.attr('title', lastUpdateString.replace('{{ago}}', renderElapsedTimeToString(asset.lastModified)));
-//            hasCachedContent = true;
-//        }
-//        return li;
-//    };
+    var liFromListEntry = function(listKey) {
+        var entry = listDetails.available[listKey];
+        var li = listEntryTemplate.clone();
+
+        if ( entry.off !== true ) {
+            li.descendants('input').attr('checked', '');
+        }
+
+        var elem = li.descendants('a:nth-of-type(1)');
+        elem.attr('href', 'asset-viewer.html?url=' + encodeURI(listKey));
+        elem.attr('type', 'text/html');
+        elem.attr('data-listkey', listKey);
+        elem.text(listNameFromListKey(listKey) + '\u200E');
+
+        if ( entry.supportName ) {
+            elem = li.descendants('a:nth-of-type(2)');
+            elem.attr('href', entry.supportURL);
+            elem.text('(' + entry.supportName + ')');
+            elem.css('display', '');
+        }
+
+        elem = li.descendants('span:nth-of-type(1)');
+        var text = listStatsTemplate
+            .replace('{{used}}', renderNumber(!entry.off && !isNaN(+entry.entryUsedCount) ? entry.entryUsedCount : 0))
+            .replace('{{total}}', !isNaN(+entry.entryCount) ? renderNumber(entry.entryCount) : '?');
+        elem.text(text);
+
+        // https://github.com/gorhill/uBlock/issues/78
+        // Badge for non-secure connection
+        var remoteURL = listKey;
+        if ( remoteURL.lastIndexOf('http:', 0) !== 0 ) {
+            remoteURL = entry.homeURL || '';
+        }
+        if ( remoteURL.lastIndexOf('http:', 0) === 0 ) {
+            li.descendants('span.status.unsecure').css('display', '');
+        }
+
+        // https://github.com/chrisaljoudi/uBlock/issues/104
+        var asset = listDetails.cache[listKey] || {};
+
+        // Badge for update status
+        if ( entry.off !== true ) {
+            if ( asset.repoObsolete ) {
+                li.descendants('span.status.new').css('display', '');
+                needUpdate = true;
+            } else if ( asset.cacheObsolete ) {
+                li.descendants('span.status.obsolete').css('display', '');
+                needUpdate = true;
+            } else if ( entry.external && !asset.cached ) {
+                li.descendants('span.status.obsolete').css('display', '');
+                needUpdate = true;
+            }
+        }
+
+        // In cache
+        if ( asset.cached ) {
+            elem = li.descendants('span.status.purge');
+            elem.css('display', '');
+            elem.attr('title', lastUpdateString.replace('{{ago}}', renderElapsedTimeToString(asset.lastModified)));
+            hasCachedContent = true;
+        }
+        return li;
+    };
 
     var listEntryCountFromGroup = function(listKeys) {
         if ( Array.isArray(listKeys) === false ) {
@@ -229,33 +229,33 @@ var renderFilterLists = function() {
         ];
         fillFiltersList(getSelectedFilters(listDetails));
         fillAvailableFiltersList();
-//        for ( i = 0; i < groupKeys.length; i++ ) {
-//            groupKey = groupKeys[i];
-//            liGroup = liFromListGroup(groupKey, groups[groupKey]);
-//            liGroup.toggleClass(
-//                'collapsed',
-//                vAPI.localStorage.getItem('collapseGroup' + (i + 1)) === 'y'
-//            );
-//            ulLists.append(liGroup);
-//            delete groups[groupKey];
-//        }
-//        // For all groups not covered above (if any left)
-//        groupKeys = Object.keys(groups);
-//        for ( i = 0; i < groupKeys.length; i++ ) {
-//            groupKey = groupKeys[i];
-//            ulLists.append(liFromListGroup(groupKey, groups[groupKey]));
-//        }
-//
-//        uDom('#listsOfBlockedHostsPrompt').text(
-//            vAPI.i18n('3pListsOfBlockedHostsPrompt')
-//                .replace('{{netFilterCount}}', renderNumber(details.netFilterCount))
-//                .replace('{{cosmeticFilterCount}}', renderNumber(details.cosmeticFilterCount))
-//        );
-//        uDom('#autoUpdate').prop('checked', listDetails.autoUpdate === true);
+        for ( i = 0; i < groupKeys.length; i++ ) {
+            groupKey = groupKeys[i];
+            liGroup = liFromListGroup(groupKey, groups[groupKey]);
+            liGroup.toggleClass(
+                'collapsed',
+                vAPI.localStorage.getItem('collapseGroup' + (i + 1)) === 'y'
+            );
+            ulLists.append(liGroup);
+            delete groups[groupKey];
+        }
+        // For all groups not covered above (if any left)
+        groupKeys = Object.keys(groups);
+        for ( i = 0; i < groupKeys.length; i++ ) {
+            groupKey = groupKeys[i];
+            ulLists.append(liFromListGroup(groupKey, groups[groupKey]));
+        }
+
+        uDom('#listsOfBlockedHostsPrompt').text(
+            vAPI.i18n('3pListsOfBlockedHostsPrompt')
+                .replace('{{netFilterCount}}', renderNumber(details.netFilterCount))
+                .replace('{{cosmeticFilterCount}}', renderNumber(details.cosmeticFilterCount))
+        );
+        uDom('#autoUpdate').prop('checked', listDetails.autoUpdate === true);
 //        uDom('#parseCosmeticFilters').prop('checked', listDetails.cosmetic === true);
 //
-//        renderWidgets();
-//        renderBusyOverlay(details.manualUpdate, details.manualUpdateProgress);
+        renderWidgets();
+        renderBusyOverlay(details.manualUpdate, details.manualUpdateProgress);
     };
     
     //Custom methods
@@ -489,7 +489,7 @@ var renderWidgets = function() {
 
 // Return whether selection of lists changed.
 
-var listsSelectionChanged = function() {
+var listsSelectionChanged = function() {   
     if ( listDetails.cosmetic !== cosmeticSwitch ) {
         return true;
     }
@@ -598,7 +598,8 @@ var selectFilterLists = function(callback) {
 
 var buttonUpdateHandler = function() {
     uDom('#buttonUpdate').removeClass('enabled');
-    if ( needUpdate ) {
+
+//    if ( needUpdate ) {
         renderBusyOverlay(true);
 
         var onSelectionDone = function() {
@@ -608,7 +609,20 @@ var buttonUpdateHandler = function() {
         selectFilterLists(onSelectionDone);
 
         cacheWasPurged = false;
-    }
+//    }
+};
+
+var buttonPurgeAllHandler = function() {
+    uDom('#buttonPurgeAll').removeClass('enabled');
+
+    renderBusyOverlay(true);
+
+    var onCompleted = function() {
+        cacheWasPurged = true;
+        renderFilterLists();
+    };
+
+    messager.send({ what: 'purgeAllCaches' }, onCompleted);
 };
 
 /******************************************************************************/
@@ -705,9 +719,7 @@ var groupEntryClickHandler = function() {
     var addSubscriptionBtnClick = function () {
         var list = document.querySelector("#subscriptionSelector");
         var data = list.options[list.selectedIndex]._data;
-
         var result = true;
-
         if (data) {
             updateSubscriptions(data.path || "", false, true, true);
         }
@@ -749,21 +761,21 @@ var groupEntryClickHandler = function() {
 
 uDom.onLoad(function() {
     //*************************************************************
-        uDom('#updateFilterLists').on('click', buttonUpdateHandler);
+//        uDom('#updateFilterLists').on('click', buttonUpdateHandler);
         uDom("#startSubscriptionSelection").on("click", startSubscriptionSelection);
         uDom('#addSubscription').on('click', addSubscriptionBtnClick);
     //*************************************************************
-//    uDom('#autoUpdate').on('change', autoUpdateCheckboxChanged);
+    uDom('#autoUpdate').on('change', autoUpdateCheckboxChanged);
 //    uDom('#parseCosmeticFilters').on('change', cosmeticSwitchChanged);
 //    uDom('#buttonApply').on('click', buttonApplyHandler);
-//    uDom('#buttonUpdate').on('click', buttonUpdateHandler);
-//    uDom('#buttonPurgeAll').on('click', buttonPurgeAllHandler);
+    uDom('#buttonUpdate').on('click', buttonUpdateHandler);
+    uDom('#buttonPurgeAll').on('click', buttonPurgeAllHandler);
 //    uDom('#lists').on('change', '.listEntry > input', onListCheckboxChanged);
 //    uDom('#lists').on('click', 'span.purge', onPurgeClicked);
 //    uDom('#externalLists').on('input', externalListsChangeHandler);
 //    uDom('#externalListsApply').on('click', externalListsApplyHandler);
 //    uDom('#lists').on('click', '.groupEntry > span', groupEntryClickHandler);
-    $("button").button();
+//    $("button").button();
     $(".refreshButton").button("option", "icons", {primary: "ui-icon-refresh"});
     $(".addButton").button("option", "icons", {primary: "ui-icon-plus"});
     $(".removeButton").button("option", "icons", {primary: "ui-icon-minus"});
