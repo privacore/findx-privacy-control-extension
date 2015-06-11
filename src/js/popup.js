@@ -93,6 +93,20 @@ var statsStr = vAPI.i18n('popupBlockedStats');
 var domainsHitStr = vAPI.i18n('popupHitDomainCount');
 var reNetworkRelatedURL = /^(?:ftps?|https?|wss?):\/\//;
 
+/***************************************************************************/
+var selectors = {
+    pageAdsBlocked: "#stats-page .blocked-quantity",
+    totalAdsBlocked: "#stats-total span",
+    closeBtn: ".close-button",
+    optionsBtn: ".options-button",
+    helpBtn: "#help-button",
+    reloadPanel: ".reloader",
+    reloadBtn: ".reloader span",
+    closeReloadPanelBtn: ".reload-close"
+};
+
+  
+
 /******************************************************************************/
 
 // https://github.com/gorhill/httpswitchboard/issues/345
@@ -815,10 +829,33 @@ var onHideTooltip = function() {
 /*Custom methods*/
 /*******************************************************************************/
 var openOptionsPage = function () {
-       
         messager.send({what: 'openOptionsPage'});
-//         vAPI.closePopup();
-    };
+        vAPI.closePopup();
+        
+};
+    
+ var openHelpPage = function () {
+        messager.send({what: 'openHelpPage'});
+        vAPI.closePopup();
+};
+    
+    /**
+     * Show the notification in the footer of popup with ability to reload a current page.
+     */
+//function showReloadNotification () {
+//    var reloader = document.querySelector(selectors.reloadPanel);
+//    if (reloader && reloader.classList.contains ("disabled")){
+//        reloader.classList.toggle ("disabled");
+//    }
+//}
+function hideReloadNotification () {
+        var reloader = document.querySelector(selectors.reloadPanel);
+        if (reloader && !reloader.classList.contains ("disabled")){
+            reloader.classList.add("disabled");
+        }
+}
+
+    /***************************************************************************/
 /******************************************************************************/
 
 // Make menu only when popup html is fully loaded
@@ -834,8 +871,13 @@ uDom.onLoad(function () {
         tabId = matches[1];
     }
     getPopupData(tabId);
-    uDom('.close-button').on('click', vAPI.closePopup);
-    uDom('.options-button').on('click', openOptionsPage);
+    uDom(selectors.closeBtn).on('click', vAPI.closePopup);
+    uDom(selectors.optionsBtn).on('click', openOptionsPage);
+    uDom(selectors.helpBtn).on('click', openHelpPage);
+    uDom(selectors.reloadBtn).on('click', reloadTab);
+    uDom(selectors.closeReloadPanelBtn).on('click', hideReloadNotification);
+//    uDom('.close-button').on('click', vAPI.closePopup);
+//    uDom('.options-button').on('click', openOptionsPage);
 //  uDom('#switch').on('click', toggleNetFilteringSwitch);
 //    uDom('#gotoPick').on('click', gotoPick);
 //    uDom('a[href]').on('click', gotoURL);

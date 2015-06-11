@@ -149,6 +149,9 @@ var onMessage = function(request, sender, callback) {
     case 'openOptionsPage':
         vAPI.openOptionsPage();
         break;
+    case 'openHelpPage':
+        vAPI.openHelpPage();
+        break;
     case 'updateAndReloadAllFilters':
         µb.reloadPresetBlacklists(request.switches, request.update);
         µb.reloadAllFilters(callback);
