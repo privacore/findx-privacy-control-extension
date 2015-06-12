@@ -281,6 +281,9 @@
             else {// all other filters not used by default
                 availableEntry.inUse = true;
             }
+            if (storedEntry.hasOwnProperty("exceptions")) {
+                availableEntry.exceptions = storedEntry.exceptions;
+            }
             
         }
         callback(availableLists);

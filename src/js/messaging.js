@@ -152,6 +152,9 @@ var onMessage = function(request, sender, callback) {
     case 'openHelpPage':
         vAPI.openHelpPage();
         break;
+    case 'updateFilter':
+        µb.updateFilter(request.updates, callback);
+        break;
     case 'updateAndReloadAllFilters':
         µb.reloadPresetBlacklists(request.switches, request.update);
         µb.reloadAllFilters(callback);
@@ -277,6 +280,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         globalAllowedRequestCount: µb.localSettings.allowedRequestCount,
         globalBlockedRequestCount: µb.localSettings.blockedRequestCount,
         netFilteringSwitch: false,
+        pauseFiltering: µb.userSettings.pauseFiltering,
         rawURL: tabContext.rawURL,
         pageURL: tabContext.normalURL,
         pageHostname: tabContext.rootHostname,
@@ -409,6 +413,10 @@ var onMessage = function(request, sender, callback) {
             pageStore.toggleNetFilteringSwitch(request.url, request.scope, request.state);
             µb.updateBadgeAsync(request.tabId);
         }
+        break;
+    case 'togglePauseFiltering':
+        µb.togglePauseFilteringSwitch(request.state);
+        µb.updateBadgeAsync(request.tabId);
         break;
 
     default:

@@ -63,7 +63,74 @@ var matchWhitelistDirective = function(url, hostname, directive) {
 };
 
 /******************************************************************************/
+/*Custom methods*/
+µBlock.togglePauseFilteringSwitch = function (newState) {
+    this.userSettings.pauseFiltering = newState;
+    this.saveUserSettings();
+};
+    
+µBlock.getUrlWithoutParams = function (link) {
+        var urlObj = new URL(link);
+        var url = urlObj.href.replace(urlObj.search, "");
+        return url || "";
+};
+    µBlock.isDomainInExceptions = function (path, domain) {
+        var filter = this.remoteBlacklists[path];
+        if (!filter || !filter.exceptions || !filter.exceptions.domains) return false;
+        if (filter.exceptions.domains.hasOwnProperty(domain)) return true;
+        return false;
+    };
 
+    /**
+     * Is filter is blocked on domain.
+     * @param {string} path - filter path
+     * @param {string} domain
+     * @returns {boolean}
+     */
+    µBlock.isBlockedForDomain = function (path, domain) {
+        var filter = this.remoteBlacklists[path];
+        try {
+            return filter.exceptions.domains[domain] || false;
+        }
+        catch (exception) {
+            console.error("Exception in 'isBlockedForDomain' (ublock.js) :\n\t", exception);
+        }
+        return false;
+    };
+    µBlock.isInUse = function (path) {
+        if (!path) return true;
+        var filter = this.remoteBlacklists[path];
+        return filter.hasOwnProperty("inUse") ? filter.inUse : true;
+    };
+    
+     µBlock.isDefaultOff = function (path) {
+        if (!path) return false;
+        var filter = this.remoteBlacklists[path];
+        return filter.hasOwnProperty("defaultOff") ? filter.defaultOff : false;
+    };
+
+    /***************************************************************************/
+
+    µBlock.isUrlInExceptions = function (path, url, pageDomain) {
+        var filter = this.remoteBlacklists[path];
+
+        if (!filter || !filter.exceptions || !filter.exceptions.links) return false;
+        var links = filter.exceptions.links;
+        if (links.hasOwnProperty(url) && links[url].hasOwnProperty(pageDomain)) return true;
+        return false;
+    };
+
+    µBlock.isUrlBlockedForDomain = function (path, url, domain) {
+        var filter = this.remoteBlacklists[path];
+        try {
+            return filter.exceptions.links[url][domain] || false;
+        }
+        catch (exception) {
+            console.error("Exception in 'isBlockedForDomain' (ublock.js) :\n\t", exception);
+        }
+        return false;
+    };
+/******************************************************************************/
 µBlock.getNetFilteringSwitch = function(url) {
     var netWhitelist = this.netWhitelist;
     var buckets, i, pos;

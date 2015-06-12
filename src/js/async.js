@@ -182,13 +182,8 @@ return asyncJobManager;
 
         var pageStore = this.pageStoreFromTabId(tabId);
         if ( pageStore !== null ) {
-            state = pageStore.getNetFilteringSwitch();
-            if ( state && this.userSettings.showIconBadge && pageStore.perLoadBlockedRequestCount ) {
-                badge = this.utils.formatCount(pageStore.perLoadBlockedRequestCount);
-            }
+            pageStore.updateBadge();
         }
-
-        vAPI.setIcon(tabId, state ? 'on' : 'off', badge);
     };
 
     return function(tabId) {

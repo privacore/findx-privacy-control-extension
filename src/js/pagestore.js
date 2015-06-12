@@ -321,10 +321,9 @@ PageStore.prototype.init = function(tabId) {
 
 PageStore.prototype.reuse = function(context) {
     // When force refreshing a page, the page store data needs to be reset.
-
     // If the hostname changes, we can't merely just update the context.
     var tabContext = µb.tabContextManager.lookup(this.tabId);
-    if ( tabContext.rootHostname !== this.tabHostname ) {
+    if ( tabContext.rootHostname !== this.tabHostname) {
         context = '';
     }
 
@@ -429,6 +428,7 @@ PageStore.prototype.createContextFromFrameHostname = function(frameHostname) {
 
 /******************************************************************************/
 
+
 PageStore.prototype.getNetFilteringSwitch = function() {
     var tabContext = µb.tabContextManager.lookup(this.tabId);
     if (
@@ -437,13 +437,15 @@ PageStore.prototype.getNetFilteringSwitch = function() {
     ) {
         return this.netFiltering;
     }
-
     // https://github.com/chrisaljoudi/uBlock/issues/1078
     // Use both the raw and normalized URLs.
     this.netFiltering = µb.getNetFilteringSwitch(tabContext.normalURL);
     if ( this.netFiltering && tabContext.rawURL !== tabContext.normalURL ) {
         this.netFiltering = µb.getNetFilteringSwitch(tabContext.rawURL);
     }
+//    if( µb.userSettings.pauseFiltering){
+//         return false;
+//    }
     this.netFilteringReadTime = Date.now();
     return this.netFiltering;
 };
@@ -485,7 +487,7 @@ PageStore.prototype.toggleNetFilteringSwitch = function(url, scope, state) {
 
 PageStore.prototype.filterRequest = function(context) {
 
-    if ( this.getNetFilteringSwitch() === false ) {
+    if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
         if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
             this.netFilteringCache.add(context, '');
         }
@@ -520,7 +522,7 @@ PageStore.prototype.filterRequest = function(context) {
 
     //console.debug('cache MISS: PageStore.filterRequest("%s")', context.requestURL);
     if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
-        this.netFilteringCache.add(context, result);
+        this.netFilteringCache.add(context, result.str || result);
     }
 
     // console.debug('[%s, %s] = "%s"', context.requestHostname, context.requestType, result);
@@ -534,7 +536,7 @@ var collapsibleRequestTypes = 'image sub_frame object';
 /******************************************************************************/
 
 PageStore.prototype.filterRequestNoCache = function(context) {
-    if ( this.getNetFilteringSwitch() === false ) {
+    if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
         return '';
     }
 
@@ -592,6 +594,15 @@ PageStore.prototype.logRequest = function(context, result) {
 // https://www.youtube.com/watch?v=drW8p_dTLD4
 
 /******************************************************************************/
+PageStore.prototype.updateBadge = function() {
+    var netFiltering = this.getNetFilteringSwitch();
+    var pauseFiltering = µb.userSettings.pauseFiltering;
+    var badge = '';
+    if ( µb.userSettings.showIconBadge && netFiltering && this.perLoadBlockedRequestCount ) {
+        badge = µb.utils.formatCount(this.perLoadBlockedRequestCount);
+    }
+    vAPI.setIcon(this.tabId, (!pauseFiltering && netFiltering) ? 'on' : 'off', badge);
+};
 
 return {
     factory: PageStore.factory

@@ -35,6 +35,20 @@ var exports = {};
 
 /******************************************************************************/
 
+var isFilterAllowed = function (filterObj, request) {
+        var µb = µBlock;
+        var url = µb.getUrlWithoutParams(request.requestURL);
+
+        if (µb.isUrlInExceptions(filterObj.filterPath, url, request.rootDomain))
+            return !µb.isUrlBlockedForDomain(filterObj.filterPath, url, request.rootDomain);
+
+        if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain))
+            return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
+
+        return µb.isAllowResult(filterObj.str || filterObj) || !µb.isInUse(filterObj.filterPath || "")
+                    || µb.isDefaultOff(filterObj.filterPath || "");
+    };
+
 // Intercept and filter web requests.
 
 var onBeforeRequest = function(details) {
@@ -106,7 +120,9 @@ var onBeforeRequest = function(details) {
     }
 
     // Not blocked
-    if ( µb.isAllowResult(result) ) {
+    
+     if (isFilterAllowed(result, requestContext)) {
+//    if ( µb.isAllowResult(result) ) {
         //console.debug('traffic.js > onBeforeRequest(): ALLOW "%s" (%o) because "%s"', details.url, details, result);
 
         // https://github.com/chrisaljoudi/uBlock/issues/114
@@ -121,6 +137,9 @@ var onBeforeRequest = function(details) {
 
         return;
     }
+    
+   
+
 
     // Blocked
     //console.debug('traffic.js > onBeforeRequest(): BLOCK "%s" (%o) because "%s"', details.url, details, result);
@@ -137,6 +156,8 @@ var onBeforeRequest = function(details) {
 
     return { cancel: true };
 };
+
+
 
 /******************************************************************************/
 
@@ -212,7 +233,7 @@ var onBeforeRootFrameRequest = function(details) {
     }
 
     // Not blocked
-    if ( µb.isAllowResult(result) ) {
+    if ( isFilterAllowed(result, context)) {
         return;
     }
 
