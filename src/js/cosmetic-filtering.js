@@ -153,10 +153,10 @@ FilterBucket.prototype.add = function(a) {
     this.filters.push(a);
 };
 
-FilterBucket.prototype.retrieve = function(s, out) {
+FilterBucket.prototype.retrieve = function(s, out, domain) {
     var i = this.filters.length;
     while ( i-- ) {
-        this.filters[i].retrieve(s, out);
+        this.filters[i].retrieve(s, out, domain);
     }
 };
 
@@ -188,12 +188,17 @@ var FilterHostname = function(s, hostname, filters) {
     this.filters = filters || {};
 };
 
-FilterHostname.prototype.retrieve = function(hostname, out) {
+FilterHostname.prototype.retrieve = function(hostname, out, domain) {
     if ( hostname.slice(-this.hostname.length) === this.hostname ) {
         var filters = [];
         for (var filter in this.filters) {
-            if (µb.isDefaultOff(this.filters[filter])) continue;
-            filters.push(filter);
+            if (µb.isDomainInExceptions(this.filters[filter], domain)){
+                if (µb.isBlockedForDomain(this.filters[filter], domain) === false)
+                    continue;
+            }
+            else if (typeof this.filters === 'string')
+                if (µb.isDefaultOff(this.filters)) continue;
+                else if (µb.isDefaultOff(this.filters[filter])) continue;
         }
         if (filters.length)
             out.push(Object.keys(filters).join(',\n'));
@@ -1113,7 +1118,7 @@ FilterContainer.prototype.pruneSelectorCacheAsync = function() {
 
 /******************************************************************************/
 
-FilterContainer.prototype.retrieveGenericSelectors = function(request) {
+FilterContainer.prototype.retrieveGenericSelectors = function(request, rootDomain) {
     if ( this.acceptedCount === 0 ) {
         return;
     }
@@ -1153,7 +1158,7 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
         }
         hash = makeHash(0, selector, hashMask);
         if ( bucket = this.lowGenericHide[hash] ) {
-            bucket.retrieve(selector, hideSelectors);
+            bucket.retrieve(selector, hideSelectors, rootDomain);
         }
     }
 
@@ -1170,7 +1175,7 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
 
 /******************************************************************************/
 
-FilterContainer.prototype.retrieveDomainSelectors = function(request) {
+FilterContainer.prototype.retrieveDomainSelectors = function(request, rootDomain) {
     if ( !request.locationURL ) {
         return;
     }
@@ -1199,29 +1204,29 @@ FilterContainer.prototype.retrieveDomainSelectors = function(request) {
     var hash, bucket;
     hash = makeHash(0, domain, this.domainHashMask);
     if ( bucket = this.hostnameFilters[hash] ) {
-        bucket.retrieve(hostname, r.cosmeticHide);
+        bucket.retrieve(hostname, r.cosmeticHide, rootDomain);
     }
     // https://github.com/chrisaljoudi/uBlock/issues/188
     // Special bucket for those filters without a valid domain name as per PSL
     if ( bucket = this.hostnameFilters[this.type0NoDomainHash] ) {
-        bucket.retrieve(hostname, r.cosmeticHide);
+        bucket.retrieve(hostname, r.cosmeticHide, rootDomain);
     }
 
     // entity filter buckets are always plain js array
     if ( bucket = this.entityFilters[r.entity] ) {
-        r.cosmeticHide = r.cosmeticHide.concat(bucket);
+        r.cosmeticHide = r.cosmeticHide.concat(bucket, rootDomain);
     }
     // No entity exceptions as of now
 
     hash = makeHash(1, domain, this.domainHashMask);
     if ( bucket = this.hostnameFilters[hash] ) {
-        bucket.retrieve(hostname, r.cosmeticDonthide);
+        bucket.retrieve(hostname, r.cosmeticDonthide, rootDomain);
     }
 
     // https://github.com/chrisaljoudi/uBlock/issues/188
     // Special bucket for those filters without a valid domain name as per PSL
     if ( bucket = this.hostnameFilters[this.type1NoDomainHash] ) {
-        bucket.retrieve(hostname, r.cosmeticDonthide);
+        bucket.retrieve(hostname, r.cosmeticDonthide, rootDomain);
     }
 
     this.retrieveFromSelectorCache(hostname, 'cosmetic', r.cosmeticHide);

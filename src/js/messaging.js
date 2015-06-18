@@ -484,7 +484,7 @@ var onMessage = function(request, sender, callback) {
     switch ( request.what ) {
     case 'retrieveDomainCosmeticSelectors':
         if ( pageStore && pageStore.getSpecificCosmeticFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
-            response = µb.cosmeticFilteringEngine.retrieveDomainSelectors(request);
+            response = µb.cosmeticFilteringEngine.retrieveDomainSelectors(request,  pageStore.tabHostname);
         }
         break;
 
@@ -579,7 +579,7 @@ var onMessage = function(request, sender, callback) {
             result: null
         };
         if ( !response.shutdown && pageStore.getGenericCosmeticFilteringSwitch() ) {
-            response.result = µb.cosmeticFilteringEngine.retrieveGenericSelectors(request);
+            response.result = µb.cosmeticFilteringEngine.retrieveGenericSelectors(request, pageStore.tabHostname);
         }
         break;
 

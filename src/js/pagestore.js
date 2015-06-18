@@ -228,7 +228,6 @@ NetFilteringResultCache.prototype.pruneAsyncCallback = function() {
 
 NetFilteringResultCache.prototype.lookup = function(context) {
     return this.urls[context.requestURL];
-//    return this.urls[context.requestType + ' ' + context.requestURL];
 };
 
 /******************************************************************************/

@@ -252,7 +252,7 @@ var renderFilterLists = function() {
                 .replace('{{cosmeticFilterCount}}', renderNumber(details.cosmeticFilterCount))
         );
         uDom('#autoUpdate').prop('checked', listDetails.autoUpdate === true);
-//        uDom('#parseCosmeticFilters').prop('checked', listDetails.cosmetic === true);
+        uDom('#parseCosmeticFilters').prop('checked', listDetails.cosmetic === true);
 //
         renderWidgets();
         renderBusyOverlay(details.manualUpdate, details.manualUpdateProgress);
@@ -419,6 +419,7 @@ var renderFilterLists = function() {
         };
         
         var createFilterItem = function (data) {
+            var asset = listDetails.cache[data.path] || {};
             try {
                 var template = $("#filter_template").html();
                 template = template.replace(new RegExp('{{delete_possibility}}', 'g'), (data.path === listDetails.userFiltersPath ? "disabled" : ""));
@@ -433,8 +434,8 @@ var renderFilterLists = function() {
                     template = template.replace(new RegExp("{{error}}", 'g'), "error");
                 }
                 else {
-                    var date = new Date(data.lastModified);
-                    var dateString = !(date instanceof Date && isFinite(date)) ? "" :
+                      var date = new Date(asset.lastModified);
+                      var dateString = !(date instanceof Date && isFinite(date)) ? "-" :
                             (date.getFullYear() + "-" +
                                     ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
                                     ("0" + date.getDate()).slice(-2) + "  " +
@@ -598,10 +599,26 @@ var selectFilterLists = function(callback) {
     }, callback);
 };
 
+var buttonApplyHandler = function() {
+      listDetails.cosmetic = this.checked;
+//    uDom('#buttonApply').removeClass('enabled');
+
+    renderBusyOverlay(true);
+
+    var onSelectionDone = function() {
+        messager.send({ what: 'reloadAllFilters' });
+    };
+
+    selectFilterLists(onSelectionDone);
+
+    cacheWasPurged = false;
+};
+
+
 var buttonUpdateHandler = function() {
     uDom('#buttonUpdate').removeClass('enabled');
 
-//    if ( needUpdate ) {
+    if ( needUpdate ) {
         renderBusyOverlay(true);
 
         var onSelectionDone = function() {
@@ -611,7 +628,7 @@ var buttonUpdateHandler = function() {
         selectFilterLists(onSelectionDone);
 
         cacheWasPurged = false;
-//    }
+    }
 };
 
 var buttonPurgeAllHandler = function() {
@@ -744,6 +761,7 @@ var groupEntryClickHandler = function() {
          */
         var updateSubscriptions = function (path, off, inUse, defaultOff) {
             // Reload blacklists
+            renderBusyOverlay(true);
             var switches = [];
             switches.push({
                 location: path,
@@ -768,7 +786,7 @@ uDom.onLoad(function() {
         uDom('#addSubscription').on('click', addSubscriptionBtnClick);
     //*************************************************************
     uDom('#autoUpdate').on('change', autoUpdateCheckboxChanged);
-//    uDom('#parseCosmeticFilters').on('change', cosmeticSwitchChanged);
+    uDom('#parseCosmeticFilters').on('change', buttonApplyHandler);
 //    uDom('#buttonApply').on('click', buttonApplyHandler);
     uDom('#buttonUpdate').on('click', buttonUpdateHandler);
     uDom('#buttonPurgeAll').on('click', buttonPurgeAllHandler);

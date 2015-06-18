@@ -64,7 +64,7 @@ var errorCantConnectTo = vAPI.i18n('errorCantConnectTo');
 
 var exports = {
     autoUpdate: true,
-    autoUpdateDelay: 4 * oneDay,
+    autoUpdateDelay: oneMinute,//4 * oneDay,
 
     // https://github.com/chrisaljoudi/uBlock/issues/426
     remoteFetchBarrier: 0

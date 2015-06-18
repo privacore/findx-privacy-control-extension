@@ -213,7 +213,6 @@ var onBeforeRootFrameRequest = function(details) {
      // Log
     var pageStore = µb.bindTabToPageStats(tabId, 'beforeRequest');
     if ( pageStore ) {
-//         console.log(2);
         pageStore.logRequest(context, result);
     }
 
@@ -319,7 +318,6 @@ var onBeforeBehindTheSceneRequest = function(details) {
     if (isFilterAllowed(result, context)) {
         return;
     }
-     console.log(3);
     pageStore.logRequest(context, result);
 
     if ( µb.logger.isEnabled() ) {
@@ -380,7 +378,6 @@ var onHeadersReceived = function(details) {
     if (isFilterAllowed(result, context)) {
         return;
     }
-     console.log(4);
     pageStore.logRequest(context, result);
 
     if ( µb.logger.isEnabled() ) {
@@ -431,7 +428,6 @@ var onRootFrameHeadersReceived = function(details) {
     if (isFilterAllowed(result, context)) {
         return;
     }
-     console.log(5);
     pageStore.logRequest(context, result);
 
     if ( µb.logger.isEnabled() ) {
