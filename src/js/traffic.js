@@ -36,18 +36,19 @@ var exports = {};
 /******************************************************************************/
 
 var isFilterAllowed = function (filterObj, request) {
-        var µb = µBlock;
-        var url = µb.getUrlWithoutParams(request.requestURL);
+    var µb = µBlock;
+    var url = µb.getUrlWithoutParams(request.requestURL);
 
-        if (µb.isUrlInExceptions(filterObj.filterPath, url, request.rootDomain))
-            return !µb.isUrlBlockedForDomain(filterObj.filterPath, url, request.rootDomain);
+    if (µb.isUrlInExceptions(filterObj.filterPath, url, request.rootDomain)){
+        return !µb.isUrlBlockedForDomain(filterObj.filterPath, url, request.rootDomain);
+    }
 
-        if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain))
-            return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
-
-        return µb.isAllowResult(filterObj.str || filterObj) || !µb.isInUse(filterObj.filterPath || "")
-                    || µb.isDefaultOff(filterObj.filterPath || "");
-    };
+    if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain)){
+        return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
+    }
+    return µb.isAllowResult(filterObj.str || filterObj) || !µb.isInUse(filterObj.filterPath || "")
+                || µb.isDefaultOff(filterObj.filterPath || "");
+};
 
 // Intercept and filter web requests.
 
@@ -100,32 +101,14 @@ var onBeforeRequest = function(details) {
     requestContext.requestURL = requestURL;
     requestContext.requestHostname = details.hostname;
     requestContext.requestType = requestType;
-
     var result = pageStore.filterRequest(requestContext);
 
     // Possible outcomes: blocked, allowed-passthru, allowed-mirror
+  
 
-    pageStore.logRequest(requestContext, result);
-
-    if ( µb.logger.isEnabled() ) {
-        µb.logger.writeOne(
-            tabId,
-            'net',
-            result,
-            requestType,
-            requestURL,
-            requestContext.rootHostname,
-            requestContext.pageHostname
-        );
-    }
-
-    // Not blocked
-    
+    // Not blocked  
+   
      if (isFilterAllowed(result, requestContext)) {
-//    if ( µb.isAllowResult(result) ) {
-        //console.debug('traffic.js > onBeforeRequest(): ALLOW "%s" (%o) because "%s"', details.url, details, result);
-
-        // https://github.com/chrisaljoudi/uBlock/issues/114
         frameId = details.frameId;
         if ( frameId > 0 ) {
             if ( isFrame  ) {
@@ -134,13 +117,21 @@ var onBeforeRequest = function(details) {
                 pageStore.setFrame(frameId, requestURL);
             }
         }
-
         return;
     }
-    
-   
+         pageStore.logRequest(requestContext, result);
 
-
+        if ( µb.logger.isEnabled() ) {
+            µb.logger.writeOne(
+                tabId,
+                'net',
+                result,
+                requestType,
+                requestURL,
+                requestContext.rootHostname,
+                requestContext.pageHostname
+            );
+        }
     // Blocked
     //console.debug('traffic.js > onBeforeRequest(): BLOCK "%s" (%o) because "%s"', details.url, details, result);
 
@@ -214,9 +205,15 @@ var onBeforeRootFrameRequest = function(details) {
         }
     }
 
-    // Log
+   
+    // Not blocked
+    if (isFilterAllowed(result, context)) {
+        return;
+    }
+     // Log
     var pageStore = µb.bindTabToPageStats(tabId, 'beforeRequest');
     if ( pageStore ) {
+//         console.log(2);
         pageStore.logRequest(context, result);
     }
 
@@ -232,10 +229,7 @@ var onBeforeRootFrameRequest = function(details) {
         );
     }
 
-    // Not blocked
-    if ( isFilterAllowed(result, context)) {
-        return;
-    }
+  
 
     // Blocked
     var query = btoa(JSON.stringify({
@@ -249,6 +243,8 @@ var onBeforeRootFrameRequest = function(details) {
 
     return { cancel: true };
 };
+
+
 
 /******************************************************************************/
 
@@ -320,7 +316,10 @@ var onBeforeBehindTheSceneRequest = function(details) {
     if ( µb.userSettings.advancedUserEnabled ) {
         result = pageStore.filterRequestNoCache(context);
     }
-
+    if (isFilterAllowed(result, context)) {
+        return;
+    }
+     console.log(3);
     pageStore.logRequest(context, result);
 
     if ( µb.logger.isEnabled() ) {
@@ -336,10 +335,7 @@ var onBeforeBehindTheSceneRequest = function(details) {
     }
 
     // Not blocked
-    if ( µb.isAllowResult(result) ) {
-        //console.debug('traffic.js > onBeforeBehindTheSceneRequest(): ALLOW "%s" (%o) because "%s"', details.url, details, result);
-        return;
-    }
+    
 
     // Blocked
     //console.debug('traffic.js > onBeforeBehindTheSceneRequest(): BLOCK "%s" (%o) because "%s"', details.url, details, result);
@@ -380,7 +376,11 @@ var onHeadersReceived = function(details) {
     context.requestType = 'inline-script';
 
     var result = pageStore.filterRequestNoCache(context);
-
+     // Don't block
+    if (isFilterAllowed(result, context)) {
+        return;
+    }
+     console.log(4);
     pageStore.logRequest(context, result);
 
     if ( µb.logger.isEnabled() ) {
@@ -395,11 +395,7 @@ var onHeadersReceived = function(details) {
         );
     }
 
-    // Don't block
-    if ( µb.isAllowResult(result) ) {
-        return;
-    }
-
+   
     µb.updateBadgeAsync(tabId);
 
     details.responseHeaders.push({
@@ -431,7 +427,11 @@ var onRootFrameHeadersReceived = function(details) {
     context.requestType = 'inline-script';
 
     var result = pageStore.filterRequestNoCache(context);
-
+     // Don't block
+    if (isFilterAllowed(result, context)) {
+        return;
+    }
+     console.log(5);
     pageStore.logRequest(context, result);
 
     if ( µb.logger.isEnabled() ) {
@@ -446,11 +446,7 @@ var onRootFrameHeadersReceived = function(details) {
         );
     }
 
-    // Don't block
-    if ( µb.isAllowResult(result) ) {
-        return;
-    }
-
+   
     µb.updateBadgeAsync(tabId);
 
     details.responseHeaders.push({

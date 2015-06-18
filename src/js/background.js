@@ -25,7 +25,7 @@
 /******************************************************************************/
 
 var µBlock = (function() {
-
+ vAPI.storage.clear();
 'use strict';
 
 /******************************************************************************/
@@ -59,7 +59,7 @@ return {
         contextMenuEnabled: false,
         dynamicFilteringEnabled: false,
         experimentalEnabled: false,
-        externalLists: defaultExternalLists,
+        externalLists: {},//defaultExternalLists,
         firewallPaneMinimized: true,
         hyperlinkAuditingDisabled: true,
         parseAllABPHideFilters: true,
@@ -117,26 +117,26 @@ return {
             group: 'default',
             off: false,
             inUse: true
-        },
-        // uBlock
-        'assets/ublock/filters.txt': {
-            title: 'uBlock filters',
-            group: 'default',
-            off: true,
-            inUse: false
-        },
-        'assets/ublock/privacy.txt': {
-            title: 'uBlock filters – Privacy',
-            group: 'default',
-            off: true,
-            inUse: false
-        },
-        'assets/ublock/unbreak.txt': {
-            title: 'uBlock filters – Unbreak',
-            group: 'default',
-            off: true,
-            inUse: false
         }
+        // uBlock
+//        'assets/ublock/filters.txt': {
+//            title: 'uBlock filters',
+//            group: 'default',
+//            off: true,
+//            inUse: false
+//        },
+//        'assets/ublock/privacy.txt': {
+//            title: 'uBlock filters – Privacy',
+//            group: 'default',
+//            off: true,
+//            inUse: false
+//        },
+//        'assets/ublock/unbreak.txt': {
+//            title: 'uBlock filters – Unbreak',
+//            group: 'default',
+//            off: true,
+//            inUse: false
+//        }
     },
 
     // current lists

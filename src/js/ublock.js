@@ -64,16 +64,16 @@ var matchWhitelistDirective = function(url, hostname, directive) {
 
 /******************************************************************************/
 /*Custom methods*/
-µBlock.togglePauseFilteringSwitch = function (newState) {
-    this.userSettings.pauseFiltering = newState;
-    this.saveUserSettings();
-};
+    µBlock.togglePauseFilteringSwitch = function (newState) {
+        this.userSettings.pauseFiltering = newState;
+        this.saveUserSettings();
+    };
     
-µBlock.getUrlWithoutParams = function (link) {
-        var urlObj = new URL(link);
-        var url = urlObj.href.replace(urlObj.search, "");
-        return url || "";
-};
+    µBlock.getUrlWithoutParams = function (link) {
+            var urlObj = new URL(link);
+            var url = urlObj.href.replace(urlObj.search, "");
+            return url || "";
+    };
     µBlock.isDomainInExceptions = function (path, domain) {
         var filter = this.remoteBlacklists[path];
         if (!filter || !filter.exceptions || !filter.exceptions.domains) return false;
@@ -98,13 +98,14 @@ var matchWhitelistDirective = function(url, hostname, directive) {
         return false;
     };
     µBlock.isInUse = function (path) {
-        if (!path) return true;
+        if (!path || path == '' || path == 'undefined') return true;
+     
         var filter = this.remoteBlacklists[path];
         return filter.hasOwnProperty("inUse") ? filter.inUse : true;
     };
     
      µBlock.isDefaultOff = function (path) {
-        if (!path) return false;
+        if (!path || path === 'undefined') return false;
         var filter = this.remoteBlacklists[path];
         return filter.hasOwnProperty("defaultOff") ? filter.defaultOff : false;
     };
@@ -113,7 +114,6 @@ var matchWhitelistDirective = function(url, hostname, directive) {
 
     µBlock.isUrlInExceptions = function (path, url, pageDomain) {
         var filter = this.remoteBlacklists[path];
-
         if (!filter || !filter.exceptions || !filter.exceptions.links) return false;
         var links = filter.exceptions.links;
         if (links.hasOwnProperty(url) && links[url].hasOwnProperty(pageDomain)) return true;

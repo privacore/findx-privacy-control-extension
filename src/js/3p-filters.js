@@ -407,6 +407,8 @@ var renderFilterLists = function() {
                             selectedFilters[path].title = listNameFromListKey(path);
                         if (listDetails.cache[path] && listDetails.cache[path].lastModified)
                             selectedFilters[path].lastModified = listDetails.cache[path].lastModified;
+                        else
+                            selectedFilters[path].lastModified = current.lastUpdate;
                     }
                 }
                 catch (exception) {
@@ -434,7 +436,7 @@ var renderFilterLists = function() {
                     var date = new Date(data.lastModified);
                     var dateString = !(date instanceof Date && isFinite(date)) ? "" :
                             (date.getFullYear() + "-" +
-                                    ("0" + date.getMonth()).slice(-2) + "-" +
+                                    ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
                                     ("0" + date.getDate()).slice(-2) + "  " +
                                     ("0" + date.getHours()).slice(-2) + ":" +
                                     ("0" + date.getMinutes()).slice(-2));

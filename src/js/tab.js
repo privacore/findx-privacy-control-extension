@@ -512,6 +512,7 @@ vAPI.tabs.onPopup = function(details) {
     // https://github.com/chrisaljoudi/uBlock/issues/91
     var pageStore = µb.pageStoreFromTabId(details.openerTabId);
     if ( pageStore ) {
+        console.log('tablogRequest');
         pageStore.logRequest(context, result);
     }
     µb.logger.writeOne(

@@ -57,9 +57,11 @@ var NetFilteringResultCacheEntry = function(result, type) {
 /******************************************************************************/
 
 NetFilteringResultCacheEntry.prototype.init = function(result, type) {
-    this.result = result;
+    this.result = result.str || result;
     this.type = type;
     this.time = Date.now();
+    this.filterPath = result.filterPath || "";
+    this.quantity = 1;
 };
 
 /******************************************************************************/
@@ -133,23 +135,36 @@ NetFilteringResultCache.prototype.dispose = function() {
 /******************************************************************************/
 
 NetFilteringResultCache.prototype.add = function(context, result) {
+    var str = result.str || result;
+    var filterPath = result.filterPath || "";
     var url = context.requestURL;
     var type = context.requestType;
     var entry = this.urls[url];
     if ( entry !== undefined ) {
-        entry.result = result;
+        entry.result = str;
         entry.type = type;
+        entry.filterPath = filterPath;
+        entry.quantity = entry.quantity ? ++entry.quantity : 1;
         entry.time = Date.now();
         return;
     }
     this.urls[url] = NetFilteringResultCacheEntry.factory(result, type);
     if ( this.count === 0 ) {
-        this.pruneAsync();
+//        this.pruneAsync();
     }
     this.count += 1;
 };
 
 /******************************************************************************/
+ NetFilteringResultCache.prototype.increaseQuantity = function (url) {
+        var entry = this.urls[url];
+        if ( entry !== undefined ) {
+            entry.quantity = entry.quantity ? ++entry.quantity : 1;
+        }
+    };
+
+/******************************************************************************/
+
 
 NetFilteringResultCache.prototype.empty = function() {
     for ( var key in this.urls ) {
@@ -212,7 +227,8 @@ NetFilteringResultCache.prototype.pruneAsyncCallback = function() {
 /******************************************************************************/
 
 NetFilteringResultCache.prototype.lookup = function(context) {
-    return this.urls[context.requestType + ' ' + context.requestURL];
+    return this.urls[context.requestURL];
+//    return this.urls[context.requestType + ' ' + context.requestURL];
 };
 
 /******************************************************************************/
@@ -310,9 +326,10 @@ PageStore.prototype.init = function(tabId) {
     // Support `elemhide` filter option. Called at this point so the required
     // context is all setup at this point.
     var context = this.createContextFromPage();
-    this.skipCosmeticFiltering = µb.staticNetFilteringEngine
+    this.skipCosmeticFiltering = (µb.staticNetFilteringEngine
                                    .matchStringExactType(context, tabContext.normalURL, 'cosmetic-filtering')
-                                   .charAt(1) === 'b';
+                                   .charAt(1) === 'b'
+                                   || µb.userSettings.pauseFiltering);
 
     return this;
 };
@@ -443,9 +460,9 @@ PageStore.prototype.getNetFilteringSwitch = function() {
     if ( this.netFiltering && tabContext.rawURL !== tabContext.normalURL ) {
         this.netFiltering = µb.getNetFilteringSwitch(tabContext.rawURL);
     }
-//    if( µb.userSettings.pauseFiltering){
-//         return false;
-//    }
+    if( µb.userSettings.pauseFiltering){
+         return false;
+    }
     this.netFilteringReadTime = Date.now();
     return this.netFiltering;
 };
@@ -468,7 +485,11 @@ PageStore.prototype.getSpecificCosmeticFilteringSwitch = function() {
 };
 
 /******************************************************************************/
+PageStore.prototype.getIsPauseFiltering = function() {
+    return µb.userSettings.pauseFiltering;
+};
 
+/******************************************************************************/
 PageStore.prototype.getGenericCosmeticFilteringSwitch = function() {
     if ( this.skipCosmeticFiltering ) {
         return false;
@@ -485,8 +506,7 @@ PageStore.prototype.toggleNetFilteringSwitch = function(url, scope, state) {
 
 /******************************************************************************/
 
-PageStore.prototype.filterRequest = function(context) {
-
+PageStore.prototype.filterRequest = function(context, isNotRequest) {
     if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
         if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
             this.netFilteringCache.add(context, '');
@@ -496,13 +516,18 @@ PageStore.prototype.filterRequest = function(context) {
 
     var entry = this.netFilteringCache.lookup(context);
     if ( entry !== undefined ) {
+        if (!isNotRequest)
+            this.netFilteringCache.increaseQuantity(context.requestURL);
         //console.debug('cache HIT: PageStore.filterRequest("%s")', context.requestURL);
-        return entry.result;
+        
+        return {
+            str: entry.result,
+            filterPath: entry.filterPath
+        };
     }
 
     µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, context.requestType);
     var result = µb.sessionURLFiltering.toFilterString();
-
     // Given that:
     // - Dynamic filtering override static filtering
     // - Evaluating dynamic filtering is much faster than static filtering
@@ -521,12 +546,11 @@ PageStore.prototype.filterRequest = function(context) {
     }
 
     //console.debug('cache MISS: PageStore.filterRequest("%s")', context.requestURL);
-    if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
-        this.netFilteringCache.add(context, result.str || result);
-    }
+//    if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
+        this.netFilteringCache.add(context, result);
+//    }
 
     // console.debug('[%s, %s] = "%s"', context.requestHostname, context.requestType, result);
-
     return result;
 };
 
@@ -536,9 +560,13 @@ var collapsibleRequestTypes = 'image sub_frame object';
 /******************************************************************************/
 
 PageStore.prototype.filterRequestNoCache = function(context) {
-    if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
-        return '';
-    }
+     
+        if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
+            if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
+                this.netFilteringCache.add(context, '');
+        }
+            return '';
+        }
 
     µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, context.requestType);
     var result = µb.sessionURLFiltering.toFilterString();
@@ -559,7 +587,6 @@ PageStore.prototype.filterRequestNoCache = function(context) {
     if ( result === '' || result.charAt(1) === 'n' ) {
         result = µb.staticNetFilteringEngine.matchString(context) || result;
     }
-
     return result;
 };
 
@@ -575,16 +602,19 @@ PageStore.prototype.logRequest = function(context, result) {
     }
     var now = Date.now();
     if ( this.hostnameToCountMap.hasOwnProperty(requestHostname) === false ) {
-        this.hostnameToCountMap[requestHostname] = 0;
+        this.hostnameToCountMap[requestHostname] = {
+            filterPath: result.filterPath || "",
+            value: 0
+        };
         this.contentLastModified = now;
     }
-    var c = result.charAt(1);
+    var c = (result.str || result).charAt(1);
     if ( c === '' || c === 'a' ) {
-        this.hostnameToCountMap[requestHostname] += 0x00010000;
+        this.hostnameToCountMap[requestHostname].value += 0x00010000;
         this.perLoadAllowedRequestCount++;
         µb.localSettings.allowedRequestCount++;
     } else /* if ( c === 'b' ) */ {
-        this.hostnameToCountMap[requestHostname] += 0x00000001;
+        this.hostnameToCountMap[requestHostname].value += 0x00000001;
         this.perLoadBlockedRequestCount++;
         µb.localSettings.blockedRequestCount++;
     }
@@ -598,11 +628,19 @@ PageStore.prototype.updateBadge = function() {
     var netFiltering = this.getNetFilteringSwitch();
     var pauseFiltering = µb.userSettings.pauseFiltering;
     var badge = '';
-    if ( µb.userSettings.showIconBadge && netFiltering && this.perLoadBlockedRequestCount ) {
+    if ( µb.userSettings.showIconBadge && netFiltering && this.perLoadBlockedRequestCount && !pauseFiltering ) {
         badge = µb.utils.formatCount(this.perLoadBlockedRequestCount);
     }
     vAPI.setIcon(this.tabId, (!pauseFiltering && netFiltering) ? 'on' : 'off', badge);
 };
+
+/******************************************************************************/
+
+PageStore.prototype.getIsPauseFiltering = function() {
+    return µb.userSettings.pauseFiltering;
+};
+
+/******************************************************************************/
 
 return {
     factory: PageStore.factory

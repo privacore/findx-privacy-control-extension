@@ -65,7 +65,9 @@ var onMessage = function(request, sender, callback) {
     case 'reloadAllFilters':
         µb.reloadAllFilters(callback);
         return;
-
+    case 'updateFilter':
+        µb.updateFilter(request.updates, callback);
+        return;    
     default:
         break;
     }
@@ -152,9 +154,6 @@ var onMessage = function(request, sender, callback) {
     case 'openHelpPage':
         vAPI.openHelpPage();
         break;
-    case 'updateFilter':
-        µb.updateFilter(request.updates, callback);
-        break;
     case 'updateAndReloadAllFilters':
         µb.reloadPresetBlacklists(request.switches, request.update);
         µb.reloadAllFilters(callback);
@@ -192,7 +191,7 @@ var µb = µBlock;
 var getHostnameDict = function(hostnameToCountMap) {
     var r = {}, de;
     var domainFromHostname = µb.URI.domainFromHostname;
-    var domain, counts, blockCount, allowCount;
+    var domain, counts, blockCount, allowCount, filterPath;
     for ( var hostname in hostnameToCountMap ) {
         if ( hostnameToCountMap.hasOwnProperty(hostname) === false ) {
             continue;
@@ -201,12 +200,15 @@ var getHostnameDict = function(hostnameToCountMap) {
             continue;
         }
         domain = domainFromHostname(hostname) || hostname;
-        counts = hostnameToCountMap[domain] || 0;
+        counts = hostnameToCountMap[domain] ? hostnameToCountMap[domain].value || 0 : 0;
+            
+        filterPath = hostnameToCountMap[domain] ? hostnameToCountMap[domain].filterPath || "" : "";
         blockCount = counts & 0xFFFF;
         allowCount = counts >>> 16 & 0xFFFF;
         if ( r.hasOwnProperty(domain) === false ) {
             de = r[domain] = {
                 domain: domain,
+                filterPath: filterPath,
                 blockCount: blockCount,
                 allowCount: allowCount,
                 totalBlockCount: 0,
@@ -215,7 +217,8 @@ var getHostnameDict = function(hostnameToCountMap) {
         } else {
             de = r[domain];
         }
-        counts = hostnameToCountMap[hostname] || 0;
+        counts = hostnameToCountMap[hostname] ? hostnameToCountMap[hostname].value || 0 : 0;
+        filterPath = hostnameToCountMap[hostname] ? hostnameToCountMap[hostname].filterPath || "" : "";
         blockCount = counts & 0xFFFF;
         allowCount = counts >>> 16 & 0xFFFF;
         de.totalBlockCount += blockCount;
@@ -225,6 +228,7 @@ var getHostnameDict = function(hostnameToCountMap) {
         }
         r[hostname] = {
             domain: domain,
+            filterPath: filterPath,
             blockCount: blockCount,
             allowCount: allowCount
         };
@@ -265,6 +269,18 @@ var getFirewallRules = function(srcHostname, desHostnames) {
     return r;
 };
 
+var getUsedFilters = function (pageStore) {
+    var usedFilters = {};
+    var urls = pageStore.netFilteringCache.urls;
+    for (var url in urls) {
+        var filterPath = urls[url].filterPath || "";
+        var filter = µb.remoteBlacklists[filterPath];
+        if (!filterPath || !filter || !filter.inUse) continue;
+        usedFilters[filterPath] = filter;
+    }
+    return usedFilters;
+};
+
 /******************************************************************************/
 
 var popupDataFromTabId = function(tabId, tabTitle) {
@@ -288,7 +304,9 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         pageAllowedRequestCount: 0,
         pageBlockedRequestCount: 0,
         tabId: tabId,
-        tabTitle: tabTitle
+        tabTitle: tabTitle,
+        usedFilters: [],
+        urls: null
     };
 
     var pageStore = µb.pageStoreFromTabId(tabId);
@@ -303,6 +321,8 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.noPopups = µb.hnSwitches.evaluateZ('no-popups', tabContext.rootHostname);
         r.noStrictBlocking = µb.hnSwitches.evaluateZ('no-strict-blocking', tabContext.rootHostname);
         r.noCosmeticFiltering = µb.hnSwitches.evaluateZ('no-cosmetic-filtering', tabContext.rootHostname);
+        r.usedFilters = getUsedFilters(pageStore);
+        r.urls = pageStore.netFilteringCache.urls;
     } else {
         r.hostnameDict = {};
         r.firewallRules = getFirewallRules();
@@ -374,7 +394,6 @@ var onMessage = function(request, sender, callback) {
     // Sync
     var pageStore;
     var response;
-
     switch ( request.what ) {
     case 'hasPopupContentChanged':
         pageStore = µb.pageStoreFromTabId(request.tabId);
@@ -464,7 +483,7 @@ var onMessage = function(request, sender, callback) {
 
     switch ( request.what ) {
     case 'retrieveDomainCosmeticSelectors':
-        if ( pageStore && pageStore.getSpecificCosmeticFilteringSwitch() ) {
+        if ( pageStore && pageStore.getSpecificCosmeticFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
             response = µb.cosmeticFilteringEngine.retrieveDomainSelectors(request);
         }
         break;
@@ -529,7 +548,7 @@ var filterRequests = function(pageStore, details) {
         context.requestURL = vAPI.punycodeURL(request.url);
         context.requestHostname = µburi.hostnameFromURI(request.url);
         context.requestType = tagNameToRequestTypeMap[request.tagName];
-        if ( isBlockResult(pageStore.filterRequest(context)) ) {
+        if ( isBlockResult(pageStore.filterRequest(context, true)) ) {
             request.collapse = true;
         }
     }
@@ -569,7 +588,7 @@ var onMessage = function(request, sender, callback) {
             shutdown: !pageStore || !pageStore.getNetFilteringSwitch(),
             result: null
         };
-        if ( !response.shutdown ) {
+        if ( !response.shutdown && !pageStore.getIsPauseFiltering() ) {
             response.result = filterRequests(pageStore, request);
         }
         break;

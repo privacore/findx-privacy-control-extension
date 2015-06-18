@@ -319,12 +319,11 @@
 
     var renderTrackedUrls = function () {
         popupData.trackedUrls = {};
-
         if (!popupData.urls) return;
         var filterPath;
-
         for (var url in popupData.urls) {
             if (popupData.urls[url].quantity)
+          
             filterPath = popupData.urls[url].filterPath;
             if (!popupData.trackedUrls[filterPath])
                 popupData.trackedUrls[filterPath] = [];
@@ -533,7 +532,7 @@
 
         function response (result) {
             blockBtn.classList.toggle("blocked");
-            blockBtn.innerText = blockedBtnText;
+            blockBtn.innerHTML = blockedBtnText;
             showReloadNotification();
         }
 
@@ -595,7 +594,6 @@
     };
 
     /**************************************************************/
-
     var toggleNetFilteringSwitch = function (ev) {
         if (!popupData || !popupData.pageURL) {
             return;

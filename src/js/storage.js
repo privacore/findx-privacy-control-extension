@@ -171,9 +171,7 @@
     if ( filters.length === 0 ) {
         return;
     }
-
     var µb = this;
-
     var onSaved = function() {
         var compiledFilters = µb.compileFilters(filters);
         var snfe = µb.staticNetFilteringEngine;
@@ -242,7 +240,7 @@
             availableEntry = availableLists[location];
             if ( availableEntry === undefined ) {
                 µb.purgeFilterList(location);
-                continue;
+//                continue;
             }
             availableEntry.off = off;
             µb.assets.setHomeURL(location, availableEntry.homeURL);
@@ -284,6 +282,9 @@
             if (storedEntry.hasOwnProperty("exceptions")) {
                 availableEntry.exceptions = storedEntry.exceptions;
             }
+            // used only for for filters not from default uBlock list.
+            availableEntry.lastUpdate = storedEntry.hasOwnProperty("lastUpdate") ?
+                storedEntry.lastUpdate : Date.now();
             
         }
         callback(availableLists);
@@ -330,23 +331,8 @@
     }
 
     // custom lists
-    var c;
-    var locations = this.userSettings.externalLists.split('\n');
-    for ( var i = 0; i < locations.length; i++ ) {
-        location = locations[i].trim();
-        c = location.charAt(0);
-        if ( location === '' || c === '!' || c === '#' ) {
-            continue;
-        }
-        // Coarse validation
-        if ( /[^0-9A-Za-z!*'();:@&=+$,\/?%#\[\]_.~-]/.test(location) ) {
-            continue;
-        }
-        availableLists[location] = {
-            title: '',
-            group: 'custom',
-            external: true
-        };
+    for (var path in this.userSettings.externalLists) {
+        availableLists[path] = this.userSettings.externalLists[path];
     }
 
     // get built-in block lists.
@@ -395,12 +381,12 @@
         µb.toSelfieAsync();
     };
 
-    var applyCompiledFilters = function(path, compiled) {
+    var applyCompiledFilters = function(compiled, path) {
         var snfe = µb.staticNetFilteringEngine;
         var cfe = µb.cosmeticFilteringEngine;
         var acceptedCount = snfe.acceptedCount + cfe.acceptedCount;
         var duplicateCount = snfe.duplicateCount + cfe.duplicateCount;
-        µb.applyCompiledFilters(compiled);
+        µb.applyCompiledFilters(compiled, path);
         if ( µb.remoteBlacklists.hasOwnProperty(path) ) {
             var entry = µb.remoteBlacklists[path];
             entry.entryCount = snfe.acceptedCount + cfe.acceptedCount - acceptedCount;
@@ -409,7 +395,7 @@
     };
 
     var onCompiledListLoaded = function(details) {
-        applyCompiledFilters(details.path, details.content);
+        applyCompiledFilters(details.content, details.path);
         filterlistsCount -= 1;
         if ( filterlistsCount === 0 ) {
             onDone();
@@ -442,7 +428,7 @@
             onDone();
             return;
         }
-
+        
         var i = toLoad.length;
         while ( i-- ) {
             µb.getCompiledFilterList(toLoad[i], onCompiledListLoaded);
@@ -463,7 +449,6 @@
 µBlock.getCompiledFilterList = function(path, callback) {
     var compiledPath = this.getCompiledFilterListPath(path);
     var µb = this;
-
     var onRawListLoaded = function(details) {
         if ( details.content === '' ) {
             callback(details);
@@ -478,9 +463,9 @@
                 listMeta.title = matches[1].trim();
             }
         }
-
         //console.debug('µBlock.getCompiledFilterList/onRawListLoaded: compiling "%s"', path);
-        details.content = µb.compileFilters(details.content);
+       
+        details.content = µb.compileFilters(details.content, details.path);
         µb.assets.put(compiledPath, details.content);
         callback(details);
     };
@@ -514,7 +499,7 @@
 
 /******************************************************************************/
 
-µBlock.compileFilters = function(rawText) {
+µBlock.compileFilters = function(rawText, filterPath) {
     var rawEnd = rawText.length;
     var compiledFilters = [];
 
@@ -527,7 +512,7 @@
     var reMaybeLocalIp = /^[\d:f]/;
     var reIsLocalhostRedirect = /\s+(?:broadcasthost|local|localhost|localhost\.localdomain)(?=\s|$)/;
     var reLocalIp = /^(?:0\.0\.0\.0|127\.0\.0\.1|::1|fe80::1%lo0)/;
-
+    var isInUse = µBlock.isInUse(filterPath);
     var lineBeg = 0, lineEnd, currentLineBeg;
     var line, lineRaw, c, pos;
 
@@ -556,10 +541,12 @@
         if ( c === '!' || c === '[' ) {
             continue;
         }
+        if (!isInUse){ 
+            continue;}
 
         // Parse or skip cosmetic filters
         // All cosmetic filters are caught here
-        if ( cosmeticFilteringEngine.compile(line, compiledFilters) ) {
+        if ( cosmeticFilteringEngine.compile(line, compiledFilters, filterPath) ) {
             continue;
         }
 
@@ -598,9 +585,9 @@
         if ( line.length === 0 ) {
             continue;
         }
-
         //staticNetFilteringEngine.add(line);
-        staticNetFilteringEngine.compile(line, compiledFilters);
+
+        staticNetFilteringEngine.compile(line, compiledFilters, filterPath);
     }
 
     return compiledFilters.join('\n');
@@ -608,15 +595,15 @@
 
 /******************************************************************************/
 
-µBlock.applyCompiledFilters = function(rawText) {
+µBlock.applyCompiledFilters = function(rawText, filterPath) {
     var skipCosmetic = !this.userSettings.parseAllABPHideFilters;
     var staticNetFilteringEngine = this.staticNetFilteringEngine;
     var cosmeticFilteringEngine = this.cosmeticFilteringEngine;
     var lineBeg = 0;
     var rawEnd = rawText.length;
     while ( lineBeg < rawEnd ) {
-        lineBeg = cosmeticFilteringEngine.fromCompiledContent(rawText, lineBeg, skipCosmetic);
-        lineBeg = staticNetFilteringEngine.fromCompiledContent(rawText, lineBeg);
+        lineBeg = cosmeticFilteringEngine.fromCompiledContent(rawText, lineBeg, skipCosmetic, filterPath);
+        lineBeg = staticNetFilteringEngine.fromCompiledContent(rawText, lineBeg, filterPath);
     }
 };
 
@@ -857,6 +844,59 @@
             this.loadFilterLists();
         }
     };
+    
+    /**
+ * Update filter data.
+ * @param {Object} updates -
+ *  {
+ *      filterPath: string,
+ *      exceptions: {
+ *          domain: string,
+ *          state: boolean
+ *      }
+ *  }
+ * @param {function} callback
+ */
+    µBlock.updateFilter = function (updates, callback) {
+        var µb = µBlock;
+        var filterLists = this.remoteBlacklists;
+
+        if ( filterLists.hasOwnProperty(updates.filterPath) === false )
+            return;
+
+        var exceptions = filterLists[updates.filterPath].exceptions || {};
+        var domain, state;
+
+        if (updates.hasOwnProperty("domains")) {
+            domain = updates.domains.domain;
+            state = updates.domains.state;
+            var domainsList = exceptions.domains || {};
+            domainsList[domain] = state;
+            exceptions.domains = domainsList;
+        }
+        else if (updates.hasOwnProperty("links")) {
+            var url = µb.getUrlWithoutParams(updates.links.url);
+            domain = updates.links.domain;
+            state = updates.links.state;
+
+            var links = exceptions.links || {};
+            if (!links[url]) links[url] = {};
+            links[url][domain] = state;
+            exceptions.links = links;
+        }
+
+        filterLists[updates.filterPath].exceptions = exceptions;
+
+
+        var onFilterListsReady = function() {
+            µb.toSelfie();
+            if (callback) callback(true);
+        };
+        // Save changed state
+        vAPI.storage.set({ 'remoteBlacklists': filterLists }, onFilterListsReady);
+    };
+
+/******************************************************************************/
 
 /******************************************************************************/
 
