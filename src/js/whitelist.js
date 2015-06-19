@@ -43,12 +43,11 @@ var reUnwantedChars = /[\x00-\x09\x0b\x0c\x0e-\x1f!"$'()<>{}|\\^\[\]`~]/;
 var whitelistChanged = function() {
     var s = uDom('#whitelist').val().trim();
     var bad = reUnwantedChars.test(s);
-    $('#whitelistApply').button((s === cachedWhitelist || bad) ? "disable" : "enable");
-//    uDom('#whitelistApply').prop(
-//        'disabled',
-//        s === cachedWhitelist || bad
-//    );
-//    uDom('#whitelist').toggleClass('bad', bad);
+    uDom('#whitelistApply').prop(
+        'disabled',
+        s === cachedWhitelist || bad
+    );
+    uDom('#whitelist').toggleClass('bad', bad);
 };
 
 /******************************************************************************/
@@ -101,8 +100,7 @@ var exportWhitelistToFile = function() {
         return;
     }
     var now = new Date();
-//    var filename = vAPI.i18n('whitelistExportFilename')
-    var filename = "my-whitelist_{{datetime}}.txt"
+    var filename = vAPI.i18n('whitelistExportFilename')
         .replace('{{datetime}}', now.toLocaleString())
         .replace(/ +/g, '_');
     vAPI.download({
@@ -130,7 +128,6 @@ uDom.onLoad(function() {
     uDom('#exportWhitelistToFile').on('click', exportWhitelistToFile);
     uDom('#whitelist').on('input', whitelistChanged);
     uDom('#whitelistApply').on('click', whitelistApplyHandler);
-    $("button").button();
 
     renderWhitelist();
 });

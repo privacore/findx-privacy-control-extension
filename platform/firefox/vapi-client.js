@@ -166,13 +166,12 @@ vAPI.messaging = {
                     channelName: self._sandboxId_ + '|' + this.channelName,
                     msg: message
                 };
-
                 if ( callback ) {
                     message.requestId = vAPI.messaging.requestId++;
                     vAPI.messaging.listeners[message.requestId] = callback;
                 }
 
-                sendAsyncMessage('ublock0:background', message);
+                sendAsyncMessage('incognitortrackerblock:background', message);
             },
             close: function() {
                 delete vAPI.messaging.channels[this.channelName];

@@ -46,6 +46,8 @@ var isFilterAllowed = function (filterObj, request) {
     if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain)){
         return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
     }
+    if (filterObj.filterPath === 'undefined')
+        return true;
     return µb.isAllowResult(filterObj.str || filterObj) || !µb.isInUse(filterObj.filterPath || "")
                 || µb.isDefaultOff(filterObj.filterPath || "");
 };

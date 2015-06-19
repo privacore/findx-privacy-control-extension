@@ -50,11 +50,11 @@ let injectContentScripts = function(win) {
 };
 
 let onLoadCompleted = function() {
-    removeMessageListener('ublock0-load-completed', onLoadCompleted);
+    removeMessageListener('incognitortrackerblock-load-completed', onLoadCompleted);
     injectContentScripts(content);
 };
 
-addMessageListener('ublock0-load-completed', onLoadCompleted);
+addMessageListener('incognitortrackerblock-load-completed', onLoadCompleted);
 
 if ( docShell ) {
     let Ci = Components.interfaces;

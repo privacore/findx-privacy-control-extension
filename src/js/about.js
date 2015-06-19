@@ -34,6 +34,7 @@ var messager = vAPI.messaging.channel('about.js');
 /******************************************************************************/
 
 var onAppDataReady = function(appData) {
+    console.log(appData);
     uDom('#aboutNameVer').html(appData.name + ' v' + appData.version);
 };
 

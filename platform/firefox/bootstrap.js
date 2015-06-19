@@ -31,7 +31,7 @@
 
 let bgProcess;
 let version;
-const hostName = 'ublock0';
+const hostName = 'incognitortrackerblock';
 const restartListener = {
     get messageManager() {
         return Components.classes['@mozilla.org/parentprocessmessagemanager;1']
@@ -47,6 +47,8 @@ const restartListener = {
 /******************************************************************************/
 
 function startup(data, reason) {
+    console.log(data);
+    console.trace();
     if ( data !== undefined ) {
         version = data.version;
     }

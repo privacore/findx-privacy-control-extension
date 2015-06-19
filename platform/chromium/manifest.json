@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
 
-    "name": "IncognitorTrackerBlock",
+    "name": "Incognitor TrackerBlock",
     "version": "0.9.8.7",
 
     "default_locale": "en",
@@ -16,11 +16,11 @@
             "19": "img/browsericons/icon19.png",
             "38": "img/browsericons/icon38.png"
         },
-        "default_title": "IncognitorTrackerBlock",
+        "default_title": "Incognitor TrackerBlock",
         "default_popup": "popup.html"
     },
 
-    "author": "All IncognitorTrackerBlock contributors",
+    "author": "All Incognitor TrackerBlock contributors",
     "background": {
         "page": "background.html"
     },
@@ -65,5 +65,5 @@
         "http://*/*",
         "https://*/*"
     ],
-    "short_name": "IncognitorTrackerBlock"
+    "short_name": "Incognitor TrackerBlock"
 }

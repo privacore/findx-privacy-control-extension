@@ -1,15 +1,17 @@
 div > p:first-child {
     margin-top: 0;
-}
-
+    }
 div > p:last-child {
     margin-bottom: 0;
-}
-
+    }
 #whitelist {
+    box-sizing: border-box;
     font-size: small;
-    width: 48em;
-    height: 30em;
+    height: 60vh;
+	text-align: left;
     white-space: pre;
-    text-align: left;
-}
+    width: 100%;
+    }
+#whitelist.bad {
+    background-color: #fee;
+    }

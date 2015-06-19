@@ -40,8 +40,10 @@ var messager = vAPI.messaging.channel('1p-filters.js');
 // This is to give a visual hint that the content of user blacklist has changed.
 
 function userFiltersChanged() {
-    var context = uDom('#userFilters').val().trim();
-    $('#userFiltersApply').button((context === cachedUserFilters) ? "disable" : "enable");
+    uDom('#userFiltersApply').prop(
+        'disabled',
+        uDom('#userFilters').val().trim() === cachedUserFilters
+    );
 }
 
 /******************************************************************************/
@@ -129,7 +131,7 @@ var exportUserFiltersToFile = function() {
         return;
     }
     var now = new Date();
-        var filename = "my-filters_{{datetime}}.txt"
+    var filename = vAPI.i18n('1pExportFilename')
         .replace('{{datetime}}', now.toLocaleString())
         .replace(/ +/g, '_');
     vAPI.download({
@@ -157,7 +159,6 @@ var userFiltersApplyHandler = function() {
 };
 
 /******************************************************************************/
-
 uDom.onLoad(function() {
     // Handle user interaction
     uDom('#importUserFiltersFromFile').on('click', startImportFilePicker);

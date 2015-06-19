@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>µBlock — Your filters</title>
+    <title>Incognitor TrackerBlock — Your filters</title>
 
     <link type="text/css" href="lib/jquery-ui/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
 
@@ -15,14 +15,10 @@
 
 <div>
     <p data-i18n="1pFormatHint"></p>
-    <a href="https://www.incognitor.com/filter-redirect.php?link=filterdoc&amp;lang=en-US"
-       target="_blank">Incognitor TrackerBlock filter syntax</a>
-
     <p>
-        <button id="userFiltersApply" disabled="true" data-i18n="1pApplyChanges"></button>
+        <button id="userFiltersApply" class="important" disabled="true" data-i18n="1pApplyChanges"></button>
     </p>
     <textarea class="userFilters" id="userFilters" dir="auto" spellcheck="false"></textarea>
-
     <p>
         <button id="importUserFiltersFromFile" data-i18n="1pImport"></button> &emsp;
         <button id="exportUserFiltersToFile" data-i18n="1pExport"></button>
