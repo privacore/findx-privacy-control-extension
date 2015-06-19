@@ -1982,7 +1982,7 @@ FilterContainer.prototype.compileToAtomicFilter = function(filterClass, parsed, 
             this.makeCategoryKey(bits) + '\v' +
             parsed.token + '\v' +
             filterClass.fid + '\v' +
-            filterClass.compile(parsed, hostname)
+            filterClass.compile(parsed, hostname,parsed.path)
         );
         return;
     }
@@ -1994,7 +1994,7 @@ FilterContainer.prototype.compileToAtomicFilter = function(filterClass, parsed, 
                 this.makeCategoryKey(bits | (bitOffset << 4)) + '\v' +
                 parsed.token + '\v' +
                 filterClass.fid + '\v' +
-                filterClass.compile(parsed, hostname)
+                filterClass.compile(parsed, hostname, parsed.path)
             );
         }
         bitOffset += 1;
@@ -2356,6 +2356,7 @@ FilterContainer.prototype.matchString = function(context) {
     catch (exception) {
         console.error("Exception in 'matchString' (static-net-filtering.js) :\n\t", exception);
     }
+    
 
     return response;
 };

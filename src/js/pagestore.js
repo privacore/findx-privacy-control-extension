@@ -600,7 +600,7 @@ PageStore.prototype.logRequest = function(context, result) {
         requestHostname = context.rootHostname;
     }
     var now = Date.now();
-    if ( this.hostnameToCountMap.hasOwnProperty(requestHostname) === false ) {
+    if ( this.hostnameToCountMap.hasOwnProperty(requestHostname) === false || this.hostnameToCountMap[requestHostname] ===  0) {
         this.hostnameToCountMap[requestHostname] = {
             filterPath: result.filterPath || "",
             value: 0
