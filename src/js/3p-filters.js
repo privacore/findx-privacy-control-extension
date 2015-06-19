@@ -781,21 +781,13 @@ var groupEntryClickHandler = function() {
 
 uDom.onLoad(function() {
     //*************************************************************
-//        uDom('#updateFilterLists').on('click', buttonUpdateHandler);
-        uDom("#startSubscriptionSelection").on("click", startSubscriptionSelection);
-        uDom('#addSubscription').on('click', addSubscriptionBtnClick);
+    uDom("#startSubscriptionSelection").on("click", startSubscriptionSelection);
+    uDom('#addSubscription').on('click', addSubscriptionBtnClick);
     //*************************************************************
     uDom('#autoUpdate').on('change', autoUpdateCheckboxChanged);
     uDom('#parseCosmeticFilters').on('change', buttonApplyHandler);
-//    uDom('#buttonApply').on('click', buttonApplyHandler);
     uDom('#buttonUpdate').on('click', buttonUpdateHandler);
     uDom('#buttonPurgeAll').on('click', buttonPurgeAllHandler);
-//    uDom('#lists').on('change', '.listEntry > input', onListCheckboxChanged);
-//    uDom('#lists').on('click', 'span.purge', onPurgeClicked);
-//    uDom('#externalLists').on('input', externalListsChangeHandler);
-//    uDom('#externalListsApply').on('click', externalListsApplyHandler);
-//    uDom('#lists').on('click', '.groupEntry > span', groupEntryClickHandler);
-//    $("button").button();
     $(".refreshButton").button("option", "icons", {primary: "ui-icon-refresh"});
     $(".addButton").button("option", "icons", {primary: "ui-icon-plus"});
     $(".removeButton").button("option", "icons", {primary: "ui-icon-minus"});

@@ -1,13 +1,10 @@
 #!/bin/bash
-#
+
 # This script assumes a linux environment
-
 echo "*** IncognitorTrackerBlock.FF: Copying files"
-
 DES=dist/build/incognitortrackerblock@itb.net
 rm -rf $DES
 mkdir -p $DES
-
 cp -R assets $DES/
 rm $DES/assets/*.sh
 cp -R src/css $DES/
