@@ -196,9 +196,10 @@ FilterHostname.prototype.retrieve = function(hostname, out, domain) {
                 if (µb.isBlockedForDomain(this.filters[filter], domain) === false)
                     continue;
             }
-            else if (typeof this.filters === 'string')
+            else if (typeof this.filters === 'string'){
                 if (µb.isDefaultOff(this.filters)) continue;
-                else if (µb.isDefaultOff(this.filters[filter])) continue;
+            }
+            else if (µb.isDefaultOff(this.filters[filter])) continue;
         }
         if (filters.length)
             out.push(Object.keys(filters).join(',\n'));
