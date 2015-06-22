@@ -2351,13 +2351,16 @@ FilterContainer.prototype.matchString = function(context) {
     };
     try {
         if (bf.filterPath) response.filterPath = bf.filterPath;
-        else if (bf.f && bf.f.filterPath) response.filterPath = bf.f.filterPath;
+        else if (bf.f && bf.f.filterPath){
+            response.filterPath = bf.f.filterPath;
+            if(bf.f.s)
+                response.str = 'sb:' + bf.f.s;
+        }
     }
     catch (exception) {
         console.error("Exception in 'matchString' (static-net-filtering.js) :\n\t", exception);
     }
     
-
     return response;
 };
 
