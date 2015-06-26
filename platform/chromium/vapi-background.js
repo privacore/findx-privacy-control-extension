@@ -53,45 +53,6 @@ vAPI.app.restart = function() {
     chrome.runtime.reload();
 };
 
-/******************************************************************************/
-//Custom methods
-vAPI.openOptionsPage = function () {
-    chrome.windows.getLastFocused(function (win) {
-        chrome.tabs.getAllInWindow(win.id, function (tabs) {
-            var optionsUrl = chrome.extension.getURL(µBlock.optionsUrl);
-            for (var i = 0; i < tabs.length; i++) {
-                if (tabs[i].url == optionsUrl) {
-                    chrome.tabs.update(tabs[i].id, {selected: true});
-                    return;
-                }
-            }
-
-            chrome.tabs.create({windowId: win.id, url: µBlock.optionsUrl, active: true});
-        });
-    });
-};
-
-
-
-    /**
-     * Opens help tab or focuses an existing one, within the last focused window.
-     */
-    vAPI.openHelpPage = function () {
-        chrome.windows.getLastFocused(function (win) {
-            chrome.tabs.getAllInWindow(win.id, function (tabs) {
-                for (var i = 0; i < tabs.length; i++) {
-                    if (tabs[i].url == µBlock.helpPageUrl) {
-                        chrome.tabs.update(tabs[i].id, {selected: true});
-                        return;
-                    }
-                }
-
-                chrome.tabs.create({windowId: win.id, url: µBlock.helpPageUrl, active: true});
-            });
-        });
-    };
-
-/******************************************************************************/
 // chrome.storage.local.get(null, function(bin){ console.debug('%o', bin); });
 
 vAPI.storage = chrome.storage.local;
@@ -734,6 +695,16 @@ vAPI.net.registerListeners = function() {
         details.type = 'object';
     };
 
+    var headerValue = function(headers, name) {
+        var i = headers.length;
+        while ( i-- ) {
+            if ( headers[i].name.toLowerCase() === name ) {
+                return headers[i].value.trim();
+            }
+        }
+        return '';
+    };
+
     var onBeforeRequestClient = this.onBeforeRequest.callback;
     var onBeforeRequest = function(details) {
         normalizeRequestDetails(details);
@@ -755,15 +726,47 @@ vAPI.net.registerListeners = function() {
     );
 
     var onHeadersReceivedClient = this.onHeadersReceived.callback;
+    var onHeadersReceivedClientTypes = this.onHeadersReceived.types.slice(0);
+    var onHeadersReceivedTypes = onHeadersReceivedClientTypes.slice(0);
+    if (
+        onHeadersReceivedTypes.length !== 0 &&
+        onHeadersReceivedTypes.indexOf('other') === -1
+    ) {
+        onHeadersReceivedTypes.push('other');
+    }
     var onHeadersReceived = function(details) {
         normalizeRequestDetails(details);
+        // Hack to work around Chromium API limitations, where requests of
+        // type `font` are returned as `other`. For example, our normalization
+        // fail at transposing `other` into `font` for URLs which are outside
+        // what is expected. At least when headers are received we can check
+        // for content type `font/*`. Blocking at onHeadersReceived time is
+        // less worse than not blocking at all. Also, due to Chromium bug,
+        // `other` always becomes `object` when it can't be normalized into
+        // something else. Test case for "unfriendly" font URLs:
+        //   https://www.google.com/fonts
+        if ( details.type === 'object' ) {
+            if ( headerValue(details.responseHeaders, 'content-type').lastIndexOf('font/', 0) === 0 ) {
+                details.type = 'font';
+                var r = onBeforeRequestClient(details);
+                if ( typeof r === 'object' && r.cancel === true ) {
+                    return { cancel: true };
+                }
+            }
+            if (
+                onHeadersReceivedClientTypes.length !== 0 &&
+                onHeadersReceivedClientTypes.indexOf(details.type) === -1
+            ) {
+                return;
+            }
+        }
         return onHeadersReceivedClient(details);
     };
     chrome.webRequest.onHeadersReceived.addListener(
         onHeadersReceived,
         {
             'urls': this.onHeadersReceived.urls || ['<all_urls>'],
-            'types': this.onHeadersReceived.types || []
+            'types': onHeadersReceivedTypes
         },
         this.onHeadersReceived.extra
     );

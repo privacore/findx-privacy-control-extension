@@ -87,6 +87,10 @@
     "message":"Lejoj filtrat kozmetikë te kjo faqja",
     "description":"English: Toggle cosmetic filtering for this site"
   },
+  "popupTipNoRemoteFonts":{
+    "message":"Bllokoj sistemet e shkronjave në distancë",
+    "description":"English: Toggle the blocking of remote fonts for this site"
+  },
   "popupAnyRulePrompt":{
     "message":"të gjitha",
     "description":""
@@ -455,6 +459,10 @@
     "message":"edhe kur",
     "description":"Used in the static filtering wizard"
   },
+  "loggerStaticFilteringFinderSentence1":{
+    "message":"Filtri statik {{filter}} u gjet te:",
+    "description":"Below this sentence, the filter lists in which the filter was found"
+  },
   "aboutChangelog":{
     "message":"Ditari i ndryshimeve",
     "description":"English: Change log"
@@ -550,6 +558,10 @@
   "docblockedPrompt2":{
     "message":"Për shkak të këtij filtri",
     "description":"English: Because of the following filter"
+  },
+  "docblockedFoundIn":{
+    "message":"Gjendet te:",
+    "description":"English: List of filter list names follows"
   },
   "docblockedBack":{
     "message":"Kthehem",

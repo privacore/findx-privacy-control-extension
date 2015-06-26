@@ -72,7 +72,7 @@
     "description":"English: Enter element picker mode"
   },
   "popupTipLog":{
-    "message":"Aller au journal des requêtes",
+    "message":"Consulter le journal des requêtes",
     "description":"English: Go to request log"
   },
   "popupTipNoPopups":{
@@ -86,6 +86,10 @@
   "popupTipNoCosmeticFiltering":{
     "message":"Activer\/Désactiver le filtrage esthétique pour ce site",
     "description":"English: Toggle cosmetic filtering for this site"
+  },
+  "popupTipNoRemoteFonts":{
+    "message":"Basculer le blocage de polices distantes pour ce site",
+    "description":"English: Toggle the blocking of remote fonts for this site"
   },
   "popupAnyRulePrompt":{
     "message":"Tout",
@@ -455,6 +459,10 @@
     "message":"même s'",
     "description":"Used in the static filtering wizard"
   },
+  "loggerStaticFilteringFinderSentence1":{
+    "message":"Filtre statique {{filter}} trouvé dans :",
+    "description":"Below this sentence, the filter lists in which the filter was found"
+  },
   "aboutChangelog":{
     "message":"Journal des changements (en Anglais)",
     "description":"English: Change log"
@@ -550,6 +558,10 @@
   "docblockedPrompt2":{
     "message":"À cause du filtre suivant :",
     "description":"English: Because of the following filter"
+  },
+  "docblockedFoundIn":{
+    "message":"Trouvé dans :",
+    "description":"English: List of filter list names follows"
   },
   "docblockedBack":{
     "message":"Retour",

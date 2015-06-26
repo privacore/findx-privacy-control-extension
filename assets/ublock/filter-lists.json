@@ -5,33 +5,33 @@
         "group": "ads",
         "homeURL": "https://easylist-downloads.adblockplus.org/easylist.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "easylist-downloads.adblockplus.org/easyprivacy.txt": {
         "defaultOff": false,
         "title": "EasyPrivacy",
         "group": "privacy",
         "homeURL": "https://easylist-downloads.adblockplus.org/easyprivacy.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "adblock.gardar.net/is.abp.txt": {
         "off": true,
         "defaultOff": true,
         "title": "ISL: Icelandic ABP List",
         "group": "regions"
-    },
+        },
     "adblock.schack.dk/block.txt": {
         "off": true,
         "defaultOff": true,
         "title": "DNK: Schacks Adblock Plus liste",
         "group": "regions"
-    },
+        },
     "dl.dropboxusercontent.com/u/1289327/abpxfiles/filtri.txt": {
         "off": true,
         "defaultOff": true,
         "title": "ITA: ABP X Files",
         "group": "regions",
         "homeURL": "https://dl.dropboxusercontent.com/u/1289327/abpxfiles/filtri.txt"
-    },
+        },
     "easylist-downloads.adblockplus.org/advblock.txt": {
         "off": true,
         "defaultOff": true,
@@ -39,7 +39,7 @@
         "group": "regions",
         "homeURL": "https://easylist-downloads.adblockplus.org/advblock.txt",
         "supportURL": "https://forums.lanik.us/viewforum.php?f=102"
-    },
+        },
     "easylist-downloads.adblockplus.org/bitblock.txt": {
         "off": true,
         "defaultOff": true,
@@ -47,7 +47,7 @@
         "group": "regions",
         "homeURL": "https://easylist-downloads.adblockplus.org/bitblock.txt",
         "supportURL": "https://forums.lanik.us/viewforum.php?f=102"
-    },
+        },
     "easylist-downloads.adblockplus.org/easylist_noelemhide.txt": {
         "off": true,
         "defaultOff": true,
@@ -55,7 +55,7 @@
         "group": "ads",
         "homeURL": "https://easylist-downloads.adblockplus.org/easylist_noelemhide.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "easylist-downloads.adblockplus.org/easylistchina.txt": {
         "off": true,
         "defaultOff": true,
@@ -63,7 +63,7 @@
         "group": "regions",
         "homeURL": "https://easylist-downloads.adblockplus.org/easylistchina.txt",
         "supportURL": "http://abpchina.org/forum/forum.php"
-    },
+        },
     "easylist-downloads.adblockplus.org/easylistdutch.txt": {
         "off": true,
         "defaultOff": true,
@@ -71,7 +71,7 @@
         "group": "regions",
         "homeURL": "https://easylist-downloads.adblockplus.org/easylistdutch.txt",
         "supportURL": "https://forums.lanik.us/viewforum.php?f=100"
-    },
+        },
     "easylist-downloads.adblockplus.org/easylistgermany.txt": {
         "off": true,
         "defaultOff": true,
@@ -79,7 +79,7 @@
         "group": "regions",
         "homeURL": "https://easylist-downloads.adblockplus.org/easylistgermany.txt",
         "supportURL": "https://forums.lanik.us/viewforum.php?f=90"
-    },
+        },
     "easylist-downloads.adblockplus.org/easylistitaly.txt": {
         "off": true,
         "defaultOff": true,
@@ -87,7 +87,7 @@
         "group": "regions",
         "homeURL": "https://easylist-downloads.adblockplus.org/easylistitaly.txt",
         "supportURL": "https://forums.lanik.us/viewforum.php?f=96"
-    },
+        },
     "easylist-downloads.adblockplus.org/fanboy-annoyance.txt": {
         "off": true,
         "defaultOff": true,
@@ -95,7 +95,7 @@
         "group": "social",
         "homeURL": "https://easylist-downloads.adblockplus.org/fanboy-annoyance.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "easylist-downloads.adblockplus.org/fanboy-social.txt": {
         "off": true,
         "defaultOff": true,
@@ -103,7 +103,7 @@
         "group": "social",
         "homeURL": "https://easylist-downloads.adblockplus.org/fanboy-social.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "easylist-downloads.adblockplus.org/liste_fr.txt": {
         "off": true,
         "defaultOff": true,
@@ -111,7 +111,7 @@
         "group": "regions",
         "homeURL": "https://easylist-downloads.adblockplus.org/liste_fr.txt",
         "supportURL": "https://forums.lanik.us/viewforum.php?f=91"
-    },
+        },
     "gitorious.org/adblock-latvian/adblock-latvian/raw/master_lists/latvian-list.txt": {
         "off": true,
         "defaultOff": true,
@@ -119,14 +119,14 @@
         "group": "regions",
         "homeURL": "https://notabug.org/latvian-list/adblock-latvian/raw/master/lists/latvian-list.txt",
         "supportURL": "https://notabug.org/latvian-list/adblock-latvian"
-    },
+        },
     "home.fredfiber.no/langsholt/adblock.txt": {
         "off": true,
         "defaultOff": true,
         "title": "NOR: Norsk adblockliste",
         "group": "regions",
         "homeURL": "http://home.fredfiber.no/langsholt/adblock.txt"
-    },
+        },
     "hosts-file.net/ad-servers": {
         "off": true,
         "defaultOff": true,
@@ -134,67 +134,67 @@
         "group": "multipurpose",
         "homeURL": "http://hosts-file.net/.%5Cad_servers.txt",
         "supportURL": "http://hosts-file.net/"
-    },
+        },
     "http://abp.mozilla-hispano.org/nauscopio/filtros.txt": {
         "off": true,
         "defaultOff": true,
         "title": "ESP: Filtros Nauscopicos",
         "group": "regions",
         "oldLocation": "abp.mozilla-hispano.org/nauscopio/filtros.txt"
-    },
+        },
     "http://adblock.ee/list.php": {
         "off": true,
         "defaultOff": true,
         "title": "EST: Eesti saitidele kohandatud filter",
         "group": "regions",
         "supportURL": "http://adblock.ee/"
-    },
+        },
     "https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt": {
         "off": true,
         "defaultOff": true,
         "title": "Malvertising filter list by Disconnect",
         "group": "malware"
-    },
+        },
     "https://s3.amazonaws.com/lists.disconnect.me/simple_malware.txt": {
         "off": true,
         "defaultOff": true,
         "title": "Malware filter list by Disconnect",
         "group": "malware"
-    },
+        },
     "https://s3.amazonaws.com/lists.disconnect.me/simple_tracking.txt": {
         "off": true,
         "defaultOff": true,
         "title": "Basic tracking list by Disconnect",
         "group": "privacy"
-    },
+        },
     "http://www.certyficate.it/adblock/adblock.txt": {
         "off": true,
         "defaultOff": true,
         "title": "POL: Adblock polskie reguly",
         "group": "regions",
         "oldLocation": "raw.githubusercontent.com/adblockpolska/Adblock_PL_List/master/adblock_polska.txt"
-    },
+        },
     "https://easylist-downloads.adblockplus.org/antiadblockfilters.txt": {
         "off": true,
         "defaultOff": true,
         "title": "Adblock Warning Removal List",
         "group": "ads",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "https://iadb.azurewebsites.net/Finland_adb.txt": {
         "off": true,
         "defaultOff": true,
         "title": "FIN: Finnish Addition to Easylist",
         "group": "regions",
         "oldLocation": "raw.githubusercontent.com/wiltteri/wiltteri.txt/master/wiltteri.txt"
-    },
+        },
     "https://raw.githubusercontent.com/gfmaster/adblock-korea-contrib/master/filter.txt": {
         "off": true,
         "defaultOff": true,
         "title": "KOR: adblock-korea-contrib",
         "group": "regions",
         "supportURL": "https://github.com/gfmaster/adblock-korea-contrib"
-    },
+        },
     "https://raw.githubusercontent.com/heradhis/indonesianadblockrules/master/subscriptions/abpindo.txt": {
         "off": true,
         "defaultOff": true,
@@ -202,7 +202,7 @@
         "group": "regions",
         "oldLocation": "indonesianadblockrules.googlecode.com/hg/subscriptions/abpindo.txt",
         "supportURL": "https://github.com/heradhis/indonesianadblockrules"
-    },
+        },
     "https://raw.githubusercontent.com/k2jp/abp-japanese-filters/master/abpjf.txt": {
         "off": true,
         "defaultOff": true,
@@ -210,14 +210,14 @@
         "group": "regions",
         "oldLocation": "raw.githubusercontent.com/k2jp/abp-japanese-filters/master/abp_jp.txt",
         "supportURL": "https://github.com/k2jp/abp-japanese-filters"
-    },
+        },
     "https://raw.githubusercontent.com/liamja/Prebake/master/obtrusive.txt": {
         "off": true,
         "defaultOff": true,
         "title": "EU: Prebake - Filter Obtrusive Cookie Notices",
         "group": "regions",
         "supportURL": "https://github.com/liamja/Prebake"
-    },
+        },
     "liste-ar-adblock.googlecode.com/hg/Liste_AR.txt": {
         "off": true,
         "defaultOff": true,
@@ -225,14 +225,14 @@
         "group": "regions",
         "homeURL": "https://liste-ar-adblock.googlecode.com/hg/Liste_AR.txt",
         "supportURL": "https://code.google.com/p/liste-ar-adblock/"
-    },
+        },
     "margevicius.lt/easylistlithuania.txt": {
         "off": true,
         "defaultOff": true,
         "title": "LTU: Adblock Plus Lithuania",
         "group": "regions",
         "homeURL": "http://margevicius.lt/easylistlithuania.txt"
-    },
+        },
     "mirror1.malwaredomains.com/files/immortal_domains.txt": {
         "off": true,
         "defaultOff": true,
@@ -240,7 +240,7 @@
         "group": "malware",
         "homeURL": "http://malwaredomains.lehigh.edu/files/immortal_domains.txt",
         "supportURL": "http://www.malwaredomains.com/"
-    },
+        },
     "mirror1.malwaredomains.com/files/justdomains": {
         "off": true,
         "defaultOff": true,
@@ -248,7 +248,7 @@
         "group": "malware",
         "homeURL": "http://malwaredomains.lehigh.edu/files/justdomains",
         "supportURL": "http://www.malwaredomains.com/"
-    },
+        },
     "pgl.yoyo.org/as/serverlist": {
         "off": true,
         "defaultOff": true,
@@ -256,7 +256,7 @@
         "group": "ads",
         "homeURL": "http://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
         "supportURL": "http://pgl.yoyo.org/adservers/"
-    },
+        },
     "raw.githubusercontent.com/AdBlockPlusIsrael/EasyListHebrew/master/EasyListHebrew.txt": {
         "off": true,
         "defaultOff": true,
@@ -264,7 +264,7 @@
         "group": "regions",
         "homeURL": "https://raw.githubusercontent.com/AdBlockPlusIsrael/EasyListHebrew/master/EasyListHebrew.txt",
         "supportURL": "https://github.com/AdBlockPlusIsrael/EasyListHebrew"
-    },
+        },
     "raw.githubusercontent.com/cjx82630/cjxlist/master/cjxlist.txt": {
         "off": true,
         "defaultOff": true,
@@ -273,15 +273,16 @@
         "homeURL": "https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjxlist.txt",
         "oldLocation": "cjxlist1.googlecode.com/svn/cjxlist.txt",
         "supportURL": "https://github.com/cjx82630/cjxlist"
-    },
+        },
     "raw.githubusercontent.com/reek/anti-adblock-killer/master/anti-adblock-killer-filters.txt": {
         "off": true,
         "defaultOff": true,
         "title": "Anti-Adblock Killer | Reek",
         "group": "ads",
         "homeURL": "https://raw.githubusercontent.com/reek/anti-adblock-killer/master/anti-adblock-killer-filters.txt",
-        "supportURL": "https://github.com/reek/anti-adblock-killer"
-    },
+        "supportURL": "https://github.com/reek/anti-adblock-killer",
+        "instructionURL": "https://github.com/reek/anti-adblock-killer#instruction"
+        },
     "raw.githubusercontent.com/szpeter80/hufilter/master/hufilter.txt": {
         "off": true,
         "defaultOff": true,
@@ -289,7 +290,7 @@
         "group": "regions",
         "homeURL": "https://raw.githubusercontent.com/szpeter80/hufilter/master/hufilter.txt",
         "supportURL": "https://github.com/szpeter80/hufilter"
-    },
+        },
     "raw.githubusercontent.com/tomasko126/easylistczechandslovak/master/filters.txt": {
         "off": true,
         "defaultOff": true,
@@ -297,7 +298,7 @@
         "group": "regions",
         "homeURL": "https://raw.githubusercontent.com/tomasko126/easylistczechandslovak/master/filters.txt",
         "supportURL": "https://github.com/tomasko126/easylistczechandslovak"
-    },
+        },
     "someonewhocares.org/hosts/hosts": {
         "off": true,
         "defaultOff": true,
@@ -305,7 +306,7 @@
         "group": "multipurpose",
         "homeURL": "http://someonewhocares.org/hosts/hosts",
         "supportURL": "http://someonewhocares.org/hosts/"
-    },
+        },
     "spam404bl.com/spam404scamlist.txt": {
         "off": true,
         "defaultOff": true,
@@ -313,7 +314,7 @@
         "group": "malware",
         "homeURL": "https://spam404bl.com/spam404scamlist.txt",
         "supportURL": "http://www.spam404.com/"
-    },
+        },
     "stanev.org/abp/adblock_bg.txt": {
         "off": true,
         "defaultOff": true,
@@ -321,7 +322,7 @@
         "group": "regions",
         "homeURL": "http://stanev.org/abp/adblock_bg.txt",
         "supportURL": "http://stanev.org/abp/"
-    },
+        },
     "winhelp2002.mvps.org/hosts.txt": {
         "off": true,
         "defaultOff": true,
@@ -329,7 +330,7 @@
         "group": "multipurpose",
         "homeURL": "http://winhelp2002.mvps.org/hosts.txt",
         "supportURL": "http://winhelp2002.mvps.org/"
-    },
+        },
     "www.fanboy.co.nz/enhancedstats.txt": {
         "off": true,
         "defaultOff": true,
@@ -337,7 +338,7 @@
         "group": "privacy",
         "homeURL": "https://www.fanboy.co.nz/enhancedstats.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "www.fanboy.co.nz/fanboy-antifacebook.txt": {
         "off": true,
         "defaultOff": true,
@@ -345,7 +346,7 @@
         "group": "social",
         "homeURL": "https://www.fanboy.co.nz/fanboy-antifacebook.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "www.fanboy.co.nz/fanboy-korean.txt": {
         "off": true,
         "defaultOff": true,
@@ -353,7 +354,7 @@
         "group": "regions",
         "homeURL": "https://www.fanboy.co.nz/fanboy-korean.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "www.fanboy.co.nz/fanboy-swedish.txt": {
         "off": true,
         "defaultOff": true,
@@ -361,7 +362,7 @@
         "group": "regions",
         "homeURL": "https://www.fanboy.co.nz/fanboy-swedish.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "www.fanboy.co.nz/fanboy-ultimate.txt": {
         "off": true,
         "defaultOff": true,
@@ -369,7 +370,7 @@
         "group": "multipurpose",
         "homeURL": "https://www.fanboy.co.nz/r/fanboy-ultimate.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "www.fanboy.co.nz/fanboy-vietnam.txt": {
         "off": true,
         "defaultOff": true,
@@ -377,25 +378,25 @@
         "group": "regions",
         "homeURL": "https://www.fanboy.co.nz/fanboy-vietnam.txt",
         "supportURL": "https://forums.lanik.us/"
-    },
+        },
     "www.malwaredomainlist.com/hostslist/hosts.txt": {
         "off": true,
         "defaultOff": true,
         "title": "Malware Domain List",
         "group": "malware",
         "homeURL": "http://www.malwaredomainlist.com/hostslist/hosts.txt"
-    },
+        },
     "www.void.gr/kargig/void-gr-filters.txt": {
         "off": true,
         "defaultOff": true,
         "title": "GRC: Greek AdBlock Filter",
         "group": "regions",
         "homeURL": "https://www.void.gr/kargig/void-gr-filters.txt"
-    },
+        },
     "www.zoso.ro/pages/rolist.txt": {
         "off": true,
         "defaultOff": true,
         "title": "ROU: RO-LIST (modified)",
         "group": "regions"
-    }
+        }
 }

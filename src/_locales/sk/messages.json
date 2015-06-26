@@ -87,6 +87,10 @@
     "message":"Prepnúť kozmetické filtrovanie pre túto stránku",
     "description":"English: Toggle cosmetic filtering for this site"
   },
+  "popupTipNoRemoteFonts":{
+    "message":"Prepnúť blokovanie vzdialených písiem na tejto stránke",
+    "description":"English: Toggle the blocking of remote fonts for this site"
+  },
   "popupAnyRulePrompt":{
     "message":"všetko",
     "description":""
@@ -455,6 +459,10 @@
     "message":"aj keď existuje",
     "description":"Used in the static filtering wizard"
   },
+  "loggerStaticFilteringFinderSentence1":{
+    "message":"Statický filter {{filter}} bol nájdený v:",
+    "description":"Below this sentence, the filter lists in which the filter was found"
+  },
   "aboutChangelog":{
     "message":"Zoznam zmien",
     "description":"English: Change log"
@@ -544,12 +552,16 @@
     "description":"Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1":{
-    "message":"uBlock zabránil načítaniu nasledujúcej stránky:",
+    "message":"uBlock Origin zabránil načítaniu nasledujúcej stránky:",
     "description":"English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2":{
     "message":"Kvôli nasledujúcemu filtru",
     "description":"English: Because of the following filter"
+  },
+  "docblockedFoundIn":{
+    "message":"Nájdený v:",
+    "description":"English: List of filter list names follows"
   },
   "docblockedBack":{
     "message":"Naspäť",

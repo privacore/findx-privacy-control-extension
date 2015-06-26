@@ -68,6 +68,21 @@ var onMessage = function(request, sender, callback) {
     case 'updateFilter':
         µb.updateFilter(request.updates, callback);
         return;    
+    case 'listsFromNetFilter':
+        µb.staticFilteringReverseLookup.fromNetFilter(
+            request.compiledFilter,
+            request.rawFilter,
+            callback
+        );
+        return;
+
+    case 'listsFromCosmeticFilter':
+        µb.staticFilteringReverseLookup.fromCosmeticFilter(
+            request.hostname,
+            request.rawFilter,
+            callback
+        );
+        return;
     default:
         break;
     }
@@ -323,6 +338,8 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.noCosmeticFiltering = µb.hnSwitches.evaluateZ('no-cosmetic-filtering', tabContext.rootHostname);
         r.usedFilters = getUsedFilters(pageStore);
         r.urls = pageStore.netFilteringCache.urls;
+        r.noRemoteFonts = µb.hnSwitches.evaluateZ('no-remote-fonts', tabContext.rootHostname);
+        r.remoteFontCount = pageStore.remoteFontCount;
     } else {
         r.hostnameDict = {};
         r.firewallRules = getFirewallRules();
@@ -1384,7 +1401,9 @@ var logCosmeticFilters = function(tabId, details) {
             'cosmetic',
             'cb:##' + selectors[i],
             'dom',
-            details.pageURL
+            details.frameURL,
+            null,
+            details.frameHostname
         );
     }
 };

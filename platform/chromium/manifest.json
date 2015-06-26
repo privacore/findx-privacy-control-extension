@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Incognitor TrackerBlock",
-    "version": "0.9.8.7",
+    "version": "0.9.9.2",
 
     "default_locale": "en",
     "description": "__MSG_extShortDesc__",
