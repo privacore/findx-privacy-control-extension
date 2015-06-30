@@ -192,6 +192,16 @@ vAPI.browserSettings = {
                 }
                 break;
 
+            case 'webrtcIPAddress':
+                this.rememberOriginalValue('media.peerconnection', 'enabled');
+                value = !!details[setting];
+                if ( value === true ) {
+                    this.clear('media.peerconnection', 'enabled');
+                } else {
+                    this.setBool('media.peerconnection', 'enabled', false);
+                }
+                break;
+
             default:
                 break;
             }
@@ -895,6 +905,12 @@ var tabWatcher = (function() {
 
     var currentBrowser = function() {
         var win = Services.wm.getMostRecentWindow('navigator:browser');
+        // https://github.com/gorhill/uBlock/issues/399
+        // getTabBrowser() can return null at browser launch time.
+        var tabBrowser = getTabBrowser(win);
+        if ( tabBrowser === null ) {
+            return null;
+        }
         return browserFromTarget(getTabBrowser(win).selectedTab);
     };
 
@@ -995,10 +1011,9 @@ var tabWatcher = (function() {
         }
 
         var tabContainer = null;
-        if ( tabBrowser.deck ) {
-            // Fennec
+        if ( tabBrowser.deck ) {                    // Fennec
             tabContainer = tabBrowser.deck;
-        } else if ( tabBrowser.tabContainer ) {
+        } else if ( tabBrowser.tabContainer ) {     // Firefox
             tabContainer = tabBrowser.tabContainer;
         }
         if ( tabContainer ) {
@@ -1022,6 +1037,7 @@ var tabWatcher = (function() {
             browser = browserFromTarget(tab);
             tabId = browserToTabIdMap.get(browser);
             if ( tabId !== undefined ) {
+                removeBrowserEntry(tabId, browser);
                 tabIdToBrowserMap.delete(tabId);
             }
             browserToTabIdMap.delete(browser);
@@ -1033,6 +1049,11 @@ var tabWatcher = (function() {
         observe: function(win, topic) {
             if ( topic === 'domwindowopened' ) {
                 win.addEventListener('DOMContentLoaded', onWindowLoad);
+                return;
+            }
+            if ( topic === 'domwindowclosed' ) {
+                onWindowUnload.call(win);
+                return;
             }
         }
     };

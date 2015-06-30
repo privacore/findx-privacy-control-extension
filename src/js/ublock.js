@@ -346,6 +346,9 @@ var matchWhitelistDirective = function(url, hostname, directive) {
     case 'prefetchingDisabled':
         vAPI.browserSettings.set({ 'prefetching': !value });
         break;
+    case 'webrtcIPAddressHidden':
+        vAPI.browserSettings.set({ 'webrtcIPAddress': !value });
+        break;
     default:
         break;
     }

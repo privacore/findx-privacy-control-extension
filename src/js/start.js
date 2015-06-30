@@ -39,6 +39,7 @@ var µb = µBlock;
 
 vAPI.app.onShutdown = function() {
     µb.staticFilteringReverseLookup.shutdown();
+    µb.assetUpdater.shutdown();
     µb.staticNetFilteringEngine.reset();
     µb.sessionFirewall.reset();
     µb.permanentFirewall.reset();
@@ -158,7 +159,8 @@ var onUserSettingsReady = function(fetched) {
     µb.contextMenu.toggle(userSettings.contextMenuEnabled);
     vAPI.browserSettings.set({
         'hyperlinkAuditing': !userSettings.hyperlinkAuditingDisabled,
-        'prefetching': !userSettings.prefetchingDisabled
+        'prefetching': !userSettings.prefetchingDisabled,
+        'webrtcIPAddress': !userSettings.webrtcIPAddressHidden
     });
 
     µb.permanentFirewall.fromString(fetched.dynamicFilteringString);

@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Incognitor TrackerBlock",
-    "version": "0.9.9.2",
+    "version": "0.9.9.3",
 
     "default_locale": "en",
     "description": "__MSG_extShortDesc__",
@@ -41,7 +41,8 @@
             "matches": [
                 "https://*.adblockplus.org/*",
                 "https://*.adblockplus.me/*",
-                "https://www.fanboy.co.nz/*"
+                "https://www.fanboy.co.nz/*",
+                "https://github.com/gorhill/uBlock/wiki/Filter-lists-from-around-the-web"
             ],
             "js": ["js/subscriber.js"],
             "run_at": "document_idle"

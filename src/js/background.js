@@ -51,6 +51,7 @@ var defaultExternalLists = [
 
 return {
     userSettings: {
+        pauseFiltering: false,
         advancedUserEnabled: true,
         autoUpdate: true,
         collapseBlocked: true,
@@ -65,7 +66,7 @@ return {
         prefetchingDisabled: true,
         requestLogMaxEntries: 1000,
         showIconBadge: true,
-        pauseFiltering: false
+        webrtcIPAddressHidden: false
     },
 
     // https://github.com/chrisaljoudi/uBlock/issues/180
