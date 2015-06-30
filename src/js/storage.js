@@ -408,6 +408,7 @@
         µb.cosmeticFilteringEngine.reset();
         µb.staticNetFilteringEngine.reset();
         µb.destroySelfie();
+        µb.staticFilteringReverseLookup.resetLists();
 
         // We need to build a complete list of assets to pull first: this is
         // because it *may* happens that some load operations are synchronous:
@@ -463,8 +464,6 @@
                 listMeta.title = matches[1].trim();
             }
         }
-        //console.debug('µBlock.getCompiledFilterList/onRawListLoaded: compiling "%s"', path);
-       
         details.content = µb.compileFilters(details.content, details.path);
         µb.assets.put(compiledPath, details.content);
         callback(details);
@@ -585,8 +584,6 @@
         if ( line.length === 0 ) {
             continue;
         }
-        //staticNetFilteringEngine.add(line);
-
         staticNetFilteringEngine.compile(line, compiledFilters, filterPath);
     }
 

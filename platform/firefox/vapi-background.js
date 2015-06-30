@@ -2001,11 +2001,6 @@ vAPI.toolbarButton = {
     var addLegacyToolbarButton = function(window) {
         var document = window.document;
 
-        var toolbox = document.getElementById('navigator-toolbox') || document.getElementById('mail-toolbox');
-        if ( !toolbox ) {
-            return;
-        }
-
         // palette might take a little longer to appear on some platforms,
         // give it a small delay and try again.
         var palette = toolbox.palette;
@@ -2464,18 +2459,6 @@ vAPI.toolbarButton = {
 
 // No toolbar button.
 
-    if ( !button ) {
-        return;
-    }
-
-    var icon = this.tabs[tabId];
-    button.setAttribute('badge', icon && icon.badge || '');
-
-    if ( !icon || !icon.img ) {
-        icon = '';
-    }
-    else {
-        icon = 'url(' + vAPI.getURL('img/browsericons/icon16.png') + ')';
 (function() {
     // Just to ensure the number of cleanup tasks is as expected: toolbar
     // button code is one single cleanup task regardless of platform.

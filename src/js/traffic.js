@@ -236,6 +236,8 @@ var onBeforeRootFrameRequest = function(details) {
 
     var compiled = result.slice(3);
 
+    var compiled = result.slice(3);
+
     // Blocked
     var query = btoa(JSON.stringify({
         url: requestURL,

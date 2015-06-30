@@ -75,7 +75,13 @@ var onMessage = function(request, sender, callback) {
             callback
         );
         return;
-
+    case 'listsFromNetFilter':
+        µb.staticFilteringReverseLookup.fromNetFilter(
+            request.compiledFilter,
+            request.rawFilter,
+            callback
+        );
+        return;
     case 'listsFromCosmeticFilter':
         µb.staticFilteringReverseLookup.fromCosmeticFilter(
             request.hostname,
@@ -83,6 +89,7 @@ var onMessage = function(request, sender, callback) {
             callback
         );
         return;
+
     default:
         break;
     }
@@ -336,10 +343,10 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.noPopups = µb.hnSwitches.evaluateZ('no-popups', tabContext.rootHostname);
         r.noStrictBlocking = µb.hnSwitches.evaluateZ('no-strict-blocking', tabContext.rootHostname);
         r.noCosmeticFiltering = µb.hnSwitches.evaluateZ('no-cosmetic-filtering', tabContext.rootHostname);
-        r.usedFilters = getUsedFilters(pageStore);
-        r.urls = pageStore.netFilteringCache.urls;
         r.noRemoteFonts = µb.hnSwitches.evaluateZ('no-remote-fonts', tabContext.rootHostname);
         r.remoteFontCount = pageStore.remoteFontCount;
+        r.usedFilters = getUsedFilters(pageStore);
+        r.urls = pageStore.netFilteringCache.urls;
     } else {
         r.hostnameDict = {};
         r.firewallRules = getFirewallRules();
