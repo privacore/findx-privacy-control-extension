@@ -32,27 +32,32 @@
 
 /******************************************************************************/
 
+vAPI.i18n.prepareTemplateText = function(str){
+    return str.replace(/uBlock₀/g, 'Incognitor TrackerBlock').replace(/3rd-party filters/g, 'Filter list');
+};
+
+
 // Helper to deal with the i18n'ing of HTML files.
 
 uDom('[data-i18n]').forEach(function(elem) {
-    elem.html(prepareTemplateText(vAPI.i18n(elem.attr('data-i18n'))));
+    elem.html(vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('data-i18n'))));
 });
 
 uDom('[title]').forEach(function(elem) {
-    var title = prepareTemplateText(vAPI.i18n(elem.attr('title')));
+    var title = vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('title')));
     if ( title ) {
         elem.attr('title', title);
     }
 });
 
 uDom('[placeholder]').forEach(function(elem) {
-    elem.attr('placeholder', prepareTemplateText(vAPI.i18n(elem.attr('placeholder'))));
+    elem.attr('placeholder', vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('placeholder'))));
 });
 
 uDom('[data-i18n-tip]').forEach(function(elem) {
     elem.attr(
         'data-tip',
-        prepareTemplateText(vAPI.i18n(elem.attr('data-i18n-tip'))).replace(/<br>/g, '\n').replace(/\n{3,}/g, '\n\n')
+        vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('data-i18n-tip'))).replace(/<br>/g, '\n').replace(/\n{3,}/g, '\n\n')
     );
 });
 
@@ -82,9 +87,6 @@ vAPI.i18n.renderElapsedTimeToString = function(tstamp) {
 
 /******************************************************************************/
 
-function prepareTemplateText(str){
-    return str.replace('uBlock₀', 'Incognitor TrackerBlock').replace('3rd-party filters', 'Filter list');
-}
 
 })();
 

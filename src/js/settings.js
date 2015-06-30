@@ -140,7 +140,7 @@ var onLocalDataReceived = function(details) {
 /******************************************************************************/
 
 var resetUserData = function() {
-    var msg = vAPI.i18n('aboutResetDataConfirm');
+    var msg = vAPI.i18n.prepareTemplateText(vAPI.i18n('aboutResetDataConfirm'));
     var proceed = window.confirm(msg);
     if ( proceed ) {
         messager.send({ what: 'resetUserData' });
