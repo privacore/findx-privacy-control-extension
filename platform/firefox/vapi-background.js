@@ -692,20 +692,20 @@ vAPI.tabs.open = function(details) {
         return;
     }
 
-    if ( details.index === -1 ) {
-        details.index = tabBrowser.browsers.indexOf(tabBrowser.selectedBrowser) + 1;
-    }
-
     // Open in a standalone window
     if ( details.popup === true ) {
-        win = Services.ww.openWindow(
-            win,
+        Services.ww.openWindow(
+            self,
             details.url,
             null,
             'menubar=no,toolbar=no,location=no,resizable=yes',
             null
         );
         return;
+    }
+
+    if ( details.index === -1 ) {
+        details.index = tabBrowser.browsers.indexOf(tabBrowser.selectedBrowser) + 1;
     }
 
     tab = tabBrowser.loadOneTab(details.url, { inBackground: !details.active });
@@ -923,7 +923,7 @@ var tabWatcher = (function() {
         if ( tabBrowser === null ) {
             return null;
         }
-        return browserFromTarget(getTabBrowser(win).selectedTab);
+        return browserFromTarget(tabBrowser.selectedTab);
     };
 
     var removeBrowserEntry = function(tabId, browser) {
@@ -1377,6 +1377,15 @@ vAPI.messaging.setup = function(defaultHandler) {
 
     cleanupTasks.push(function() {
         var gmm = vAPI.messaging.globalMessageManager;
+
+        gmm.broadcastAsyncMessage(
+            location.host + ':broadcast',
+            JSON.stringify({
+                broadcast: true,
+                channelName: 'vAPI',
+                msg: { cmd: 'shutdownSandbox' }
+            })
+        );
 
         gmm.removeDelayedFrameScript(vAPI.messaging.frameScript);
         gmm.removeMessageListener(
