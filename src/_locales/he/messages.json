@@ -184,7 +184,7 @@
     "description":"English: "
   },
   "settingsWebRTCIPAddressHiddenPrompt":{
-    "message":"מנע מ WebRTC להדליף כתובת ה IP לוקאלית",
+    "message":"מנע מ WebRTC להדליף כתובת IP לוקאלית",
     "description":"English: "
   },
   "settingsExperimentalPrompt":{

@@ -1183,8 +1183,8 @@ FilterContainer.prototype.retrieveDomainSelectors = function(request, rootDomain
 
     //quickProfiler.start('FilterContainer.retrieve()');
 
-    var hostname = µb.URI.hostnameFromURI(request.locationURL);
-    var domain = µb.URI.domainFromHostname(hostname) || hostname;
+    var hostname = this.µburi.hostnameFromURI(request.locationURL);
+    var domain = this.µburi.domainFromHostname(hostname) || hostname;
     var pos = domain.indexOf('.');
 
     // https://github.com/chrisaljoudi/uBlock/issues/587

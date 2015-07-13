@@ -4,411 +4,411 @@
     "description":"extension name."
   },
   "extShortDesc":{
-    "message":"În sfârșit, un blocant eficient. Folosește procesorul și memoria foarte puțin.",
+    "message":"இறுதியாக ஒரு திறமையான‌ விளம்பர தடுப்பான். கனினியின் மையச் செயற்பகுதி மற்றும் நினைவகத்துடன் எளிதாக செயல்புரியும். \n",
     "description":"this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName":{
-    "message":"uBlock₀ — Panou de control",
+    "message":"uBlock₀ - நிர்வாக மையம்",
     "description":"English: uBlock₀ — Dashboard"
   },
   "settingsPageName":{
-    "message":"Opțiuni",
+    "message":"அமைப்புகள்",
     "description":"appears as tab name in dashboard"
   },
   "3pPageName":{
-    "message":"Filtre externe",
+    "message":"3 ஆம் தரப்பு வடிகட்டிகள்",
     "description":"appears as tab name in dashboard"
   },
   "1pPageName":{
-    "message":"Filtrele mele",
+    "message":"என் வடிகட்டிகள்",
     "description":"appears as tab name in dashboard"
   },
   "rulesPageName":{
-    "message":"Regulile mele",
+    "message":"என் விதிமுறைகள்",
     "description":"appears as tab name in dashboard"
   },
   "whitelistPageName":{
-    "message":"Lista de excluderi",
+    "message":"அனுமதிப்பட்டியல்",
     "description":"appears as tab name in dashboard"
   },
   "statsPageName":{
-    "message":"uBlock₀ — Jurnalul cererilor de rețea",
+    "message":"uBlock₀ — Network request log",
     "description":"Title for the network request log window"
   },
   "aboutPageName":{
-    "message":"Despre",
+    "message":"எம்மைப் பற்றி",
     "description":"appears as tab name in dashboard"
   },
   "popupPowerSwitchInfo":{
-    "message":"Clic: dezactivează\/activează uBlock₀ pentru acest sait.\n\nCtrl+clic: dezactivează uBlock₀ doar pe această pagină.",
+    "message":"சொடுக்கு: இந்த தளத்திற்கான ‍‍‍uBlock₀ ஐ முடக்கு\/இயக்கு. \n\nCtrl+click: என்ற குறுக்குவிசையின் மூலம் uBlock₀ ஐ இத்தளத்திற்கு மட்டும் முடக்கு.",
     "description":"English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupBlockedRequestPrompt":{
-    "message":"cereri blocate",
+    "message":"கோரிக்கைகள் தடுக்கப்பட்டுள்ளது",
     "description":"English: requests blocked"
   },
   "popupBlockedOnThisPagePrompt":{
-    "message":"pe această pagină",
+    "message":"இந்த இணையப் பக்கத்தில்",
     "description":"English: on this page"
   },
   "popupBlockedStats":{
-    "message":"{{count}} sau {{percent}}%",
+    "message":"{{count}} or {{percent}}%",
     "description":"Example: 15 or 13%"
   },
   "popupBlockedSinceInstallPrompt":{
-    "message":"de la instalare",
+    "message":"நிறுவியது முதல்",
     "description":"English: since install"
   },
   "popupOr":{
-    "message":"sau",
+    "message":"அல்லது",
     "description":"English: or"
   },
   "popupTipDashboard":{
-    "message":"Clic pentru a deschide panoul",
+    "message":"நிர்வாக மையத்தை திறக்க இங்கே சொடுக்கவும்",
     "description":"English: Click to open the dashboard"
   },
   "popupTipPicker":{
-    "message":"Modul alege element",
+    "message":"Enter element picker mode",
     "description":"English: Enter element picker mode"
   },
   "popupTipLog":{
-    "message":"Deschide jurnalul cererilor",
+    "message":"Go to request log",
     "description":"English: Go to request log"
   },
   "popupTipNoPopups":{
-    "message":"Comută blocarea tuturor popup-urilor pentru acest sait",
+    "message":"Toggle the blocking of all popups for this site",
     "description":"English: Toggle the blocking of all popups for this site"
   },
   "popupTipNoStrictBlocking":{
-    "message":"Comută blocarea strictă pentru acest sait",
+    "message":"Toggle strict blocking for this site",
     "description":"English: Toggle strict blocking for this site"
   },
   "popupTipNoCosmeticFiltering":{
-    "message":"Comută filtrarea vizuală pentru acest sait",
+    "message":"Toggle cosmetic filtering for this site",
     "description":"English: Toggle cosmetic filtering for this site"
   },
   "popupTipNoRemoteFonts":{
-    "message":"Comută blocarea fonturilor de la distanță pentru acest sait",
+    "message":"Toggle the blocking of remote fonts for this site",
     "description":"English: Toggle the blocking of remote fonts for this site"
   },
   "popupAnyRulePrompt":{
-    "message":"tot",
+    "message":"all",
     "description":""
   },
   "popupImageRulePrompt":{
-    "message":"imagini",
+    "message":"படிமங்கள்",
     "description":""
   },
   "popup3pAnyRulePrompt":{
-    "message":"terțe",
+    "message":"3rd-party",
     "description":""
   },
   "popupInlineScriptRulePrompt":{
-    "message":"scripturi înglobate",
+    "message":"inline scripts",
     "description":""
   },
   "popup1pScriptRulePrompt":{
-    "message":"scripturi din saitul primar",
+    "message":"1st-party scripts",
     "description":""
   },
   "popup3pScriptRulePrompt":{
-    "message":"scripturi din saituri terțe",
+    "message":"3rd-party scripts",
     "description":""
   },
   "popup3pFrameRulePrompt":{
-    "message":"cadre din saituri terțe",
+    "message":"3rd-party frames",
     "description":""
   },
   "popupHitDomainCountPrompt":{
-    "message":"domenii conectate",
+    "message":"ஆள்களங்கள் இணைக்கப்பட்டுள்ளது",
     "description":"appears in popup"
   },
   "popupHitDomainCount":{
-    "message":"{{count}} din {{total}}",
+    "message":"மொத்தம் {{total}} இல் {{count}}",
     "description":"appears in popup"
   },
   "pickerCreate":{
-    "message":"Creează",
+    "message":"Create",
     "description":"English: Create"
   },
   "pickerPick":{
-    "message":"Alege",
+    "message":"Pick",
     "description":"English: Pick"
   },
   "pickerQuit":{
-    "message":"Ieșire",
+    "message":"வெளியேறு",
     "description":"English: Quit"
   },
   "pickerNetFilters":{
-    "message":"Filtre net",
+    "message":"Net filters",
     "description":"English: Net filters"
   },
   "pickerCosmeticFilters":{
-    "message":"Filtre vizuale",
+    "message":"Cosmetic filters",
     "description":"English: Cosmetic filters"
   },
   "pickerCosmeticFiltersHint":{
-    "message":"Clic, Ctrl-clic",
+    "message":"Click, Ctrl-click",
     "description":"English: Click, Ctrl-click"
   },
   "pickerContextMenuEntry":{
-    "message":"Blochează elementul",
+    "message":"Block element",
     "description":"English: Block element"
   },
   "settingsCollapseBlockedPrompt":{
-    "message":"Ascunde substituenții elementelor blocate",
+    "message":"Hide placeholders of blocked elements",
     "description":"English: Hide placeholders of blocked elements"
   },
   "settingsIconBadgePrompt":{
-    "message":"Arată numărul cererilor blocate pe pictogramă",
+    "message":"Show the number of blocked requests on the icon",
     "description":"English: Show the number of blocked requests on the icon"
   },
   "settingsContextMenuPrompt":{
-    "message":"Folosește meniul contextual unde este cazul",
+    "message":"Make use of context menu where appropriate",
     "description":"English: Make use of context menu where appropriate"
   },
   "settingsColorBlindPrompt":{
-    "message":"Accesibil pentru daltonism",
+    "message":"Color-blind friendly",
     "description":"English: Color-blind friendly"
   },
   "settingsAdvancedUserPrompt":{
-    "message":"Sunt un utilizator avansat (<a href='https:\/\/github.com\/gorhill\/uBlock\/wiki\/Advanced-user-features'>Lectură obligatorie<\/a>)",
+    "message":"I am an advanced user (<a href='https:\/\/github.com\/gorhill\/uBlock\/wiki\/Advanced-user-features'>Required reading<\/a>)",
     "description":"English: "
   },
   "settingsPrefetchingDisabledPrompt":{
-    "message":"Dezactivează preluarea în avans (pentru a preveni orice conexiune ce s-ar încadra în cereri de rețea blocate)",
+    "message":"Disable pre-fetching (to prevent any connection for blocked network requests)",
     "description":"English: "
   },
   "settingsHyperlinkAuditingDisabledPrompt":{
-    "message":"Dezactivează auditarea\/semnalizatorul legăturilor",
+    "message":"Disable hyperlink auditing\/beacon",
     "description":"English: "
   },
   "settingsWebRTCIPAddressHiddenPrompt":{
-    "message":"Previne dezvăluirea adreselor IP prin intermediul protocolului WebRTC",
+    "message":"Prevent WebRTC from leaking local IP address",
     "description":"English: "
   },
   "settingsExperimentalPrompt":{
-    "message":"Activează funcțiile experimentale (<a href='https:\/\/github.com\/gorhill\/uBlock\/wiki\/Experimental-features'>Despre<\/a>)",
+    "message":"Enable experimental features (<a href='https:\/\/github.com\/gorhill\/uBlock\/wiki\/Experimental-features'>About<\/a>)",
     "description":"English: Enable experimental features"
   },
   "settingsStorageUsed":{
-    "message":"Spațiu de stocare utilizat: {{value}} octeți",
+    "message":"பயன்படுத்தப்பட்ட சேமிப்பகத்தின் அளவு: {{value}} பைட்டுகள்",
     "description":"English: Storage used: {{}} bytes"
   },
   "settingsLastRestorePrompt":{
-    "message":"Ultima restaurare:",
+    "message":"Last restore:",
     "description":"English: Last restore:"
   },
   "settingsLastBackupPrompt":{
-    "message":"Ultima copie de siguranță:",
+    "message":"Last backup:",
     "description":"English: Last backup:"
   },
   "3pListsOfBlockedHostsPrompt":{
-    "message":"{{netFilterCount}} filtre rețea ＋ {{cosmeticFilterCount}} filtre vizuale din:",
+    "message":"{{netFilterCount}} network filters ＋ {{cosmeticFilterCount}} cosmetic filters from:",
     "description":"English: {{netFilterCount}} network filters ＋ {{cosmeticFilterCount}} cosmetic filters from:"
   },
   "3pListsOfBlockedHostsPerListStats":{
-    "message":"{{used}} folosite din {{total}}",
+    "message":"மொத்தம் {{total}} இல் {{used}} பயன்படுத்தப்பட்டது",
     "description":"English: {{used}} used out of {{total}}"
   },
   "3pAutoUpdatePrompt1":{
-    "message":"Actualizare automată a listelor de filtre.",
+    "message":"Auto-update filter lists.",
     "description":"English: Auto-update filter lists."
   },
   "3pUpdateNow":{
-    "message":"Actualizează acum",
+    "message":"Update now",
     "description":"English: Update now"
   },
   "3pPurgeAll":{
-    "message":"Golește tot din memoria tampon",
+    "message":"Purge all caches",
     "description":"English: Purge all caches"
   },
   "3pParseAllABPHideFiltersPrompt1":{
-    "message":"Citește și aplică filtrele vizuale.",
+    "message":"Parse and enforce cosmetic filters.",
     "description":"English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo":{
-    "message":"<p>Această opțiune permite citirea și aplicarea <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">filtrelor compatibile Adblock Plus pentru &ldquo;ascunderea elementelor&rdquo;<\/a>. Aceste filtre sunt în esență vizuale, ele servesc la ascunderea elementelor dintr-o pagină web care sunt considerate drept o neplăcere vizuală și care nu pot fi blocate de motorul de filtrare bazat pe cereri de rețea.<\/p><p>Activând această opțiune memoria utilizată de uBlock₀ va crește.<\/p>",
+    "message":"<p>This option enables the parsing and enforcing of <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-compatible &ldquo;element hiding&rdquo; filters<\/a>. These filters are essentially cosmetic, they serve to hide elements in a web page which are deemed to be a visual nuisance, and which can't be blocked by the net request-based filtering engine.<\/p><p>Enabling this feature increases uBlock₀'s memory footprint.<\/p>",
     "description":"English: see English messages.json"
   },
   "3pListsOfBlockedHostsHeader":{
-    "message":"Lista adreselor blocate",
+    "message":"Lists of blocked hosts",
     "description":"English: Lists of blocked hosts"
   },
   "3pApplyChanges":{
-    "message":"Aplică modificările",
+    "message":"Apply changes",
     "description":"English: Apply changes"
   },
   "3pGroupAds":{
-    "message":"Reclame",
+    "message":"விளம்பரங்கள்",
     "description":"English: Ads"
   },
   "3pGroupPrivacy":{
-    "message":"Intimitate",
+    "message":"தனியுரிமை",
     "description":"English: Privacy"
   },
   "3pGroupMalware":{
-    "message":"Domenii malițioase",
+    "message":"தீப்பொருள் ஆள்களங்கள்",
     "description":"English: Malware domains"
   },
   "3pGroupSocial":{
-    "message":"Social",
+    "message":"சமூக",
     "description":"English: Social"
   },
   "3pGroupMultipurpose":{
-    "message":"Multifuncționale",
+    "message":"பல்நோக்கு வடிகட்டி",
     "description":"English: Multipurpose"
   },
   "3pGroupRegions":{
-    "message":"Regiuni, limbi",
+    "message":"மாநில பகுதிகள், மொழிகள் வாரியான",
     "description":"English: Regions, languages"
   },
   "3pGroupCustom":{
-    "message":"Personalizare",
+    "message":"தனிபயன்",
     "description":"English: Custom"
   },
   "3pExternalListsHint":{
-    "message":"O adresă pe linie. Liniile care încep cu &lsquo;!&rsquo; vor fi ignorate. Adresele nevalide vor fi ignorate fără avertizare.",
+    "message":"One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored.",
     "description":"English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
   },
   "3pExternalListsApply":{
-    "message":"Analizează",
+    "message":"Parse",
     "description":"English: Parse"
   },
   "3pExternalListPurge":{
-    "message":"golește memoria tampon",
+    "message":"purge cache",
     "description":"English: purge cache"
   },
   "3pExternalListNew":{
-    "message":"versiune nouă disponibilă",
+    "message":"new version available",
     "description":"English: new version available"
   },
   "3pExternalListObsolete":{
-    "message":"învechit",
+    "message":"outdated",
     "description":"English: outdated"
   },
   "3pLastUpdate":{
-    "message":"Ultima actualizare: {{ago}}",
+    "message":"Last update: {{ago}}",
     "description":"English: Last update: {{ago}}, where 'ago' will be replaced with something like '2 days ago'"
   },
   "1pFormatHint":{
-    "message":"Un filtru pe linie. Un filtru poate fi un simplu nume de gazdă sau un filtru compatibil Adblock Plus. Liniile precedate de &lsquo;!&rsquo; vor fi ignorate.",
+    "message":"One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored.",
     "description":"English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
   },
   "1pImport":{
-    "message":"Importă și adaugă",
+    "message":"Import and append",
     "description":"English: Import and append"
   },
   "1pExport":{
-    "message":"Exportă",
+    "message":"Export",
     "description":"English: Export"
   },
   "1pExportFilename":{
-    "message":"filtrele-mele-statice-ublock_{{datetime}}.txt",
+    "message":"my-ublock-static-filters_{{datetime}}.txt",
     "description":"English: my-ublock-static-filters_{{datetime}}.txt"
   },
   "1pApplyChanges":{
-    "message":"Aplică modificările",
+    "message":"Apply changes",
     "description":"English: Apply changes"
   },
   "rulesPermanentHeader":{
-    "message":"Reguli permanente",
+    "message":"Permanent rules",
     "description":"header"
   },
   "rulesTemporaryHeader":{
-    "message":"Reguli temporare",
+    "message":"Temporary rules",
     "description":"header"
   },
   "rulesRevert":{
-    "message":"Înlătură",
+    "message":"Revert",
     "description":"This will remove all temporary rules"
   },
   "rulesCommit":{
-    "message":"Aplică",
+    "message":"Commit",
     "description":"This will persist temporary rules"
   },
   "rulesEdit":{
-    "message":"Modifică",
+    "message":"Edit",
     "description":"Will enable manual-edit mode (textarea)"
   },
   "rulesEditSave":{
-    "message":"Salvează",
+    "message":"சேமிக்கும்",
     "description":"Will save manually-edited content and exit manual-edit mode"
   },
   "rulesEditDiscard":{
-    "message":"Elimină",
+    "message":"நிராகரிக்கபடும்",
     "description":"Will discard manually-edited content and exit manual-edit mode"
   },
   "rulesImport":{
-    "message":"Importă din fișier...",
+    "message":"கோப்பிலிருந்து இறக்குமதி செய் ...",
     "description":""
   },
   "rulesExport":{
-    "message":"Exportă în fișier...",
+    "message":"கோப்பினுள் ஏற்று",
     "description":""
   },
   "rulesDefaultFileName":{
-    "message":"regulile-mele-dinamice-ublock_{{datetime}}.txt",
+    "message":"my-ublock-dynamic-rules_{{datetime}}.txt",
     "description":"default file name to use"
   },
   "rulesHint":{
-    "message":"Lista regulilor tale de filtrare dinamică.",
+    "message":"List of your dynamic filtering rules.",
     "description":"English: List of your dynamic filtering rules."
   },
   "rulesFormatHint":{
-    "message":"Sintaxa pentru regulă: <code>sursă destinație tip acțiune<\/code> (<a href='https:\/\/github.com\/gorhill\/uBlock\/wiki\/Dynamic-filtering:-rule-syntax'>documentație<\/a>).",
+    "message":"Rule syntax: <code>source destination type action<\/code> (<a href='https:\/\/github.com\/gorhill\/uBlock\/wiki\/Dynamic-filtering:-rule-syntax'>full documentation<\/a>).",
     "description":"English: dynamic rule syntax and full documentation."
   },
   "whitelistPrompt":{
-    "message":"Lista ta de nume de gazde unde uBlock₀ va fi dezactivat. Fiecare adresă pe o singură linie. Adresele nevalide vor fi ignorate automat.",
+    "message":"Your list of host names for which uBlock₀ will be disabled. One entry per line. Invalid host names will be silently ignored.",
     "description":"English: Your list of host names for which uBlock₀ will be disabled. One host name per line. Invalid host names will be silently ignored."
   },
   "whitelistImport":{
-    "message":"Importă și adaugă",
+    "message":"Import and append",
     "description":"English: Import and append"
   },
   "whitelistExport":{
-    "message":"Exportă",
+    "message":"ஏற்று",
     "description":"English: Export"
   },
   "whitelistExportFilename":{
-    "message":"lista-mea-de-excluderi-ublock_{{datetime}}.txt",
+    "message":"my-ublock-whitelist_{{datetime}}.txt",
     "description":"English: my-ublock-whitelist_{{datetime}}.txt"
   },
   "whitelistApply":{
-    "message":"Aplică modificările",
+    "message":"மாற்றங்களைச் செயல்படுத்து",
     "description":"English: Apply changes"
   },
   "logRequestsHeaderType":{
-    "message":"Tip",
+    "message":"வகை",
     "description":"English: Type"
   },
   "logRequestsHeaderDomain":{
-    "message":"Domeniu",
+    "message":"ஆள்களம்",
     "description":"English: Domain"
   },
   "logRequestsHeaderURL":{
-    "message":"URL",
+    "message":"உரலி",
     "description":"English: URL"
   },
   "logRequestsHeaderFilter":{
-    "message":"Filtru",
+    "message":"வடிகட்டு",
     "description":"English: Filter"
   },
   "logAll":{
-    "message":"Tot",
+    "message":"அனைத்து",
     "description":"Appears in the logger's tab selector"
   },
   "logBehindTheScene":{
-    "message":"În spatele scenei",
+    "message":"திறக்கப்பட்ட இ.தளங்களின் பின்னால் நடப்பவை",
     "description":"Pretty name for behind-the-scene network requests"
   },
   "logFilterPrompt":{
-    "message":"filtrează intrările din jurnal",
+    "message":"filter log entries",
     "description":"English: filter log entries"
   },
   "logMaxEntriesTip":{
-    "message":"Numărul maxim de intrări în jurnal",
+    "message":"Maximum number of log entries",
     "description":"Tooltip informaing that the input field is to set the maximum number of entries in the log"
   },
   "loggerURLFilteringContextLabel":{
@@ -416,179 +416,179 @@
     "description":"Label for the context selector"
   },
   "loggerURLFilteringTypeLabel":{
-    "message":"Tip:",
+    "message":"வகை:",
     "description":"Label for the type selector"
   },
   "loggerURLFilteringHeader":{
-    "message":"Filtrare dinamică a URL-urilor",
+    "message":"Dynamic URL filtering",
     "description":"Small header to identify the dynamic URL filtering section"
   },
   "loggerStaticFilteringHeader":{
-    "message":"Filtrare statică",
+    "message":"Static filtering",
     "description":"Small header to identify the static filtering section"
   },
   "loggerStaticFilteringSentence":{
-    "message":"{{action}} cererile de rețea de {{type}} {{br}}când adresa URL corespunde cu {{url}} {{br}}și care își au originea {{origin}},{{br}}{{importance}} există un filtru corespondent de excepție.",
+    "message":"{{action}} network requests of {{type}} {{br}}which URL address matches {{url}} {{br}}and which originates {{origin}},{{br}}{{importance}} there is a matching exception filter.",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartBlock":{
-    "message":"Blochează",
+    "message":"Block",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartAllow":{
-    "message":"Permite",
+    "message":"Allow",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartType":{
-    "message":"tip “{{type}}”",
+    "message":"type “{{type}}”",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartAnyType":{
-    "message":"orice tip",
+    "message":"any type",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartOrigin":{
-    "message":"de la “{{origin}}”",
+    "message":"from “{{origin}}”",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartAnyOrigin":{
-    "message":"de oriunde",
+    "message":"from anywhere",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartNotImportant":{
-    "message":"exceptând când",
+    "message":"except when",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartImportant":{
-    "message":"chiar dacă",
+    "message":"even if",
     "description":"Used in the static filtering wizard"
   },
   "loggerStaticFilteringFinderSentence1":{
-    "message":"Filtru static {{filter}} găsit în:",
+    "message":"Static filter {{filter}} found in:",
     "description":"Below this sentence, the filter lists in which the filter was found"
   },
   "aboutChangelog":{
-    "message":"Jurnalul de modificări",
+    "message":"நிரல் மாற்றம் மற்றும் வெளியீடுகளின் பதிவு",
     "description":"English: Change log"
   },
   "aboutWiki":{
-    "message":"Wiki",
+    "message":"விக்கி",
     "description":"English: project' wiki on Github"
   },
   "aboutCode":{
-    "message":"Cod sursă (GPLv3)",
+    "message":"மூல நிரல் (பொது மக்கள் உரிமம் பதிப்பு 3)",
     "description":"English: Source code (GPLv3)"
   },
   "aboutContributors":{
-    "message":"Contribuitori",
+    "message":"பங்களிப்பாளர்கள்",
     "description":"English: Contributors"
   },
   "aboutBackupDataButton":{
-    "message":"Copie de siguranță în fișier",
+    "message":"Backup to file",
     "description":"English: Backup to file"
   },
   "aboutBackupFilename":{
-    "message":"salvarea-mea-ublock_{{datetime}}.txt",
+    "message":"my-ublock-backup_{{datetime}}.txt",
     "description":"English: my-ublock-backup_{{datetime}}.txt"
   },
   "aboutRestoreDataButton":{
-    "message":"Restaurează din fișier...",
+    "message":"Restore from file...",
     "description":"English: Restore from file..."
   },
   "aboutResetDataButton":{
-    "message":"Restaurează la configurarea implicită...",
+    "message":"Reset to default settings...",
     "description":"English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm":{
-    "message":"Toate opțiunile vor fi suprascrise cu datele din {{time}} și uBlock₀ va fi repornit.\n\nDorești să suprascrii toate opțiunile folosind datele salvate?",
+    "message":"All your settings will be overwritten using data backed up on {{time}}, and uBlock₀ will restart.\n\nOverwrite all existing settings using backed up data?",
     "description":"Message asking user to confirm restore"
   },
   "aboutRestoreDataError":{
-    "message":"Datele nu au putut fi citite sau sunt nevalide",
+    "message":"The data could not be read or is invalid",
     "description":"Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm":{
-    "message":"Toate configurările tale vor fi eliminate și uBlock₀ va reporni.\n\nRestaurează uBlock₀ la configurările din fabrică?",
+    "message":"All your settings will be removed, and uBlock₀ will restart.\n\nReset uBlock₀ to factory settings?",
     "description":"Message asking user to confirm reset"
   },
   "errorCantConnectTo":{
-    "message":"Nu mă pot conecta la {{url}}",
+    "message":"Unable to connect to {{url}}",
     "description":"English: Network error: unable to connect to {{url}}"
   },
   "subscriberConfirm":{
-    "message":"uBlock₀: Adaug următorul URL în lista ta de filtre personalizate?\n\nTitlu: \"{{title}}\"\nURL: {{url}}",
+    "message":"uBlock₀: Add the following URL to your custom filter lists?\n\nTitle: \"{{title}}\"\nURL: {{url}}",
     "description":"English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo":{
-    "message":"acum un minut",
+    "message":"ஒரு நிமிடத்திற்கு முன்பு",
     "description":"English: a minute ago"
   },
   "elapsedManyMinutesAgo":{
-    "message":"acum {{value}} minute",
+    "message":"{{value}} நிமிடங்களுக்கு முன்பு",
     "description":"English: {{value}} minutes ago"
   },
   "elapsedOneHourAgo":{
-    "message":"acum o oră",
+    "message":"ஒரு மணிநேரத்திற்கு முன்பு",
     "description":"English: an hour ago"
   },
   "elapsedManyHoursAgo":{
-    "message":"acum {{value}} ore",
+    "message":"{{value}} மணி நேரம் முன்பு",
     "description":"English: {{value}} hours ago"
   },
   "elapsedOneDayAgo":{
-    "message":"în urmă cu o zi",
+    "message":"ஒரு நாளைக்கு முன்பு",
     "description":"English: a day ago"
   },
   "elapsedManyDaysAgo":{
-    "message":"în urmă cu {{value}} zile",
+    "message":"{{value}} நாட்கள் முன்பு",
     "description":"English: {{value}} days ago"
   },
   "showDashboardButton":{
-    "message":"Deschide panoul de control",
+    "message":"நிர்வாக மையத்தைக் காட்டுக",
     "description":"Firefox\/Fennec-specific: Show Dashboard"
   },
   "showNetworkLogButton":{
-    "message":"Arată jurnalul",
+    "message":"Show Logger",
     "description":"Firefox\/Fennec-specific: Show Logger"
   },
   "fennecMenuItemBlockingOff":{
-    "message":"dezactivat",
+    "message":"off",
     "description":"Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1":{
-    "message":"uBlock Origin a prevenit încărcarea acestei pagini:",
+    "message":"uBlock Origin has prevented the following page from loading:",
     "description":"English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2":{
-    "message":"Din cauza următorului filtru",
+    "message":"Because of the following filter",
     "description":"English: Because of the following filter"
   },
   "docblockedFoundIn":{
-    "message":"Găsit în:",
+    "message":"Found in:",
     "description":"English: List of filter list names follows"
   },
   "docblockedBack":{
-    "message":"Înapoi",
+    "message":"Go back",
     "description":"English: Go back"
   },
   "docblockedClose":{
-    "message":"Închide această fereastră",
+    "message":"Close this window",
     "description":"English: Close this window"
   },
   "docblockedProceed":{
-    "message":"Dezactivează blocarea strictă pentru {{hostname}}",
+    "message":"Disable strict blocking for {{hostname}}",
     "description":"English: Disable strict blocking for {{hostname}} ..."
   },
   "docblockedDisableTemporary":{
-    "message":"Temporar",
+    "message":"Temporarily",
     "description":"English: Temporarily"
   },
   "docblockedDisablePermanent":{
-    "message":"Permanent",
+    "message":"Permanently",
     "description":"English: Permanently"
   },
   "dummy":{
-    "message":"Aceasta intrare trebuie sa fie ultima",
+    "message":"This entry must be the last one",
     "description":"so we dont need to deal with comma for last entry"
   }
 }

@@ -662,14 +662,14 @@ PageStore.prototype.logRequest = function(context, result) {
         this.contentLastModified = now;
     }
     var c = (result.str || result).charAt(1);
-    if ( c === '' || c === 'a' ) {
-        this.hostnameToCountMap[requestHostname].value += 0x00010000;
-        this.perLoadAllowedRequestCount++;
-        µb.localSettings.allowedRequestCount++;
-    } else /* if ( c === 'b' ) */ {
+    if ( c === 'b' ) {
         this.hostnameToCountMap[requestHostname].value += 0x00000001;
         this.perLoadBlockedRequestCount++;
         µb.localSettings.blockedRequestCount++;
+    } else /* if ( c === '' || c === 'a' || c === 'n' ) */ {
+        this.hostnameToCountMap[requestHostname].value += 0x00010000;
+        this.perLoadAllowedRequestCount++;
+        µb.localSettings.allowedRequestCount++;
     }
     µb.localSettingsModifyTime = now;
 };
