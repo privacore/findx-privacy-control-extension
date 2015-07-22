@@ -463,7 +463,7 @@ var matchWhitelistDirective = function(url, hostname, directive) {
 
     var injectNow = function(tabId) {
         delete tabIdToTimerMap[tabId];
-        µBlock.scriptlets.inject(tabId, 'cosmetic-logger');
+        µBlock.scriptlets.injectDeep(tabId, 'cosmetic-logger');
     };
 
     var injectAsync = function(tabId) {
