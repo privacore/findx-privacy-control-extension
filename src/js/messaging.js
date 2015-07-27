@@ -96,7 +96,13 @@ var onMessage = function(request, sender, callback) {
         µb.contextMenuClientX = request.clientX;
         µb.contextMenuClientY = request.clientY;
         break;
-
+    case 'reloadAllFilters':
+       µb.reloadAllFilters(callback);
+       return;
+    case 'updateAndReloadAllFilters':
+        µb.reloadPresetBlacklists(request.switches, request.update);
+        µb.reloadAllFilters(callback);
+        return;
     case 'cosmeticFiltersInjected':
         µb.cosmeticFilteringEngine.addToSelectorCache(request);
         /* falls through */
@@ -168,10 +174,6 @@ var onMessage = function(request, sender, callback) {
     case 'openHelpPage':
         vAPI.openHelpPage();
         break;
-    case 'updateAndReloadAllFilters':
-        µb.reloadPresetBlacklists(request.switches, request.update);
-        µb.reloadAllFilters(callback);
-        return;
         /**********************************/
 
     default:
