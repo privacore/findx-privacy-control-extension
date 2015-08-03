@@ -181,8 +181,14 @@ var hideElements = function(selectors) {
         if ( shadow !== null && shadow.className === sessionId ) {
             continue;
         }
-        shadow = elem.createShadowRoot();
-        shadow.className = sessionId;
+        // https://github.com/w3c/webcomponents/issues/102
+        // not all nodes can be shadowed
+        try {
+            shadow = elem.createShadowRoot();
+            shadow.className = sessionId;
+        } catch (ex) {
+            elem.style.setProperty('display', 'none', 'important');
+        }
     }
 };
 

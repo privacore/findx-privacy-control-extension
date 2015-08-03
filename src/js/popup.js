@@ -321,7 +321,7 @@ var buildAllFirewallRows = function() {
 
     // Remove and reuse all rows: the order may have changed, we can't just
     // reuse them in-place.
-    rowsToRecycle = uDom('#firewallContainer > div:nth-of-type(8) ~ div').detach();
+    rowsToRecycle = uDom('#firewallContainer > div:nth-of-type(7) ~ div').detach();
 
     var n = allHostnameRows.length;
     for ( var i = 0; i < n; i++ ) {
@@ -432,6 +432,15 @@ var renderPopup = function() {
                        .replace('{{percent}}', formatNumber(Math.floor(blocked * 100 / total)));
     }
     uDom.nodeFromId('total-blocked').textContent = text;
+
+    // https://github.com/gorhill/uBlock/issues/507
+    // Convenience: open the logger with current tab automatically selected
+    if ( popupData.tabId ) {
+        uDom.nodeFromSelector('.statName > a[href^="logger-ui.html"]').setAttribute(
+            'href',
+            'logger-ui.html#tab_' + popupData.tabId
+        );
+    }
 
     // This will collate all domains, touched or not
     renderPrivacyExposure();
@@ -825,9 +834,10 @@ var onHideTooltip = function() {
 
 /******************************************************************************/
 
-// Make menu only when popup html is fully loaded
+// Popup DOM is assumed to be loaded at this point -- because this script
+// is loaded after everything else..
 
-uDom.onLoad(function () {
+(function() {
     // If there's no tab id specified in the query string,
     // it will default to current tab.
     var tabId = null;
@@ -851,7 +861,7 @@ uDom.onLoad(function () {
 
     uDom('body').on('mouseenter', '[data-tip]', onShowTooltip)
                 .on('mouseleave', '[data-tip]', onHideTooltip);
-});
+})();
 
 /******************************************************************************/
 
