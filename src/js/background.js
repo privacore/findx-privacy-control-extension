@@ -66,6 +66,7 @@ return {
         prefetchingDisabled: true,
         requestLogMaxEntries: 1000,
         showIconBadge: true,
+        cloudStorageEnabled: false,
         webrtcIPAddressHidden: false
     },
 
