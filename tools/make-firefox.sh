@@ -27,6 +27,7 @@ cp LICENSE.txt $DES/
 echo "*** IncognitorTrackerBlock.FF: Generating meta..."
 python tools/make-firefox-meta.py $DES/
 
+
 if [ "$1" = all ]; then
     echo "*** IncognitorTrackerBlock.FF: Creating package..."
     pushd $DES/
