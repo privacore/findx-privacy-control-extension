@@ -246,7 +246,9 @@ var getHostnameDict = function(hostnameToCountMap) {
             domain: domain,
             filterPath: filterPath,
             blockCount: blockCount,
-            allowCount: allowCount
+            allowCount: allowCount,
+            totalBlockCount: 0,
+            totalAllowCount: 0
         };
     }
     return r;

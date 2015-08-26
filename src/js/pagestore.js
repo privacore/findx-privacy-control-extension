@@ -460,10 +460,7 @@ PageStore.prototype.createContextFromFrameHostname = function(frameHostname) {
 
 PageStore.prototype.getNetFilteringSwitch = function() {
     var tabContext = µb.tabContextManager.lookup(this.tabId);
-    if (
-        this.netFilteringReadTime > µb.netWhitelistModifyTime &&
-        this.netFilteringReadTime > tabContext.modifyTime
-    ) {
+    if ( this.netFilteringReadTime > µb.netWhitelistModifyTime ) {
         return this.netFiltering;
     }
     // https://github.com/chrisaljoudi/uBlock/issues/1078

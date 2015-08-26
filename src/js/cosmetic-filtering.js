@@ -1158,8 +1158,9 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request, rootDomai
             continue;
         }
         hash = makeHash(0, selector, hashMask);
-        if ( bucket = this.lowGenericHide[hash] ) {
+        if ( (bucket = this.lowGenericHide[hash]) ) {
             bucket.retrieve(selector, hideSelectors, rootDomain);
+
         }
     }
 
@@ -1204,29 +1205,29 @@ FilterContainer.prototype.retrieveDomainSelectors = function(request, rootDomain
 
     var hash, bucket;
     hash = makeHash(0, domain, this.domainHashMask);
-    if ( bucket = this.hostnameFilters[hash] ) {
+    if ( (bucket = this.hostnameFilters[hash]) ) {
         bucket.retrieve(hostname, r.cosmeticHide, rootDomain);
     }
     // https://github.com/chrisaljoudi/uBlock/issues/188
     // Special bucket for those filters without a valid domain name as per PSL
-    if ( bucket = this.hostnameFilters[this.type0NoDomainHash] ) {
+    if (( bucket = this.hostnameFilters[this.type0NoDomainHash]) ) {
         bucket.retrieve(hostname, r.cosmeticHide, rootDomain);
     }
 
     // entity filter buckets are always plain js array
-    if ( bucket = this.entityFilters[r.entity] ) {
+    if ( (bucket = this.entityFilters[r.entity]) ) {
         r.cosmeticHide = r.cosmeticHide.concat(bucket, rootDomain);
     }
     // No entity exceptions as of now
 
     hash = makeHash(1, domain, this.domainHashMask);
-    if ( bucket = this.hostnameFilters[hash] ) {
+    if ( (bucket = this.hostnameFilters[hash]) ) {
         bucket.retrieve(hostname, r.cosmeticDonthide, rootDomain);
     }
 
     // https://github.com/chrisaljoudi/uBlock/issues/188
     // Special bucket for those filters without a valid domain name as per PSL
-    if ( bucket = this.hostnameFilters[this.type1NoDomainHash] ) {
+    if ( (bucket = this.hostnameFilters[this.type1NoDomainHash]) ) {
         bucket.retrieve(hostname, r.cosmeticDonthide, rootDomain);
     }
 
