@@ -186,12 +186,8 @@
         },
     "https://raw.githubusercontent.com/gfmaster/adblock-korea-contrib/master/filter.txt": {
         "off": true,
-<<<<<<< HEAD
         "defaultOff": true,
-        "title": "KOR: adblock-korea-contrib",
-=======
         "title": "KOR: Korean Adblock List",
->>>>>>> master
         "group": "regions",
         "supportURL": "https://github.com/gfmaster/adblock-korea-contrib"
         },
