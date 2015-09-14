@@ -84,27 +84,28 @@ var histogram = function(label, buckets) {
 //   #A9AdsMiddleBoxTop
 //   .AD-POST
 
-var FilterPlain = function(s, filterPath) {
-    this.s = s;
+var FilterPlain = function(filterPath) {
     this.filterPath = filterPath || "";
 };
 
 FilterPlain.prototype.retrieve = function(s, out) {
-    if ( s === this.s && !µb.isDefaultOff(this.filterPath)) {
-        out.push(this.s);
+    if ( !µb.isDefaultOff(this.filterPath)) {
+        out.push(s);
     }
+
 };
 
 FilterPlain.prototype.fid = '#';
 
 FilterPlain.prototype.toSelfie = function() {
-    return this.s + '\t' + this.filterPath;
+    return this.filterPath;
 };
 
-FilterPlain.fromSelfie = function(s) {
-    var args = s.split('\t');
-    return new FilterPlain(args[0], args[1]);
+FilterPlain.fromSelfie = function() {
+    return filterPlain;
 };
+
+var filterPlain = new FilterPlain();
 
 /******************************************************************************/
 
@@ -524,7 +525,6 @@ var makeHash = function(unhide, token, mask) {
 
 var FilterContainer = function() {
     this.domainHashMask = (1 << 10) - 1; // 10 bits
-    this.genericHashMask = (1 << 15) - 1; // 15 bits
     this.type0NoDomainHash = 'type0NoDomain';
     this.type1NoDomainHash = 'type1NoDomain';
     this.parser = new FilterParser();
@@ -582,26 +582,28 @@ FilterContainer.prototype.reset = function() {
 // https://github.com/chrisaljoudi/uBlock/issues/1004
 // Detect and report invalid CSS selectors.
 
-FilterContainer.prototype.div = document.createElement('div');
+FilterContainer.prototype.isValidSelector = (function() {
+    var div = document.createElement('div');
 
-// Not all browsers support `Element.matches`:
-// http://caniuse.com/#feat=matchesselector
+    // Not all browsers support `Element.matches`:
+    // http://caniuse.com/#feat=matchesselector
+    if ( typeof div.matches !== 'function' ) {
+        return function() {
+            return true;
+        };
+    }
 
-if ( typeof FilterContainer.prototype.div.matches === 'function' ) {
-    FilterContainer.prototype.isValidSelector = function(s) {
+    return function(s) {
         try {
-            this.div.matches(s);
+            // https://github.com/gorhill/uBlock/issues/693
+            div.matches(s + ',\n#foo');
         } catch (e) {
             console.error('uBlock> invalid cosmetic filter:', s);
             return false;
         }
         return true;
     };
-} else {
-    FilterContainer.prototype.isValidSelector = function() {
-        return true;
-    };
-}
+})();
 
 /******************************************************************************/
 
@@ -681,8 +683,7 @@ FilterContainer.prototype.compileGenericSelector = function(parsed, out, filterP
         if ( matches[1] === selector ) {
             out.push(
                 'c\vlg\v' +
-                makeHash(0, matches[1], this.genericHashMask) + '\v' +
-                selector
+                 matches[1]
             );
             return;
         }
@@ -690,7 +691,7 @@ FilterContainer.prototype.compileGenericSelector = function(parsed, out, filterP
         if ( this.isValidSelector(selector) ) {
             out.push(
                 'c\vlg+\v' +
-                makeHash(0, matches[1], this.genericHashMask) + '\v' +
+                 matches[1] + '\v' +
                 selector
             );
         }
@@ -784,7 +785,7 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, skip, pa
 
     var lineEnd;
     var textEnd = text.length;
-    var line, fields, filter, bucket;
+    var line, fields, filter, key, bucket;
 
     while ( lineBeg < textEnd ) {
         if ( text.charAt(lineBeg) !== 'c' ) {
@@ -825,7 +826,7 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, skip, pa
         // lg+	2jx	.Mpopup + #Mad > #MadZone
         if ( fields[0] === 'lg' || fields[0] === 'lg+' ) {
             filter = fields[0] === 'lg' ?
-                        new FilterPlain(fields[2], path) :
+                        filterPlain :
                         new FilterPlainMore(fields[2], path);
             bucket = this.lowGenericHide[fields[1]];
             if ( bucket === undefined ) {
@@ -856,10 +857,14 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, skip, pa
         }
 
         if ( fields[0] === 'hmg0' ) {
-            if ( Array.isArray(this.highMediumGenericHide[fields[1]]) ) {
-                this.highMediumGenericHide[fields[1]].push(fields[2]);
+            key = fields[1];
+            bucket = this.highMediumGenericHide[key];
+            if ( bucket === undefined ) {
+                this.highMediumGenericHide[key] = fields[2];
+            } else if ( Array.isArray(bucket) ) {
+                bucket.push(fields[2]);
             } else {
-                this.highMediumGenericHide[fields[1]] = [fields[2]];
+                this.highMediumGenericHide[key] = [bucket, fields[2]];
             }
             this.highMediumGenericHideCount += 1;
             continue;
@@ -1146,21 +1151,16 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request, rootDomai
         r.donthide = this.genericDonthide;
     }
 
-    var hash, bucket;
-    var hashMask = this.genericHashMask;
     var hideSelectors = r.hide;
+    var selector, bucket;
     var selectors = request.selectors;
     var i = selectors.length;
-    var selector;
     while ( i-- ) {
-        selector = selectors[i];
-        if ( !selector ) {
-            continue;
-        }
-        hash = makeHash(0, selector, hashMask);
-        if ( (bucket = this.lowGenericHide[hash]) ) {
-            bucket.retrieve(selector, hideSelectors, rootDomain);
-
+        if (
+            (selector = selectors[i]) &&
+            (bucket = this.lowGenericHide[selector])
+        ) {
+            bucket.retrieve(selector, hideSelectors,rootDomain);
         }
     }
 
