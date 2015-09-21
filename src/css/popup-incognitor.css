@@ -60,8 +60,10 @@ header {
 header .hdr-privacy-status {
     float: left;
     height: 100%;
-    font-size: 1.5em;
-    line-height: 35pt;
+    font-size: 1.2em;
+    line-height: 17pt;
+/*    font-size: 1.5em;
+    line-height: 35pt;*/
     margin-left: 15px;
     cursor: default;
 }
@@ -429,7 +431,7 @@ footer #pause-blocking-button {
 footer #stats-total {
     margin: 0 auto;
     text-align: center;
-    font-size: 1.3em;
+    font-size: 1.1em;
     cursor: default;
 }
 

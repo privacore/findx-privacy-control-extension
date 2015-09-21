@@ -43,7 +43,7 @@ vAPI.fennec = Services.appinfo.ID === '{aa3c5121-dab2-40e2-81ca-7ea25febc110}';
 
 /******************************************************************************/
 vAPI.app = {
-    name: 'IncognitorTrackerBlock',
+    name: 'PrivaControl',
     version: location.hash.slice(1)
 };
 
@@ -2859,7 +2859,7 @@ vAPI.contextMenu.remove = function() {
 /******************************************************************************/
 
 var optionsObserver = {
-    addonId: 'incognitortrackerblock@itb.net',
+    addonId: 'privacontrol@privacore.com',
 
     register: function() {
         Services.obs.addObserver(this, 'addon-options-displayed', false);

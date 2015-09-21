@@ -230,7 +230,7 @@ var messagingConnector = function(details) {
 
     // Respond back if required
     if ( details.mainProcessId !== undefined ) {
-        sendAsyncMessage('incognitortrackerblock:background', {
+        sendAsyncMessage('privacontrol:background', {
             mainProcessId: details.mainProcessId,
             msg: response
         });
@@ -269,7 +269,7 @@ MessagingChannel.prototype.sendTo = function(message, toTabId, toChannel, callba
         messaging.pending[auxProcessId] = callback;
         messaging.pendingCount += 1;
     }
-    sendAsyncMessage('incognitortrackerblock:background', {
+    sendAsyncMessage('privacontrol:background', {
         channelName: self._sandboxId_ + '|' + this.channelName,
         auxProcessId: auxProcessId,
         toTabId: toTabId,

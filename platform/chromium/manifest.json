@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
 
-    "name": "Incognitor TrackerBlock",
+    "name": "PrivaControl",
     "version": "1.1.1",
 
     "default_locale": "en",
@@ -16,11 +16,11 @@
             "19": "img/browsericons/icon19.png",
             "38": "img/browsericons/icon38.png"
         },
-        "default_title": "Incognitor TrackerBlock",
+        "default_title": "PrivaControl",
         "default_popup": "popup.html"
     },
 
-    "author": "All Incognitor TrackerBlock contributors",
+    "author": "All PrivaControl contributors",
     "background": {
         "page": "background.html"
     },
@@ -66,5 +66,5 @@
         "http://*/*",
         "https://*/*"
     ],
-    "short_name": "Incognitor TrackerBlock"
+    "short_name": "PrivaControl"
 }

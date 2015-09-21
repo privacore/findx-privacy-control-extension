@@ -33,7 +33,7 @@
 /******************************************************************************/
 
 vAPI.i18n.prepareTemplateText = function(str){
-    return str.replace(/uBlock₀/g, 'Incognitor TrackerBlock').replace(/3rd-party filters/g, 'Filter list');
+    return str.replace(/uBlock₀/g, 'PrivaControl').replace(/3rd-party filters/g, 'Filter list');
 };
 
 

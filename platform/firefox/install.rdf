@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <r:RDF xmlns:r="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.mozilla.org/2004/em-rdf#">
     <r:Description about="urn:mozilla:install-manifest">
-        <id>incognitortrackerblock@itb.net</id>
+        <id>privacontrol@privacore.com</id>
         <version>{version}</version>
         <name>{name}</name>
         <description>{description}</description>
-        <homepageURL>{homepage}</homepageURL>
-        <creator>{author}</creator>
-        <developer>Deathamns</developer>
-        <developer>Alex Vallat</developer>
+        <homepageURL>https://github.com/privacore/privacontrol</homepageURL>
+        <creator>All PrivaControl and uBlock contributors</creator>
         <type>2</type>
         <bootstrap>true</bootstrap>
         <multiprocessCompatible>true</multiprocessCompatible>

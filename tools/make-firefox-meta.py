@@ -56,13 +56,13 @@ for alpha2 in sorted(os.listdir(source_locale_dir)):
 chrome_manifest = pj(build_dir, 'chrome.manifest')
 
 with open(chrome_manifest, 'at', encoding='utf-8', newline='\n') as f:
-    f.write(u'\nlocale incognitortrackerblock en ./locale/en/\n')
+    f.write(u'\nlocale privacontrol en ./locale/en/\n')
 
     for alpha2 in language_codes:
         if alpha2 == 'en':
             continue
 
-        f.write(u'locale incognitortrackerblock ' + alpha2 + ' ./locale/' + alpha2 + '/\n')
+        f.write(u'locale privacontrol ' + alpha2 + ' ./locale/' + alpha2 + '/\n')
 
 rmtree(source_locale_dir)
 
@@ -74,7 +74,7 @@ with open(chromium_manifest, encoding='utf-8') as m:
     manifest = json.load(m)
 
 
-manifest['homepage'] = 'https://github.com/gorhill/uBlock'
+manifest['homepage'] = 'https://github.com/privacore/privacontrol'
 manifest['description'] = descriptions['en']
 del descriptions['en']
 manifest['localized'] = []
@@ -90,10 +90,10 @@ for alpha2 in descriptions:
         '\n' + t*2 + '<localized><r:Description>\n' +
         t3 + '<locale>' + alpha2 + '</locale>\n' +
         t3 + '<name>' + manifest['name'] + '</name>\n' +
-        t3 + '<description>' + descriptions[alpha2] + '</description>\n' +
-        t3 + '<creator>' + manifest['author'] + '</creator>\n' +
+        t3 + '<description>  Control your privacy and block the data collectors.  </description>\n' +
+        t3 + '<creator> All PrivaControl and uBlock contributors </creator>\n' +
         # t3 + '<translator>' + ??? + '</translator>\n' +
-        t3 + '<homepageURL>' + manifest['homepage'] + '</homepageURL>\n' +
+        t3 + '<homepageURL>https://github.com/privacore/privacontrol</homepageURL>\n' +
         t*2 + '</r:Description></localized>'
     )
 

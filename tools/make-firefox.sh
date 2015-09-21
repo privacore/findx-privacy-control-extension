@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # This script assumes a linux environment
-echo "*** IncognitorTrackerBlock.FF: Copying files"
-DES=dist/build/incognitortrackerblock@itb.net
+echo "*** PrivaControl.FF: Copying files"
+DES=dist/build/privacontrol@privacore.com
 rm -rf $DES
 mkdir -p $DES
 
@@ -26,15 +26,15 @@ cp    platform/firefox/install.rdf      $DES/
 cp    platform/firefox/*.xul            $DES/
 cp    LICENSE.txt                       $DES/
 
-echo "*** IncognitorTrackerBlock.FF: Generating meta..."
+echo "*** PrivaControl.FF: Generating meta..."
 python tools/make-firefox-meta.py $DES/
 
 
 if [ "$1" = all ]; then
-    echo "*** IncognitorTrackerBlock.FF: Creating package..."
+    echo "*** PrivaControl.FF: Creating package..."
     pushd $DES/
     zip ../uBlock0.firefox.xpi -qr *
     popd
 fi
 
-echo "*** IncognitorTrackerBlock.FF: Package done."
+echo "*** PrivaControl.FF: Package done."

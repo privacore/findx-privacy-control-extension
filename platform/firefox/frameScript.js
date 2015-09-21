@@ -52,11 +52,11 @@ let injectContentScripts = function(win) {
 };
 
 let onLoadCompleted = function() {
-    removeMessageListener('incognitortrackerblock-load-completed', onLoadCompleted);
+    removeMessageListener('privacontrol-load-completed', onLoadCompleted);
     injectContentScripts(content);
 };
 
-addMessageListener('incognitortrackerblock-load-completed', onLoadCompleted);
+addMessageListener('privacontrol-load-completed', onLoadCompleted);
 
 if ( docShell ) {
     let Ci = Components.interfaces;

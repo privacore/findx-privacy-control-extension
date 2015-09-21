@@ -4,7 +4,7 @@
     "description":"extension name."
   },
   "extShortDesc":{
-    "message":"Finally, an efficient blocker. Easy on CPU and memory.",
+    "message":"Control your privacy and block the data collectors.",
     "description":"this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName":{

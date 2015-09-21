@@ -33,7 +33,7 @@ const {classes: Cc, interfaces: Ci} = Components;
 
 let bgProcess;
 let version;
-const hostName = 'incognitortrackerblock';
+const hostName = 'privacontrol';
 const restartListener = {
     get messageManager() {
         return Cc['@mozilla.org/parentprocessmessagemanager;1']
