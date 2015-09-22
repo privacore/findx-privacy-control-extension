@@ -86,6 +86,7 @@ var histogram = function(label, buckets) {
 
 var FilterPlain = function(filterPath) {
     this.filterPath = filterPath || "";
+   
 };
 
 FilterPlain.prototype.retrieve = function(s, out) {
@@ -101,11 +102,11 @@ FilterPlain.prototype.toSelfie = function() {
     return this.filterPath;
 };
 
-FilterPlain.fromSelfie = function() {
-    return filterPlain;
+FilterPlain.fromSelfie = function(s) {
+ var args = s.split('\t');
+    return new FilterPlain(args[0]);
 };
 
-var filterPlain = new FilterPlain();
 
 /******************************************************************************/
 
@@ -139,7 +140,8 @@ FilterPlainMore.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var FilterBucket = function(a, b) {
+var FilterBucket = function(a, b, filterPath) {
+    this.filterPath = filterPath || "";
     this.f = null;
     this.filters = [];
     if ( a !== undefined ) {
@@ -183,7 +185,8 @@ FilterBucket.fromSelfie = function() {
 //   japantimes.co.jp##table[align="right"][width="250"]
 //   mobilephonetalk.com##[align="center"] > b > a[href^="http://tinyurl.com/"]
 
-var FilterHostname = function(s, hostname, filters) {
+var FilterHostname = function(s, hostname, filters, filterPath) {
+    this.filterPath = filterPath || "";
     this.s = s;
     this.hostname = hostname;
     this.filters = filters || {};
@@ -215,7 +218,7 @@ FilterHostname.prototype.toSelfie = function() {
 
 FilterHostname.fromSelfie = function(s) {
     var args = s.split('\t');
-    return new FilterHostname(decode(args[0]), args[1], decode(args[2]));
+    return new FilterHostname(decode(args[0]), args[1], decode(args[2]),args[3]);
 };
 
 /******************************************************************************/
@@ -826,7 +829,7 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, skip, pa
         // lg+	2jx	.Mpopup + #Mad > #MadZone
         if ( fields[0] === 'lg' || fields[0] === 'lg+' ) {
             filter = fields[0] === 'lg' ?
-                        filterPlain :
+                        new FilterPlain(path) :
                         new FilterPlainMore(fields[2], path);
             bucket = this.lowGenericHide[fields[1]];
             if ( bucket === undefined ) {
