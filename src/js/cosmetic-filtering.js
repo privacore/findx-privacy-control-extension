@@ -205,6 +205,7 @@ FilterHostname.prototype.retrieve = function(hostname, out, domain) {
             }
             else if (µb.isDefaultOff(this.filters[filter])) continue;
         }
+       
         if (filters.length)
             out.push(Object.keys(filters).join(',\n'));
     }
@@ -213,12 +214,12 @@ FilterHostname.prototype.retrieve = function(hostname, out, domain) {
 FilterHostname.prototype.fid = 'h';
 
 FilterHostname.prototype.toSelfie = function() {
-    return encode(this.s) + '\t' + this.hostname + '\t' + encode(this.filters);
+    return encode(this.s) + '\t' + this.hostname + '\t' + encode(this.filters) + '\t' + this.filterPath;
 };
 
 FilterHostname.fromSelfie = function(s) {
     var args = s.split('\t');
-    return new FilterHostname(decode(args[0]), args[1], decode(args[2]),args[3]);
+    return new FilterHostname(decode(args[0]), args[1], decode(args[2]), args[3]);
 };
 
 /******************************************************************************/
@@ -782,7 +783,7 @@ FilterContainer.prototype.compileEntitySelector = function(hostname, parsed, out
 /******************************************************************************/
 
 FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, skip, path) {
-    if ( skip ) {
+    if ( skip  || µb.isDefaultOff(path)) {
         return this.skipCompiledContent(text, lineBeg);
     }
 
