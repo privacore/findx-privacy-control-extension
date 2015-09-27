@@ -554,26 +554,25 @@
 
         renderTrackedUrls();
         displayUsedFilters();
-
-        return;
-        var isHTTP = /^https?:\/\/[0-9a-z]/.test(popupData.pageURL);
-
-        uDom('#switch').toggleClass('off', popupData.pageURL === '' || !popupData.netFilteringSwitch);
-
-        // Conditions for element picker:
-        // - `http` or `https` scheme
-        uDom('#gotoPick').toggleClass('enabled', isHTTP);
-
-        // https://github.com/gorhill/uBlock/issues/470
-        // This must be done here, to be sure the popup is resized properly
-        var dfPaneVisible = popupData.dfEnabled && popupData.advancedUserEnabled;
-
-        uDom('#panes').toggleClass('dfEnabled', dfPaneVisible);
-
-        // Build dynamic filtering pane only if in use
-        if (dfPaneVisible) {
-            buildAllDynamicFilters();
-        }
+//        return;
+//        var isHTTP = /^https?:\/\/[0-9a-z]/.test(popupData.pageURL);
+//
+//        uDom('#switch').toggleClass('off', popupData.pageURL === '' || !popupData.netFilteringSwitch);
+//
+//        // Conditions for element picker:
+//        // - `http` or `https` scheme
+//        uDom('#gotoPick').toggleClass('enabled', isHTTP);
+//
+//        // https://github.com/gorhill/uBlock/issues/470
+//        // This must be done here, to be sure the popup is resized properly
+//        var dfPaneVisible = popupData.dfEnabled && popupData.advancedUserEnabled;
+//
+//        uDom('#panes').toggleClass('dfEnabled', dfPaneVisible);
+//
+//        // Build dynamic filtering pane only if in use
+//        if (dfPaneVisible) {
+//            buildAllDynamicFilters();
+//        }
     };
 
     /**************************************************************/

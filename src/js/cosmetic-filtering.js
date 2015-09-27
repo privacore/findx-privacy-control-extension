@@ -115,11 +115,11 @@ FilterPlain.fromSelfie = function(s) {
 //   #center_col > div[style="font-size:14px;margin-right:0;min-height:5px"] ...
 //   #adframe:not(frameset)
 //   .l-container > #fishtank
-
 var FilterPlainMore = function(s, filterPath) {
     this.s = s;
     this.filterPath = filterPath || "";
 };
+
 
 FilterPlainMore.prototype.retrieve = function(s, out) {
     if ( this.s.lastIndexOf(s, 0) === 0 ) {
@@ -144,9 +144,9 @@ var FilterBucket = function(a, b, filterPath) {
     this.filterPath = filterPath || "";
     this.f = null;
     this.filters = [];
-    if ( a !== undefined ) {
+    if ( a  && a !== undefined ) {
         this.filters[0] = a;
-        if ( b !== undefined ) {
+        if (b &&  b !== undefined ) {
             this.filters[1] = b;
         }
     }
@@ -166,11 +166,12 @@ FilterBucket.prototype.retrieve = function(s, out, domain) {
 FilterBucket.prototype.fid = '[]';
 
 FilterBucket.prototype.toSelfie = function() {
-    return this.filters.length.toString();
+    return this.filters.length.toString() + '\t' + this.filterPath;
 };
 
-FilterBucket.fromSelfie = function() {
-    return new FilterBucket();
+FilterBucket.fromSelfie = function(s) {
+    var args = s.split('\t');
+    return new FilterBucket(null, null, args[1]);
 };
 
 /******************************************************************************/
@@ -786,11 +787,9 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, skip, pa
     if ( skip  || µb.isDefaultOff(path)) {
         return this.skipCompiledContent(text, lineBeg);
     }
-
     var lineEnd;
     var textEnd = text.length;
     var line, fields, filter, key, bucket;
-
     while ( lineBeg < textEnd ) {
         if ( text.charAt(lineBeg) !== 'c' ) {
             return lineBeg;
@@ -814,7 +813,7 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, skip, pa
 
         // h	ir	twitter.com	.promoted-tweet
         if ( fields[0] === 'h' ) {
-            filter = new FilterHostname(fields[3], fields[2], path);
+            filter = new FilterHostname(fields[3], fields[2], null, path);
             bucket = this.hostnameFilters[fields[1]];
             if ( bucket === undefined ) {
                 this.hostnameFilters[fields[1]] = filter;
@@ -950,7 +949,6 @@ FilterContainer.prototype.toSelfie = function() {
         }
         return selfie.join('\n');
     };
-
     return {
         acceptedCount: this.acceptedCount,
         duplicateCount: this.duplicateCount,
