@@ -128,7 +128,15 @@ var netFilters = function(details) {
     //console.debug('document.querySelectorAll("%s") = %o', text, document.querySelectorAll(text));
 };
 
+var onBeforeScriptExecuteHandler = function(ev) {
+    if ( vAPI.reScriptTagRegex.test(ev.target.textContent) ) {
+        ev.preventDefault();
+        ev.stopPropagation();
+    }
+};
+
 var filteringHandler = function(details) {
+    var value;
     var styleTagCount = vAPI.styles.length;
 
     vAPI.skipCosmeticFiltering = !details || details.skipCosmeticFiltering;
@@ -138,6 +146,11 @@ var filteringHandler = function(details) {
         }
         if ( details.netHide.length !== 0 ) {
             netFilters(details);
+        }
+        value = details.scriptTagRegex;
+        if ( typeof value === 'string' && value.length !== 0 ) {
+            vAPI.reScriptTagRegex = new RegExp(value);
+            document.addEventListener('beforescriptexecute', onBeforeScriptExecuteHandler);
         }
         // The port will never be used again at this point, disconnecting allows
         // the browser to flush this script from memory.
@@ -183,13 +196,12 @@ var hideElements = function(selectors) {
     var elem, shadow;
     while ( i-- ) {
         elem = elems[i];
-        shadow = elem.shadowRoot;
+        // https://github.com/gorhill/uBlock/issues/762
+        // Always hide using inline style.
+        elem.style.setProperty('display', 'none', 'important');
         // https://www.chromestatus.com/features/4668884095336448
         // "Multiple shadow roots is being deprecated."
-        if ( shadow !== null ) {
-            if ( shadow.className !== sessionId ) {
-                elem.style.setProperty('display', 'none', 'important');
-            }
+        if ( elem.shadowRoot !== null ) {
             continue;
         }
         // https://github.com/gorhill/uBlock/pull/555
@@ -199,7 +211,6 @@ var hideElements = function(selectors) {
             shadow = elem.createShadowRoot();
             shadow.className = sessionId;
         } catch (ex) {
-            elem.style.setProperty('display', 'none', 'important');
         }
     }
 };

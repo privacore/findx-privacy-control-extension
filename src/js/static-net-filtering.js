@@ -395,7 +395,7 @@ FilterPlain.prototype.rtCompile = function() {
 };
 
 FilterPlain.compile = function(details) {
-    return details.f + '\t' + details.tokenBeg+ '\t' + details.path;
+    return details.f + '\t' + details.tokenBeg + '\t' + details.path;
 };
 
 FilterPlain.fromSelfie = function(s) {
@@ -405,10 +405,9 @@ FilterPlain.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var FilterPlainHostname = function(s, tokenBeg, domainOpt, hostname, filterPath) {
+var FilterPlainHostname = function(s, tokenBeg, domainOpt, filterPath) {
     this.s = s;
     this.tokenBeg = tokenBeg;
-    this.hostname = hostname;
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -426,16 +425,14 @@ FilterPlainHostname.prototype.toSelfie =
 FilterPlainHostname.prototype.rtCompile = function() {
     return this.s + '\t' +
            this.tokenBeg + '\t' +
-           this.hostname + '\t' +
            this.domainOpt + '\t' +
            this.filterPath;
 };
 
-FilterPlainHostname.compile = function(details, hostname) {
+FilterPlainHostname.compile = function(details) {
     return details.f + '\t' +
            details.tokenBeg + '\t' +
            details.domainOpt + '\t' +
-           hostname + '\t' +
            details.path;
 };
 
@@ -476,9 +473,8 @@ FilterPlainPrefix0.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var FilterPlainPrefix0Hostname = function(s, domainOpt, hostname, filterPath) {
+var FilterPlainPrefix0Hostname = function(s, domainOpt, filterPath) {
     this.s = s;
-    this.hostname = hostname;
     this.filterPath = filterPath || ""; 
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -496,13 +492,12 @@ FilterPlainPrefix0Hostname.prototype.rtfid = '0ah';
 FilterPlainPrefix0Hostname.prototype.toSelfie = 
 FilterPlainPrefix0Hostname.prototype.rtCompile = function() {
     return this.s + '\t' +
-           this.hostname + '\t' +
            this.domainOpt + '\t' +
            this.filterPath;
 };
 
-FilterPlainPrefix0Hostname.compile = function(details, hostname) {
-    return details.f + '\t' + details.domainOpt + '\t' + hostname + '\t' + details.path;
+FilterPlainPrefix0Hostname.compile = function(details) {
+    return details.f + '\t' + details.domainOpt + '\t' + details.path;
 };
 
 FilterPlainPrefix0Hostname.fromSelfie = function(s) {
@@ -542,9 +537,8 @@ FilterPlainPrefix1.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var FilterPlainPrefix1Hostname = function(s, domainOpt, hostname, filterPath) {
+var FilterPlainPrefix1Hostname = function(s, domainOpt, filterPath) {
     this.s = s;
-    this.hostname = hostname;
     this.domainOpt = domainOpt;
     this.filterPath = filterPath || "";
     this.hostnameTest = hostnameTestPicker(this);
@@ -563,13 +557,12 @@ FilterPlainPrefix1Hostname.prototype.rtfid = '1ah';
 FilterPlainPrefix1Hostname.prototype.toSelfie = 
 FilterPlainPrefix1Hostname.prototype.rtCompile = function() {
     return this.s + '\t' +
-           this.hostname + '\t' +
            this.domainOpt + '\t' +
            this.filterPath;
 };
 
-FilterPlainPrefix1Hostname.compile = function(details, hostname) {
-    return details.f + '\t' + details.domainOpt + '\t' + hostname + '\t' + details.path;
+FilterPlainPrefix1Hostname.compile = function(details) {
+    return details.f + '\t' + details.domainOpt  + '\t' + details.path;
 };
 
 FilterPlainPrefix1Hostname.fromSelfie = function(s) {
@@ -609,9 +602,8 @@ FilterPlainLeftAnchored.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var FilterPlainLeftAnchoredHostname = function(s, domainOpt, hostname, filterPath) {
+var FilterPlainLeftAnchoredHostname = function(s, domainOpt, filterPath) {
     this.s = s;
-    this.hostname = hostname;
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -630,12 +622,11 @@ FilterPlainLeftAnchoredHostname.prototype.toSelfie =
 FilterPlainLeftAnchoredHostname.prototype.rtCompile = function() {
     return this.s + '\t' +
            this.domainOpt + '\t' +
-           this.hostname + '\t' +
            this.filterPath;
 };
 
-FilterPlainLeftAnchoredHostname.compile = function(details, hostname) {
-    return details.f + '\t' + details.domainOpt + '\t' + hostname + '\t' + details.path;
+FilterPlainLeftAnchoredHostname.compile = function(details) {
+    return details.f + '\t' + details.domainOpt + '\t' + details.path;
 };
 
 FilterPlainLeftAnchoredHostname.fromSelfie = function(s) {
@@ -676,9 +667,8 @@ FilterPlainRightAnchored.fromSelfie = function(s) {
 /******************************************************************************/
 
 
-var FilterPlainRightAnchoredHostname = function(s, domainOpt, hostname, filterPath) {
+var FilterPlainRightAnchoredHostname = function(s, domainOpt, filterPath) {
     this.s = s;
-    this.hostname = hostname;
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -697,12 +687,11 @@ FilterPlainRightAnchoredHostname.prototype.toSelfie =
 FilterPlainRightAnchoredHostname.prototype.rtCompile = function() {
     return this.s + '\t' +
            this.domainOpt + '\t' +
-           this.hostname + '\t' +
            this.filterPath;
 };
 
-FilterPlainRightAnchoredHostname.compile = function(details, hostname) {
-    return details.f + '\t' + details.domainOpt + '\t' + hostname + '\t' + details.path;
+FilterPlainRightAnchoredHostname.compile = function(details) {
+    return details.f + '\t' + details.domainOpt + '\t' + details.path;
 
 };
 
@@ -756,9 +745,8 @@ FilterPlainHnAnchored.fromSelfie = function(s) {
 
 // https://github.com/gorhill/uBlock/issues/142
 
-var FilterPlainHnAnchoredHostname = function(s,domainOpt, hostname, filterPath) {
+var FilterPlainHnAnchoredHostname = function(s, domainOpt, filterPath) {
     this.s = s;
-    this.hostname = hostname;
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -783,12 +771,12 @@ FilterPlainHnAnchoredHostname.prototype.rtfid = '||ah';
 
 FilterPlainHnAnchoredHostname.prototype.toSelfie = 
 FilterPlainHnAnchoredHostname.prototype.rtCompile = function() {
-    return this.s + '\t' + this.domainOpt + '\t' + this.hostname + '\t' +
+    return this.s + '\t' + this.domainOpt + '\t' +
            this.filterPath;
 };
 
 FilterPlainHnAnchoredHostname.compile = function(details, hostname) {
-    return details.f + '\t' + details.domainOpt + '\t' + hostname + '\t' + details.path;;
+    return details.f + '\t' + details.domainOpt + '\t' + details.path;;
 };
 
 FilterPlainHnAnchoredHostname.fromSelfie = function(s) {
@@ -837,9 +825,8 @@ FilterGeneric.fromSelfie = function(s) {
 
 // Generic filter
 
-var FilterGenericHostname = function(s, anchor, domainOpt, hostname, filterPath) {
+var FilterGenericHostname = function(s, anchor, domainOpt, filterPath) {
     FilterGeneric.call(this, s, anchor, filterPath);
-    this.hostname = hostname;
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -860,17 +847,17 @@ FilterGenericHostname.prototype.rtfid = '_h';
 
 FilterGenericHostname.prototype.toSelfie = 
 FilterGenericHostname.prototype.rtCompile = function() {
-    return  FilterGeneric.prototype.toSelfie.call(this) + '\t' + this.domainOpt + '\t' + this.hostname + '\t' +
+    return  FilterGeneric.prototype.toSelfie.call(this) + '\t' + this.domainOpt + '\t' +
            this.filterPath;
 };
 
-FilterGenericHostname.compile = function(details, hostname) {
-    return FilterGeneric.compile(details) + '\t' + details.domainOpt + '\t' + hostname + '\t' + details.path;
+FilterGenericHostname.compile = function(details) {
+    return FilterGeneric.compile(details) + '\t' + details.domainOpt + '\t' + details.path;
 };
 
 FilterGenericHostname.fromSelfie = function(s) {
     var args = s.split('\t');
-    return new FilterGenericHostname(args[0], parseInt(args[1], 10), args[2], args[3]);
+    return new FilterGenericHostname(args[0], parseInt(args[1], 10), args[3], args[4]);
 };
 
 /******************************************************************************/
@@ -922,9 +909,8 @@ FilterGenericHnAnchored.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var FilterGenericHnAnchoredHostname = function(s, domainOpt, hostname, filterPath) {
+var FilterGenericHnAnchoredHostname = function(s, domainOpt, filterPath) {
     FilterGenericHnAnchored.call(this, s);
-    this.hostname = hostname;
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -945,12 +931,12 @@ FilterGenericHnAnchoredHostname.prototype.rtfid = '||_h';
 
 FilterGenericHnAnchoredHostname.prototype.toSelfie = 
 FilterGenericHnAnchoredHostname.prototype.rtCompile = function() {
-    return this.s + '\t' + this.domainOpt + '\t' + this.hostname + '\t' +
+    return this.s + '\t' + this.domainOpt + '\t' +
            this.filterPath;
 };
 
-FilterGenericHnAnchoredHostname.compile = function(details, hostname) {
-    return details.f + '\t' + details.domainOpt + '\t' + hostname + '\t' + details.path;
+FilterGenericHnAnchoredHostname.compile = function(details) {
+    return details.f + '\t' + details.domainOpt + '\t' + details.path;
 };
 
 FilterGenericHnAnchoredHostname.fromSelfie = function(s) {
@@ -992,9 +978,8 @@ FilterRegex.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var FilterRegexHostname = function(s, domainOpt, hostname, filterPath) {
+var FilterRegexHostname = function(s, domainOpt, filterPath) {
     this.re = new RegExp(s);
-    this.hostname = hostname;
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -1012,12 +997,12 @@ FilterRegexHostname.prototype.rtfid = '//h';
 
 FilterRegexHostname.prototype.toSelfie = 
 FilterRegexHostname.prototype.rtCompile = function() {
-      return this.re.source + '\t' + this.domainOpt + '\t' + this.hostname + '\t' +
+      return this.re.source + '\t' + this.domainOpt + '\t' +
            this.filterPath;
 };
 
-FilterRegexHostname.compile = function(details, hostname) {
-     return details.f + '\t' + details.domainOpt + '\t' + hostname + '\t' + this.hostname;
+FilterRegexHostname.compile = function(details) {
+     return details.f + '\t' + details.domainOpt + '\t' + details.path;
 };
 
 FilterRegexHostname.fromSelfie = function(s) {
@@ -1047,7 +1032,8 @@ FilterRegexHostname.fromSelfie = function(s) {
 // footprint is smaller. Compacting huge list of hostnames into single strings
 // saves a lot of memory compared to having one dictionary entry per hostname.
 
-var FilterHostnameDict = function() {
+var FilterHostnameDict = function(filterPath) {
+    this.filterPath = filterPath;
     this.h = ''; // short-lived register
     this.dict = {};
     this.count = 0;
@@ -1134,7 +1120,7 @@ FilterHostnameDict.prototype.add = function(hn, filterPath) {
         bucket = this.dict[key] = {};
         bucket[hn] = filterPath;
         this.count += 1;
-        return true;
+        return filterPath;
     }
     if ( typeof bucket === 'string' ) {
         bucket = this.dict[key] = this.meltBucket(hn.length, bucket);
@@ -1144,7 +1130,7 @@ FilterHostnameDict.prototype.add = function(hn, filterPath) {
     }
     bucket[hn] = filterPath;
     this.count += 1;
-    return true;
+    return filterPath;
 };
 
 FilterHostnameDict.prototype.freeze = function() {
@@ -1153,7 +1139,7 @@ FilterHostnameDict.prototype.freeze = function() {
     for ( var key in buckets ) {
         bucket = buckets[key];
         if ( typeof bucket === 'object' ) {
-//            buckets[key] = this.freezeBucket(bucket);
+            buckets[key] = this.freezeBucket(bucket);
         }
     }
 };
@@ -1166,10 +1152,11 @@ FilterHostnameDict.prototype.matchesExactly = function(hn) {
         return false;
     }
     if ( typeof bucket === 'object' ) {
-         return ((bucket[hn] !== undefined) ? bucket[hn] : false);
+         return ((bucket[hn] !== undefined) ? this.filterPath : false);
     }
     if ( bucket.charAt(0) === ' ' ) {
-        return bucket.indexOf(' ' + hn + ' ') !== -1;
+        if(bucket.indexOf(' ' + hn + ' ') !== -1)
+            return this.filterPath;
     }
     // binary search
     var len = hn.length;
@@ -1185,7 +1172,7 @@ FilterHostnameDict.prototype.matchesExactly = function(hn) {
         } else if ( hn > needle ) {
             left = i + 1;
         } else {
-            return true;
+            return this.filterPath;
         }
     }
     return false;
@@ -1220,7 +1207,8 @@ FilterHostnameDict.prototype.rtCompile = function() {
 FilterHostnameDict.prototype.toSelfie = function() {
     return JSON.stringify({
         count: this.count,
-        dict: this.dict
+        dict: this.dict,
+        filterPath:  this.filterPath
     });
 };
 
@@ -1229,6 +1217,7 @@ FilterHostnameDict.fromSelfie = function(s) {
     var o = JSON.parse(s);
     f.count = o.count;
     f.dict = o.dict;
+    f.filterPath = o.filterPath;
     return f;
 };
 
@@ -1267,14 +1256,15 @@ FilterHostnameDict.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var FilterBucket = function(a, b) {
+var FilterBucket = function(a, b, filterPath) {
+    this.filterPath = filterPath;
     this.promoted = 0;
     this.vip = 16;
     this.f = null;  // short-lived register
     this.filters = [];
-    if ( a !== undefined ) {
+    if ( a && a !== undefined) {
         this.filters[0] = a;
-        if ( b !== undefined ) {
+        if ( b && b !== undefined ) {
             this.filters[1] = b;
         }
     }
@@ -1328,8 +1318,8 @@ FilterBucket.prototype.match = function(url, tokenBeg) {
 
 FilterBucket.prototype.fid = '[]';
 
-FilterBucket.prototype.toSelfie = function() {
-    return this.filters.length.toString();
+FilterBucket.prototype.toSelfie = function() {  
+     return this.filters.length.toString() + '\t' + this.filterPath;
 };
 
 // Not supposed to be called without a valid filter hit.
@@ -1337,8 +1327,9 @@ FilterBucket.prototype.rtCompile = function() {
     return this.f.rtCompile();
 };
 
-FilterBucket.fromSelfie = function() {
-    return new FilterBucket();
+FilterBucket.fromSelfie = function(s) {
+    var args = s.split('\t');
+    return new FilterBucket(null, null, args[1]);
 };
 
 /******************************************************************************/
@@ -2064,7 +2055,7 @@ FilterContainer.prototype.compileToAtomicFilter = function(filterClass, parsed, 
             toHex(bits) + '\v' +
             parsed.token + '\v' +
             filterClass.fid + '\v' +
-            filterClass.compile(parsed, hostname, parsed.path)
+            filterClass.compile(parsed)
         );
         return;
     }
@@ -2076,7 +2067,7 @@ FilterContainer.prototype.compileToAtomicFilter = function(filterClass, parsed, 
                 toHex(bits | (bitOffset << 4)) + '\v' +
                 parsed.token + '\v' +
                 filterClass.fid + '\v' +
-                filterClass.compile(parsed, hostname, parsed.path)
+                filterClass.compile(parsed)
             );
         }
         bitOffset += 1;
@@ -2143,7 +2134,7 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, path) {
             entry.add(filter);
             continue;
         }
-        bucket[fields[1]] = new FilterBucket(entry, filter);
+        bucket[fields[1]] = new FilterBucket(entry, filter, path);
     }
     return textEnd;
 };
@@ -2353,7 +2344,6 @@ FilterContainer.prototype.matchTokens = function(bucket, url) {
         this.fRegister = f;
         return true;
     }
-
     return false;
 };
 
@@ -2605,29 +2595,38 @@ FilterContainer.prototype.matchString = function(context) {
 // the filter string. Typically, if the logger is not enabled, there is no
 // point in returning the long version: this saves overhead.
 
-FilterContainer.prototype.toResultString = function(verbose) {
-    var register = this.fRegister;
-    if ( register === null ) {
-        return '';
-    }
-    var s = this.keyRegister & 0x01 ? 'sa:' : 'sb:';
-     var response = {
-        str: s + register.s
-    };
-        try {
-        if (register.filterPath) response.filterPath = register.filterPath;
-        else if (register.f && register.f.filterPath){
-            response.filterPath = register.f.filterPath;
-            if(register.f.s)
-                response.str = s + register.f.s;
+    FilterContainer.prototype.toResultString = function (verbose) {
+        if (this.fRegister === null) {
+            return '';
         }
-    }
-    catch (exception) {
-        console.error("Exception in 'matchString' (static-net-filtering.js) :\n\t", exception);
-    }
-   
-    return response;
-};
+        var r  = this.fRegister;
+        var s = this.keyRegister & 0x01 ? 'sa:' : 'sb:';
+        if (!verbose) {
+            return  r.f ? {
+                str:s + r.f.s,
+                filterPath: r.f.filterPath
+            }
+            : {
+                str: s + r.s,
+                filterPath: r.filterPath
+            };
+        }else{
+            s += toHex(this.keyRegister) + '\v' + this.tokenRegister + '\v';
+            if ( this.tokenRegister === '.' ) {
+                s += this.fRegister.rtCompile();
+            } else {
+                s += this.fRegister.rtfid + '\v' + this.fRegister.rtCompile();
+            }
+            return  r.f ? {
+                str:s + r.f.s,
+                filterPath: r.f.filterPath
+            }
+            : {
+                str: s + r.s,
+                filterPath: r.filterPath
+            };
+        };
+    };
 
 /******************************************************************************/
 

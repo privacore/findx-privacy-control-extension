@@ -38,7 +38,7 @@ var exports = {};
 var isFilterAllowed = function (filterObj, request) {
     var µb = µBlock;
     var url = µb.getUrlWithoutParams(request.requestURL);
-    if(!µb.isInUse(filterObj.filterPath || "")){
+    if(!µb.isInUse(filterObj.filterPath)){
         return true;
     }
     if (µb.isUrlInExceptions(filterObj.filterPath, url, request.rootDomain)){
@@ -48,7 +48,7 @@ var isFilterAllowed = function (filterObj, request) {
     if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain)){
         return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
     }
-    return µb.isAllowResult(filterObj.str || filterObj) || µb.isDefaultOff(filterObj.filterPath || "");
+    return µb.isDefaultOff(filterObj.filterPath ) || µb.isAllowResult(filterObj.str || filterObj)  ;
 };
 
 // Intercept and filter web requests.

@@ -98,7 +98,7 @@ var matchWhitelistDirective = function(url, hostname, directive) {
         return false;
     };
     µBlock.isInUse = function (path) {
-        if (!path || path == '' || path == 'undefined') return true;
+        if (!path) return true;
      
         var filter = this.remoteBlacklists[path];
         return filter.hasOwnProperty("inUse") ? filter.inUse : true;

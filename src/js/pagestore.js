@@ -57,7 +57,7 @@ var NetFilteringResultCacheEntry = function(result, type) {
 /******************************************************************************/
 
 NetFilteringResultCacheEntry.prototype.init = function(result, type) {
-    this.result = result.str || result;
+    this.result = result.str;
     this.type = type;
     this.time = Date.now();
     this.filterPath = result.filterPath || "";
@@ -135,8 +135,10 @@ NetFilteringResultCache.prototype.dispose = function() {
 /******************************************************************************/
 
 NetFilteringResultCache.prototype.add = function(context, result) {
-    var str = result.str || result;
-    var filterPath = result.filterPath || "";
+    if(!result || !result.str || !result.str.length || !result.filterPath || !result.filterPath.length )
+        return;
+    var str = result.str ?result.str: 'test';
+    var filterPath = result.filterPath ? result.filterPath:'test';
     var url = context.requestURL;
     var type = context.requestType;
     var entry = this.urls[url];
@@ -149,9 +151,6 @@ NetFilteringResultCache.prototype.add = function(context, result) {
         return;
     }
     this.urls[url] = NetFilteringResultCacheEntry.factory(result, type);
-    if ( this.count === 0 ) {
-//        this.pruneAsync();
-    }
     this.count += 1;
 };
 
@@ -518,18 +517,18 @@ PageStore.prototype.toggleNetFilteringSwitch = function(url, scope, state) {
 PageStore.prototype.filterRequest = function(context, isNotRequest) {
     var requestType = context.requestType;
     if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
-       if ( collapsibleRequestTypes.indexOf(requestType) !== -1 ) {
+        if ( collapsibleRequestTypes.indexOf(requestType) !== -1 ) {
             this.netFilteringCache.add(context, '');
         }
         return '';
     }
 
     var entry = this.netFilteringCache.lookup(context);
-    if ( entry !== undefined ) {
+
+    if ( entry) {
         if (!isNotRequest)
             this.netFilteringCache.increaseQuantity(context.requestURL);
         //console.debug('cache HIT: PageStore.filterRequest("%s")', context.requestURL);
-        
         return {
             str: entry.result,
             filterPath: entry.filterPath
@@ -571,10 +570,8 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
 
     //console.debug('cache MISS: PageStore.filterRequest("%s")', context.requestURL);
 
-//    if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
         this.netFilteringCache.add(context, result);
-//    }
-
+    
     // console.debug('[%s, %s] = "%s"', context.requestHostname, requestType, result);
     
     return result;
@@ -586,7 +583,6 @@ var collapsibleRequestTypes = 'image sub_frame object';
 /******************************************************************************/
 
 PageStore.prototype.filterRequestNoCache = function(context) {
-     
         if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
             if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
                 this.netFilteringCache.add(context, '');

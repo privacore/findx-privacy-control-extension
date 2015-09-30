@@ -468,7 +468,7 @@
         callback(details);
     };
 
-    var onCompiledListLoaded = function(details) {
+    var onCompiledListLoaded = function(details) {  
         if ( details.content === '' ) {
             //console.debug('µBlock.getCompiledFilterList/onCompiledListLoaded: no compiled version for "%s"', path);
             µb.assets.get(path, onRawListLoaded);
@@ -834,8 +834,8 @@
     //console.debug('µBlock.getCompiledFilterList/onRawListLoaded: compiling "%s"', path);
     this.assets.put(
         this.getCompiledFilterListPath(path),
-        this.compileFilters(details.content)
-    );
+        this.compileFilters(details.content, path)
+);
 };
 
 /******************************************************************************/
