@@ -259,24 +259,19 @@
     };
 
     /******************************************************************************/
-    /******************************************************************************/
 
-    var FilterParser = function () {
-        this.prefix = '';
-        this.suffix = '';
+    var FilterParser = function() {
+        this.prefix =  this.suffix = this.style = '';
         this.unhide = 0;
         this.hostnames = [];
         this.invalid = false;
         this.cosmetic = true;
-        this.reParser = /^\s*([^#]*)(##|#@#)(.+)\s*$/;
-        this.reScriptSelectorParser = /^script:contains\(\/.+?\/\)$/;
+        this.reParser = /^([^#]*?)(##|#@#)(.+)$/;
+        this.reScriptContains = /^script:contains\(.+?\)$/;
     };
 
-    /******************************************************************************/
-
-    FilterParser.prototype.reset = function () {
-        this.prefix = '';
-        this.suffix = '';
+    FilterParser.prototype.reset = function() {
+        this.prefix = this.suffix = this.style = '';
         this.unhide = 0;
         this.hostnames.length = 0;
         this.invalid = false;
@@ -284,27 +279,34 @@
         return this;
     };
 
-    /******************************************************************************/
-
     FilterParser.prototype.parse = function (s) {
-        // important!
+            // important!
         this.reset();
-
         var matches = this.reParser.exec(s);
-        if (matches === null || matches.length !== 4) {
-            this.cosmetic = false;
+            if ( matches === null || matches.length !== 4 ) {
+                this.cosmetic = false;
+                return this;
+            }
+        this.prefix = matches[1].trim();
+        this.unhide = matches[2].charAt(1) === '@' ? 1 : 0;
+        this.suffix = matches[3].trim();
+
+        // Cosmetic filters with explicit style properties can apply only:
+        // - to specific cosmetic filters (those which apply to a specific site)
+        // - to block cosmetic filters (not exception cosmetic filters)
+        if ( this.suffix.slice(-1) === '}' ) {
+            // Not supported for now: this code will ensure some backward
+            // compatibility for when cosmetic filters with explicit style
+            // properties start to be in use.
+            this.invalid = true;
             return this;
         }
-
-        // Remember original string
-        this.prefix = matches[1];
-        this.suffix = matches[3];
 
         // 2014-05-23:
         // https://github.com/gorhill/httpswitchboard/issues/260
         // Any sequence of `#` longer than one means the line is not a valid
         // cosmetic filter.
-        if (this.suffix.indexOf('##') !== -1) {
+        if ( this.suffix.indexOf('##') !== -1 ) {
             this.cosmetic = false;
             return this;
         }
@@ -312,11 +314,19 @@
         // Normalize high-medium selectors: `href` is assumed to imply `a` tag. We
         // need to do this here in order to correctly avoid duplicates. The test
         // is designed to minimize overhead -- this is a low occurrence filter.
-        if (this.suffix.charAt(1) === '[' && this.suffix.slice(2, 9) === 'href^="') {
+        if ( this.suffix.charAt(1) === '[' && this.suffix.slice(2, 9) === 'href^="' ) {
             this.suffix = this.suffix.slice(1);
         }
 
+        if ( this.prefix !== '' ) {
+            this.hostnames = this.prefix.split(/\s*,\s*/);
+        }
+
         // Script tag filters: pre-process them so that can be used with minimal
+        // overhead in the content script.
+        // Examples:
+        //   focus.de##script:contains(/uabInject/)
+        //   focus.de##script:contains(uabInject)
         // overhead in the content script.
         if (
                 this.suffix.charAt(0) === 's' &&
@@ -336,6 +346,10 @@
         }
         return this;
     };
+
+        // Script tag filters: pre-process them so that can be used with minimal
+       
+   
 
     /******************************************************************************/
     /******************************************************************************/
@@ -1276,8 +1290,8 @@
 
     /******************************************************************************/
 
-    FilterContainer.prototype.retrieveDomainSelectors = function (request, rootDomain) {
-        if (!request.locationURL) {
+    FilterContainer.prototype.retrieveDomainSelectors = function(request) {
+        if ( !request.locationURL ) {
             return;
         }
 
@@ -1299,50 +1313,16 @@
             cosmeticHide: [],
             cosmeticDonthide: [],
             netHide: [],
-            scriptTagRegex: this.retrieveScriptTagRegex(domain, hostname),
             netCollapse: µb.userSettings.collapseBlocked
         };
 
-        var hash, bucket;
-        hash = makeHash(0, domain, this.domainHashMask);
-        if ((bucket = this.hostnameFilters[hash])) {
-            bucket.retrieve(hostname, r.cosmeticHide, rootDomain);
-        }
-        // https://github.com/chrisaljoudi/uBlock/issues/188
-        // Special bucket for those filters without a valid domain name as per PSL
-        if ((bucket = this.hostnameFilters[this.type0NoDomainHash])) {
-            bucket.retrieve(hostname, r.cosmeticHide, rootDomain);
-        }
+            //console.log(
+            //    'µBlock> abp-hide-filters.js: "%s" => %d selectors out',
+            //    request.locationURL,
+            //    r.cosmeticHide.length + r.cosmeticDonthide.length
+            //);
 
-        // entity filter buckets are always plain js array
-        if ((bucket = this.entityFilters[r.entity])) {
-            r.cosmeticHide = r.cosmeticHide.concat(bucket, rootDomain);
-        }
-        // No entity exceptions as of now
-
-        hash = makeHash(1, domain, this.domainHashMask);
-        if ((bucket = this.hostnameFilters[hash])) {
-            bucket.retrieve(hostname, r.cosmeticDonthide, rootDomain);
-        }
-
-        // https://github.com/chrisaljoudi/uBlock/issues/188
-        // Special bucket for those filters without a valid domain name as per PSL
-        if ((bucket = this.hostnameFilters[this.type1NoDomainHash])) {
-            bucket.retrieve(hostname, r.cosmeticDonthide, rootDomain);
-        }
-
-        this.retrieveFromSelectorCache(hostname, 'cosmetic', r.cosmeticHide);
-        this.retrieveFromSelectorCache(hostname, 'net', r.netHide);
-
-        //quickProfiler.stop();
-
-        //console.log(
-        //    'µBlock> abp-hide-filters.js: "%s" => %d selectors out',
-        //    request.locationURL,
-        //    r.cosmeticHide.length + r.cosmeticDonthide.length
-        //);
-
-        return r;
+            return r;
     };
 
     /******************************************************************************/
