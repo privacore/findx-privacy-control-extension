@@ -36,48 +36,58 @@
 
 // Could be replaced with encodeURIComponent/decodeURIComponent,
 // which seems faster on Firefox.
-    var encode = JSON.stringify;
-    var decode = JSON.parse;
+var encode = JSON.stringify;
+var decode = JSON.parse;
 
-    /******************************************************************************/
-    /*
-     var histogram = function(label, buckets) {
-     var h = [],
-     bucket;
-     for ( var k in buckets ) {
-     if ( buckets.hasOwnProperty(k) === false ) {
-     continue;
-     }
-     bucket = buckets[k];
-     h.push({
-     k: k,
-     n: bucket instanceof FilterBucket ? bucket.filters.length : 1
-     });
-     }
-     
-     console.log('Histogram %s', label);
-     
-     var total = h.length;
-     h.sort(function(a, b) { return b.n - a.n; });
-     
-     // Find indices of entries of interest
-     var target = 3;
-     for ( var i = 0; i < total; i++ ) {
-     if ( h[i].n === target ) {
-     console.log('\tEntries with only %d filter(s) start at index %s (key = "%s")', target, i, h[i].k);
-     target -= 1;
-     }
-     }
-     
-     h = h.slice(0, 50);
-     
-     h.forEach(function(v) {
-     console.log('\tkey="%s" count=%d', v.k, v.n);
-     });
-     console.log('\tTotal buckets count: %d', total);
-     };
-     */
-    /******************************************************************************/
+var isBadRegex = function(s) {
+    try {
+        void new RegExp(s);
+    } catch (ex) {
+        isBadRegex.message = ex.toString();
+        return true;
+    }
+    return false;
+};
+
+/******************************************************************************/
+/*
+var histogram = function(label, buckets) {
+    var h = [],
+        bucket;
+    for ( var k in buckets ) {
+        if ( buckets.hasOwnProperty(k) === false ) {
+            continue;
+        }
+        bucket = buckets[k];
+        h.push({
+            k: k,
+            n: bucket instanceof FilterBucket ? bucket.filters.length : 1
+        });
+    }
+
+    console.log('Histogram %s', label);
+
+    var total = h.length;
+    h.sort(function(a, b) { return b.n - a.n; });
+
+    // Find indices of entries of interest
+    var target = 3;
+    for ( var i = 0; i < total; i++ ) {
+        if ( h[i].n === target ) {
+            console.log('\tEntries with only %d filter(s) start at index %s (key = "%s")', target, i, h[i].k);
+            target -= 1;
+        }
+    }
+
+    h = h.slice(0, 50);
+
+    h.forEach(function(v) {
+        console.log('\tkey="%s" count=%d', v.k, v.n);
+    });
+    console.log('\tTotal buckets count: %d', total);
+};
+*/
+/******************************************************************************/
 
 // Pure id- and class-based filters
 // Examples:
@@ -279,37 +289,94 @@
         return this;
     };
 
-    FilterParser.prototype.parse = function (s) {
-            // important!
-        this.reset();
-        var matches = this.reParser.exec(s);
-            if ( matches === null || matches.length !== 4 ) {
-                this.cosmetic = false;
-                return this;
-            }
-        this.prefix = matches[1].trim();
-        this.unhide = matches[2].charAt(1) === '@' ? 1 : 0;
-        this.suffix = matches[3].trim();
+  
+FilterParser.prototype.parse = function(raw) {
+    // important!
+    this.reset();
 
-        // Cosmetic filters with explicit style properties can apply only:
-        // - to specific cosmetic filters (those which apply to a specific site)
-        // - to block cosmetic filters (not exception cosmetic filters)
-        if ( this.suffix.slice(-1) === '}' ) {
-            // Not supported for now: this code will ensure some backward
-            // compatibility for when cosmetic filters with explicit style
-            // properties start to be in use.
-            this.invalid = true;
-            return this;
-        }
+    var matches = this.reParser.exec(raw);
+    if ( matches === null || matches.length !== 4 ) {
+        this.cosmetic = false;
+        return this;
+    }
+    this.prefix = matches[1].trim();
+    this.unhide = matches[2].charAt(1) === '@' ? 1 : 0;
+    this.suffix = matches[3].trim();
 
-        // 2014-05-23:
-        // https://github.com/gorhill/httpswitchboard/issues/260
-        // Any sequence of `#` longer than one means the line is not a valid
-        // cosmetic filter.
-        if ( this.suffix.indexOf('##') !== -1 ) {
-            this.cosmetic = false;
-            return this;
-        }
+    // Cosmetic filters with explicit style properties can apply only:
+    // - to specific cosmetic filters (those which apply to a specific site)
+    // - to block cosmetic filters (not exception cosmetic filters)
+    if ( this.suffix.slice(-1) === '}' ) {
+        // Not supported for now: this code will ensure some backward
+        // compatibility for when cosmetic filters with explicit style
+        // properties start to be in use.
+        this.invalid = true;
+        return this;
+    }
+
+    // 2014-05-23:
+    // https://github.com/gorhill/httpswitchboard/issues/260
+    // Any sequence of `#` longer than one means the line is not a valid
+    // cosmetic filter.
+    if ( this.suffix.indexOf('##') !== -1 ) {
+        this.cosmetic = false;
+        return this;
+    }
+
+    // Normalize high-medium selectors: `href` is assumed to imply `a` tag. We
+    // need to do this here in order to correctly avoid duplicates. The test
+    // is designed to minimize overhead -- this is a low occurrence filter.
+    if ( this.suffix.charAt(1) === '[' && this.suffix.slice(2, 9) === 'href^="' ) {
+        this.suffix = this.suffix.slice(1);
+    }
+
+    if ( this.prefix !== '' ) {
+        this.hostnames = this.prefix.split(/\s*,\s*/);
+    }
+
+    // Script tag filters: pre-process them so that can be used with minimal
+    // overhead in the content script.
+    // Examples:
+    //   focus.de##script:contains(/uabInject/)
+    //   focus.de##script:contains(uabInject)
+
+    // Inline script tag filter?
+    if (
+        this.suffix.charAt(0) !== 's' ||
+        this.reScriptContains.test(this.suffix) === false )
+    {
+        return this;
+    }
+
+    // Currently supported only as non-generic selector. Also, exception
+    // script tag filter makes no sense, ignore.
+    if ( this.hostnames.length === 0 || this.unhide === 1 ) {
+        this.invalid = true;
+        return this;
+    }
+
+    var suffix = this.suffix;
+    this.suffix = 'script//:';
+
+    // Plain string-based?
+    if ( suffix.charAt(16) !== '/' || suffix.slice(-2) !== '/)' ) {
+        this.suffix += suffix.slice(16, -1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return this;
+    }
+
+    // Regex-based
+    this.suffix += suffix.slice(17, -2).replace(/\\/g, '\\');
+
+    // Valid regex?
+    if ( isBadRegex(this.suffix) ) {
+        console.error(
+            "uBlock Origin> discarding bad regular expression-based cosmetic filter '%s': '%s'",
+            raw,
+            isBadRegex.message
+        );
+        this.invalid = true;
+        return this;
+    }
 
         // Normalize high-medium selectors: `href` is assumed to imply `a` tag. We
         // need to do this here in order to correctly avoid duplicates. The test
