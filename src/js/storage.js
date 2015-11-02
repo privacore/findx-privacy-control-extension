@@ -239,6 +239,7 @@
                 µb.purgeFilterList(location);
 //                continue;
             }
+            
             availableEntry.off = off;
             if ( typeof availableEntry.homeURL === 'string' ) {
                 µb.assets.setHomeURL(location, availableEntry.homeURL);
