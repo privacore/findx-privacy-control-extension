@@ -34,9 +34,9 @@ var messager = vAPI.messaging.channel('about.js');
 /******************************************************************************/
 
 var onAppDataReady = function(appData) {
-    var released = '06.19.2015';
+    var released = '06/19/2015';
     uDom('#aboutNameVer').html(appData.name + ' v' + appData.version + ', released '+released );
-    uDom('#aboutBuild').html('Build date - 05.11.2015');
+    uDom('#aboutBuild').html('Build date - 11/09/2015');
 };
 
 messager.send({ what: 'getAppData' }, onAppDataReady);

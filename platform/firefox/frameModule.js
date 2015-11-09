@@ -209,7 +209,7 @@ var contentObserver = {
             url: location.spec
         };
 
-        //console.log('shouldLoad: type=' + type' ' + 'url=' + location.spec);
+        //console.log('shouldLoad: type=' + type + ' url=' + location.spec);
         var r;
         if ( typeof messageManager.sendRpcMessage === 'function' ) {
             // https://bugzil.la/1092216
@@ -220,7 +220,7 @@ var contentObserver = {
         }
 
         // Important: hard test against `false`.
-        if ( Array.isArray(r) && r.length !== 0 && r[0] === false ) {
+        if ( Array.isArray(r) && r[0] === false ) {
             return this.REJECT;
         }
 

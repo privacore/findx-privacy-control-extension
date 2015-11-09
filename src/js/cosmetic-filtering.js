@@ -796,20 +796,20 @@ FilterParser.prototype.parse = function(raw) {
             // Single-CSS rule: no need to test for whether the selector
             // is valid, the regex took care of this. Most generic selector falls
             // into that category.
-            if (matches[1] === selector) {
+            if (matches[0] === selector) {
                 out.push(
-                        'c\vlg\v' +
-                        matches[1]
-                        );
+                    'c\vlg\v' +
+                    matches[0]
+                );
                 return;
             }
             // Many-CSS rules
             if (this.isValidSelector(selector)) {
                 out.push(
-                        'c\vlg+\v' +
-                        matches[1] + '\v' +
-                        selector
-                        );
+                    'c\vlg+\v' +
+                    matches[0] + '\v' +
+                    selector
+                );
             }
             return;
         }

@@ -189,11 +189,13 @@ vAPI.browserSettings = {
     },
 
     set: function(details) {
-        var value;
+        var settingVal;
+        var prefName, prefVal;
         for ( var setting in details ) {
             if ( details.hasOwnProperty(setting) === false ) {
                 continue;
             }
+            settingVal = !!details[setting];
             switch ( setting ) {
             case 'prefetching':
                 this.rememberOriginalValue('network', 'prefetch-next');
@@ -201,10 +203,9 @@ vAPI.browserSettings = {
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=814169
                 // Sigh.
                 this.rememberOriginalValue('network.http', 'speculative-parallel-limit');
-                value = !!details[setting];
                 // https://github.com/gorhill/uBlock/issues/292
                 // "true" means "do not disable", i.e. leave entry alone
-                if ( value === true ) {
+                if ( settingVal ) {
                     this.clear('network', 'prefetch-next');
                     this.clear('network.http', 'speculative-parallel-limit');
                 } else {
@@ -216,10 +217,9 @@ vAPI.browserSettings = {
             case 'hyperlinkAuditing':
                 this.rememberOriginalValue('browser', 'send_pings');
                 this.rememberOriginalValue('beacon', 'enabled');
-                value = !!details[setting];
                 // https://github.com/gorhill/uBlock/issues/292
                 // "true" means "do not disable", i.e. leave entry alone
-                if ( value === true ) {
+                if ( settingVal ) {
                     this.clear('browser', 'send_pings');
                     this.clear('beacon', 'enabled');
                 } else {
@@ -228,13 +228,24 @@ vAPI.browserSettings = {
                 }
                 break;
 
+            // https://github.com/gorhill/uBlock/issues/894
+            // Do not disable completely WebRTC if it can be avoided. FF42+
+            // has a `media.peerconnection.ice.default_address_only` pref which
+            // purpose is to prevent local IP address leakage.
             case 'webrtcIPAddress':
-                this.rememberOriginalValue('media.peerconnection', 'enabled');
-                value = !!details[setting];
-                if ( value === true ) {
-                    this.clear('media.peerconnection', 'enabled');
+                if ( this.getValue('media.peerconnection', 'ice.default_address_only') !== undefined ) {
+                    prefName = 'ice.default_address_only';
+                    prefVal = true;
                 } else {
-                    this.setValue('media.peerconnection', 'enabled', false);
+                    prefName = 'enabled';
+                    prefVal = false;
+                }
+
+                this.rememberOriginalValue('media.peerconnection', prefName);
+                if ( settingVal ) {
+                    this.clear('media.peerconnection', prefName);
+                } else {
+                    this.setValue('media.peerconnection', prefName, prefVal);
                 }
                 break;
 
@@ -1217,6 +1228,13 @@ var tabWatcher = (function() {
             return;
         }
 
+        // https://github.com/gorhill/uBlock/issues/906
+        // This might have been the cause. Will see.
+        if ( document.readyState !== 'complete' ) {
+            attachToTabBrowserLater({ window: window, tryCount: tryCount });
+            return;
+        }
+
         // On some platforms, the tab browser isn't immediately available,
         // try waiting a bit if this happens.
         // https://github.com/gorhill/uBlock/issues/763
@@ -1843,52 +1861,52 @@ var httpObserver = {
         }
     },
 
+    // Pending request ring buffer:
+    // +-------+-------+-------+-------+-------+-------+-------
+    // |0      |1      |2      |3      |4      |5      |...      
+    // +-------+-------+-------+-------+-------+-------+-------
+    //
+    // URL to ring buffer index map:
+    // { k = URL, s = ring buffer indices }
+    //
+    // s is a string which character codes map to ring buffer indices -- for
+    // when the same URL is received multiple times by shouldLoadListener()
+    // before the existing one is serviced by the network request observer.
+    // I believe the use of a string in lieu of an array reduces memory
+    // churning.
+
     createPendingRequest: function(url) {
         var bucket;
         var i = this.pendingWritePointer;
         this.pendingWritePointer = i + 1 & 31;
         var preq = this.pendingRingBuffer[i];
+        var si = String.fromCharCode(i);
         // Cleanup unserviced pending request
         if ( preq._key !== '' ) {
             bucket = this.pendingURLToIndex.get(preq._key);
-            if ( Array.isArray(bucket) ) {
-                // Assuming i in array
-                var pos = bucket.indexOf(i);
-                bucket.splice(pos, 1);
-                if ( bucket.length === 1 ) {
-                    this.pendingURLToIndex.set(preq._key, bucket[0]);
-                }
-            } else if ( typeof bucket === 'number' ) {
-                // Assuming bucket === i
+            if ( bucket.length === 1 ) {
                 this.pendingURLToIndex.delete(preq._key);
+            } else {
+                var pos = bucket.indexOf(si);
+                this.pendingURLToIndex.set(preq._key, bucket.slice(0, pos) + bucket.slice(pos + 1));
             }
         }
-        // Would be much simpler if a url could not appear more than once.
         bucket = this.pendingURLToIndex.get(url);
-        if ( bucket === undefined ) {
-            this.pendingURLToIndex.set(url, i);
-        } else if ( Array.isArray(bucket) ) {
-            bucket = bucket.push(i);
-        } else {
-            bucket = [bucket, i];
-        }
+        this.pendingURLToIndex.set(url, bucket === undefined ? si : bucket + si);
         preq._key = url;
         return preq;
     },
 
     lookupPendingRequest: function(url) {
-        var i = this.pendingURLToIndex.get(url);
-        if ( i === undefined ) {
+        var bucket = this.pendingURLToIndex.get(url);
+        if ( bucket === undefined ) {
             return null;
         }
-        if ( Array.isArray(i) ) {
-            var bucket = i;
-            i = bucket.shift();
-            if ( bucket.length === 1 ) {
-                this.pendingURLToIndex.set(url, bucket[0]);
-            }
-        } else {
+        var i = bucket.charCodeAt(0);
+        if ( bucket.length === 1 ) {
             this.pendingURLToIndex.delete(url);
+        } else {
+            this.pendingURLToIndex.set(url, bucket.slice(1));
         }
         var preq = this.pendingRingBuffer[i];
         preq._key = ''; // mark as "serviced"
@@ -2158,7 +2176,6 @@ vAPI.net.registerListeners = function() {
         // requests.
         var details = e.data;
         var sourceTabId = null;
-        var mustLoad;
 
         details.tabId = tabWatcher.tabIdFromTarget(e.target);
 
@@ -2174,8 +2191,10 @@ vAPI.net.registerListeners = function() {
         // https://github.com/gorhill/uBlock/issues/868
         // Firefox quirk: for some reasons, there are instances of resources
         // for `video` tag not being reported to HTTP observers.
-        if ( details.rawtype === 15 ) {
-            mustLoad = shouldLoadMedia(details);
+        // If blocking, do not bother creating a pending request entry, it
+        // won't be used anyway.
+        if ( details.rawtype === 15 && shouldLoadMedia(details) === false ) {
+            return false;
         }
 
         // We are being called synchronously from the content process, so we
@@ -2187,8 +2206,6 @@ vAPI.net.registerListeners = function() {
         pendingReq.rawtype = details.rawtype;
         pendingReq.sourceTabId = sourceTabId;
         pendingReq.tabId = details.tabId;
-
-        return mustLoad;
     };
 
     vAPI.messaging.globalMessageManager.addMessageListener(
@@ -3028,7 +3045,6 @@ vAPI.contextMenu = {
 vAPI.contextMenu.displayMenuItem = function({target}) {
     var doc = target.ownerDocument;
     var gContextMenu = doc.defaultView.gContextMenu;
-
     if ( !gContextMenu.browser ) {
         return;
     }
@@ -3039,14 +3055,14 @@ vAPI.contextMenu.displayMenuItem = function({target}) {
     // https://github.com/chrisaljoudi/uBlock/issues/105
     // TODO: Should the element picker works on any kind of pages?
     if ( !currentURI.schemeIs('http') && !currentURI.schemeIs('https') ) {
-        menuitem.hidden = true;
+        menuitem.setAttribute('hidden', true);
         return;
     }
 
     var ctx = vAPI.contextMenu.contexts;
 
     if ( !ctx ) {
-        menuitem.hidden = false;
+        menuitem.setAttribute('hidden', false);
         return;
     }
 
@@ -3062,60 +3078,82 @@ vAPI.contextMenu.displayMenuItem = function({target}) {
             !gContextMenu.onVideo &&
             !gContextMenu.onAudio
         ) {
-            menuitem.hidden = false;
+            menuitem.setAttribute('hidden', false);
             return;
         }
         if (
             ctxMap.hasOwnProperty(context) &&
             gContextMenu[ctxMap[context]]
         ) {
-            menuitem.hidden = false;
+            menuitem.setAttribute('hidden', false);
             return;
         }
     }
 
-    menuitem.hidden = true;
+    menuitem.setAttribute('hidden', true);
 };
 
 /******************************************************************************/
 
-vAPI.contextMenu.register = function(doc) {
-    if ( !this.menuItemId ) {
-        return;
-    }
+vAPI.contextMenu.register = (function() {
+    var register = function(doc) {
+        if ( !this.menuItemId ) {
+            return;
+        }
 
-    if ( vAPI.fennec ) {
-        // TODO https://developer.mozilla.org/en-US/Add-ons/Firefox_for_Android/API/NativeWindow/contextmenus/add
-        /*var nativeWindow = doc.defaultView.NativeWindow;
-        contextId = nativeWindow.contextmenus.add(
-            this.menuLabel,
-            nativeWindow.contextmenus.linkOpenableContext,
-            this.onCommand
-        );*/
-        return;
-    }
+        if ( vAPI.fennec ) {
+            // TODO https://developer.mozilla.org/en-US/Add-ons/Firefox_for_Android/API/NativeWindow/contextmenus/add
+            /*var nativeWindow = doc.defaultView.NativeWindow;
+            contextId = nativeWindow.contextmenus.add(
+                this.menuLabel,
+                nativeWindow.contextmenus.linkOpenableContext,
+                this.onCommand
+            );*/
+            return;
+        }
 
-    // Already installed?
-    if ( doc.getElementById(this.menuItemId) !== null ) {
-        return;
-    }
+        // Already installed?
+        if ( doc.getElementById(this.menuItemId) !== null ) {
+            return;
+        }
 
-    var contextMenu = doc.getElementById('contentAreaContextMenu');
+        var contextMenu = doc.getElementById('contentAreaContextMenu');
 
-    // This can happen (Thunderbird).
-    if ( contextMenu === null ) {
-        return;
-    }
+        // This can happen (Thunderbird).
+        if ( contextMenu === null ) {
+            return;
+        }
 
-    var menuitem = doc.createElement('menuitem');
-    menuitem.setAttribute('id', this.menuItemId);
-    menuitem.setAttribute('label', this.menuLabel);
-    menuitem.setAttribute('image', vAPI.getURL('img/browsericons/icon16.png'));
-    menuitem.setAttribute('class', 'menuitem-iconic');
-    menuitem.addEventListener('command', this.onCommand);
-    contextMenu.addEventListener('popupshowing', this.displayMenuItem);
-    contextMenu.insertBefore(menuitem, doc.getElementById('inspect-separator'));
-};
+        var menuitem = doc.createElement('menuitem');
+        menuitem.setAttribute('id', this.menuItemId);
+        menuitem.setAttribute('label', this.menuLabel);
+        menuitem.setAttribute('image', vAPI.getURL('img/browsericons/icon16.svg'));
+        menuitem.setAttribute('class', 'menuitem-iconic');
+        menuitem.addEventListener('command', this.onCommand);
+        contextMenu.addEventListener('popupshowing', this.displayMenuItem);
+        contextMenu.insertBefore(menuitem, doc.getElementById('inspect-separator'));
+    };
+
+    // https://github.com/gorhill/uBlock/issues/906
+    // Be sure document.readyState is 'complete': it could happen at launch
+    // time that we are called by vAPI.contextMenu.create() directly before
+    // the environment is properly initialized.
+    var registerSafely = function(doc, tryCount) {
+        if ( doc.readyState === 'complete' ) {
+            register.call(this, doc);
+            return;
+        }
+        if ( typeof tryCount !== 'number' ) {
+            tryCount = 0;
+        }
+        tryCount += 1;
+        if ( tryCount < 8 ) {
+            vAPI.setTimeout(registerSafely.bind(this, doc, tryCount), 200);
+        }
+    };
+
+    return registerSafely;
+})();
 
 /******************************************************************************/
 
