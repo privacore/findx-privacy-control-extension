@@ -711,7 +711,6 @@ vAPI.noTabId = '-1';
 
 vAPI.tabs = {};
 
-
 /******************************************************************************/
 
 vAPI.tabs.registerListeners = function() {
@@ -839,11 +838,6 @@ vAPI.tabs.open = function(details) {
 
         for ( tab of this.getAll() ) {
             var browser = tabWatcher.browserFromTarget(tab);
-
-            // Or simply .equals if we care about the fragment
-            if ( URI.equalsExceptRef(browser.currentURI) === false ) {
-                continue;
-            }
 
             // Or simply .equals if we care about the fragment
             if ( URI.equalsExceptRef(browser.currentURI) === false ) {
@@ -1746,9 +1740,6 @@ var httpObserver = {
     ACCEPT: Components.results.NS_SUCCEEDED,
     // Request types:
     // https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIContentPolicy#Constants
-    MAIN_FRAME: Ci.nsIContentPolicy.TYPE_DOCUMENT,
-    VALID_CSP_TARGETS: 1 << Ci.nsIContentPolicy.TYPE_DOCUMENT |
-                       1 << Ci.nsIContentPolicy.TYPE_SUBDOCUMENT,
     typeMap: {
         1: 'other',
         2: 'script',
@@ -1766,6 +1757,10 @@ var httpObserver = {
         19: 'beacon',
         21: 'image'
     },
+    onBeforeRequest: function(){},
+    onBeforeRequestTypes: null,
+    onHeadersReceived: function(){},
+    onHeadersReceivedTypes: null,
 
     get componentRegistrar() {
         return Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
@@ -1932,14 +1927,12 @@ var httpObserver = {
     },
 
     handleRequest: function(channel, URI, details) {
-        var onBeforeRequest = vAPI.net.onBeforeRequest;
         var type = this.typeMap[details.rawtype] || 'other';
-
-        if ( onBeforeRequest.types && onBeforeRequest.types.has(type) === false ) {
+        if ( this.onBeforeRequestTypes && this.onBeforeRequestTypes.has(type) === false ) {
             return false;
         }
 
-        var result = onBeforeRequest.callback({
+        var result = this.onBeforeRequest({
             frameId: details.frameId,
             hostname: URI.asciiHost,
             parentFrameId: details.parentFrameId,
@@ -1960,67 +1953,98 @@ var httpObserver = {
         return false;
     },
 
+    getResponseHeader: function(channel, name) {
+        var value;
+        try {
+            value = channel.getResponseHeader(name);
+        } catch (ex) {
+        }
+        return value;
+    },
+
+    handleResponseHeaders: function(channel, URI, channelData) {
+        var type = this.typeMap[channelData[4]] || 'other';
+        if ( this.onHeadersReceivedTypes && this.onHeadersReceivedTypes.has(type) === false ) {
+            return;
+        }
+
+        // 'Content-Security-Policy' MUST come last in the array. Need to
+        // revised this eventually.
+        var responseHeaders = [];
+        var value = this.getResponseHeader(channel, 'Content-Security-Policy');
+        if ( value !== undefined ) {
+            responseHeaders.push({ name: 'Content-Security-Policy', value: value });
+        }
+
+        var result = this.onHeadersReceived({
+            hostname: URI.asciiHost,
+            parentFrameId: channelData[1],
+            responseHeaders: responseHeaders,
+            tabId: channelData[3],
+            type: this.typeMap[channelData[4]] || 'other',
+            url: URI.asciiSpec
+        });
+
+        if ( !result ) {
+            return;
+        }
+
+        if ( result.cancel ) {
+            channel.cancel(this.ABORT);
+            return;
+        }
+
+        if ( result.responseHeaders ) {
+            channel.setResponseHeader(
+                'Content-Security-Policy',
+                result.responseHeaders.pop().value,
+                true
+            );
+            return;
+        }
+    },
+
     observe: function(channel, topic) {
         if ( channel instanceof Ci.nsIHttpChannel === false ) {
             return;
         }
 
         var URI = channel.URI;
-        var channelData, result;
 
         if ( topic === 'http-on-examine-response' ) {
-            if ( !(channel instanceof Ci.nsIWritablePropertyBag) ) {
+            if ( channel instanceof Ci.nsIWritablePropertyBag === false ) {
                 return;
             }
 
+            var channelData;
             try {
                 channelData = channel.getProperty(this.REQDATAKEY);
             } catch (ex) {
-                return;
             }
-
             if ( !channelData ) {
                 return;
             }
 
-            if ( (1 << channelData[4] & this.VALID_CSP_TARGETS) === 0 ) {
-                return;
-            }
-
-            topic = 'Content-Security-Policy';
-
-            try {
-                result = channel.getResponseHeader(topic);
-            } catch (ex) {
-                result = null;
-            }
-
-            result = vAPI.net.onHeadersReceived.callback({
-                hostname: URI.asciiHost,
-                parentFrameId: channelData[1],
-                responseHeaders: result ? [{name: topic, value: result}] : [],
-                tabId: channelData[3],
-                type: this.typeMap[channelData[4]] || 'other',
-                url: URI.asciiSpec
-            });
-
-            if ( result ) {
-                channel.setResponseHeader(
-                    topic,
-                    result.responseHeaders.pop().value,
-                    true
-                );
-            }
+            this.handleResponseHeaders(channel, URI, channelData);
 
             return;
         }
 
         // http-on-opening-request
 
-        //console.log('http-on-opening-request:', URI.spec);
-
         var pendingRequest = this.lookupPendingRequest(URI.spec);
-        var rawtype = channel.loadInfo && channel.loadInfo.contentPolicyType || 1;
+
+        // https://github.com/gorhill/uMatrix/issues/390#issuecomment-155759004
+        var rawtype = 1;
+        var loadInfo = channel.loadInfo;
+        if ( loadInfo ) {
+            rawtype = loadInfo.externalContentPolicyType !== undefined ?
+                loadInfo.externalContentPolicyType :
+                loadInfo.contentPolicyType;
+            if ( !rawtype ) {
+                rawtype = 1;
+            }
+        }
 
         // Behind-the-scene request
         if ( pendingRequest === null ) {
@@ -2106,6 +2130,7 @@ var httpObserver = {
 };
 
 /******************************************************************************/
+/******************************************************************************/
 
 vAPI.net = {};
 
@@ -2115,9 +2140,19 @@ vAPI.net.registerListeners = function() {
     // Since it's not used
     this.onBeforeSendHeaders = null;
 
-    this.onBeforeRequest.types = this.onBeforeRequest.types ?
-        new Set(this.onBeforeRequest.types) :
-        null;
+    if ( typeof this.onBeforeRequest.callback === 'function' ) {
+        httpObserver.onBeforeRequest = this.onBeforeRequest.callback;
+        httpObserver.onBeforeRequestTypes = this.onBeforeRequest.types ?
+            new Set(this.onBeforeRequest.types) :
+            null;
+    }
+
+    if ( typeof this.onHeadersReceived.callback === 'function' ) {
+        httpObserver.onHeadersReceived = this.onHeadersReceived.callback;
+        httpObserver.onHeadersReceivedTypes = this.onHeadersReceived.types ?
+            new Set(this.onHeadersReceived.types) :
+            null;
+    }
 
     var shouldBlockPopup = function(details) {
         var sourceTabId = null;
@@ -2153,21 +2188,6 @@ vAPI.net.registerListeners = function() {
         return sourceTabId;
     };
 
-    var shouldLoadMedia = function(details) {
-        var uri = Services.io.newURI(details.url, null, null);
-
-        var r = vAPI.net.onBeforeRequest.callback({
-            frameId: details.frameId,
-            hostname: uri.asciiHost,
-            parentFrameId: details.parentFrameId,
-            tabId: details.tabId,
-            type: 'media',
-            url: uri.asciiSpec
-        });
-
-        return typeof r !== 'object' || r === null;
-    };
-
     var shouldLoadListenerMessageName = location.host + ':shouldLoad';
     var shouldLoadListener = function(e) {
         // Non blocking: it is assumed that the http observer is fired after
@@ -2186,15 +2206,6 @@ vAPI.net.registerListeners = function() {
         // this code path is typically taken only once per page load.
         if ( details.openerURL ) {
             sourceTabId = shouldBlockPopup(details);
-        }
-
-        // https://github.com/gorhill/uBlock/issues/868
-        // Firefox quirk: for some reasons, there are instances of resources
-        // for `video` tag not being reported to HTTP observers.
-        // If blocking, do not bother creating a pending request entry, it
-        // won't be used anyway.
-        if ( details.rawtype === 15 && shouldLoadMedia(details) === false ) {
-            return false;
         }
 
         // We are being called synchronously from the content process, so we
