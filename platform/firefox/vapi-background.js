@@ -1709,16 +1709,24 @@ vAPI.rpcReceiver = (function() {
         }
     };
 
-    if ( Services.ppmm ) {
-        Services.ppmm.addMessageListener(
+    var ppmm = Services.ppmm;
+    if ( !ppmm ) {
+        ppmm = Cc['@mozilla.org/parentprocessmessagemanager;1'];
+        if ( ppmm ) {
+            ppmm = ppmm.getService(Ci.nsIMessageListenerManager);
+        }
+    }
+
+    if ( ppmm ) {
+        ppmm.addMessageListener(
             childProcessMessageName,
             onChildProcessMessage
         );
     }
 
     cleanupTasks.push(function() {
-        if ( Services.ppmm ) {
-            Services.ppmm.removeMessageListener(
+        if ( ppmm ) {
+            ppmm.removeMessageListener(
                 childProcessMessageName,
                 onChildProcessMessage
             );
@@ -1908,6 +1916,68 @@ var httpObserver = {
         return preq;
     },
 
+    // https://github.com/gorhill/uMatrix/issues/165
+    // https://developer.mozilla.org/en-US/Firefox/Releases/3.5/Updating_extensions#Getting_a_load_context_from_a_request
+    // Not sure `umatrix:shouldLoad` is still needed, uMatrix does not
+    //   care about embedded frames topography.
+    // Also:
+    //   https://developer.mozilla.org/en-US/Firefox/Multiprocess_Firefox/Limitations_of_chrome_scripts
+    tabIdFromChannel: function(channel) {
+        var aWindow;
+        if ( channel.notificationCallbacks ) {
+            try {
+                var loadContext = channel
+                        .notificationCallbacks
+                        .getInterface(Ci.nsILoadContext);
+                if ( loadContext.topFrameElement ) {
+                    return tabWatcher.tabIdFromTarget(loadContext.topFrameElement);
+                }
+                aWindow = loadContext.associatedWindow;
+            } catch (ex) {
+                //console.error(ex);
+            }
+        }
+        try {
+            if ( !aWindow && channel.loadGroup && channel.loadGroup.notificationCallbacks ) {
+                aWindow = channel
+                    .loadGroup
+                    .notificationCallbacks
+                    .getInterface(Ci.nsILoadContext)
+                    .associatedWindow;
+            }
+            if ( aWindow ) {
+                return tabWatcher.tabIdFromTarget(
+                    aWindow
+                    .getInterface(Ci.nsIWebNavigation)
+                    .QueryInterface(Ci.nsIDocShell)
+                    .rootTreeItem
+                    .QueryInterface(Ci.nsIInterfaceRequestor)
+                    .getInterface(Ci.nsIDOMWindow)
+                    .gBrowser
+                    .getBrowserForContentWindow(aWindow)
+                );
+            }
+        } catch (ex) {
+            //console.error(ex);
+        }
+        return vAPI.noTabId;
+    },
+
+    // https://github.com/gorhill/uBlock/issues/959
+    //   Try to synthesize a pending request from a behind-the-scene request.
+    synthesizePendingRequest: function(channel, rawtype) {
+        var tabId = this.tabIdFromChannel(channel);
+        if ( tabId === vAPI.noTabId ) {
+            return null;
+        }
+        return {
+            frameId: 0,
+            parentFrameId: -1,
+            tabId: tabId,
+            rawtype: rawtype
+        };
+    },
+
     handlePopup: function(URI, tabId, sourceTabId) {
         if ( !sourceTabId ) {
             return false;
@@ -1947,6 +2017,12 @@ var httpObserver = {
 
         if ( result.cancel === true ) {
             channel.cancel(this.ABORT);
+            return true;
+        }
+
+        if ( result.redirectUrl ) {
+            channel.redirectionLimit = 1;
+            channel.redirectTo(Services.io.newURI(result.redirectUrl, null, null));
             return true;
         }
 
@@ -2046,7 +2122,12 @@ var httpObserver = {
             }
         }
 
-        // Behind-the-scene request
+        // Behind-the-scene request... Really?
+        if ( pendingRequest === null ) {
+            pendingRequest = this.synthesizePendingRequest(channel, rawtype);
+        }
+
+        // Behind-the-scene request... Yes, really.
         if ( pendingRequest === null ) {
             if ( this.handleRequest(channel, URI, { tabId: vAPI.noTabId, rawtype: rawtype }) ) {
                 return;
@@ -2373,15 +2454,34 @@ vAPI.toolbarButton = {
         });
     };
 
+    // https://github.com/gorhill/uBlock/issues/955
+    // Defer until `NativeWindow` is available.
+    tbb.initOne = function(win, tryCount) {
+        if ( !win.NativeWindow ) {
+            if ( typeof tryCount !== 'number' ) {
+                tryCount = 0;
+            }
+            tryCount += 1;
+            if ( tryCount < 10 ) {
+                vAPI.setTimeout(
+                    this.initOne.bind(this, win, tryCount),
+                    200
+                );
+            }
+            return;
+        }
+        var label = this.getMenuItemLabel();
+        var id = win.NativeWindow.menu.add({
+            name: label,
+            callback: this.onClick
+        });
+        menuItemIds.set(win, id);
+    };
+
     tbb.init = function() {
         // Only actually expecting one window under Fennec (note, not tabs, windows)
         for ( var win of winWatcher.getWindows() ) {
-            var label = this.getMenuItemLabel();
-            var id = win.NativeWindow.menu.add({
-                name: label,
-                callback: this.onClick
-            });
-            menuItemIds.set(win, id);
+            this.initOne(win);
         }
 
         cleanupTasks.push(shutdown);
@@ -3264,7 +3364,19 @@ var optionsObserver = {
         cleanupTasks.push(this.unregister.bind(this));
 
         var browser = tabWatcher.currentBrowser();
-        if ( browser && browser.currentURI && browser.currentURI.spec === 'about:addons' ) {
+        if ( !browser ) {
+            return;
+        }
+
+        // https://github.com/gorhill/uBlock/issues/948
+        // Older versions of Firefox can throw here when looking up `currentURI`.
+        var currentURI;
+        try {
+            currentURI = browser.currentURI;
+        } catch (ex) {
+        }
+
+        if ( currentURI && currentURI.spec === 'about:addons' ) {
             this.observe(browser.contentDocument, 'addon-enabled', this.addonId);
         }
     },

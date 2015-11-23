@@ -63,6 +63,23 @@ const getMessageManager = function(win) {
 
 /******************************************************************************/
 
+const getChildProcessMessageManager = function() {
+    var svc = Services;
+    if ( !svc ) {
+        return;
+    }
+    var cpmm = svc.cpmm;
+    if ( cpmm ) {
+        return cpmm;
+    }
+    cpmm = Components.classes['@mozilla.org/childprocessmessagemanager;1'];
+    if ( cpmm ) {
+        return cpmm.getService(Ci.nsISyncMessageSender);
+    }
+};
+
+/******************************************************************************/
+
 var contentObserver = {
     classDescription: 'content-policy for ' + hostName,
     classID: Components.ID('{7afbd130-cbaf-46c2-b944-f5d24305f484}'),
@@ -242,11 +259,9 @@ var contentObserver = {
                 wantXHRConstructor: false
             });
 
-            if ( Services.cpmm ) {
+            if ( getChildProcessMessageManager() ) {
                 sandbox.rpc = function(details) {
-                    var svc = Services;
-                    if ( svc === undefined ) { return; }
-                    var cpmm = svc.cpmm;
+                    var cpmm = getChildProcessMessageManager();
                     if ( !cpmm ) { return; }
                     var r = cpmm.sendSyncMessage(rpcEmitterName, details);
                     if ( Array.isArray(r) ) {
@@ -406,10 +421,10 @@ var contentObserver = {
             lss(this.contentBaseURI + 'contentscript-end.js', sandbox);
 
             if (
-                doc.querySelector('a[href^="abp:"]') ||
+                doc.querySelector('a[href^="abp:"],a[href^="https://subscribe.adblockplus.org/?"]') ||
                 loc.href === 'https://github.com/gorhill/uBlock/wiki/Filter-lists-from-around-the-web'
             ) {
-                lss(this.contentBaseURI + 'subscriber.js', sandbox);
+                lss(this.contentBaseURI + 'scriptlets/subscriber.js', sandbox);
             }
         };
 

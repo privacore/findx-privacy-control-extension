@@ -156,6 +156,9 @@ arstechnica.com###lg-pushdown
 # https://adblockplus.org/forum/viewtopic.php?f=2&t=26700&start=120#p141228
 ||www.valuewalk.com/wp-content/plugins/adblade-publisher-tools$script,first-party
 
+# https://github.com/gorhill/uBlock/issues/923#issuecomment-154903084
+investopedia.com##.pg-wrapper > div:not(#Nav):not(.nav-space):not(.subnav-space):not(#Header):not(#Content):not(#Footer):not(.region-content)
+
 # Useful inline script tag filters until filter list maintainers start to use
 # it in their respective filter lists
 arstechnica.com##script:contains(ars.READY.push)
@@ -168,7 +171,8 @@ activistpost.com,explosm.net,valuewalk.com##script:contains(/^\s*?__durl=/)
 extremetube.com,gaytube.com,keezmovies.com,mofosex.com,pornhub.com,redtube.com,spankwire.com,thumbzilla.com,tube8.*,xtube.com,youporn.com,youporngay.com##script:contains(FastPopSessionRequestNumber)
 foot01.com,metronews.fr##script:contains(ligatus)
 layer13.net##script:contains(adBlockDetected)
+linternaute.com##script:contains(/^\s*var\s+Asl=/)
 opensubtitles.org##script:contains(defaultCheckForAdBlockExistance)
+sueddeutsche.de##script:contains(BlockAdBlock)
 vg.no##script:contains(/^\s*?window\.__AB__/)
 voetbalzone.nl##script:contains(/^\s*?var\s+?init_ads/)
-
