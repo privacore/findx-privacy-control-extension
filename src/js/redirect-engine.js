@@ -38,16 +38,59 @@ var toBroaderHostname = function(hostname) {
 };
 
 /******************************************************************************/
+/******************************************************************************/
+
+var RedirectEntry = function(mime, lines) {
+    this.mime = mime;
+    this.encoded = mime.indexOf(';') !== -1;
+    var data = lines.join(this.encoded ? '' : '\n');
+    // check for placeholders.
+    this.ph = this.encoded === false && this.rePlaceHolders.test(data);
+    if ( this.ph ) {
+        this.data = data;
+    } else {
+        this.data = 
+            'data:' +
+            mime +
+            (this.encoded ? '' : ';base64') +
+            ',' +
+            (this.encoded ? data : btoa(data));
+    }
+};
+
+/******************************************************************************/
+
+RedirectEntry.prototype.rePlaceHolders = /\{\{.+?\}\}/;
+RedirectEntry.prototype.reRequestURL = /\{\{requestURL\}\}/g;
+
+/******************************************************************************/
+
+RedirectEntry.prototype.toURL = function(requestURL) {
+    if ( this.ph === false ) {
+        return this.data;
+    }
+    return 'data:' +
+           this.mime + ';base64,' +
+           btoa(this.data.replace(this.reRequestURL, requestURL));
+};
+
+/******************************************************************************/
+/******************************************************************************/
 
 var RedirectEngine = function() {
+    this.resources = Object.create(null);
     this.reset();
 };
 
 /******************************************************************************/
 
 RedirectEngine.prototype.reset = function() {
-    this.redirects = Object.create(null);
     this.rules = Object.create(null);
+};
+
+/******************************************************************************/
+
+RedirectEngine.prototype.freeze = function() {
 };
 
 /******************************************************************************/
@@ -72,7 +115,7 @@ RedirectEngine.prototype.lookup = function(context) {
                     while ( i-- ) {
                         entry = entries[i];
                         if ( entry.c.test(reqURL) ) {
-                            return this.redirects[entry.r];
+                            return entry.r;
                         }
                     }
                 }
@@ -91,15 +134,156 @@ RedirectEngine.prototype.lookup = function(context) {
 
 /******************************************************************************/
 
+RedirectEngine.prototype.toURL = function(context) {
+    var token = this.lookup(context);
+    if ( token === undefined ) {
+        return;
+    }
+    var entry = this.resources[token];
+    if ( entry !== undefined ) {
+        return entry.toURL(context.requestURL);
+    }
+};
+
+/******************************************************************************/
+
+RedirectEngine.prototype.matches = function(context) {
+    var token = this.lookup(context);
+    return token !== undefined && this.resources[token] !== undefined;
+};
+
+/******************************************************************************/
+
+RedirectEngine.prototype.addRule = function(src, des, type, pattern, redirect) {
+    var typeEntry = this.rules[type];
+    if ( typeEntry === undefined ) {
+        typeEntry = this.rules[type] = Object.create(null);
+    }
+    var desEntry = typeEntry[des];
+    if ( desEntry === undefined ) {
+        desEntry = typeEntry[des] = Object.create(null);
+    }
+    var ruleEntries = desEntry[src];
+    if ( ruleEntries === undefined ) {
+        ruleEntries = desEntry[src] = [];
+    }
+    ruleEntries.push({
+        c: new RegExp(pattern),
+        r: redirect
+    });
+};
+
+/******************************************************************************/
+
+RedirectEngine.prototype.fromCompiledRule = function(line) {
+    var fields = line.split('\t');
+    if ( fields.length !== 5 ) {
+        return;
+    }
+    this.addRule(fields[0], fields[1], fields[2], fields[3], fields[4]);
+};
+
+/******************************************************************************/
+
+RedirectEngine.prototype.compileRuleFromStaticFilter = function(line) {
+    var matches = this.reFilterParser.exec(line);
+    if ( matches === null || matches.length !== 4 ) {
+        return;
+    }
+
+    var pattern = (matches[1] + matches[2]).replace(/[.+?{}()|[\]\\]/g, '\\$&')
+                                           .replace(/\^/g, '[^\\w\\d%-]')
+                                           .replace(/\*/g, '.*?');
+
+    var des = matches[1];
+    var type;
+    var redirect = '';
+    var srcs = [];
+    var options = matches[3].split(','), option;
+    while ( (option = options.pop()) ) {
+        if ( option.lastIndexOf('redirect=', 0) === 0 ) {
+            redirect = option.slice(9);
+            continue;
+        }
+        if ( option.lastIndexOf('domain=', 0) === 0 ) {
+            srcs = option.slice(7).split('|');
+            continue;
+        }
+        // One and only one type must be specified.
+        if ( option in this.supportedTypes ) {
+            if ( type !== undefined ) {
+                return;
+            }
+            type = this.supportedTypes[option];
+            continue;
+        }
+    }
+
+    // Need a resource token.
+    if ( redirect === '' ) {
+        return;
+    }
+
+    // Need one single type -- not negated.
+    if ( type === undefined || type.charAt(0) === '~' ) {
+        return;
+    }
+
+    if ( des === '' ) {
+        des = '*';
+    }
+
+    if ( srcs.length === 0 ) {
+        srcs.push('*');
+    }
+
+    var out = [];
+    var i = srcs.length, src;
+    while ( i-- ) {
+        src = srcs[i];
+        if ( src === '' ) {
+            continue;
+        }
+        if ( src.charAt(0) === '~' ) {
+            continue;
+        }
+        // Need at least one specific src or des.
+        if ( src === '*' && des === '*' ) {
+            continue;
+        }
+        out.push(src + '\t' + des + '\t' + type + '\t' + pattern + '\t' + redirect);
+    }
+
+    return out;
+};
+
+/******************************************************************************/
+
+RedirectEngine.prototype.reFilterParser = /^\|\|([^\/?#^*]+)([^$]+)\$([^$]+)$/;
+
+RedirectEngine.prototype.supportedTypes = (function() {
+    var types = Object.create(null);
+    types.stylesheet = 'stylesheet';
+    types.image = 'image';
+    types.object = 'object';
+    types.script = 'script';
+    types.xmlhttprequest = 'xmlhttprequest';
+    types.subdocument = 'sub_frame';
+    types.font = 'font';
+    return types;
+})();
+
+/******************************************************************************/
+
 // TODO: combine same key-redirect pairs into a single regex.
 
-RedirectEngine.prototype.fromString = function(text) {
+RedirectEngine.prototype.resourcesFromString = function(text) {
     var textEnd = text.length;
     var lineBeg = 0, lineEnd;
-    var mode, modeData, line, fields, encoded, data;
-    var reSource, typeEntry, desEntry, ruleEntries;
+    var line, fields, encoded;
+    var reNonEmptyLine = /\S/;
 
-    this.reset();
+    this.resources = Object.create(null);
 
     while ( lineBeg < textEnd ) {
         lineEnd = text.indexOf('\n', lineBeg);
@@ -109,77 +293,41 @@ RedirectEngine.prototype.fromString = function(text) {
                 lineEnd = textEnd;
             }
         }
-        line = text.slice(lineBeg, lineEnd).trim();
+        line = text.slice(lineBeg, lineEnd);
         lineBeg = lineEnd + 1;
 
         if ( line.charAt(0) === '#' ) {
             continue;
         }
 
-        if ( line.slice(-1) === ':' ) {
-            mode = line.slice(0, -1);
-            continue;
-        }
-
-        if ( mode === 'redirects' ) {
-            fields = line.split(/\s+/);
-            if ( fields.length !== 2 ) {
-                continue;
-            }
-            mode = 'redirects/redirect';
-            modeData = fields;
-            continue;
-        }
-
-        if ( mode === 'redirects/redirect' ) {
-            if ( line !== '' ) {
-                modeData.push(line);
-                continue;
-            }
-            encoded = modeData[1].indexOf(';') !== -1;
-            data = modeData.slice(2).join(encoded ? '' : '\n');
-            this.redirects[modeData[0]] =
-                'data:' +
-                modeData[1] + 
-                (encoded ? '' : ';base64') +
-                ',' +
-                (encoded ? data : btoa(data));
-            mode = 'redirects';
-            continue;
-        }
-
-        if ( mode === 'rules' ) {
-            fields = line.split(/\s+/);
-            if ( fields.length !== 5 ) {
-                continue;
-            }
-            reSource = fields[3];
-            if ( reSource.charAt(0) !== '/' || reSource.slice(-1) !== '/' ) {
-                reSource = reSource.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        if ( fields === undefined ) {
+            fields = line.trim().split(/\s+/);
+            if ( fields.length === 2 ) {
+                encoded = fields[1].indexOf(';') !== -1;
             } else {
-                reSource = reSource.slice(1, -1);
+                fields = undefined;
             }
-            typeEntry = this.rules[fields[2]];
-            if ( typeEntry === undefined ) {
-                typeEntry = this.rules[fields[2]] = Object.create(null);
-            }
-            desEntry = typeEntry[fields[1]];
-            if ( desEntry === undefined ) {
-                desEntry = typeEntry[fields[1]] = Object.create(null);
-            }
-            ruleEntries = desEntry[fields[0]];
-            if ( ruleEntries === undefined ) {
-                ruleEntries = desEntry[fields[0]] = [];
-            }
-            ruleEntries.push({
-                c: new RegExp(reSource),
-                r: fields[4]
-            });
             continue;
         }
+
+        if ( reNonEmptyLine.test(line) ) {
+            fields.push(encoded ? line.trim() : line);
+            continue;
+        }
+
+        // No more data, add the resource.
+        this.resources[fields[0]] = new RedirectEntry(fields[1], fields.slice(2));
+
+        fields = undefined;
+    }
+
+    // Process pending resource data.
+    if ( fields !== undefined ) {
+        this.resources[fields[0]] = new RedirectEntry(fields[1], fields.slice(2));
     }
 };
 
+/******************************************************************************/
 /******************************************************************************/
 
 return new RedirectEngine();

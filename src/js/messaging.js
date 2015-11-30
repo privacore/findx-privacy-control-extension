@@ -556,22 +556,34 @@ var filterRequests = function(pageStore, details) {
 
     //console.debug('messaging.js/contentscript-end.js: processing %d requests', requests.length);
 
-    var µburi = µb.URI;
-    var isBlockResult = µb.isBlockResult;
+    var hostnameFromURI = µb.URI.hostnameFromURI;
+    var redirectEngine = µb.redirectEngine;
+    var punycodeURL = vAPI.punycodeURL;
 
     // Create evaluation context
     var context = pageStore.createContextFromFrameHostname(details.pageHostname);
 
-    var request;
+    var request, r;
     var i = requests.length;
     while ( i-- ) {
         request = requests[i];
-        context.requestURL = vAPI.punycodeURL(request.url);
-        context.requestHostname = µburi.hostnameFromURI(request.url);
-        context.requestType = tagNameToRequestTypeMap[request.tagName];
-        if ( isBlockResult(pageStore.filterRequest(context, true)) ) {
-            request.collapse = true;
+        context.requestURL = punycodeURL(request.url);
+        // https://github.com/gorhill/uBlock/issues/978
+        // Ignore invalid URLs: these would not occur on the HTTP
+        // observer side.
+        if ( (context.requestHostname = hostnameFromURI(request.url)) === '' ) {
+            continue;
         }
+        context.requestType = tagNameToRequestTypeMap[request.tagName];
+        r = pageStore.filterRequest(context);
+        if ( typeof r !== 'string' || r.charAt(1) !== 'b' ) {
+            continue;
+        }
+        // Redirected? (We do not hide redirected resources.)
+        if ( redirectEngine.matches(context) ) {
+            continue;
+        }
+        request.collapse = true;
     }
     return requests;
 };

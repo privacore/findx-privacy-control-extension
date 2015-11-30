@@ -163,7 +163,7 @@ var onUserSettingsReady = function(fetched) {
     // Disabling local mirroring for the time being
     userSettings.experimentalEnabled = false;
 
-    µb.contextMenu.toggle(userSettings.contextMenuEnabled);
+    //µb.contextMenu.toggle(userSettings.contextMenuEnabled);
     vAPI.browserSettings.set({
         'hyperlinkAuditing': !userSettings.hyperlinkAuditingDisabled,
         'prefetching': !userSettings.prefetchingDisabled,
@@ -211,7 +211,7 @@ var onFirstFetchReady = function(fetched) {
     fromFetch(µb.restoreBackupSettings, fetched);
     onNetWhitelistReady(fetched.netWhitelist);
     onVersionReady(fetched.version);
-    µb.loadRedirectRules();
+    µb.loadRedirectResources();
 
     // If we have a selfie, skip loading PSL, filters
     if ( onSelfieReady(fetched.selfie) ) {

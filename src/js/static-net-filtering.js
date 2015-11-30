@@ -1471,6 +1471,8 @@ FilterParser.prototype.reset = function() {
     this.hostnamePure = false;
     this.domainOpt = '';
     this.isRegex = false;
+    this.raw = '';
+    this.redirect = false;
     this.thirdParty = false;
     this.token = '';
     this.tokenBeg = 0;
@@ -1555,7 +1557,7 @@ FilterParser.prototype.parseOptions = function(s) {
             this.parseOptType(opt, not);
             continue;
         }
-        if ( opt.slice(0,7) === 'domain=' ) {
+        if ( opt.lastIndexOf('domain=', 0) === 0 ) {
             this.domainOpt = opt.slice(7);
             continue;
         }
@@ -1567,6 +1569,16 @@ FilterParser.prototype.parseOptions = function(s) {
             this.parseOptParty(true, not);
             continue;
         }
+        if ( opt.lastIndexOf('redirect=', 0) === 0 ) {
+            if ( this.action === BlockAction ) {
+                this.redirect = true;
+                continue;
+            }
+            this.unsupported = true;
+            break;
+        }
+
+        // Unrecognized filter option: ignore whole filter.
         this.unsupported = true;
         break;
     }
@@ -1578,7 +1590,7 @@ FilterParser.prototype.parse = function(raw) {
     // important!
     this.reset();
 
-    var s = raw;
+    var s = this.raw = raw;
 
     // plain hostname?
     if ( reHostnameRule.test(s) ) {
@@ -2099,6 +2111,21 @@ FilterContainer.prototype.compileToAtomicFilter = function(filterClass, parsed, 
         bitOffset += 1;
         type >>>= 1;
     } while ( type !== 0 );
+
+    // Only static filter with an explicit type can be redirected. If we reach
+    // this point, it's because there is one or more explicit type.
+    if ( !parsed.redirect ) {
+        return;
+    }
+
+    var redirects = µb.redirectEngine.compileRuleFromStaticFilter(parsed.raw);
+    if ( Array.isArray(redirects) === false ) {
+        return;
+    }
+    var i = redirects.length;
+    while ( i-- ) {
+        out.push('n\v\v\v=>\v' + redirects[i]);
+    }
 };
 
 /******************************************************************************/
@@ -2119,6 +2146,14 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, path) {
         fields = line.split('\v');
         lineBeg = lineEnd + 1;
 
+        // Special cases: delegate to more specialized engines.
+        // Redirect engine.
+        if ( fields[2] === '=>' ) {
+            µb.redirectEngine.fromCompiledRule(fields[3]);
+            continue;
+        }
+
+        // Plain static filters.
         this.acceptedCount += 1;
 
         bucket = this.categories[fields[0]];

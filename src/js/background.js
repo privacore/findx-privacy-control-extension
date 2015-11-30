@@ -117,24 +117,28 @@ return {
             inUse: true
         }
         // uBlock
-//        'assets/ublock/filters.txt': {
-//            title: 'uBlock filters',
-//            group: 'default',
-//            off: true,
-//            inUse: false
-//        },
-//        'assets/ublock/privacy.txt': {
-//            title: 'uBlock filters – Privacy',
-//            group: 'default',
-//            off: true,
-//            inUse: false
-//        },
-//        'assets/ublock/unbreak.txt': {
-//            title: 'uBlock filters – Unbreak',
-//            group: 'default',
-//            off: true,
-//            inUse: false
-//        }
+        //'assets/ublock/filters.txt': {
+        //    title: 'uBlock filters',
+        //    group: 'default'
+        //},
+        //'assets/ublock/privacy.txt': {
+        //    title: 'uBlock filters – Privacy',
+        //    group: 'default'
+        //},
+        //'assets/ublock/unbreak.txt': {
+        //    title: 'uBlock filters – Unbreak',
+        //    group: 'default'
+        //},
+        //'assets/ublock/redirect.txt': {
+        //    title: 'uBlock filters – Block-then-redirect',
+        //    group: 'default'
+        //},
+        //'assets/ublock/badware.txt': {
+        //    title: 'uBlock filters – Badware risks',
+        //    group: 'default',
+        //    supportURL: 'https://github.com/gorhill/uBlock/wiki/Badware-risks',
+        //    instructionURL: 'https://github.com/gorhill/uBlock/wiki/Badware-risks'
+        //}
     },
 
     // current lists
@@ -177,7 +181,8 @@ return {
         "assets/thirdparties/www.fanboy.co.nz/fanboy-ultimate.txt": "https://www.fanboy.co.nz/r/fanboy-ultimate.txt",
         "assets/thirdparties/www.fanboy.co.nz/fanboy-vietnam.txt": "https://www.fanboy.co.nz/fanboy-vietnam.txt",
         "assets/thirdparties/www.void.gr/kargig/void-gr-filters.txt": "https://www.void.gr/kargig/void-gr-filters.txt",
-        "assets/thirdparties/www.zoso.ro/pages/rolist.txt": ""
+        "assets/thirdparties/www.zoso.ro/pages/rolist.txt": "",
+        "https://iadb.azurewebsites.net/Finland_adb.txt": "http://adb.juvander.net/Finland_adb.txt"
     },
 
     selfieAfter: 23 * oneMinute,

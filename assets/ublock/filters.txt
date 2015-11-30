@@ -155,6 +155,9 @@ arstechnica.com###lg-pushdown
 
 # https://adblockplus.org/forum/viewtopic.php?f=2&t=26700&start=120#p141228
 ||www.valuewalk.com/wp-content/plugins/adblade-publisher-tools$script,first-party
+www.valuewalk.com##.widgetad
+www.valuewalk.com###sidebar > div[class]:not([id])
+www.valuewalk.com##article > div > headr
 
 # https://github.com/gorhill/uBlock/issues/923#issuecomment-154903084
 investopedia.com##.pg-wrapper > div:not(#Nav):not(.nav-space):not(.subnav-space):not(#Header):not(#Content):not(#Footer):not(.region-content)
@@ -162,12 +165,12 @@ investopedia.com##.pg-wrapper > div:not(#Nav):not(.nav-space):not(.subnav-space)
 # Useful inline script tag filters until filter list maintainers start to use
 # it in their respective filter lists
 arstechnica.com##script:contains(ars.READY.push)
-arcor.de,auto-motor-und-sport.de,boerse-online.de,echo-online.de,fem.com,finanzen.net,focus.de,gamestar.de,kabeleins.de,pcwelt.de,prosieben.de,prosiebenmaxx.de,rp-online.de,sat1.de,sat1gold.de,sixx.de,spiegel.de,the-voice-of-germany.de,tvspielfilm.de,wetter.com,wetteronline.de##script:contains(uabInject)
+20min.ch,allgemeine-zeitung.de,arcor.de,ariva.de,auto-motor-und-sport.de,boerse-online.de,buerstaedter-zeitung.de,echo-online.de,fem.com,finanzen.net,focus.de,gamestar.de,kabeleins.de,lampertheimer-zeitung.de,lustich.de,main-spitze.de,motorradonline.de,pcwelt.de,prosieben.de,prosiebenmaxx.de,rhein-main-presse.de,rp-online.de,sat1.de,sat1gold.de,sixx.de,spiegel.de,spox.com,shz.de,the-voice-of-germany.de,transfermarkt.de,tvspielfilm.de,wetter.com,wetteronline.de,wiesbadener-kurier.de,wiesbadener-tagblatt.de,wormser-zeitung.de##script:contains(uabInject)
 bild.de##script:contains(/^\s*de.bild.cmsKonfig/)
 bild.de##script:contains(Javascript)
 dayt.se##script:contains(adblock.php)
 dpstream.net,jeux-porno.net##script:contains(/^\s*?var\s+?uniqueParam\s*?=/)
-activistpost.com,explosm.net,valuewalk.com##script:contains(/^\s*?__durl=/)
+activistpost.com,alfonzorachel.com,breathecast.com,bulletsfirst.net,clashdaily.com,comicallyincorrect.com,conservativebyte.com,cowboybyte.com,dailysurge.com,dccrimestories.com,drhotze.com,explosm.net,genfringe.com,girlsjustwannahaveguns.com,joeforamerica.com,latinpost.com,mensfitness.com,minutemennews.com,mobilelikez.com,muscleandfitness.com,naturalblaze.com,oddee.com,okmagazine.com,patriotoutdoornews.com,pitgrit.com,radaronline.com,redmaryland.com,shark-tank.com,theblacksphere.net,thegatewaypundit,themattwalshblog.com,thepoke.co.uk,unilad.co.uk,valuewalk.com,vcpost.com,victoriajackson.com,viralnova.com##script:contains(/^.{0,16}__durl=/)
 extremetube.com,gaytube.com,keezmovies.com,mofosex.com,pornhub.com,redtube.com,spankwire.com,thumbzilla.com,tube8.*,xtube.com,youporn.com,youporngay.com##script:contains(FastPopSessionRequestNumber)
 foot01.com,metronews.fr##script:contains(ligatus)
 layer13.net##script:contains(adBlockDetected)

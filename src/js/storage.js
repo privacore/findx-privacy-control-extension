@@ -371,6 +371,7 @@
 
         µb.staticNetFilteringEngine.freeze();
         µb.cosmeticFilteringEngine.freeze();
+        µb.redirectEngine.freeze();
         vAPI.storage.set({ 'remoteBlacklists': µb.remoteBlacklists });
 
         //quickProfiler.stop(0);
@@ -405,6 +406,7 @@
     var onFilterListsReady = function(lists) {
         µb.remoteBlacklists = lists;
 
+        µb.redirectEngine.reset();
         µb.cosmeticFilteringEngine.reset();
         µb.staticNetFilteringEngine.reset();
         µb.destroySelfie();
@@ -655,20 +657,21 @@
 
 // TODO: toSelfie/fromSelfie.
 
-µBlock.loadRedirectRules = function(callback) {
+µBlock.loadRedirectResources = function(callback) {
     var µb = this;
 
     if ( typeof callback !== 'function' ) {
         callback = this.noopFunc;
     }
-    var onRulesLoaded = function(details) {
+
+    var onResourcesLoaded = function(details) {
         if ( details.content !== '' ) {
-            µb.redirectEngine.fromString(details.content);
+            µb.redirectEngine.resourcesFromString(details.content);
         }
         callback();
     };
 
-    this.assets.get('assets/ublock/redirect-rules.txt', onRulesLoaded);
+    this.assets.get('assets/ublock/redirect-resources.txt', onResourcesLoaded);
 };
 
 /******************************************************************************/
