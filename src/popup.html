@@ -15,10 +15,9 @@
 <header>
     <div class="hdr-privacy-status">Protection by PrivaControl<br>
         <a target='_blank' href="http://www.privacore.com">View our other privacy solutions</a></div>
-    <!--<div class="hdr-privacy-status">View our other privacy solutions</div>-->
     <div class="hdr-buttons">
-        <div class="close-button"></div>
-        <div class="options-button"></div>
+        <div class="hdr-btn close-button"></div>
+        <div class="hdr-btn options-button"></div>
     </div>
 </header>
 
@@ -28,32 +27,41 @@
         <div id="stats-page">
             <div class="blocked-quantity"></div>
             <div class="blocked-info">
-                <span>TRACKERS/ADS BLOCKED ON</span>
+                <span>Trackers/ADS blocked on</span>
                 <br/>
-                <div class="tabDomain">youtube.com</div>
+                <div class="tabDomain"></div>
             </div>
         </div>
     </div>
 
     <div id="subscription-list-wrapper"></div>
+
+    <div id="whitelist_block" class="hidden">
+        <div class="whitelist-block-label">Site is in a whitelist</div>
+    </div>
 </div>
 
 <footer>
     <div id="footer-btn-panel">
-        <div class="footer-button left" id="pause-blocking-button" title="Pause Blocking">
-            Pause Blocking
+        <div class="footer-button" id="pause-blocking-button" title="Pause Blocking">
+            <div class="button-icon pause-icon"></div>
+            <div class="button-label">Pause Blocking</div>
         </div>
-        <div class="footer-button left" id="whitelist-button" title="Whitelist Site">
-            Whitelist Site
+        <div class="footer-button" id="whitelist-button" title="Whitelist Site">
+            <div class="button-icon whitelist-icon"></div>
+            <div class="button-label">Whitelist Site</div>
         </div>
-        <div class="footer-help-button left tooltip" id="help-button" title="Help">
-            Help
+        <div class="footer-button help-button tooltip" id="help-button" title="Help">
+            <div class="button-icon help-icon"></div>
+            <div class="button-label">Help</div>
         </div>
     </div>
     <div id="stats-total"><span></span> TRACKERS/ADS BLOCKED IN TOTAL</div>
     <div class="reloader disabled">
-        Please <span>reload</span> the page to see your changes.
-        <div class="reload-close"></div>
+        <div>
+            Please <span>reload</span> the page to see your changes.
+            <div class="reload-close"></div>
+        </div>
     </div>
 </footer>
 
@@ -61,30 +69,35 @@
 
 <!--Template of filter item used by Mustache.js-->
 <script id="subscription-template" type="text/html">
-    <div class="info-container">
-        <div class="arrow"></div>
-        <div class="subscription-text">
-            <div>
-                <div class="subscription-title ellipsis " title="{{title}}">{{title}}</div>
-                <div class="subscription-group ellipsis" title="{{group}}">{{group}}</div>
+    <div>
+        <div class="subscription-header">
+            <div class="info-container">
+                <div class="arrow"></div>
+                <div class="subscription-text">
+                    <div>
+                        <div class="subscription-title ellipsis " title="{{title}}">{{title}}</div>
+                        <div class="subscription-group ellipsis" title="{{group}}">{{group}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="blocking-control-container">
+                <div class="blocking-control {{isEnabled}}" title="{{filterBlockBtnTitle}}">
+                    <div class="blocking-control-icon"></div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="blocking-control-container">
-        <div class="blocking-control {{isEnabled}}" title="{{filterBlockBtnTitle}}">
-            <div class="blocking-control-icon"></div>
+        <div class="filters-list disabled">
+            <div>
+                {{#trackedUrls}}
+                <div class="filter">
+                    <div class="filter-url ellipsis" title="{{url}}">{{url}}</div>
+                    <div class="filter-blocking-button {{blockedBtnClass}}" data-clickable="true" data-url="{{url}}"
+                         title="Click to {{blockedBtnTitle}} this rule for domain">{{blockedBtnText}}</div>
+                    <div class="filter-counter {{counterVisibility}}">{{counter}}</div>
+                </div>
+                {{/trackedUrls}}
+            </div>
         </div>
-    </div>
-    <div class="clear"></div>
-    <div class="filters-list disabled">
-        {{#trackedUrls}}
-        <div class="filter">
-            <div class="filter-url ellipsis" title="{{url}}">{{url}}</div>
-            <div class="filter-blocking-button {{blockedBtnClass}}" data-clickable="true" data-url="{{url}}"
-                 title="Click to {{blockedBtnTitle}} this rule for domain">{{blockedBtnText}}</div>
-            <div class="filter-counter {{counterVisibility}}">{{counter}}</div>
-        </div>
-        {{/trackedUrls}}
     </div>
 </script>
 

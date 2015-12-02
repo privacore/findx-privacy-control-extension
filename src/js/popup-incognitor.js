@@ -62,8 +62,10 @@
         reloadPanel: ".reloader",
         reloadBtn: ".reloader span",
         closeReloadPanelBtn: ".reload-close",
+        whiteListBlock: "#whitelist_block",
         whiteListBtn: "#whitelist-button",
         pauseBtn: "#pause-blocking-button",
+        pauseBtnLabel: "#pause-blocking-button .button-label",
         filtersContainer: "#subscription-list-wrapper",
         subscriptionTemplate: "#subscription-template",
         subscrItemBody: ".info-container",
@@ -547,10 +549,30 @@
 
     var renderPopup = function () {
         uDom(selectors.tabDomain).text(popupData.pageHostname);
+
+        if (uDom(selectors.whiteListBtn).toggleClass('off', popupData.pageURL === '' || !popupData.netFilteringSwitch).hasClass("off")) {
+            uDom(selectors.whiteListBlock).removeClass('hidden');
+        }
+        else {
+            uDom(selectors.whiteListBlock).addClass('hidden');
+        }
+
+        if (uDom(selectors.pauseBtn).toggleClass('start', popupData.pauseFiltering).hasClass("start")) {
+            uDom(selectors.pauseBtnLabel).text('Start blocking');
+        }
+        else {
+            uDom(selectors.pauseBtnLabel).text('Pause blocking');
+        }
+
         uDom(selectors.pageAdsBlocked).text(popupData.pageBlockedRequestCount);
+        if (!popupData.pageBlockedRequestCount) {
+            uDom(selectors.pageAdsBlocked).addClass("empty");
+        }
+
         uDom(selectors.totalAdsBlocked).text(popupData.globalBlockedRequestCount);
-        uDom(selectors.whiteListBtn).toggleClass('off', popupData.pageURL === '' || !popupData.netFilteringSwitch);
-        uDom(selectors.pauseBtn).toggleClass('off', popupData.pauseFiltering);
+        if (!popupData.globalBlockedRequestCount) {
+            uDom(selectors.totalAdsBlocked).addClass("empty");
+        }
 
         renderTrackedUrls();
         displayUsedFilters();
@@ -581,9 +603,18 @@
         if (!popupData || !popupData.pageURL) {
             return;
         }
+
+        var state = uDom(this).toggleClass('start').hasClass('start');
+        if (state) {
+            uDom(selectors.pauseBtnLabel).text('Start blocking');
+        }
+        else {
+            uDom(selectors.pauseBtnLabel).text('Pause blocking');
+        }
+
         messager.send({
             what:  'togglePauseFiltering',
-            state: uDom(this).toggleClass('off').hasClass('off'),
+            state: state,
             tabId: popupData.tabId
         });
 
