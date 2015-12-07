@@ -306,7 +306,7 @@ PageStore.factory = function(tabId) {
 /******************************************************************************/
 
 PageStore.prototype.init = function(tabId) {
-    var tabContext = µb.tabContextManager.lookup(tabId);
+    var tabContext = µb.tabContextManager.mustLookup(tabId);
     this.tabId = tabId;
     this.tabHostname = tabContext.rootHostname;
     this.title = tabContext.rawURL;
@@ -348,8 +348,8 @@ PageStore.prototype.init = function(tabId) {
 PageStore.prototype.reuse = function(context) {
     // When force refreshing a page, the page store data needs to be reset.
     // If the hostname changes, we can't merely just update the context.
-    var tabContext = µb.tabContextManager.lookup(this.tabId);
-    if ( tabContext.rootHostname !== this.tabHostname) {
+    var tabContext = µb.tabContextManager.mustLookup(this.tabId);
+    if ( tabContext.rootHostname !== this.tabHostname ) {
         context = '';
     }
 
@@ -455,7 +455,7 @@ PageStore.prototype.createContextFromFrameHostname = function(frameHostname) {
 
 
 PageStore.prototype.getNetFilteringSwitch = function() {
-    return µb.tabContextManager.lookup(this.tabId).getNetFilteringSwitch();
+    return µb.tabContextManager.mustLookup(this.tabId).getNetFilteringSwitch();
 };
 
 /******************************************************************************/
@@ -465,7 +465,7 @@ PageStore.prototype.getSpecificCosmeticFilteringSwitch = function() {
         return false;
     }
 
-    var tabContext = µb.tabContextManager.lookup(this.tabId);
+    var tabContext = µb.tabContextManager.mustLookup(this.tabId);
 
     if ( µb.hnSwitches.evaluateZ('no-cosmetic-filtering', tabContext.rootHostname) ) {
         return false;

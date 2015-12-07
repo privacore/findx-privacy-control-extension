@@ -113,7 +113,7 @@ return {
         // User
         'assets/user/filters.txt': {
             group: 'default',
-            off: false,
+            off:   false,
             inUse: true
         }
         // uBlock
@@ -138,6 +138,13 @@ return {
         //    group: 'default',
         //    supportURL: 'https://github.com/gorhill/uBlock/wiki/Badware-risks',
         //    instructionURL: 'https://github.com/gorhill/uBlock/wiki/Badware-risks'
+        //},
+        //'assets/ublock/experimental.txt': {
+        //    title: 'uBlock filters – Experimental',
+        //    group: 'default',
+        //    off: true,
+        //    supportURL: 'https://github.com/gorhill/uBlock/wiki/Experimental-filters',
+        //    instructionURL: 'https://github.com/gorhill/uBlock/wiki/Experimental-filters'
         //}
     },
 

@@ -303,7 +303,7 @@ var getUsedFilters = function (pageStore) {
 /******************************************************************************/
 
 var popupDataFromTabId = function(tabId, tabTitle) {
-    var tabContext = µb.tabContextManager.lookup(tabId);
+    var tabContext = µb.tabContextManager.mustLookup(tabId);
     var r = {
         advancedUserEnabled: µb.userSettings.advancedUserEnabled,
         appName: vAPI.app.name,
@@ -1172,7 +1172,7 @@ var restoreUserData = function(request) {
     var onAllRemoved = function() {
         // Be sure to adjust `countdown` if adding/removing anything below
         µb.keyvalSetOne('version', userData.version);
-        µBlock.saveLocalSettings(true);
+        µBlock.saveLocalSettings();
         vAPI.storage.set(userData.userSettings, onCountdown);
         µb.keyvalSetOne('remoteBlacklists', userData.filterLists, onCountdown);
         µb.keyvalSetOne('netWhitelist', userData.netWhitelist || '', onCountdown);
@@ -1208,7 +1208,7 @@ var resetUserData = function() {
     vAPI.storage.clear();
 
     // Keep global counts, people can become quite attached to numbers
-    µb.saveLocalSettings(true);
+    µb.saveLocalSettings();
 
     vAPI.app.restart();
 };

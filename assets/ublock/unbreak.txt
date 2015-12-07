@@ -5,12 +5,15 @@
 # https://github.com/chrisaljoudi/uBlock/issues/119
 # https://github.com/chrisaljoudi/uBlock/issues/940
 # To counter `google-analytics.com` in Peter Lowe's list
-@@||google-analytics.com^$domain=avianca.com|jackbox.tv|bikstok.sonymusicshop.dk
+@@||google-analytics.com^$domain=avianca.com|jackbox.tv|newegg.com|bikstok.sonymusicshop.dk
 
 # From Chrome store: "Go to site http://www.vd.nl/ ... links from dropdown top menu do not work"
 # To counter Dan Pollock's, hpHosts, MVPS, Peter Lowe's
 @@||google-analytics.com/analytics.js$script,domain=www.vd.nl
 @@||google-analytics.com/plugins/ua/ec.js$script,domain=www.vd.nl
+
+# https://github.com/gorhill/uBlock/issues/1020
+@@||www.google-analytics.com/ga.js$script,domain=www.tv2.no
 
 # https://github.com/gorhill/uBlock/issues/939
 @@||google-analytics.com/urchin.js$script,domain=live.euroleague.net

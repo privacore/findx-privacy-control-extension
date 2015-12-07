@@ -62,6 +62,7 @@ var typeNameToTypeValue = {
          'sub_frame':  6 << 4,
               'font':  7 << 4,
              'other':  8 << 4,
+          'popunder': 11 << 4,
         'main_frame': 12 << 4,
 'cosmetic-filtering': 13 << 4,
      'inline-script': 14 << 4,
@@ -78,6 +79,7 @@ var typeValueToTypeName = {
      6: 'subdocument',
      7: 'font',
      8: 'other',
+    11: 'popunder',
     12: 'document',
     13: 'cosmetic-filtering',
     14: 'inline-script',
@@ -205,13 +207,14 @@ var strToRegex = function(s, anchor, flags) {
 
     // https://www.loggly.com/blog/five-invaluable-techniques-to-improve-regex-performance/
     // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
-    var reStr = s.replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+    var reStr = s.replace(/[.+?${}()|[\]\\]/g, '\\$&')
+                 .replace(/\^/g, '[^%.0-9a-z_-]')
                  .replace(/\*/g, '[^ ]*?');
 
     if ( anchor < 0 ) {
         reStr = '^' + reStr;
     } else if ( anchor > 0 ) {
-        reStr += reStr + '$';
+        reStr += '$';
     }
 
     //console.debug('µBlock.staticNetFilteringEngine: created RegExp("%s")', reStr);
@@ -1344,71 +1347,6 @@ FilterBucket.fromSelfie = function(s) {
 
 /******************************************************************************/
 
-var getFilterClass = function(details) {
-    if ( details.domainOpt.length !== 0 ) {
-        return getHostnameBasedFilterClass(details);
-    }
-    if ( details.isRegex ) {
-        return FilterRegex;
-    }
-    var s = details.f;
-    if ( s.indexOf('*') !== -1 || details.token === '*' ) {
-        if ( details.hostnameAnchored ) {
-            return FilterGenericHnAnchored;
-        }
-        return FilterGeneric;
-    }
-    if ( details.anchor < 0 ) {
-        return FilterPlainLeftAnchored;
-    }
-    if ( details.anchor > 0 ) {
-        return FilterPlainRightAnchored;
-    }
-    if ( details.hostnameAnchored ) {
-        return FilterPlainHnAnchored;
-    }
-    if ( details.tokenBeg === 0 ) {
-        return FilterPlainPrefix0;
-    }
-    if ( details.tokenBeg === 1 ) {
-        return FilterPlainPrefix1;
-    }
-    return FilterPlain;
-};
-
-/******************************************************************************/
-
-var getHostnameBasedFilterClass = function(details) {
-    if ( details.isRegex ) {
-        return FilterRegexHostname;
-    }
-    var s = details.f;
-    if ( s.indexOf('*') !== -1 || details.token === '*' ) {
-        if ( details.hostnameAnchored ) {
-            return FilterGenericHnAnchoredHostname;
-        }
-        return FilterGenericHostname;
-    }
-    if ( details.anchor < 0 ) {
-        return FilterPlainLeftAnchoredHostname;
-    }
-    if ( details.anchor > 0 ) {
-        return FilterPlainRightAnchoredHostname;
-    }
-    if ( details.hostnameAnchored ) {
-        return FilterPlainHnAnchoredHostname;
-    }
-    if ( details.tokenBeg === 0 ) {
-        return FilterPlainPrefix0Hostname;
-    }
-    if ( details.tokenBeg === 1 ) {
-        return FilterPlainPrefix1Hostname;
-    }
-    return FilterPlainHostname;
-};
-
-/******************************************************************************/
-
 // Trim leading/trailing char "c"
 
 var trimChar = function(s, c) {
@@ -1452,6 +1390,7 @@ FilterParser.prototype.toNormalizedType = {
        'subdocument': 'sub_frame',
               'font': 'font',
              'other': 'other',
+          'popunder': 'popunder',
           'document': 'main_frame',
           'elemhide': 'cosmetic-filtering',
      'inline-script': 'inline-script',
@@ -1474,9 +1413,8 @@ FilterParser.prototype.reset = function() {
     this.raw = '';
     this.redirect = false;
     this.thirdParty = false;
-    this.token = '';
+    this.token = '*';
     this.tokenBeg = 0;
-    this.tokenEnd = 0;
     this.types = 0;
     this.important = 0;
     this.unsupported = false;
@@ -1604,7 +1542,7 @@ FilterParser.prototype.parse = function(raw) {
     if ( pos !== -1 ) {
         var c = s.charAt(pos + 1);
         if ( c === '#' || c === '@' ) {
-            console.error('static-net-filtering.js > unexpected cosmetic filters');
+            //console.error('static-net-filtering.js > unexpected cosmetic filters');
             this.elemHiding = true;
             return this;
         }
@@ -1624,6 +1562,12 @@ FilterParser.prototype.parse = function(raw) {
     if ( s.charAt(0) !== '/' || s.slice(-1) !== '/' ) {
         pos = s.lastIndexOf('$');
         if ( pos !== -1 ) {
+            // https://github.com/gorhill/uBlock/issues/952
+            // Discard Adguard-specific `$$` filters.
+            if ( s.indexOf('$$') !== -1 ) {
+                this.unsupported = true;
+                return this;
+            }
             this.parseOptions(s.slice(pos + 1));
             s = s.slice(0, pos);
         }
@@ -1681,8 +1625,15 @@ FilterParser.prototype.parse = function(raw) {
     // TODO: transforming `^` into `*` is not a strict interpretation of
     // ABP syntax.
     if ( this.reHasWildcard.test(s) ) {
-        s = s.replace(/\^/g, '*').replace(/\*\*+/g, '*');
-        s = trimChar(s, '*');
+        // remove pointless leading *
+        if ( s.charAt(0) === '*' ) {
+            s = s.replace(/^\*+([^%0-9a-z])/, '$1');
+        }
+        // remove pointless trailing *
+        if ( s.slice(-1) === '*' ) {
+            s = s.replace(/([^%0-9a-z])\*+$/, '$1');
+        }
+        s = trimChar(s, '^');
     }
 
     // nothing left?
@@ -1708,6 +1659,7 @@ FilterParser.prototype.parse = function(raw) {
 // performance.
 // These "bad tokens" are collated manually.
 
+// Hostname-anchored with no wildcard always have a token index of 0.
 var reHostnameToken = /^[0-9a-z]+/g;
 var reGoodToken = /[%0-9a-z]{2,}/g;
 
@@ -1726,25 +1678,27 @@ var badTokens = {
 
 var findFirstGoodToken = function(s) {
     reGoodToken.lastIndex = 0;
-    var matches;
+    var matches, lpos;
+    var badTokenMatch = null;
     while ( (matches = reGoodToken.exec(s)) ) {
+        // https://github.com/gorhill/uBlock/issues/997
+        // Ignore token if preceded by wildcard.
+        lpos = matches.index;
+        if ( lpos !== 0 && s.charAt(lpos - 1) === '*' ) {
+            continue;
+        }
         if ( s.charAt(reGoodToken.lastIndex) === '*' ) {
             continue;
         }
         if ( badTokens.hasOwnProperty(matches[0]) ) {
+            if ( badTokenMatch === null ) {
+                badTokenMatch = matches;
+            }
             continue;
         }
         return matches;
     }
-    // No good token found, try again without minding "bad" tokens
-    reGoodToken.lastIndex = 0;
-    while ( (matches = reGoodToken.exec(s)) ) {
-        if ( s.charAt(reGoodToken.lastIndex) === '*' ) {
-            continue;
-        }
-        return matches;
-    }
-    return null;
+    return badTokenMatch;
 };
 
 var findHostnameToken = function(s) {
@@ -1755,42 +1709,20 @@ var findHostnameToken = function(s) {
 /******************************************************************************/
 
 FilterParser.prototype.makeToken = function() {
-    if ( this.isRegex ) {
-        this.token = '*';
-        return;
-    }
-
-    var s = this.f;
-
     // https://github.com/chrisaljoudi/uBlock/issues/1038
-    // Match any URL.
-    if ( s === '*' ) {
-        this.token = '*';
+    // Single asterisk will match any URL.
+    if ( this.isRegex || this.f === '*' ) {
         return;
     }
 
-    var matches;
+    var matches = this.hostnameAnchored && this.f.indexOf('*') === -1 ?
+        findHostnameToken(this.f) :
+        findFirstGoodToken(this.f);
 
-    // Hostname-anchored with no wildcard always have a token index of 0.
-    if ( this.hostnameAnchored && s.indexOf('*') === -1 ) {
-        matches = findHostnameToken(s);
-        if ( !matches || matches[0].length === 0 ) {
-            return;
-        }
+    if ( matches !== null && matches[0].length !== 0 ) {
+        this.token = matches[0];
         this.tokenBeg = matches.index;
-        this.tokenEnd = reHostnameToken.lastIndex;
-        this.token = s.slice(this.tokenBeg, this.tokenEnd);
-        return;
     }
-
-    matches = findFirstGoodToken(s);
-    if ( matches === null || matches[0].length === 0 ) {
-        this.token = '*';
-        return;
-    }
-    this.tokenBeg = matches.index;
-    this.tokenEnd = reGoodToken.lastIndex;
-    this.token = s.slice(this.tokenBeg, this.tokenEnd);
 };
 
 /******************************************************************************/
@@ -1806,6 +1738,7 @@ var TokenEntry = function() {
 
 var FilterContainer = function() {
     this.reAnyToken = /[%0-9a-z]+/g;
+    this.reIsGeneric = /[\^\*]/;
     this.tokens = [];
     this.filterParser = new FilterParser();
     this.reset();
@@ -1974,17 +1907,71 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
 
 /******************************************************************************/
 
+FilterContainer.prototype.getFilterClass = function(details) {
+    var s = details.f;
+
+    if ( details.domainOpt.length !== 0 ) {
+        if ( details.isRegex ) {
+            return FilterRegexHostname;
+        }
+        if ( this.reIsGeneric.test(s) ) {
+            if ( details.hostnameAnchored ) {
+                return FilterGenericHnAnchoredHostname;
+            }
+            return FilterGenericHostname;
+        }
+        if ( details.anchor < 0 ) {
+            return FilterPlainLeftAnchoredHostname;
+        }
+        if ( details.anchor > 0 ) {
+            return FilterPlainRightAnchoredHostname;
+        }
+        if ( details.hostnameAnchored ) {
+            return FilterPlainHnAnchoredHostname;
+        }
+        if ( details.tokenBeg === 0 ) {
+            return FilterPlainPrefix0Hostname;
+        }
+        if ( details.tokenBeg === 1 ) {
+            return FilterPlainPrefix1Hostname;
+        }
+        return FilterPlainHostname;
+    }
+
+    if ( details.isRegex ) {
+        return FilterRegex;
+    }
+    if ( this.reIsGeneric.test(s) ) {
+        if ( details.hostnameAnchored ) {
+            return FilterGenericHnAnchored;
+        }
+        return FilterGeneric;
+    }
+    if ( details.anchor < 0 ) {
+        return FilterPlainLeftAnchored;
+    }
+    if ( details.anchor > 0 ) {
+        return FilterPlainRightAnchored;
+    }
+    if ( details.hostnameAnchored ) {
+        return FilterPlainHnAnchored;
+    }
+    if ( details.tokenBeg === 0 ) {
+        return FilterPlainPrefix0;
+    }
+    if ( details.tokenBeg === 1 ) {
+        return FilterPlainPrefix1;
+    }
+    return FilterPlain;
+};
+
+/******************************************************************************/
+
 FilterContainer.prototype.compile = function(raw, out, filterPath) {
     // ORDER OF TESTS IS IMPORTANT!
     // Ignore empty lines
     var s = raw.trim();
     if ( s.length === 0 ) {
-        return false;
-    }
-
-    // Ignore comments
-    var c = s.charAt(0);
-    if ( c === '[' || c === '!' ) {
         return false;
     }
 
@@ -2064,8 +2051,8 @@ FilterContainer.prototype.compileHostnameOnlyFilter = function(parsed, out) {
 
 FilterContainer.prototype.compileFilter = function(parsed, out) {
     parsed.makeToken();
-    if ( parsed.token === '' ) {
-        console.error('static-net-filtering.js > FilterContainer.addFilter("%s"): can\'t tokenize', parsed.f);
+    if ( parsed.token === '*' && parsed.hostnameAnchored ) {
+        console.error('FilterContainer.compileFilter("%s"): invalid filter', parsed.f);
         return false;
     }
 
@@ -2074,7 +2061,7 @@ FilterContainer.prototype.compileFilter = function(parsed, out) {
         party = parsed.firstParty ? FirstParty : ThirdParty;
     }
 
-    var filterClass = getFilterClass(parsed);
+    var filterClass = this.getFilterClass(parsed);
     if ( filterClass === null ) {
         return false;
     }
@@ -2135,7 +2122,7 @@ FilterContainer.prototype.fromCompiledContent = function(text, lineBeg, path) {
     var textEnd = text.length;
     var line, fields, bucket, entry, factory, filter;
     while ( lineBeg < textEnd ) {
-        if ( text.charAt(lineBeg) !== 'n' ) {
+        if ( text.charCodeAt(lineBeg) !== 0x6E /* 'n' */ ) {
             return lineBeg;
         }
         lineEnd = text.indexOf('\n', lineBeg);

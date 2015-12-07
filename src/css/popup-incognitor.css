@@ -1,5 +1,6 @@
 body {
     min-width: 250px;
+    min-height: 298px;
     width: 350px;
     margin: 0px;
     font-family: Arial, Helvetica, sans-serif;
@@ -178,7 +179,7 @@ header .hdr-buttons {
 
 
 #whitelist_block {
-    height: 100px;
+    height: 130px;
     width: 100%;
     display: block;
     position: absolute;
@@ -190,20 +191,20 @@ header .hdr-buttons {
     margin: auto;
     text-align: center;
     box-sizing: border-box;
-    padding: 45px 0 45px 15px;
+    padding: 60px 0 45px 15px;
     cursor: default;
     color: #2c5b72;
     font-size: 16px;
     background-image: url(../img/whitelist_block_icon.png);
     background-repeat: no-repeat;
-    background-position: 0px 47px;
+    background-position: 0px 61px;
 }
 
 
 /************************** SUBSCRIPTIONS LIST  ***************************/
 #subscription-list-wrapper {
     width: 100%;
-    min-height: 100px;
+    min-height: 130px;
     max-height: 380px;
     overflow: auto;
     box-sizing: border-box;
@@ -273,7 +274,7 @@ header .hdr-buttons {
 .info-container .subscription-text > div {
     display: table-cell;
     vertical-align: middle;
-    max-width: 205px;
+    max-width: 200px;
 }
 .info-container .subscription-title {
     font-family: Arial, Helvetica, sans-serif;
