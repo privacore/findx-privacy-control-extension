@@ -324,6 +324,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         pageBlockedRequestCount: 0,
         tabId: tabId,
         tabTitle: tabTitle,
+        tooltipsDisabled: µb.userSettings.tooltipsDisabled,
         usedFilters: [],
         urls: null
     };
@@ -504,8 +505,11 @@ var onMessage = function(request, sender, callback) {
 
     switch ( request.what ) {
     case 'retrieveDomainCosmeticSelectors':
-        if ( pageStore && pageStore.getSpecificCosmeticFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
+        if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering()) {
             response = µb.cosmeticFilteringEngine.retrieveDomainSelectors(request,  pageStore.tabHostname);
+            if ( response && response.skipCosmeticFiltering !== true ) {
+                response.skipCosmeticFiltering = !pageStore.getSpecificCosmeticFilteringSwitch();
+            }
         }
         break;
 
@@ -897,10 +901,10 @@ var onMessage = function(request, sender, callback) {
     // Async
     switch ( request.what ) {
     case 'readUserFilters':
-        return µb.assets.get(µb.userFiltersPath, callback);
+        return µb.loadUserFilters(callback);
 
     case 'writeUserFilters':
-        return µb.assets.put(µb.userFiltersPath, request.content, callback);
+        return µb.saveUserFilters(request.content, callback);
 
     default:
         break;

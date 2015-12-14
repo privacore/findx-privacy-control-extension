@@ -710,8 +710,24 @@ var getTabBrowser = (function() {
         };
     }
 
+    // https://github.com/gorhill/uBlock/issues/1004
+    //   Merely READING the `gBrowser` property causes the issue -- no
+    //   need to even use its returned value... This really should be fixed
+    //   in the browser.
+    //   Meanwhile, the workaround is to check whether the document is
+    //   ready. This is hacky, as the code below has to make assumption
+    //   about the browser's inner working -- specifically that the `gBrowser`
+    //   property should NOT be accessed before the document of the window is
+    //   in its ready state.
+
     return function(win) {
-        return win && win.gBrowser || null;
+        if ( win ) {
+            var doc = win.document;
+            if ( doc && doc.readyState === 'complete' ) {
+                return win.gBrowser || null;
+            }
+        }
+        return null;
     };
 })();
 
@@ -3371,55 +3387,84 @@ vAPI.contextMenu.remove = function() {
 /******************************************************************************/
 /******************************************************************************/
 
-var optionsObserver = {
-    addonId: 'privacontrol@privacore.com',
+var optionsObserver = (function() {
+    var addonId = 'privacontrol@privacore.com';
 
-    register: function() {
-        Services.obs.addObserver(this, 'addon-options-displayed', false);
-        cleanupTasks.push(this.unregister.bind(this));
-
-        var browser = tabWatcher.currentBrowser();
-        if ( !browser ) {
-            return;
+    var commandHandler = function() {
+        switch ( this.id ) {
+        case 'showDashboardButton':
+            vAPI.tabs.open({ url: 'dashboard.html', index: -1 });
+            break;
+        case 'showNetworkLogButton':
+            vAPI.tabs.open({ url: 'logger-ui.html', index: -1 });
+            break;
+        default:
+            break;
         }
+    };
 
-        // https://github.com/gorhill/uBlock/issues/948
-        // Older versions of Firefox can throw here when looking up `currentURI`.
-        var currentURI;
-        try {
-            currentURI = browser.currentURI;
-        } catch (ex) {
-        }
-
-        if ( currentURI && currentURI.spec === 'about:addons' ) {
-            this.observe(browser.contentDocument, 'addon-enabled', this.addonId);
-        }
-    },
-
-    unregister: function() {
-        Services.obs.removeObserver(this, 'addon-options-displayed');
-    },
-
-    setupOptionsButton: function(doc, id, page) {
+    var setupOptionsButton = function(doc, id) {
         var button = doc.getElementById(id);
         if ( button === null ) {
             return;
         }
-        button.addEventListener('command', function() {
-            vAPI.tabs.open({ url: page, index: -1 });
-        });
+        button.addEventListener('command', commandHandler);
         button.label = vAPI.i18n(id);
-    },
+    };
 
-    observe: function(doc, topic, addonId) {
-        if ( addonId !== this.addonId ) {
-            return;
+    var setupOptionsButtons = function(doc) {
+        setupOptionsButton(doc, 'showDashboardButton');
+        setupOptionsButton(doc, 'showNetworkLogButton');
+    };
+
+    var observer = {
+        observe: function(doc, topic, id) {
+            if ( id !== addonId ) {
+                return;
+            }
+
+            setupOptionsButtons(doc);
         }
+    };
 
-        this.setupOptionsButton(doc, 'showDashboardButton', 'dashboard.html');
-        this.setupOptionsButton(doc, 'showNetworkLogButton', 'logger-ui.html');
-    }
-};
+    // https://github.com/gorhill/uBlock/issues/948
+    // Older versions of Firefox can throw here when looking up `currentURI`.
+
+    var canInit = function() {
+        try {
+            var tabBrowser = tabWatcher.currentBrowser();
+            return tabBrowser &&
+                   tabBrowser.currentURI &&
+                   tabBrowser.currentURI.spec === 'about:addons' &&
+                   tabBrowser.contentDocument &&
+                   tabBrowser.contentDocument.readyState === 'complete';
+        } catch (ex) {
+        }
+    };
+
+    // Manually add the buttons if the `about:addons` page is already opened.
+
+    var init = function() {
+        if ( canInit() ) {
+            setupOptionsButtons(tabWatcher.currentBrowser().contentDocument);
+        }
+    };
+
+    var unregister = function() {
+        Services.obs.removeObserver(observer, 'addon-options-displayed');
+    };
+
+    var register = function() {
+        Services.obs.addObserver(observer, 'addon-options-displayed', false);
+        cleanupTasks.push(unregister);
+        deferUntil(canInit, init, { next: 463 });
+    };
+
+    return {
+        register: register,
+        unregister: unregister
+    };
+})();
 
 optionsObserver.register();
 

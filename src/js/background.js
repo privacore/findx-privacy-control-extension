@@ -51,6 +51,7 @@ return {
         pauseFiltering: false,
         advancedUserEnabled: true,
         autoUpdate: true,
+        cloudStorageEnabled: false,
         collapseBlocked: true,
         colorBlindFriendly: false,
         contextMenuEnabled: true,
@@ -63,7 +64,7 @@ return {
         prefetchingDisabled: true,
         requestLogMaxEntries: 1000,
         showIconBadge: true,
-        cloudStorageEnabled: false,
+        tooltipsDisabled: false,
         webrtcIPAddressHidden: false
     },
 

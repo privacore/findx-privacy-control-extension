@@ -516,6 +516,22 @@ vAPI.tabs.onPopupUpdated = (function() {
     // remember whether a popup or popunder was matched.
     var context = {};
 
+    // https://github.com/gorhill/uBlock/commit/1d448b85b2931412508aa01bf899e0b6f0033626#commitcomment-14944764
+    // See if two URLs are different, disregarding scheme -- because the scheme
+    // can be unilaterally changed by the browser.
+    var areDifferentURLs = function(a, b) {
+        var pos = a.indexOf('://');
+        if ( pos === -1 ) {
+            return false;
+        }
+        a = a.slice(pos);
+        pos = b.indexOf('://');
+        if ( pos === -1 ) {
+            return false;
+        }
+        return b.slice(pos) !== a;
+    };
+
     var popupMatch = function(openerURL, targetURL, clickedURL, popupType) {
         var openerHostname = µb.URI.hostnameFromURI(openerURL);
         var openerDomain = µb.URI.domainFromHostname(openerHostname);
@@ -529,12 +545,19 @@ vAPI.tabs.onPopupUpdated = (function() {
         context.requestHostname = µb.URI.hostnameFromURI(targetURL);
         context.requestType = 'popup';
 
+        // https://github.com/gorhill/uBlock/commit/1d448b85b2931412508aa01bf899e0b6f0033626#commitcomment-14944764
+        // Ignore bad target URL. On Firefox, an `about:blank` tab may be
+        // opened for a new tab before it is filled in with the real target URL.
+        if ( context.requestHostname === '' ) {
+            return '';
+        }
+
         // Dynamic filtering makes sense only when we have a valid hostname.
         if ( openerHostname !== '' ) {
             // Check user switch first
             if (
                 popupType !== 'popunder' &&
-                targetURL !== clickedURL &&
+                areDifferentURLs(targetURL, clickedURL) &&
                 µb.hnSwitches.evaluateZ('no-popups', openerHostname)
             ) {
                 return 'ub:no-popups: ' + µb.hnSwitches.z + ' true';
@@ -611,7 +634,6 @@ vAPI.tabs.onPopupUpdated = (function() {
             var tmp = openerTabId; openerTabId = targetTabId; targetTabId = tmp;
             popupType = 'popunder';
             result = popupMatch(targetURL, openerURL, µb.mouseURL, popupType);
-            console.log('vAPI.tabs.onPopupUpdated: %s => %s (%s)', targetURL, openerURL, popupType);
         }
 
         // Log only for when there was a hit against an actual filter (allow or block).

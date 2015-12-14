@@ -693,9 +693,6 @@ var cosmeticFilterFromTarget = function(nid, coarseSelector) {
 /******************************************************************************/
 
 var cosmeticFilterMapper = (function() {
-    // https://github.com/gorhill/uBlock/issues/1015
-    var reSpecificityBooster = /^:root\s+/;
-
     // https://github.com/gorhill/uBlock/issues/546
     var matchesFnName;
     if ( typeof document.body.matches === 'function' ) {
@@ -717,7 +714,9 @@ var cosmeticFilterMapper = (function() {
         var i = selectors.length;
         var selector, nodes, j, node;
         while ( i-- ) {
-            selector = selectors[i].replace(reSpecificityBooster, '');
+            // https://github.com/gorhill/uBlock/issues/1015
+            // Discard `:root ` prefix.
+            selector = selectors[i].slice(6);
             if ( filterMap.has(rootNode) === false && rootNode[matchesFnName](selector) ) {
                 filterMap.set(rootNode, selector);
                 hideNode(node);
@@ -743,6 +742,7 @@ var cosmeticFilterMapper = (function() {
             nodesFromStyleTag(styleTag, rootNode);
             if ( styleTag.sheet !== null ) {
                 styleTag.sheet.disabled = true;
+                styleTag[vAPI.sessionId] = true;
             }
         }
     };
@@ -760,9 +760,9 @@ var cosmeticFilterMapper = (function() {
             styleTag = styleTags[i];
             if ( styleTag.sheet !== null ) {
                 styleTag.sheet.disabled = false;
+                styleTag[vAPI.sessionId] = undefined;
             }
         }
-        reset();
     };
 
     return {

@@ -151,6 +151,12 @@
 /******************************************************************************/
 
 µBlock.saveUserFilters = function(content, callback) {
+    // https://github.com/gorhill/uBlock/issues/1022
+    // Be sure to end with an empty line.
+    content = content.trim();
+    if ( content !== '' ) {
+        content += '\n';
+    }
     this.assets.put(this.userFiltersPath, content, callback);
 };
 
@@ -460,7 +466,7 @@
         var listMeta = µb.remoteBlacklists[path];
         // https://github.com/gorhill/uBlock/issues/313
         // Always try to fetch the name if this is an external filter list.
-        if ( listMeta && listMeta.title === '' || /^https?:/.test(path) ) {
+        if ( listMeta && (listMeta.title === '' || listMeta.group === 'custom') ) {
             var matches = details.content.slice(0, 1024).match(/(?:^|\n)!\s*Title:([^\n]+)/i);
             if ( matches !== null ) {
                 listMeta.title = matches[1].trim();
