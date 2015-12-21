@@ -1322,7 +1322,7 @@ var onMessage = function(request, sender, callback) {
             if ( pageStore === null ) {
                 continue;
             }
-            if ( pageStore.rawURL.lastIndexOf(loggerURL, 0) === 0 ) {
+            if ( pageStore.rawURL.startsWith(loggerURL) ) {
                 continue;
             }
             tabIds[tabId] = pageStore.title;

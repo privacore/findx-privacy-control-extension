@@ -33,7 +33,7 @@
   },
   "statsPageName":{
     "message":"uBlock₀ — Kërkesat e rrjetit",
-    "description":"Title for the network request log window"
+    "description":"Title for the logger window"
   },
   "aboutPageName":{
     "message":"Info",
@@ -73,7 +73,7 @@
   },
   "popupTipLog":{
     "message":"Hap ditarin e kërkesave",
-    "description":"English: Go to request log"
+    "description":"Tooltip used for the logger icon in the panel"
   },
   "popupTipNoPopups":{
     "message":"Bllokoj të gjitha dritaret automatike që hap kjo faqja",
@@ -90,6 +90,22 @@
   "popupTipNoRemoteFonts":{
     "message":"Bllokoj sistemet e shkronjave në distancë",
     "description":"English: Toggle the blocking of remote fonts for this site"
+  },
+  "popupTipGlobalRules":{
+    "message":"Rregullat globale: rregullat në këtë shtyllë zbatohen te të gjitha faqet.",
+    "description":"Tooltip when hovering the top-most cell of the global-rules column."
+  },
+  "popupTipLocalRules":{
+    "message":"Rregullat lokale: rregullat në këtë shtyllë zbatohen vetëm te kjo faqja.\nRregullat lokale kanë më përparësi se rregullat globale.",
+    "description":"Tooltip when hovering the top-most cell of the local-rules column."
+  },
+  "popupTipSaveRules":{
+    "message":"Klikoni që t'i bëni ndryshimet të përhershme.",
+    "description":"Tooltip when hovering over the padlock in the dynamic filtering pane."
+  },
+  "popupTipRevertRules":{
+    "message":"Klikoni që t'i zhbëni ndryshimet.",
+    "description":"Tooltip when hovering over the eraser in the dynamic filtering pane."
   },
   "popupAnyRulePrompt":{
     "message":"të gjitha",
@@ -304,7 +320,7 @@
     "description":"English: Last update: {{ago}}, where 'ago' will be replaced with something like '2 days ago'"
   },
   "1pFormatHint":{
-    "message":"Një filtër për rresht. Filtri mund të jetë thjesht emri i një hosti ose t'i ngjasojë atyre që përdor Adblock Plus. Rreshtat që kanë si parashtesë &lsquo;!&rsquo; nuk do të merren parasysh.",
+    "message":"Një filtër për rresht. Filtri mund të jetë thjesht emri i një hosti ose t'i ngjasojë atyre që përdor Adblock Plus. Nuk do të merren parasysh rreshtat që kanë si parashtesë &lsquo;!&rsquo;.",
     "description":"English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
   },
   "1pImport":{
@@ -520,7 +536,7 @@
     "description":"Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm":{
-    "message":"Të gjithë parametrat do të fshihen dhe uBlock₀ do të hapet përsëri.\n\nDo ktheni parametrat origjinalë?",
+    "message":"Të gjithë parametrat do të fshihen dhe uBlock₀ do të hapet përsëri.\n\nDo i ktheni parametrat origjinalë?",
     "description":"Message asking user to confirm reset"
   },
   "errorCantConnectTo":{
