@@ -269,6 +269,7 @@ var histogram = function(label, buckets) {
     };
 
     /******************************************************************************/
+    /******************************************************************************/
 
     var FilterParser = function() {
         this.prefix = this.suffix = this.style = '';
@@ -276,8 +277,10 @@ var histogram = function(label, buckets) {
         this.hostnames = [];
         this.invalid = false;
         this.cosmetic = true;
-        this.reScriptContains = /^script:contains\(.+?\)$/;
+        this.reScriptTagFilter = /^script:(contains|inject)\((.+?)\)$/;
     };
+
+    /******************************************************************************/
 
     FilterParser.prototype.reset = function() {
         this.prefix = this.suffix = this.style = '';
@@ -288,139 +291,143 @@ var histogram = function(label, buckets) {
         return this;
     };
 
+    /******************************************************************************/
   
-FilterParser.prototype.parse = function(raw) {
-    // important!
-    this.reset();
+    FilterParser.prototype.parse = function(raw) {
+        // important!
+        this.reset();
 
-    // Find the bounds of the anchor.
-    var lpos = raw.indexOf('#');
-    if ( lpos === -1 ) {
-        this.cosmetic = false;
-        return this;
-    }
-    var rpos = raw.indexOf('#', lpos + 1);
-    if ( rpos === -1 ) {
-        this.cosmetic = false;
-        return this;
-    }
-
-    // Coarse-check that the anchor is valid.
-    // `##`: l = 1
-    // `#@#`, `#$#`, `#%#`: l = 2
-    // `#@$#`, `#@%#`: l = 3
-    if ( (rpos - lpos) > 3 ) {
-        this.cosmetic = false;
-        return this;
-    }
-
-    // Find out type of cosmetic filter.
-    // Exception filter?
-    if ( raw.charCodeAt(lpos + 1) === 0x40 /* '@' */ ) {
-        this.unhide = 1;
-    }
-
-    // https://github.com/gorhill/uBlock/issues/952
-    // Find out whether we are dealing with an Adguard-specific cosmetic
-    // filter, and if so, discard the filter.
-    var cCode = raw.charCodeAt(rpos - 1);
-    if ( cCode !== 0x23 /* '#' */ && cCode !== 0x40 /* '@' */ ) {
-        // We have an Adguard cosmetic filter if and only if the character is
-        // `$` or `%`, otherwise it's not a cosmetic filter.
-        if ( cCode === 0x24 /* '$' */ || cCode === 0x25 /* '%' */ ) {
-            this.invalid = true;
-        } else {
+        // Find the bounds of the anchor.
+        var lpos = raw.indexOf('#');
+        if ( lpos === -1 ) {
             this.cosmetic = false;
+            return this;
         }
-        return this;
-    }
+        var rpos = raw.indexOf('#', lpos + 1);
+        if ( rpos === -1 ) {
+            this.cosmetic = false;
+            return this;
+        }
 
-    // Extract the hostname(s).
-    if ( lpos !== 0 ) {
-        this.prefix = raw.slice(0, lpos);
-    }
+        // Coarse-check that the anchor is valid.
+        // `##`: l = 1
+        // `#@#`, `#$#`, `#%#`: l = 2
+        // `#@$#`, `#@%#`: l = 3
+        if ( (rpos - lpos) > 3 ) {
+            this.cosmetic = false;
+            return this;
+        }
 
-    // Extract the selector.
-    this.suffix = raw.slice(rpos + 1);
-    if ( this.suffix.length === 0 ) {
-        this.cosmetic = false;
-        return this;
-    }
+        // Find out type of cosmetic filter.
+        // Exception filter?
+        if ( raw.charCodeAt(lpos + 1) === 0x40 /* '@' */ ) {
+            this.unhide = 1;
+        }
 
-    // Cosmetic filters with explicit style properties can apply only:
-    // - to specific cosmetic filters (those which apply to a specific site)
-    // - to block cosmetic filters (not exception cosmetic filters)
-    if ( this.suffix.endsWith('}') ) {
-        // Not supported for now: this code will ensure some backward
-        // compatibility for when cosmetic filters with explicit style
-        // properties start to be in use.
-        this.invalid = true;
-        return this;
-    }
+        // https://github.com/gorhill/uBlock/issues/952
+        // Find out whether we are dealing with an Adguard-specific cosmetic
+        // filter, and if so, discard the filter.
+        var cCode = raw.charCodeAt(rpos - 1);
+        if ( cCode !== 0x23 /* '#' */ && cCode !== 0x40 /* '@' */ ) {
+            // We have an Adguard cosmetic filter if and only if the character is
+            // `$` or `%`, otherwise it's not a cosmetic filter.
+            if ( cCode === 0x24 /* '$' */ || cCode === 0x25 /* '%' */ ) {
+                this.invalid = true;
+            } else {
+                this.cosmetic = false;
+            }
+            return this;
+        }
 
-    // 2014-05-23:
-    // https://github.com/gorhill/httpswitchboard/issues/260
-    // Any sequence of `#` longer than one means the line is not a valid
-    // cosmetic filter.
-    if ( this.suffix.indexOf('##') !== -1 ) {
-        this.cosmetic = false;
-        return this;
-    }
+        // Extract the hostname(s).
+        if ( lpos !== 0 ) {
+            this.prefix = raw.slice(0, lpos);
+        }
 
-    // Normalize high-medium selectors: `href` is assumed to imply `a` tag. We
-    // need to do this here in order to correctly avoid duplicates. The test
-    // is designed to minimize overhead -- this is a low occurrence filter.
-    if ( this.suffix.startsWith('[href^="', 1) ) {
-        this.suffix = this.suffix.slice(1);
-    }
+        // Extract the selector.
+        this.suffix = raw.slice(rpos + 1);
+        if ( this.suffix.length === 0 ) {
+            this.cosmetic = false;
+            return this;
+        }
 
-    if ( this.prefix !== '' ) {
-        this.hostnames = this.prefix.split(/\s*,\s*/);
-    }
+        // Cosmetic filters with explicit style properties can apply only:
+        // - to specific cosmetic filters (those which apply to a specific site)
+        // - to block cosmetic filters (not exception cosmetic filters)
+        if ( this.suffix.endsWith('}') ) {
+            // Not supported for now: this code will ensure some backward
+            // compatibility for when cosmetic filters with explicit style
+            // properties start to be in use.
+            this.invalid = true;
+            return this;
+        }
 
-    // Script tag filters: pre-process them so that can be used with minimal
-    // overhead in the content script.
-    // Examples:
-    //   focus.de##script:contains(/uabInject/)
-    //   focus.de##script:contains(uabInject)
+        // 2014-05-23:
+        // https://github.com/gorhill/httpswitchboard/issues/260
+        // Any sequence of `#` longer than one means the line is not a valid
+        // cosmetic filter.
+        if ( this.suffix.indexOf('##') !== -1 ) {
+            this.cosmetic = false;
+            return this;
+        }
 
-    // Inline script tag filter?
-    if (
-        this.suffix.startsWith('script:contains(') === false ||
-        this.suffix.endsWith(')') === false
-    ) {
-        return this;
-    }
+        // Normalize high-medium selectors: `href` is assumed to imply `a` tag. We
+        // need to do this here in order to correctly avoid duplicates. The test
+        // is designed to minimize overhead -- this is a low occurrence filter.
+        if ( this.suffix.startsWith('[href^="', 1) ) {
+            this.suffix = this.suffix.slice(1);
+        }
 
-    // Currently supported only as non-generic selector. Also, exception
-    // script tag filter makes no sense, ignore.
-    if ( this.hostnames.length === 0 || this.unhide === 1 ) {
-        this.invalid = true;
-        return this;
-    }
+        if ( this.prefix !== '' ) {
+            this.hostnames = this.prefix.split(/\s*,\s*/);
+        }
 
-    var suffix = this.suffix.slice(16, -1);
-    this.suffix = 'script//:';
+        // Script tag filters: pre-process them so that can be used with minimal
+        // overhead in the content script.
+        // Examples:
+        //   focus.de##script:contains(/uabInject/)
+        //   focus.de##script:contains(uabInject)
+        //   focus.de##script:inject(uabinject-defuser.js)
 
-    // Plain string-based?
-    if ( suffix.startsWith('/') === false || suffix.endsWith('/') === false ) {
-        this.suffix += suffix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        return this;
-    }
+        var matches = this.reScriptTagFilter.exec(this.suffix);
+        if ( matches === null ) {
+            return this;
+        }
 
-    // Regex-based
-    this.suffix += suffix.slice(1, -1);
+        // Currently supported only as non-generic selector. Also, exception
+        // script tag filter makes no sense, ignore.
+        if ( this.hostnames.length === 0 || this.unhide === 1 ) {
+            this.invalid = true;
+            return this;
+        }
 
-    // Valid regex?
-    if ( isBadRegex(this.suffix) ) {
-        console.error(
-            "uBlock Origin> discarding bad regular expression-based cosmetic filter '%s': '%s'",
-            raw,
-            isBadRegex.message
-        );
-        this.invalid = true;
-        return this;
-    }
+        var token = matches[2];
+
+        switch ( matches[1] ) {
+        case 'contains':
+            this.suffix = 'script?';
+            // Plain string- or regex-based?
+            if ( token.startsWith('/') === false || token.endsWith('/') === false ) {
+                this.suffix += token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            } else {
+                this.suffix += token.slice(1, -1);
+                if ( isBadRegex(this.suffix) ) {
+                    console.error(
+                        "uBlock Origin> discarding bad regular expression-based cosmetic filter '%s': '%s'",
+                        raw,
+                        isBadRegex.message
+                    );
+                    this.invalid = true;
+                }
+            }
+            break;
+        case 'inject':
+            this.suffix = 'script+' + token;
+            break;
+        default:
+            this.invalid = true;
+            break;
+        }
 
         // Normalize high-medium selectors: `href` is assumed to imply `a` tag. We
         // need to do this here in order to correctly avoid duplicates. The test
@@ -728,12 +735,14 @@ FilterParser.prototype.parse = function(raw) {
         this.entityFilters = {};
         this.scriptTagFilters = {};
         this.scriptTagFilterCount = 0;
+        this.scriptTags = {};
+        this.scriptTagCount = 0;
     };
 
     /******************************************************************************/
 
-// https://github.com/chrisaljoudi/uBlock/issues/1004
-// Detect and report invalid CSS selectors.
+    // https://github.com/chrisaljoudi/uBlock/issues/1004
+    // Detect and report invalid CSS selectors.
 
     FilterContainer.prototype.isValidSelector = (function () {
         var div = document.createElement('div');
@@ -754,7 +763,9 @@ FilterParser.prototype.parse = function(raw) {
             } catch (e) {
             }
             if ( s.startsWith('script//:') ) {
-                return true;
+                if ( s.startsWith('?', 6) || s.startsWith('+', 6) ) {
+                    return true;
+                }
             }
             console.error('uBlock> invalid cosmetic filter:', s);
             return false;
@@ -979,6 +990,7 @@ FilterParser.prototype.parse = function(raw) {
                 this.duplicateCount += 1;
                 continue;
             }
+
             this.duplicateBuster[line] = true;
 
             fields = line.split('\v');
@@ -986,8 +998,8 @@ FilterParser.prototype.parse = function(raw) {
             // h	ir	twitter.com	.promoted-tweet
             if (fields[0] === 'h') {
                 // Special filter: script tags. Not a real CSS selector.
-                if (fields[3].startsWith('script//:')) {
-                    this.createScriptTagFilter(fields[2], fields[3].slice(9));
+                if (fields[3].startsWith('script')) {
+                    this.createScriptFilter(fields[2], fields[3].slice(6));
                     continue;
                 }
                 filter = new FilterHostname(fields[3], fields[2], null, path);
@@ -1022,8 +1034,8 @@ FilterParser.prototype.parse = function(raw) {
             // entity	selector
             if (fields[0] === 'e') {
                 // Special filter: script tags. Not a real CSS selector.
-                if (fields[2].startsWith('script//:')) {
-                    this.createScriptTagFilter(fields[1], fields[2].slice(9), path);
+                if (fields[2].startsWith('script?')) {
+                    this.createScriptFilter(fields[1], fields[2].slice(6), path);
                     continue;
                 }
                 bucket = this.entityFilters[fields[1]];
@@ -1091,6 +1103,19 @@ FilterParser.prototype.parse = function(raw) {
 
     /******************************************************************************/
 
+    FilterContainer.prototype.createScriptFilter = function(hostname, s, filterPath) {
+        if (µb.isDefaultOff(filterPath))
+            return;
+        if ( s.charAt(0) === '?' ) {
+            return this.createScriptTagFilter(hostname, s.slice(1));
+        }
+        if ( s.charAt(0) === '+' ) {
+            return this.createScriptTagInjector(hostname, s.slice(1));
+        }
+    };
+
+    /******************************************************************************/
+
     FilterContainer.prototype.createScriptTagFilter = function (hostname, s, filterPath) {
         if (µb.isDefaultOff(filterPath))
             return;
@@ -1133,6 +1158,62 @@ FilterParser.prototype.parse = function(raw) {
         if (out.length !== 0) {
             return out.join('|');
         }
+    };
+
+    /******************************************************************************/
+
+    FilterContainer.prototype.createScriptTagInjector = function(hostname, s, filterPath) {
+        if (µb.isDefaultOff(filterPath))
+            return;
+        if ( this.scriptTags.hasOwnProperty(hostname) ) {
+            this.scriptTags[hostname].push(s);
+        } else {
+            this.scriptTags[hostname] = [s];
+        }
+        this.scriptTagCount += 1;
+    };
+
+
+    /******************************************************************************/
+
+    FilterContainer.prototype.retrieveScriptTags = function(domain, hostname) {
+        if ( this.scriptTagCount === 0 ) {
+            return;
+        }
+        var reng = µb.redirectEngine;
+        if ( !reng ) {
+            return;
+        }
+        var out = [],
+            hn = hostname, pos, rnames, i, content;
+        for (;;) {
+            rnames = this.scriptTags[hn];
+            i = rnames && rnames.length || 0;
+            while ( i-- ) {
+                if ( (content = reng.resourceContentFromName(rnames[i], 'application/javascript')) ) {
+                    out.push(content);
+                }
+            }
+            if ( hn === domain ) {
+                break;
+            }
+            pos = hn.indexOf('.');
+            if ( pos === -1 ) {
+                break;
+            }
+            hn = hn.slice(pos + 1);
+        }
+        pos = domain.indexOf('.');
+        if ( pos !== -1 ) {
+            rnames = this.scriptTags[domain.slice(0, pos)];
+            i = rnames && rnames.length || 0;
+            while ( i-- ) {
+                if ( (content = reng.resourceContentFromName(rnames[i], 'application/javascript')) ) {
+                    out.push(content);
+                }
+            }
+        }
+        return out;
     };
 
     /******************************************************************************/
@@ -1192,7 +1273,9 @@ FilterParser.prototype.parse = function(raw) {
             highHighGenericHideCount: this.highHighGenericHideCount,
             genericDonthide: this.genericDonthide,
             scriptTagFilters: this.scriptTagFilters,
-            scriptTagFilterCount: this.scriptTagFilterCount
+            scriptTagFilterCount: this.scriptTagFilterCount,
+            scriptTags: this.scriptTags,
+            scriptTagCount: this.scriptTagCount
         };
     };
 
@@ -1255,6 +1338,8 @@ FilterParser.prototype.parse = function(raw) {
         this.genericDonthide = selfie.genericDonthide;
         this.scriptTagFilters = selfie.scriptTagFilters;
         this.scriptTagFilterCount = selfie.scriptTagFilterCount;
+        this.scriptTags = selfie.scriptTags;
+        this.scriptTagCount = selfie.scriptTagCount;
         this.frozen = true;
     };
 
@@ -1270,9 +1355,9 @@ FilterParser.prototype.parse = function(raw) {
         // Of interest: http://fitzgeraldnick.com/weblog/40/
         // http://googlecode.blogspot.ca/2009/07/gmail-for-mobile-html5-series-using.html
         this.selectorCacheTimer = vAPI.setTimeout(
-                this.pruneSelectorCacheAsync.bind(this),
-                this.selectorCachePruneDelay
-                );
+            this.pruneSelectorCacheAsync.bind(this),
+            this.selectorCachePruneDelay
+        );
     };
 
     /******************************************************************************/
@@ -1378,12 +1463,12 @@ FilterParser.prototype.parse = function(raw) {
 
         if (request.firstSurvey) {
             r.highGenerics = {
-                hideLow: this.highLowGenericHide,
-                hideLowCount: this.highLowGenericHideCount,
-                hideMedium: this.highMediumGenericHide,
+                hideLow:         this.highLowGenericHide,
+                hideLowCount:    this.highLowGenericHideCount,
+                hideMedium:      this.highMediumGenericHide,
                 hideMediumCount: this.highMediumGenericHideCount,
-                hideHigh: this.highHighGenericHide,
-                hideHighCount: this.highHighGenericHideCount
+                hideHigh:        this.highHighGenericHide,
+                hideHighCount:   this.highHighGenericHideCount
             };
             // https://github.com/chrisaljoudi/uBlock/issues/497
             r.donthide = this.genericDonthide;
@@ -1395,9 +1480,9 @@ FilterParser.prototype.parse = function(raw) {
         var i = selectors.length;
         while (i--) {
             if (
-                    (selector = selectors[i]) &&
-                    (bucket = this.lowGenericHide[selector])
-                    ) {
+                (selector = selectors[i]) &&
+                (bucket = this.lowGenericHide[selector])
+            ) {
                 bucket.retrieve(selector, hideSelectors, rootDomain);
             }
         }
@@ -1438,7 +1523,8 @@ FilterParser.prototype.parse = function(raw) {
             cosmeticHide: [],
             cosmeticDonthide: [],
             netHide: [],
-            netCollapse: µb.userSettings.collapseBlocked
+            netCollapse: µb.userSettings.collapseBlocked,
+            scripts: this.retrieveScriptTags(domain, hostname)
         };
 
             //console.log(

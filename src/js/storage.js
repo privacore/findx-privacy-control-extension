@@ -676,7 +676,7 @@
         callback();
     };
 
-    this.assets.get('assets/ublock/redirect-resources.txt', onResourcesLoaded);
+    this.assets.get('assets/ublock/resources.txt', onResourcesLoaded);
 };
 
 /******************************************************************************/
@@ -861,7 +861,7 @@
             assets[location] = true;
         }
         assets[µb.pslPath] = true;
-        assets['assets/ublock/redirect-resources.txt'] = true;
+        assets['assets/ublock/resources.txt'] = true;
         callback(assets);
     };
 
