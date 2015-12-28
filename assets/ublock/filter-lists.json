@@ -360,5 +360,12 @@
         "title": "GRC: Greek AdBlock Filter",
         "group": "regions",
         "supportURL": "https://github.com/kargig/greek-adblockplus-filter"
-        }
+        },
+    "https://raw.githubusercontent.com/betterwebleon/slovenian-list/master/filters.txt": {
+		"off": true,
+		"defaultOff": true,
+		"title": "SVN: Slovenian List",
+		"group": "regions",
+		"supportURL": "https://github.com/betterwebleon/slovenian-list"
+	}
 }

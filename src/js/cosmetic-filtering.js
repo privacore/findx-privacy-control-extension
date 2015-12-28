@@ -94,28 +94,28 @@ var histogram = function(label, buckets) {
 //   #A9AdsMiddleBoxTop
 //   .AD-POST
 
-    var FilterPlain = function (filterPath) {
-        this.filterPath = filterPath || "";
+var FilterPlain = function (filterPath) {
+    this.filterPath = filterPath || "";
 
-    };
+};
 
-    FilterPlain.prototype.retrieve = function (s, out) {
-        if (!µb.isDefaultOff(this.filterPath)) {
-            out.push(s);
-        }
+FilterPlain.prototype.retrieve = function (s, out) {
+    if (!µb.isDefaultOff(this.filterPath)) {
+        out.push(s);
+    }
 
-    };
+};
 
-    FilterPlain.prototype.fid = '#';
+FilterPlain.prototype.fid = '#';
 
-    FilterPlain.prototype.toSelfie = function () {
-        return this.filterPath;
-    };
+FilterPlain.prototype.toSelfie = function () {
+    return this.filterPath;
+};
 
-    FilterPlain.fromSelfie = function (s) {
-        var args = s.split('\t');
-        return new FilterPlain(args[0]);
-    };
+FilterPlain.fromSelfie = function (s) {
+    var args = s.split('\t');
+    return new FilterPlain(args[0]);
+};
 
 
     /******************************************************************************/
@@ -966,121 +966,122 @@ var histogram = function(label, buckets) {
 
     /******************************************************************************/
 
-    FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, path) {
-        if (skip) {
-            return this.skipCompiledContent(text, lineBeg);
+FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, path) {
+    if (skip) {
+        return this.skipCompiledContent(text, lineBeg);
+    }
+
+    var lineEnd;
+    var textEnd = text.length;
+    var line, fields, filter, key, bucket;
+
+    while (lineBeg < textEnd) {
+        if ( text.charCodeAt(lineBeg) !== 0x63 /* 'c' */ ) {
+            return lineBeg;
         }
-        var lineEnd;
-        var textEnd = text.length;
-        var line, fields, filter, key, bucket;
-        while (lineBeg < textEnd) {
-            if ( text.charCodeAt(lineBeg) !== 0x63 /* 'c' */ ) {
-                return lineBeg;
-            }
-            lineEnd = text.indexOf('\n', lineBeg);
-            if (lineEnd === -1) {
-                lineEnd = textEnd;
-            }
-            line = text.slice(lineBeg + 2, lineEnd);
-            lineBeg = lineEnd + 1;
-
-
-            this.acceptedCount += 1;
-            if (this.duplicateBuster.hasOwnProperty(line)) {
-                this.duplicateCount += 1;
-                continue;
-            }
-
-            this.duplicateBuster[line] = true;
-
-            fields = line.split('\v');
-
-            // h	ir	twitter.com	.promoted-tweet
-            if (fields[0] === 'h') {
-                // Special filter: script tags. Not a real CSS selector.
-                if (fields[3].startsWith('script')) {
-                    this.createScriptFilter(fields[2], fields[3].slice(6));
-                    continue;
-                }
-                filter = new FilterHostname(fields[3], fields[2], null, path);
-                bucket = this.hostnameFilters[fields[1]];
-                if (bucket === undefined) {
-                    this.hostnameFilters[fields[1]] = filter;
-                } else if (bucket instanceof FilterBucket) {
-                    bucket.add(filter);
-                } else {
-                    this.hostnameFilters[fields[1]] = new FilterBucket(bucket, filter, path);
-                }
-                continue;
-            }
-
-            // lg	105	.largeAd
-            // lg+	2jx	.Mpopup + #Mad > #MadZone
-            if (fields[0] === 'lg' || fields[0] === 'lg+') {
-                filter = fields[0] === 'lg' ?
-                        new FilterPlain(path) :
-                        new FilterPlainMore(fields[2], path);
-                bucket = this.lowGenericHide[fields[1]];
-                if (bucket === undefined) {
-                    this.lowGenericHide[fields[1]] = filter;
-                } else if (bucket instanceof FilterBucket) {
-                    bucket.add(filter);
-                } else {
-                    this.lowGenericHide[fields[1]] = new FilterBucket(bucket, filter, path);
-                }
-                continue;
-            }
-
-            // entity	selector
-            if (fields[0] === 'e') {
-                // Special filter: script tags. Not a real CSS selector.
-                if (fields[2].startsWith('script?')) {
-                    this.createScriptFilter(fields[1], fields[2].slice(6), path);
-                    continue;
-                }
-                bucket = this.entityFilters[fields[1]];
-                if (bucket === undefined) {
-                    this.entityFilters[fields[1]] = [fields[2]];
-                } else {
-                    bucket.push(fields[2]);
-                }
-                continue;
-            }
-
-            if (fields[0] === 'hlg0') {
-                this.highLowGenericHide[fields[1]] = true;
-                this.highLowGenericHideCount += 1;
-                continue;
-            }
-
-            if (fields[0] === 'hmg0') {
-                key = fields[1];
-                bucket = this.highMediumGenericHide[key];
-                if (bucket === undefined) {
-                    this.highMediumGenericHide[key] = fields[2];
-                } else if (Array.isArray(bucket)) {
-                    bucket.push(fields[2]);
-                } else {
-                    this.highMediumGenericHide[key] = [bucket, fields[2]];
-                }
-                this.highMediumGenericHideCount += 1;
-                continue;
-            }
-
-            if (fields[0] === 'hhg0') {
-                this.highHighGenericHideArray.push(fields[1]);
-                this.highHighGenericHideCount += 1;
-                continue;
-            }
-
-            // https://github.com/chrisaljoudi/uBlock/issues/497
-            // Generic exception filters: expected to be a rare occurrence.
-            if (fields[0] === 'g1') {
-                this.genericDonthide.push(fields[1]);
-            }
+        lineEnd = text.indexOf('\n', lineBeg);
+        if (lineEnd === -1) {
+            lineEnd = textEnd;
         }
-        return textEnd;
-    };
+        line = text.slice(lineBeg + 2, lineEnd);
+        lineBeg = lineEnd + 1;
+
+
+        this.acceptedCount += 1;
+        if (this.duplicateBuster.hasOwnProperty(line)) {
+            this.duplicateCount += 1;
+            continue;
+        }
+        this.duplicateBuster[line] = true;
+
+        fields = line.split('\v');
+
+        // h	ir	twitter.com	.promoted-tweet
+        if (fields[0] === 'h') {
+            // Special filter: script tags. Not a real CSS selector.
+            if (fields[3].startsWith('script')) {
+                this.createScriptFilter(fields[2], fields[3].slice(6));
+                continue;
+            }
+            filter = new FilterHostname(fields[3], fields[2], null, path);
+            bucket = this.hostnameFilters[fields[1]];
+            if (bucket === undefined) {
+                this.hostnameFilters[fields[1]] = filter;
+            } else if (bucket instanceof FilterBucket) {
+                bucket.add(filter);
+            } else {
+                this.hostnameFilters[fields[1]] = new FilterBucket(bucket, filter, path);
+            }
+            continue;
+        }
+
+        // lg	105	.largeAd
+        // lg+	2jx	.Mpopup + #Mad > #MadZone
+        if (fields[0] === 'lg' || fields[0] === 'lg+') {
+            filter = fields[0] === 'lg' ?
+                    new FilterPlain(path) :
+                    new FilterPlainMore(fields[2], path);
+            bucket = this.lowGenericHide[fields[1]];
+            if (bucket === undefined) {
+                this.lowGenericHide[fields[1]] = filter;
+            } else if (bucket instanceof FilterBucket) {
+                bucket.add(filter);
+            } else {
+                this.lowGenericHide[fields[1]] = new FilterBucket(bucket, filter, path);
+            }
+            continue;
+        }
+
+        // entity	selector
+        if (fields[0] === 'e') {
+            // Special filter: script tags. Not a real CSS selector.
+            if (fields[2].startsWith('script')) {
+                this.createScriptFilter(fields[1], fields[2].slice(6), path);
+                continue;
+            }
+            bucket = this.entityFilters[fields[1]];
+            if (bucket === undefined) {
+                this.entityFilters[fields[1]] = [fields[2]];
+            } else {
+                bucket.push(fields[2]);
+            }
+            continue;
+        }
+
+        if (fields[0] === 'hlg0') {
+            this.highLowGenericHide[fields[1]] = true;
+            this.highLowGenericHideCount += 1;
+            continue;
+        }
+
+        if (fields[0] === 'hmg0') {
+            key = fields[1];
+            bucket = this.highMediumGenericHide[key];
+            if (bucket === undefined) {
+                this.highMediumGenericHide[key] = fields[2];
+            } else if (Array.isArray(bucket)) {
+                bucket.push(fields[2]);
+            } else {
+                this.highMediumGenericHide[key] = [bucket, fields[2]];
+            }
+            this.highMediumGenericHideCount += 1;
+            continue;
+        }
+
+        if (fields[0] === 'hhg0') {
+            this.highHighGenericHideArray.push(fields[1]);
+            this.highHighGenericHideCount += 1;
+            continue;
+        }
+
+        // https://github.com/chrisaljoudi/uBlock/issues/497
+        // Generic exception filters: expected to be a rare occurrence.
+        if (fields[0] === 'g1') {
+            this.genericDonthide.push(fields[1]);
+        }
+    }
+    return textEnd;
+};
 
     /******************************************************************************/
 

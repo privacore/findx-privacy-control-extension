@@ -171,6 +171,22 @@ www.google-analytics.com/ga.js application/javascript
     window._gaq = gaq.qf = gaq;
 })();
 
+www.google-analytics.com/analytics.js application/javascript
+(function() {
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/
+    var ga = function() {
+        var len = arguments.length;
+        if ( len === 0 ) {
+            return;
+        }
+        var f = arguments[len-1];
+        if ( typeof f === 'object' && typeof f.hitCallback === 'function' ) {
+            f.hitCallback();
+        }
+    };
+    window.ga = ga;
+})();
+
 
 # Ubiquitous googletagservices.com: not blocked by EasyPrivacy.
 # "Tags are tiny bits of website code that let you measure traffic and
