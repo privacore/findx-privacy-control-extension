@@ -293,6 +293,12 @@
                 storedEntry.lastUpdate : Date.now();
             
         }
+
+        // https://github.com/gorhill/uBlock/issues/747
+        if ( µb.firstInstall ) {
+            µb.autoSelectFilterLists(availableLists);
+        }
+
         callback(availableLists);
     };
 
@@ -347,6 +353,25 @@
 
 /******************************************************************************/
 
+µBlock.autoSelectFilterLists = function(lists) {
+    var lang = self.navigator.language.slice(0, 2),
+        list;
+    for ( var path in lists ) {
+        if ( lists.hasOwnProperty(path) === false ) {
+            continue;
+        }
+        list = lists[path];
+        if ( list.off !== true ) {
+            continue;
+        }
+        if ( list.lang === lang ) {
+            list.off = false;
+        }
+    }
+};
+
+/******************************************************************************/
+
 µBlock.createShortUniqueId = function(path) {
     var md5 = YaMD5.hashStr(path);
     return md5.slice(0, 4) + md5.slice(-4);
@@ -356,7 +381,15 @@
 
 /******************************************************************************/
 
+// This is used to be re-entrancy resistant.
+µBlock.loadingFilterLists = false;
+
 µBlock.loadFilterLists = function(callback) {
+    // Callers are expected to check this first.
+    if ( this.loadingFilterLists ) {
+        return;
+    }
+    this.loadingFilterLists = true;
 
     //quickProfiler.start('µBlock.loadFilterLists()');
 
@@ -386,6 +419,7 @@
         callback();
 
         µb.selfieManager.create();
+        µb.loadingFilterLists = false;
     };
 
     var applyCompiledFilters = function(compiled, path) {
@@ -434,8 +468,7 @@
         }
         filterlistsCount = toLoad.length;
         if ( filterlistsCount === 0 ) {
-            onDone();
-            return;
+            return onDone();
         }
         
         var i = toLoad.length;
@@ -651,6 +684,8 @@
     var µb = this;
 
     // We are just reloading the filter lists: we do not want assets to update.
+    // TODO: probably not needed anymore, since filter lists are now always
+    // loaded without update => see `µb.assets.remoteFetchBarrier`.
     this.assets.autoUpdate = false;
 
     var onFiltersReady = function() {
