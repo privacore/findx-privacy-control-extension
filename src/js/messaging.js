@@ -322,6 +322,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         pageDomain: tabContext.rootDomain,
         pageAllowedRequestCount: 0,
         pageBlockedRequestCount: 0,
+        popupBlockedCount: 0,
         tabId: tabId,
         tabTitle: tabTitle,
         tooltipsDisabled: µb.userSettings.tooltipsDisabled,
@@ -345,6 +346,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.remoteFontCount = pageStore.remoteFontCount;
         r.usedFilters = getUsedFilters(pageStore);
         r.urls = pageStore.netFilteringCache.urls;
+        r.popupBlockedCount = pageStore.popupBlockedCount;
     } else {
         r.hostnameDict = {};
         r.firewallRules = getFirewallRules();
@@ -504,13 +506,18 @@ var onMessage = function(request, sender, callback) {
     }
 
     switch ( request.what ) {
-    case 'retrieveDomainCosmeticSelectors':
+        case 'retrieveDomainCosmeticSelectors':
         if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering()) {
             response = µb.cosmeticFilteringEngine.retrieveDomainSelectors(request,  pageStore.tabHostname);
             if ( response && response.skipCosmeticFiltering !== true ) {
                 response.skipCosmeticFiltering = !pageStore.getSpecificCosmeticFilteringSwitch();
             }
         }
+        // Changed from 11.01.2016 by Igor Petrenko. Don't know what is it.
+        // If leave it as default - skipCosmeticFiltering always be false and in case when EasyList filter
+        //      disabled for some domain - ads will be blocked anyway.
+        // And if it set as true if you enable EasyList on a domain it will blocks ads.
+        response.skipCosmeticFiltering = true;
         break;
 
     default:

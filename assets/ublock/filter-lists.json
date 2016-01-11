@@ -198,7 +198,7 @@
         "title": "JPN: ABP Japanese filters (日本用フィルタ)",
         "group": "regions",
         "lang": "ja",
-        "supportURL": "https://github.com/k2jp/abp-japanese-filters"
+        "supportURL": "https://github.com/k2jp/abp-japanese-filters/wiki/Support_Policy"
         },
     "https://raw.githubusercontent.com/liamja/Prebake/master/obtrusive.txt": {
         "off": true,
@@ -348,6 +348,14 @@
         "group": "regions",
         "supportURL": "https://forums.lanik.us/"
         },
+    "https://easylist-downloads.adblockplus.org/easylistspanish.txt": {
+        "off": true,
+        "defaultOff": true,
+        "title": "spa: EasyList Spanish",
+        "group": "regions",
+        "lang": "es",
+        "supportURL": "https://forums.lanik.us/viewforum.php?f=103"
+    },
     "https://www.fanboy.co.nz/fanboy-swedish.txt": {
         "off": true,
         "defaultOff": true,

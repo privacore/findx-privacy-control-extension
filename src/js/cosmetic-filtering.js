@@ -1528,13 +1528,46 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             scripts: this.retrieveScriptTags(domain, hostname)
         };
 
-            //console.log(
-            //    'µBlock> abp-hide-filters.js: "%s" => %d selectors out',
-            //    request.locationURL,
-            //    r.cosmeticHide.length + r.cosmeticDonthide.length
-            //);
+        //var hash, bucket;
+        //hash = makeHash(0, domain, this.domainHashMask);
+        //if ( (bucket = this.hostnameFilters[hash]) ) {
+        //    bucket.retrieve(hostname, r.cosmeticHide);
+        //}
+        //// https://github.com/chrisaljoudi/uBlock/issues/188
+        //// Special bucket for those filters without a valid domain name as per PSL
+        //if ( (bucket = this.hostnameFilters[this.type0NoDomainHash]) ) {
+        //    bucket.retrieve(hostname, r.cosmeticHide);
+        //}
+        //
+        //// entity filter buckets are always plain js array
+        //if ( this.entityFilters.hasOwnProperty(r.entity) ) {
+        //    r.cosmeticHide = r.cosmeticHide.concat(this.entityFilters[r.entity]);
+        //}
+        //// No entity exceptions as of now
+        //
+        //hash = makeHash(1, domain, this.domainHashMask);
+        //if ( (bucket = this.hostnameFilters[hash]) ) {
+        //    bucket.retrieve(hostname, r.cosmeticDonthide);
+        //}
+        //
+        //// https://github.com/chrisaljoudi/uBlock/issues/188
+        //// Special bucket for those filters without a valid domain name as per PSL
+        //if ( (bucket = this.hostnameFilters[this.type1NoDomainHash]) ) {
+        //    bucket.retrieve(hostname, r.cosmeticDonthide);
+        //}
+        //
+        //this.retrieveFromSelectorCache(hostname, 'cosmetic', r.cosmeticHide);
+        //this.retrieveFromSelectorCache(hostname, 'net', r.netHide);
 
-            return r;
+        //quickProfiler.stop();
+
+        //console.log(
+        //    'µBlock> abp-hide-filters.js: "%s" => %d selectors out',
+        //    request.locationURL,
+        //    r.cosmeticHide.length + r.cosmeticDonthide.length
+        //);
+
+        return r;
     };
 
     /******************************************************************************/

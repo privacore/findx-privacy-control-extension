@@ -150,8 +150,8 @@ jeu.info###page [class^="banniere-"]
 # http://arstechnica.com/civis/viewtopic.php?f=3&t=1296357
 arstechnica.com###lg-pushdown
 
-# This prevents spurious redirection, but breaks comments
-||www.washingtonpost.com/*/twp-global.js$script,first-party
+# This prevents spurious redirections
+washingtonpost.com##script:inject(wpredirect-defuser.js)
 
 # https://adblockplus.org/forum/viewtopic.php?f=2&t=26700&start=120#p141228
 ||www.valuewalk.com/wp-content/plugins/adblade-publisher-tools$script,first-party
@@ -202,11 +202,27 @@ segmentnext.com###content > div > div[class] > div[class] > div[class]
 # http://forum.palemoon.org/viewtopic.php?f=46&t=10271#p71697
 @@||cdn.windows7themes.net/wp-content/advert.js$script,first-party
 
+# Popunders
+
 # https://github.com/gorhill/uBlock/issues/991
 # New `popunder` filter option to explicitly block popunders.
 # Older version of uBO will discard this unknown filter option -- so it's safe
 # to add it here now.
 |http://$popunder,third-party,domain=xhamster.com
+# https://github.com/gorhill/uBlock/issues/1173
+||exoclick.com^$popunder
+# https://github.com/gorhill/uBlock/issues/1053
+||zinturax.com^$document,popunder,script
+# https://github.com/gorhill/uBlock/issues/995
+||trafficstars.com^$document,popunder
+# https://forums.lanik.us/viewtopic.php?f=62&t=25212&start=15
+||branchroughlend.info^$popunder,popup
+||market-buster.com^$popunder,popup
+||clkfeed.com^$popunder,popup
+# https://github.com/gorhill/uBlock/issues/1177
+||clicksvenue.com^$popunder
+||globaltraffico.com^$popunder,popup
+
 
 # https://forums.lanik.us/viewtopic.php?f=62&t=27003
 www.opensubtitles.org##div[itemscope] > fieldset
@@ -220,12 +236,6 @@ skystreaming.net###fanback + style + div[id]
 
 # https://github.com/gorhill/uBlock/issues/1049
 ||d1zatounuylvwg.cloudfront.net/abw.js$script,third-party
-
-# https://github.com/gorhill/uBlock/issues/1053
-||zinturax.com^$document,popunder,script
-
-# https://github.com/gorhill/uBlock/issues/995
-||trafficstars.com^$document,popunder
 
 # https://github.com/gorhill/uBlock/issues/1079
 # These are just used by obnoxious click-bait ads with obfuscated links -- they
@@ -241,7 +251,7 @@ skystreaming.net###fanback + style + div[id]
 activistpost.com,alfonzorachel.com,aplus.com,breathecast.com,bulletsfirst.net,clashdaily.com,comicallyincorrect.com,conservativebyte.com,cowboybyte.com,dailysurge.com,dccrimestories.com,drhotze.com,explosm.net,genfringe.com,girlsjustwannahaveguns.com,joeforamerica.com,latinpost.com,mensfitness.com,minutemennews.com,mobilelikez.com,muscleandfitness.com,naturalblaze.com,oddee.com,okmagazine.com,patriotoutdoornews.com,pitgrit.com,radaronline.com,redmaryland.com,segmentnext.com,shark-tank.com,theblacksphere.net,thegatewaypundit.com,themattwalshblog.com,thepoke.co.uk,unilad.co.uk,valuewalk.com,vcpost.com,victoriajackson.com,viralnova.com##script:inject(yavli-defuser.js)
 
 # https://github.com/gorhill/uBlock/issues/1094
-extremetube.com,pornhub.com,primewire.*,redtube.com,spankwire.com,tube8.com,tube8.fr,tube8.es,youporn.com,youporngay.com##script:inject(pornhub-popup-defuser.js)
+extremetube.com,pornhub.com,primewire.*,redtube.*,spankwire.com,tube8.*,youporn.com,youporngay.com##script:inject(pornhub-popup-defuser.js)
 
 # https://adblockplus.org/forum/viewtopic.php?f=2&t=43192
 # Users should not have to punch holes in their blockers if it can be avoided.
@@ -250,12 +260,37 @@ extremetube.com,pornhub.com,primewire.*,redtube.com,spankwire.com,tube8.com,tube
 
 # https://github.com/gorhill/uBlock/issues/1136
 ||dailymotion.com/ac/video/$image,first-party,redirect=2x2-transparent.png
+# https://github.com/gorhill/uBlock/issues/1136#issuecomment-170371863
+dailymotion.com##script:inject(1136#issuecomment-170371863.js)
 
 # https://news.ycombinator.com/item?id=10814913
 forbes.com##script:inject(forbes-defuser.js)
 
 # https://forums.lanik.us/viewtopic.php?f=62&t=25212&start=15
-||branchroughlend.info^$popunder,popup
-||market-buster.com^$popunder,popup
-||clkfeed.com^$popunder,popup
 animeuploads.com,cizgifilmlerizle.com##script:inject(impspcabe-defuser.js)
+
+# https://github.com/gorhill/uBlock/issues/949
+||s3.amazonaws.com/homad-global-configs.schneevonmorgen.com/hd-main.js$script,domain=cdnapi.kaltura.com|spiegel.de|stern.de|t-online.de,redirect=hd-main.js
+||hgc.svonm.com/hd-main.js$script,domain=cdnapi.kaltura.com,redirect=hd-main.js
+
+# https://adblockplus.org/forum/viewtopic.php?f=2&t=40985
+# Proof of concept: no need to open ourselves to more 3rd-party scripts/frames in
+# order to prevent blocker bypass. The `important` filter option is used here
+# to override EasyList exception filters for this case: ideally exception filters
+# should be avoided as much as possible.
+||ads.ad-center.com/smart_ad/display?ref=*&smart_ad_id=$subdocument,domain=dayt.se,redirect=noopframe,important
+||ads.ad-center.com^$subdocument,domain=dayt.se,redirect=noopframe,important
+||aflrm.com^$subdocument,domain=dayt.se,redirect=noopframe,important
+||dayt.se^*fuckadblock.js$script,redirect=fuckadblock.js-3.2.0,important
+||imads.integral-marketing.com^$domain=dayt.se,important
+
+# https://github.com/gorhill/uBlock/issues/1078
+||eurotransport.de/*/antiAdBlock.js$script,first-party,redirect=antiAdBlock.js
+
+# https://forums.lanik.us/viewtopic.php?f=91&t=27188
+||i.ligatus.com/*/angular-tag.js$script,redirect=i.ligatus.com/*/angular-tag.js
+
+# https://github.com/gorhill/uBlock/issues/1194
+openload.co##script:inject(openload-defuser.js)
+# https://github.com/gorhill/uBlock/issues/1201
+openload.*##script:contains(/^\s*window\.popAdsLoaded=/)

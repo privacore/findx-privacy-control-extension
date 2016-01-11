@@ -697,16 +697,14 @@ var renderExternalLists = function() {
 /******************************************************************************/
 
 var externalListsChangeHandler = function() {
-    uDom('#externalListsApply').prop(
-        'disabled',
-        this.value.trim() === externalLists
-    );
+    uDom.nodeFromId('externalListsApply').disabled =
+        uDom.nodeFromId('externalLists').value.trim() === externalLists.trim();
 };
 
 /******************************************************************************/
 
 var externalListsApplyHandler = function() {
-    externalLists = uDom('#externalLists').val();
+    externalLists = uDom.nodeFromId('externalLists').value;
     messager.send({
         what: 'userSettings',
         name: 'externalLists',
@@ -765,36 +763,35 @@ var groupEntryClickHandler = function() {
         else {
             result = addExternal();
         }
-
         if (result) {
             $("#addSubscriptionContainer").hide();
             $("#customSubscriptionContainer").hide();
             $("#addSubscriptionButton").show();
         }
     };
-      /**
-         * Update subscriptions after some changes like default on/off changing or in use selecting.
-         * @param {string} path - path to the file, need to search filter in "availableFilters" list by key
-         * @param {boolean} off - new state value
-         * @param {boolean} inUse - new state value
-         * @param {boolean} defaultOff - new state value
-         */
-        var updateSubscriptions = function (path, off, inUse, defaultOff) {
-            // Reload blacklists
-            renderBusyOverlay(true);
-            var switches = [];
-            switches.push({
-                location: path,
-                defaultOff: defaultOff,
-                inUse: inUse,
-                off: off
-            });
-            messager.send({
-                what: 'updateAndReloadAllFilters',
-                switches: switches,
-                update: true
-            });
-        };
+    /**
+     * Update subscriptions after some changes like default on/off changing or in use selecting.
+     * @param {string} path - path to the file, need to search filter in "availableFilters" list by key
+     * @param {boolean} off - new state value
+     * @param {boolean} inUse - new state value
+     * @param {boolean} defaultOff - new state value
+     */
+    var updateSubscriptions = function (path, off, inUse, defaultOff) {
+        // Reload blacklists
+        renderBusyOverlay(true);
+        var switches = [];
+        switches.push({
+            location: path,
+            defaultOff: defaultOff,
+            inUse: inUse,
+            off: off
+        });
+        messager.send({
+            what: 'updateAndReloadAllFilters',
+            switches: switches,
+            update: true
+        });
+    };
 
 
 /******************************************************************************/
