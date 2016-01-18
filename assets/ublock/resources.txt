@@ -62,6 +62,19 @@ var L = (function(){
 })();
 
 
+1216.js application/javascript
+(function() {
+	delete window.noHomad;
+	try {
+		Object.defineProperty(window, 'noHomad', {
+			get: function() { return true; },
+			set: function() { }
+		});
+	} catch(ex) {
+	}
+})()
+
+
 # fuckadblock defuser
 fuckadblock.js-3.2.0 application/javascript
 (function() {
@@ -224,6 +237,15 @@ google-analytics.com/analytics.js application/javascript
 	window[gaName] = ga;
 })();
 
+google-analytics.com/inpage_linkid.js application/javascript
+(function() {
+	window._gaq = window._gaq || {
+		push: function() {
+			;
+		}
+	};
+})();
+
 
 # Ubiquitous googletagservices.com: not blocked by EasyPrivacy.
 # "Tags are tiny bits of website code that let you measure traffic and
@@ -367,18 +389,28 @@ i.ligatus.com/*/angular-tag.js application/javascript
 # suffering Yavli's click-bait ads.
 yavli-defuser.js application/javascript
 (function() {
-	var descriptor = {
-		set: function() {
-			;
-		},
+	var noopfn = function() {
+		;
+	};
+	var nourl = {
+		set: noopfn,
 		get: function() {
 			return '';
 		}
 	};
+	var noy = {
+		start: noopfn
+	};
 	try {
-		Object.defineProperty(window, '__durl', descriptor);
-		Object.defineProperty(window, '__lsurl', descriptor);
-		Object.defineProperty(window, '__lturl', descriptor);
+		Object.defineProperty(window, '__durl', nourl);
+		Object.defineProperty(window, '__lsurl', nourl);
+		Object.defineProperty(window, '__lturl', nourl);
+		Object.defineProperty(window, '_y', {
+			set: noopfn,
+			get: function() {
+				return noy;
+			}
+		});
 	} catch (ex) {
 	}
 })();
@@ -417,18 +449,35 @@ forbes-defuser.js application/javascript
 	if ( !window.location.pathname.startsWith('/forbes/welcome/') ) {
 		return;
 	}
-	if ( typeof window.fbs_settings === 'object' ) {
-		window.fbs_settings.classes = 'W10=';
-		window.fbs_settings.mobile = 'true';
-		return;
-	}
-	Object.defineProperty(window, 'fbs_settings', {
-		value: {
-			classes: 'W10=',
-			data: {
-				title: ''
-			},
-			mobile: 'true'
+	var noopfn = function() {
+		;
+	};
+	var odp = Object.defineProperty;
+	var wad, wadm, abc = function() {};
+	var abcp = abc.prototype;
+	abcp.addCheck =  abcp.check = abcp.initialize =
+	abcp.removeCheck = abcp.triggerAdBlockState = noopfn;
+	abcp.getAdBlockState = function() {
+		return false;
+	};
+	odp(window, 'WelcomeAd', {
+		get: function() { return wad; },
+		set: function(a) {
+			wad = a;
+			odp(a, 'Modules', {
+				get: function() { return wadm; },
+				set: function(a) {
+					wadm = a;
+					if ( a.AdBlockChecker ) {
+						a.AdBlockChecker = abc;
+					} else {
+						odp(a, 'AdBlockChecker', {
+							get: function() { return abc; },
+							set: function() {}
+						});
+					}
+				}
+			});
 		}
 	});
 })();
@@ -461,7 +510,7 @@ openload-defuser.js application/javascript
 
 
 # https://github.com/gorhill/uBlock/issues/1136
-1136#issuecomment-170371863.js application/javascript
+1136.js application/javascript
 (function() {
 	var wjdmp;
 	var noopfn = function() {
@@ -486,5 +535,26 @@ openload-defuser.js application/javascript
 		set: function(a) {
 			wjdmp = makefn(a);
 		}
+	});
+})();
+
+
+bab-defuser.js application/javascript
+(function() {
+	var sto = window.setTimeout,
+		re = /\.bab_elementid.$/;
+	window.setTimeout = function(a, b) {
+		if ( typeof a !== 'string' || !re.test(a) ) {
+			sto(a, b);
+		}
+	};
+})();
+
+
+kissanime-defuser.js application/javascript
+(function() {
+	Object.defineProperty(window, 'isBlockAds2', {
+		get: function() { return false; },
+		set: function(a) {}
 	});
 })();

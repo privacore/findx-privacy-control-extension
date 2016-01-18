@@ -165,7 +165,7 @@ investopedia.com##.pg-wrapper > div:not(#Nav):not(.nav-space):not(.subnav-space)
 # Useful inline script tag filters until filter list maintainers start to use
 # it in their respective filter lists
 arstechnica.com##script:contains(ars.READY.push)
-aussenwirtschaftslupe.de,autozeitung.de,brieffreunde.de,donnerwetter.de,formel1.de,fremdwort.de,helles-koepfchen.de,inside-handy.de,motorsport-total.com,moviejones.de,news.de,rechtslupe.de,wintotal.de##script:contains(window.tisoomi)
+aussenwirtschaftslupe.de,autozeitung.de,brieffreunde.de,donnerwetter.de,fanfiktion.de,formel1.de,fremdwort.de,helles-koepfchen.de,inside-handy.de,motorsport-total.com,moviejones.de,news.de,rechtslupe.de,wintotal.de##script:contains(window.tisoomi)
 bild.de##script:contains(/^\s*de.bild.cmsKonfig/)
 bild.de##script:contains(Javascript)
 commentcamarche.net,foot01.com,metronews.fr##script:contains(/[Ll]igatus/)
@@ -209,6 +209,8 @@ segmentnext.com###content > div > div[class] > div[class] > div[class]
 # Older version of uBO will discard this unknown filter option -- so it's safe
 # to add it here now.
 |http://$popunder,third-party,domain=xhamster.com
+# https://github.com/gorhill/uBlock/issues/1094
+||slopeaota.com^$document,popunder,popup
 # https://github.com/gorhill/uBlock/issues/1173
 ||exoclick.com^$popunder
 # https://github.com/gorhill/uBlock/issues/1053
@@ -222,7 +224,9 @@ segmentnext.com###content > div > div[class] > div[class] > div[class]
 # https://github.com/gorhill/uBlock/issues/1177
 ||clicksvenue.com^$popunder
 ||globaltraffico.com^$popunder,popup
-
+# https://github.com/gorhill/uBlock/issues/1208
+||data.*.info^$document,popunder,popup
+||hilltopads.net^$popunder,popup
 
 # https://forums.lanik.us/viewtopic.php?f=62&t=27003
 www.opensubtitles.org##div[itemscope] > fieldset
@@ -261,7 +265,7 @@ extremetube.com,pornhub.com,primewire.*,redtube.*,spankwire.com,tube8.*,youporn.
 # https://github.com/gorhill/uBlock/issues/1136
 ||dailymotion.com/ac/video/$image,first-party,redirect=2x2-transparent.png
 # https://github.com/gorhill/uBlock/issues/1136#issuecomment-170371863
-dailymotion.com##script:inject(1136#issuecomment-170371863.js)
+dailymotion.com##script:inject(1136.js)
 
 # https://news.ycombinator.com/item?id=10814913
 forbes.com##script:inject(forbes-defuser.js)
@@ -272,6 +276,8 @@ animeuploads.com,cizgifilmlerizle.com##script:inject(impspcabe-defuser.js)
 # https://github.com/gorhill/uBlock/issues/949
 ||s3.amazonaws.com/homad-global-configs.schneevonmorgen.com/hd-main.js$script,domain=cdnapi.kaltura.com|spiegel.de|stern.de|t-online.de,redirect=hd-main.js
 ||hgc.svonm.com/hd-main.js$script,domain=cdnapi.kaltura.com,redirect=hd-main.js
+# https://github.com/gorhill/uBlock/issues/1216
+chip.de##script:inject(1216.js)
 
 # https://adblockplus.org/forum/viewtopic.php?f=2&t=40985
 # Proof of concept: no need to open ourselves to more 3rd-party scripts/frames in
@@ -294,3 +300,9 @@ animeuploads.com,cizgifilmlerizle.com##script:inject(impspcabe-defuser.js)
 openload.co##script:inject(openload-defuser.js)
 # https://github.com/gorhill/uBlock/issues/1201
 openload.*##script:contains(/^\s*window\.popAdsLoaded=/)
+
+# https://forums.lanik.us/viewtopic.php?f=64&t=27505
+kissanime.to##script:inject(kissanime-defuser.js)
+
+# https://forums.lanik.us/viewtopic.php?f=64&t=27908
+ip-address.org##script:inject(bab-defuser.js)
