@@ -2020,15 +2020,8 @@ var httpObserver = {
             return false;
         }
 
-        // https://github.com/gorhill/uBlock/issues/966
-        var hostname = URI.asciiHost;
-        if ( hostname.endsWith('.') ) {
-            hostname = hostname.slice(0, -1);
-        }
-
         var result = this.onBeforeRequest({
             frameId: details.frameId,
-            hostname: hostname,
             parentFrameId: details.parentFrameId,
             tabId: details.tabId,
             type: type,
@@ -2082,14 +2075,7 @@ var httpObserver = {
             }
         }
 
-        // https://github.com/gorhill/uBlock/issues/966
-        var hostname = URI.asciiHost;
-        if ( hostname.endsWith('.') ) {
-            hostname = hostname.slice(0, -1);
-        }
-
         var result = this.onHeadersReceived({
-            hostname: hostname,
             parentFrameId: channelData[1],
             responseHeaders: responseHeaders,
             tabId: channelData[2],
@@ -2750,7 +2736,10 @@ vAPI.toolbarButton = {
             break;
         }
 
-        if ( document.getElementById(tbb.id) !== null ) {
+        // https://github.com/gorhill/uBlock/issues/763
+        // We are done if our toolbar button is already installed in one of the
+        // toolbar.
+        if ( palette !== null && toolbarButton.parentElement !== palette ) {
             return;
         }
 

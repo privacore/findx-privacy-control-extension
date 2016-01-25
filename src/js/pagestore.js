@@ -666,6 +666,9 @@ PageStore.prototype.logRequest = function(context, result) {
     if ( requestHostname === '' ) {
         requestHostname = context.rootHostname;
     }
+    if (requestHostname == "edition.cnn.com") {
+        console.log("asdf");
+    }
     var now = Date.now();
     if ( this.hostnameToCountMap.hasOwnProperty(requestHostname) === false || this.hostnameToCountMap[requestHostname] ===  0) {
         this.hostnameToCountMap[requestHostname] = {

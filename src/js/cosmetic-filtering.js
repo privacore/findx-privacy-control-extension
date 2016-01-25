@@ -1215,6 +1215,7 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             }
         }
         return out;
+        //return out.join('\n');
     };
 
     /******************************************************************************/

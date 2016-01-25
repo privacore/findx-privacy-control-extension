@@ -34,6 +34,19 @@
 /******************************************************************************/
 
 var loadDashboardPanel = function(tab, q) {
+    //TODO: 25.01.16 - uncomment after uBlock's logic will be complete
+    //var pane = window.location.hash.slice(1);
+    //if ( pane === '' ) {
+    //    pane = 'settings.html';
+    //}
+    //var tabButton = uDom('[href="#' + pane + '"]');
+    //if ( !tabButton || tabButton.hasClass('selected') ) {
+    //    return;
+    //}
+    //uDom('.tabButton.selected').toggleClass('selected', false);
+    //uDom('iframe').attr('src', pane);
+    //tabButton.toggleClass('selected', true);
+
     var tabButton = uDom('[href="#' + tab + '"]');
     if ( !tabButton ) {
         return;
@@ -47,8 +60,18 @@ var loadDashboardPanel = function(tab, q) {
 /******************************************************************************/
 
 var onTabClickHandler = function(e) {
-    loadDashboardPanel(this.hash.slice(1));
+    //var url = window.location.href,
+    //    pos = url.indexOf('#');
+    //if ( pos !== -1 ) {
+    //    url = url.slice(0, pos);
+    //}
+    //url += this.hash;
+    //if ( url !== window.location.href ) {
+    //    window.location.replace(url);
+    //    loadDashboardPanel();
+    //}
     e.preventDefault();
+    loadDashboardPanel(this.hash.slice(1)); // 25.01.16 - Last commit is not complete, so we implement an old logic
 };
 
 /******************************************************************************/
@@ -57,7 +80,7 @@ uDom.onLoad(function() {
     // Display jQuery UI elements
     $("#tabs").tabs();
     $("button").button();
-//    window.addEventListener('resize', resizeFrame);
+    //    window.addEventListener('resize', resizeFrame);
 
     var matches = window.location.search.slice(1).match(/\??(tab=([^&]+))?(.*)$/);
     var tab = '', q = '';
@@ -71,8 +94,11 @@ uDom.onLoad(function() {
     if ( !tab ) {
         tab = 'settings';
     }
-    loadDashboardPanel(tab, q);
+
+    //resizeFrame();
+    //window.addEventListener('resize', resizeFrame);
     uDom('.tabButton').on('click', onTabClickHandler);
+    loadDashboardPanel(tab, q);
 });
 
 /******************************************************************************/

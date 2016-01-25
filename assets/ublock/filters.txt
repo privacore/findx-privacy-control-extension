@@ -261,6 +261,8 @@ extremetube.com,pornhub.com,primewire.*,redtube.*,spankwire.com,tube8.*,youporn.
 # Users should not have to punch holes in their blockers if it can be avoided.
 */fuckadblock-$script,redirect=fuckadblock.js-3.2.0
 */fuckadblock.$script,redirect=fuckadblock.js-3.2.0
+# https://github.com/gorhill/uBlock/issues/1271
+*/blockadblock.$script,redirect=fuckadblock.js-3.2.0
 
 # https://github.com/gorhill/uBlock/issues/1136
 ||dailymotion.com/ac/video/$image,first-party,redirect=2x2-transparent.png

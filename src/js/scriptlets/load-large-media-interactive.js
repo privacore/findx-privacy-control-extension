@@ -52,8 +52,14 @@ var mediaNotLoaded = function(elem) {
     case 'video':
         return elem.error !== null;
     case 'img':
-        return elem.offsetWidth !== 0 && elem.offsetHeight !== 0 &&
-              (elem.naturalWidth === 0 || elem.naturalHeight === 0);
+        if ( elem.naturalWidth !== 0 || elem.naturalHeight !== 0 ) {
+            break;
+        }
+        var style = window.getComputedStyle(elem);
+        // For some reason, style can be null with Pale Moon.
+        return style !== null ?
+            style.getPropertyValue('display') !== 'none' :
+            elem.offsetHeight !== 0 && elem.offsetWidth !== 0;
     default:
         break;
     }
@@ -100,6 +106,8 @@ styleTag.textContent = [
         'font-size: 1em !important;',
         'min-height: 1em !important;',
         'min-width: 1em !important;',
+        'opacity: 1 !important;',
+        'outline: none !important;',
     '}'
 ].join('\n');
 document.head.appendChild(styleTag);
