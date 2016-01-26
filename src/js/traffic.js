@@ -103,6 +103,35 @@ var onBeforeRequest = function(details) {
 
     // Possible outcomes: blocked, allowed-passthru, allowed-mirror
 
+    //pageStore.logRequest(requestContext, result);
+    //
+    //if ( µb.logger.isEnabled() ) {
+    //    µb.logger.writeOne(
+    //        tabId,
+    //        'net',
+    //        result,
+    //        requestType,
+    //        requestURL,
+    //        requestContext.rootHostname,
+    //        requestContext.pageHostname
+    //    );
+    //}
+
+    // Not blocked
+    //if ( µb.isAllowResult(result, requestContext) ) { //26.01.16 - in this case all urls will not be blocked
+    if ( isFilterAllowed(result, requestContext) ) {
+        // https://github.com/chrisaljoudi/uBlock/issues/114
+        frameId = details.frameId;
+        if ( frameId > 0 ) {
+            if ( isFrame  ) {
+                pageStore.setFrame(frameId, requestURL);
+            } else if ( pageStore.getFrame(frameId) === null ) {
+                pageStore.setFrame(frameId, requestURL);
+            }
+        }
+        return;
+    }
+
     pageStore.logRequest(requestContext, result);
 
     if ( µb.logger.isEnabled() ) {
@@ -117,32 +146,6 @@ var onBeforeRequest = function(details) {
         );
     }
 
-    // Not blocked
-    if ( µb.isAllowResult(result, requestContext) ) {
-        // https://github.com/chrisaljoudi/uBlock/issues/114
-        frameId = details.frameId;
-        if ( frameId > 0 ) {
-            if ( isFrame  ) {
-                pageStore.setFrame(frameId, requestURL);
-            } else if ( pageStore.getFrame(frameId) === null ) {
-                pageStore.setFrame(frameId, requestURL);
-            }
-        }
-        return;
-    }
-         pageStore.logRequest(requestContext, result);
-
-        if ( µb.logger.isEnabled() ) {
-            µb.logger.writeOne(
-                tabId,
-                'net',
-                result,
-                requestType,
-                requestURL,
-                requestContext.rootHostname,
-                requestContext.pageHostname
-            );
-        }
     // Blocked
 
     // https://github.com/chrisaljoudi/uBlock/issues/905#issuecomment-76543649
