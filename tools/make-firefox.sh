@@ -1,7 +1,9 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+#
 # This script assumes a linux environment
+
 echo "*** PrivaControl.FF: Copying files"
+
 DES=dist/build/privacontrol@privacore.com
 rm -rf $DES
 mkdir -p $DES

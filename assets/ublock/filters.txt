@@ -208,7 +208,6 @@ segmentnext.com###content > div > div[class] > div[class] > div[class]
 # New `popunder` filter option to explicitly block popunders.
 # Older version of uBO will discard this unknown filter option -- so it's safe
 # to add it here now.
-|http://$popunder,third-party,domain=xhamster.com
 # https://github.com/gorhill/uBlock/issues/1094
 ||slopeaota.com^$document,popunder,popup
 # https://github.com/gorhill/uBlock/issues/1173
@@ -256,6 +255,9 @@ activistpost.com,alfonzorachel.com,aplus.com,breathecast.com,bulletsfirst.net,cl
 
 # https://github.com/gorhill/uBlock/issues/1094
 extremetube.com,pornhub.com,primewire.*,redtube.*,spankwire.com,tube8.*,youporn.com,youporngay.com##script:inject(pornhub-popup-defuser.js)
+# Using important will prevent the site from leveraging random exception filters
+||trafficjunky.net^$third-party,important
+||xxxmyself.com^$important
 
 # https://adblockplus.org/forum/viewtopic.php?f=2&t=43192
 # Users should not have to punch holes in their blockers if it can be avoided.
