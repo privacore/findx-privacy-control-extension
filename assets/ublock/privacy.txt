@@ -48,3 +48,13 @@
 
 # Redirect to neutered Google Analytics 
 ||google-analytics.com/analytics.js$script,redirect=google-analytics.com/analytics.js
+
+# https://github.com/gorhill/uBlock/issues/1411
+# https://www.reddit.com/r/firefox/comments/3pwcey/firefox_extension_download_manager_s3_asks_for/
+||lnkr.us^$document
+||metrext.com^$document
+||icontent.us^$document
+
+# https://www.reddit.com/r/ublock/comments/47o2ih/ublock_disabling_all_javascript_links/d0fhock
+# Time to bring this filter out of experimental status
+||googletagservices.com/tag/js/gpt.js$script,redirect=googletagservices.com/gpt.js

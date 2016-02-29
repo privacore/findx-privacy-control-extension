@@ -224,8 +224,8 @@ var getHostnameDict = function(hostnameToCountMap) {
                 filterPath: filterPath,
                 blockCount: blockCount,
                 allowCount: allowCount,
-                totalBlockCount: 0,
-                totalAllowCount: 0
+                totalBlockCount: blockCount,
+                totalAllowCount: allowCount
             };
         } else {
             de = r[domain];
