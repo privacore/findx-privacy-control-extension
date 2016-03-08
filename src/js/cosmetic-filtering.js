@@ -709,6 +709,10 @@ FilterPlain.fromSelfie = function (s) {
 
         this.selectorCache = {};
         this.selectorCacheCount = 0;
+        if ( this.selectorCacheTimer !== null ) {
+            clearTimeout(this.selectorCacheTimer);
+            this.selectorCacheTimer = null;
+        }
 
         // permanent
         // [class], [id]
@@ -755,19 +759,24 @@ FilterPlain.fromSelfie = function (s) {
             };
         }
 
-        return function (s) {
+        return function(s) {
             try {
                 // https://github.com/gorhill/uBlock/issues/693
                 div.matches(s + ',\n#foo');
-                return true;
+                // Discard new ABP's `-abp-properties` directive until it is
+                // implemented (if ever).
+                if ( s.indexOf('[-abp-properties=') === -1 ) {
+                    return true;
+                }
             } catch (e) {
             }
-            if ( s.startsWith('script//:') ) {
+            // We reach this point very rarely.
+            if ( s.startsWith('script') ) {
                 if ( s.startsWith('?', 6) || s.startsWith('+', 6) ) {
                     return true;
                 }
             }
-            console.error('uBlock> invalid cosmetic filter:', s);
+            //console.error('uBlock> invalid cosmetic filter:', s);
             return false;
         };
     })();

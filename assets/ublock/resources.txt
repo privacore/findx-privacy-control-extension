@@ -409,7 +409,7 @@ yavli-defuser.js application/javascript
 		Object.defineProperty(window, '__lturl', nourl);
 	} catch (ex) {
 	}
-	var aa = ['_x','_y','_z','gj','pz','xz','yy','yz','zp','zx','zy'];
+	var aa = ['_x','_y','_z','pz','xz','yy','yz','zp','zx','zy','gj','fj','jf'];
 	var no = {
 		set: noopfn,
 		get: function() {
@@ -424,13 +424,6 @@ yavli-defuser.js application/javascript
 		} catch (e) {
 		}
 	}
-	var sto = window.setTimeout;
-	window.setTimeout = function(a, b) {
-		var re = /rec\(rid,\s*tw\s*\+\s*step\)/;
-		if ( typeof b !== 'number' || (b % 200) !== 0 || !re.test(a.toString()) ) {
-			sto(a, b);
-		}
-	};
 })();
 
 
@@ -582,7 +575,7 @@ bab-defuser.js application/javascript
 		re = /\.bab_elementid.$/;
 	window.setTimeout = function(a, b) {
 		if ( typeof a !== 'string' || !re.test(a) ) {
-			sto(a, b);
+			return sto(a, b);
 		}
 	};
 })();
@@ -709,7 +702,7 @@ wired-defuser.js application/javascript
 		re = /^function n\(\)/;
 	window.setTimeout = function(a, b) {
 		if ( b !== 50 || !re.test(a.toString()) ) {
-			sto(a, b);
+			return sto(a, b);
 		}
 	};
 })();
@@ -731,4 +724,24 @@ bcplayer-defuser.js application/javascript
 			};
 		}
 	});
+})();
+
+
+# https://forums.lanik.us/viewtopic.php?f=62&t=27719
+opensubtitles.org application/javascript
+(function() {
+	Object.defineProperty(window, '_0x1cae', {
+		get: function() { return []; },
+		set: function(a) {}
+	});
+})();
+
+
+# Might be useful on some sites to be able to foil all calls to `setTimeout`.
+# Example of a filter: `example.com##script:inject(setTimeout-defuser)`
+setTimeout-defuser application/javascript
+(function() {
+	window.setTimeout = function() {
+		return 1;
+	};
 })();

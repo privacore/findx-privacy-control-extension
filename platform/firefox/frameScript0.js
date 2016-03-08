@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2016 Raymond Hill
+    Copyright (C) 2014-2016 The uBlock Origin authors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,28 +19,40 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global uDom */
-
 /******************************************************************************/
 
-uDom.onLoad(function() {
+// https://developer.mozilla.org/en-US/Firefox/Multiprocess_Firefox/Frame_script_environment
 
-'use strict';
+(function(context) {
+
+    'use strict';
+
+    if ( !context.content ) {
+        return;
+    }
+
+    let {contentObserver} = Components.utils.import(
+        Components.stack.filename.replace('Script0', 'Module'),
+        null
+    );
+
+    let injectContentScripts = function(win) {
+        if ( !win || !win.document ) {
+            return;
+        }
+
+        contentObserver.observe(win.document);
+
+        if ( win.frames && win.frames.length ) {
+            let i = win.frames.length;
+            while ( i-- ) {
+                injectContentScripts(win.frames[i]);
+            }
+        }
+    };
+
+    injectContentScripts(context.content);
+
+})(this);
 
 /******************************************************************************/
-
-var messager = vAPI.messaging.channel('about.js');
-
-/******************************************************************************/
-
-var onAppDataReady = function(appData) {
-    var released = '06/19/2015';
-    uDom('#aboutNameVer').html(appData.name + ' v' + appData.version + ', released '+released );
-    uDom('#aboutBuild').html('Build date - 03/08/2016');
-};
-
-messager.send({ what: 'getAppData' }, onAppDataReady);
-
-/******************************************************************************/
-
-});
