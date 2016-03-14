@@ -79,7 +79,7 @@
 
     // https://github.com/gorhill/httpswitchboard/issues/345
 
-    var messager = vAPI.messaging.channel('popup.js');
+    var messager = vAPI.messaging;
 
     /***************************************************************************/
     
@@ -500,7 +500,7 @@
             blockingControl.classList.toggle("disabled");
             showReloadNotification();
         }
-        messager.send({
+        messager.send('popupPanel', {
             what:  'updateFilter',
             updates: updates
         }, response);
@@ -537,7 +537,7 @@
             showReloadNotification();
         }
 
-        messager.send({
+        messager.send('popupPanel', {
             what:  'updateFilter',
             updates: updates
         }, response);
@@ -612,7 +612,7 @@
             uDom(selectors.pauseBtnLabel).text('Pause blocking');
         }
 
-        messager.send({
+        messager.send('popupPanel', {
             what:  'togglePauseFiltering',
             state: state,
             tabId: popupData.tabId
@@ -627,7 +627,7 @@
         if (!popupData || !popupData.pageURL) {
             return;
         }
-        messager.send({
+        messager.send('popupPanel', {
             what:  'toggleNetFiltering',
             url:   popupData.pageURL,
             scope: ev.ctrlKey || ev.metaKey ? 'page' : '',
@@ -642,7 +642,7 @@
     /***************************************************************************/
 
     var gotoPick = function () {
-        messager.send({
+        messager.send('popupPanel', {
             what:  'gotoPick',
             tabId: popupData.tabId
         });
@@ -659,7 +659,7 @@
 
         ev.preventDefault();
 
-        messager.send({
+        messager.send('popupPanel', {
             what:    'gotoURL',
             details: {
                 url:    this.getAttribute('href'),
@@ -679,7 +679,7 @@
         }
         popupData.dfEnabled = !popupData.dfEnabled;
 
-        messager.send({
+        messager.send('popupPanel', {
             what:  'userSettings',
             name:  'dynamicFilteringEnabled',
             value: popupData.dfEnabled
@@ -716,7 +716,7 @@
             updateAllDynamicFilters();
             hashFromPopupData();
         };
-        messager.send({
+        messager.send('popupPanel', {
             what:         'toggleDynamicFilter',
             tabId:        popupData.tabId,
             pageHostname: popupData.pageHostname,
@@ -771,7 +771,7 @@
     /***************************************************************************/
 
     var reloadTab = function () {
-        messager.send({what: 'reloadTab', tabId: popupData.tabId});
+        messager.send('popupPanel', {what: 'reloadTab', tabId: popupData.tabId});
         hideReloadNotification();
         // Polling will take care of refreshing the popup content
     };
@@ -779,12 +779,12 @@
     /***************************************************************************/
 
     var openOptionsPage = function () {
-        messager.send({what: 'openOptionsPage'});
+        messager.send('popupPanel', {what: 'openOptionsPage'});
         vAPI.closePopup();
     };
 
     var openHelpPage = function () {
-        messager.send({what: 'openHelpPage'});
+        messager.send('popupPanel', {what: 'openHelpPage'});
         vAPI.closePopup();
     };
 
@@ -830,7 +830,7 @@
 
         var pollCallback = function () {
             pollTimer = null;
-            messager.send(
+            messager.send('popupPanel',
                 {
                     what:                'hasPopupContentChanged',
                     tabId:               popupData.tabId,
@@ -867,7 +867,7 @@
             hashFromPopupData(true);
             pollForContentChange();
         };
-        messager.send({what: 'getPopupData'}, onDataReceived);
+        messager.send('popupPanel', {what: 'getPopupData'}, onDataReceived);
     };
 
     /***************************************************************************/

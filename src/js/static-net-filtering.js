@@ -1354,8 +1354,8 @@ FilterBucket.fromSelfie = function(s) {
 /******************************************************************************/
 
 var FilterParser = function() {
-    this.reHostnameRule1 = /^[0-9a-z][0-9a-z.-]*[0-9a-z]$/;
-    this.reHostnameRule2 = /^\**[0-9a-z][0-9a-z.-]*[0-9a-z]\^?$/;
+    this.reHostnameRule1 = /^[0-9a-z][0-9a-z.-]*[0-9a-z]$/i;
+    this.reHostnameRule2 = /^\**[0-9a-z][0-9a-z.-]*[0-9a-z]\^?$/i;
     this.reCleanupHostnameRule2 = /^\**|\^$/g;
     this.reHasWildcard = /[\^\*]/;
     this.reCanTrimCarets1 = /^[^*]*$/;
