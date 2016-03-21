@@ -268,7 +268,7 @@ animeuploads.com,cizgifilmlerizle.com##script:inject(impspcabe-defuser.js)
 
 # https://github.com/gorhill/uBlock/issues/949
 ||s3.amazonaws.com/homad-global-configs.schneevonmorgen.com/hd-main.js$script,domain=chip.de|cdnapi.kaltura.com|focus.de|spiegel.de|stern.de|t-online.de,redirect=hd-main.js
-||hgc.svonm.com/hd-main.js$script,domain=cdnapi.kaltura.com,redirect=hd-main.js
+||svonm.com/hd-main.js$script,redirect=hd-main.js,domain=chip.de|cdnapi.kaltura.com
 # https://github.com/gorhill/uBlock/issues/1216
 chip.de##script:inject(1216.js)
 stern.de##script:inject(bcplayer-defuser.js)
@@ -300,13 +300,10 @@ kissanime.to##script:inject(kissanime-defuser.js)
 
 # https://forums.lanik.us/viewtopic.php?f=64&t=27908
 # https://github.com/gorhill/uBlock/issues/1354
-animes-mangas-ddl.com,best-movies.info,crazymeds.us,dasolo.org,ip-address.org,uploadshub.com##script:inject(bab-defuser.js)
+animes-mangas-ddl.com,best-movies.info,crazymeds.us,dasolo.org,ip-address.org,uploadshub.com,yourvideohost.com##script:inject(bab-defuser.js)
 
 # https://adblockplus.org/forum/viewtopic.php?f=2&t=41860
 filmvf.net,filmstreaming-hd.com,gaara-fr.com,gaytube.com,gum-gum-streaming.com,hentaifr.net,hentaihaven.org,narutoshippudenvf.com,thebadbuzz.com,tuxboard.com,xstory-fr.com##script:inject(phenv-defuser.js)
-
-# https://github.com/gorhill/uBlock/issues/1397
-||googletagservices.com/tag/js/gpt.js$script,redirect=googletagservices.com/gpt.js,domain=focus.de
 
 # https://adblockplus.org/forum/viewtopic.php?f=2&t=43914#p147866
 wired.com##script:inject(wired-defuser.js)
@@ -339,3 +336,6 @@ tweaktown.com###background_skin
 
 # https://forums.lanik.us/viewtopic.php?f=64&t=22975&start=45#p77969
 kisscartoon.me##script:inject(kisscartoon-defuser.js)
+
+# https://twitter.com/hotelzululima/status/711729434458324992
+||computerworld.com.au/compressor-staticfiles/addsmin/idg_gpt_pipeline_generated.js$script

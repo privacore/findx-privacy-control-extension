@@ -334,8 +334,9 @@ PageStore.prototype.init = function(tabId) {
     this.skipCosmeticFiltering = (µb.staticNetFilteringEngine.matchStringExactType(
         this.createContextFromPage(),
         tabContext.normalURL,
-        'cosmetic-filtering'
-    ) || µb.userSettings.pauseFiltering);
+        //'cosmetic-filtering'
+        'elemhide'
+    ) === false || µb.userSettings.pauseFiltering);
     if ( this.skipCosmeticFiltering && µb.logger.isEnabled() ) {
         // https://github.com/gorhill/uBlock/issues/370
         // Log using `cosmetic-filtering`, not `elemhide`.
@@ -343,7 +344,7 @@ PageStore.prototype.init = function(tabId) {
             tabId,
             'net',
             µb.staticNetFilteringEngine.toResultString(true),
-            'cosmetic-filtering',
+            'elemhide',
             tabContext.rawURL,
             this.tabHostname,
             this.tabHostname

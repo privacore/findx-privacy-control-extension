@@ -704,7 +704,7 @@ FilterPlain.fromSelfie = function (s) {
         this.µburi = µb.URI;
         this.frozen = false;
         this.acceptedCount = 0;
-        this.duplicateCount = 0;
+        this.discardedCount = 0;
         this.duplicateBuster = {};
 
         this.selectorCache = {};
@@ -998,7 +998,7 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
 
         this.acceptedCount += 1;
         if (this.duplicateBuster.hasOwnProperty(line)) {
-            this.duplicateCount += 1;
+            this.discardedCount += 1;
             continue;
         }
         this.duplicateBuster[line] = true;
@@ -1106,6 +1106,8 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             if (lineEnd === -1) {
                 lineEnd = textEnd;
             }
+            this.acceptedCount += 1;
+            this.discardedCount += 1;
             lineBeg = lineEnd + 1;
         }
         return textEnd;
@@ -1271,7 +1273,7 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
         };
         return {
             acceptedCount: this.acceptedCount,
-            duplicateCount: this.duplicateCount,
+            discardedCount: this.discardedCount,
             hostnameSpecificFilters: selfieFromDict(this.hostnameFilters),
             entitySpecificFilters: this.entityFilters,
             lowGenericHide: selfieFromDict(this.lowGenericHide),
@@ -1335,7 +1337,7 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
         };
 
         this.acceptedCount = selfie.acceptedCount;
-        this.duplicateCount = selfie.duplicateCount;
+        this.discardedCount = selfie.discardedCount;
         this.hostnameFilters = dictFromSelfie(selfie.hostnameSpecificFilters);
         this.entityFilters = selfie.entitySpecificFilters;
         this.lowGenericHide = dictFromSelfie(selfie.lowGenericHide);
@@ -1582,7 +1584,7 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
     /******************************************************************************/
 
     FilterContainer.prototype.getFilterCount = function () {
-        return this.acceptedCount - this.duplicateCount;
+        return this.acceptedCount - this.discardedCount;
     };
 
     /******************************************************************************/
