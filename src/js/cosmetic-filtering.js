@@ -405,21 +405,17 @@ FilterPlain.fromSelfie = function (s) {
 
         switch ( matches[1] ) {
         case 'contains':
-            this.suffix = 'script?';
             // Plain string- or regex-based?
             if ( token.startsWith('/') === false || token.endsWith('/') === false ) {
-                this.suffix += token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                token += token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             } else {
-                this.suffix += token.slice(1, -1);
-                if ( isBadRegex(this.suffix) ) {
-                    console.error(
-                        "uBlock Origin> discarding bad regular expression-based cosmetic filter '%s': '%s'",
-                        raw,
-                        isBadRegex.message
-                    );
+                token += token.slice(1, -1);
+                if ( isBadRegex(token) ) {
+                    µb.logger.writeOne('', 'error', 'Cosmetic filtering – bad regular expression: ' + raw + ' (' + isBadRegex.message + ')');
                     this.invalid = true;
                 }
             }
+            this.suffix = 'script?' + token;
             break;
         case 'inject':
             this.suffix = 'script+' + token;
@@ -429,43 +425,8 @@ FilterPlain.fromSelfie = function (s) {
             break;
         }
 
-        // Normalize high-medium selectors: `href` is assumed to imply `a` tag. We
-        // need to do this here in order to correctly avoid duplicates. The test
-        // is designed to minimize overhead -- this is a low occurrence filter.
-        if ( this.suffix.charAt(1) === '[' && this.suffix.slice(2, 9) === 'href^="' ) {
-            this.suffix = this.suffix.slice(1);
-        }
-
-        if ( this.prefix !== '' ) {
-            this.hostnames = this.prefix.split(/\s*,\s*/);
-        }
-
-        // Script tag filters: pre-process them so that can be used with minimal
-        // overhead in the content script.
-        // Examples:
-        //   focus.de##script:contains(/uabInject/)
-        //   focus.de##script:contains(uabInject)
-        // overhead in the content script.
-        if (
-                this.suffix.charAt(0) === 's' &&
-                this.reScriptSelectorParser.test(this.suffix)
-                ) {
-            // Currently supported only as non-generic selector.
-            if (this.prefix.length === 0) {
-                this.invalid = true;
-                return this;
-            }
-            this.suffix = 'script//:' + this.suffix.slice(17, -2).replace(/\\/g, '\\');
-        }
-
-        this.unhide = matches[2].charAt(1) === '@' ? 1 : 0;
-        if (this.prefix !== '') {
-            this.hostnames = this.prefix.split(/\s*,\s*/);
-        }
-        return this;
-    };
-
-        // Script tag filters: pre-process them so that can be used with minimal
+    return this;
+};
        
    
 
@@ -776,7 +737,7 @@ FilterPlain.fromSelfie = function (s) {
                     return true;
                 }
             }
-            //console.error('uBlock> invalid cosmetic filter:', s);
+            µb.logger.writeOne('', 'error', 'Cosmetic filtering – invalid filter: ' + s);
             return false;
         };
     })();

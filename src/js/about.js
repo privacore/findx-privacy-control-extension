@@ -32,7 +32,7 @@ uDom.onLoad(function() {
 var onAppDataReady = function(appData) {
     var released = '06/19/2015';
     uDom('#aboutNameVer').html(appData.name + ' v' + appData.version + ', released '+released );
-    uDom('#aboutBuild').html('Build date - 03/21/2016');
+    uDom('#aboutBuild').html('Build date - 03/28/2016');
 };
 
 vAPI.messaging.send('dashboard', { what: 'getAppData' }, onAppDataReady);

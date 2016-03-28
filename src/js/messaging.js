@@ -579,7 +579,8 @@ var onMessage = function(request, sender, callback) {
         // If leave it as default - skipCosmeticFiltering always be false and in case when EasyList filter
         //      disabled for some domain - ads will be blocked anyway.
         // And if it set as true if you enable EasyList on a domain it will blocks ads.
-        response.skipCosmeticFiltering = true;
+        if (response)
+            response.skipCosmeticFiltering = true;
         break;
 
     case 'retrieveGenericCosmeticSelectors':
