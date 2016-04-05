@@ -367,25 +367,56 @@
         var template = uDom(selectors.subscriptionTemplate).text();
 
         var usedFilters = popupData.usedFilters || {};
-        var filter, filterData;
         var fragment = document.createDocumentFragment();
+
+        usedFilters = convertUsedFilters(usedFilters);
+
+        usedFilters.forEach(function (filter) {
+            var filterEl = createUsedFilterItem(filter, template);
+            fragment.appendChild(filterEl);
+        });
+
+        listContainer.append(fragment);
+    };
+
+    /**
+     * Convert "usedFilters" object to array of needed data.
+     * @param {Object} usedFilters
+     */
+    var convertUsedFilters = function (usedFilters) {
+        var response = [];
         for (var path in usedFilters) {
-            filter = usedFilters[path];
+            var filter = usedFilters[path];
             if (filter.off) continue;
 
-            filterData = {};
+            var filterData = {};
             filterData.title = filter.title;
             filterData.group = filter.group;
             filterData.id = path;
             filterData.isEnabled = isFilterEnabled(filter);
             filterData.filterBlockBtnTitle = "Click to " +
-                (isFilterEnabled(filter) === "disabled" ? "block" : "unblock") + " filter on current domain";
+            (isFilterEnabled(filter) === "disabled" ? "block" : "unblock") + " filter on current domain";
             filterData.trackedUrls = getTrackedUrlsData(path);
 
-            var filterEl = createUsedFilterItem(filterData, template);
-            fragment.appendChild(filterEl);
+            response.push(filterData);
         }
-        listContainer.append(fragment);
+
+        response = sortUsedFilters(response);
+
+        return response;
+    };
+
+    var sortUsedFilters = function (filters) {
+        return filters.sort(function (a, b) {
+            if (a.title < b.title) {
+                return false;
+            }
+            else if (a.title > b.title) {
+                return true;
+            }
+            else
+                return 0;
+        });
     };
 
     /***************************************************************************/
