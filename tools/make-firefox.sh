@@ -8,8 +8,8 @@ DES=dist/build/privacontrol@privacore.com
 rm -rf $DES
 mkdir -p $DES
 
-cp -R assets                            $DES/
-rm    $DES/assets/*.sh
+./tools/make-assets.sh $DES
+
 cp -R src/css                           $DES/
 cp -R src/img                           $DES/
 cp -R src/js                            $DES/
@@ -36,10 +36,11 @@ python tools/make-firefox-meta.py $DES/
 
 
 if [ "$1" = all ]; then
-    echo "*** PrivaControl.FF: Creating package..."
-    pushd $DES/
+    set +v
+    echo "*** PrivaControl.firefox: Creating package..."
+    pushd $DES/ > /dev/null
     zip ../uBlock0.firefox.xpi -qr *
-    popd
+    popd > /dev/null
 fi
 
 echo "*** PrivaControl.FF: Package done."

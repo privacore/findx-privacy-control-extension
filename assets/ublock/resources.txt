@@ -418,7 +418,7 @@ yavli-defuser.js application/javascript
 		Object.defineProperty(window, '__lturl', nourl);
 	} catch (ex) {
 	}
-	var aa = ['yz','zp','zx','zy','gj','fj','jf','kj','kp','pk','uj','ju'];
+	var aa = ['zx','zy','gj','fj','jf','kj','kp','pk','uj','ju','gk','hj'];
 	var no = {
 		set: noopfn,
 		get: function() {
@@ -717,6 +717,7 @@ addthis.com/addthis_widget.js application/javascript
 	};
 	window.addthis = {
 		addEventListener: noopfn,
+		button: noopfn,
 		init: noopfn,
 		layers: noopfn,
 		toolbox: noopfn,
@@ -1008,4 +1009,17 @@ overlay-buster.js application/javascript
 		});
 	};
 	document.addEventListener('DOMContentLoaded', domReady);
+})();
+
+
+# http://www.wilderssecurity.com/threads/ublock-a-lean-and-fast-blocker.365273/page-77
+imore-sanitizer.js application/javascript
+(function() {
+	if ( window.mbn_zones ) {
+		delete window.mbn_zones;
+		return;
+	}
+	Object.defineProperty(window, 'mbn_zones', {
+		value: undefined
+	});
 })();

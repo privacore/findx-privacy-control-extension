@@ -245,6 +245,7 @@
         },
     "https://liste-ar-adblock.googlecode.com/hg/Liste_AR.txt": {
         "off": true,
+        "defaultOff": true,
         "title": "ara: Liste AR (obsolete, will be removed soon)",
         "group": "regions",
         "supportURL": "https://code.google.com/p/liste-ar-adblock/"
