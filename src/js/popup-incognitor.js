@@ -897,9 +897,23 @@
             renderPopup();
             hashFromPopupData(true);
             pollForContentChange();
+
+            ffPopupHeightFixes();
         };
         messager.send('popupPanel', {what: 'getPopupData'}, onDataReceived);
     };
+
+    /***************************************************************************/
+
+    /**
+     * In FF popup window sometimes has incorrect height and footer buttons disappears.
+     * https://github.com/privacore/privacontrol/issues/4
+     * When add some attribute to the "body" element - popup height recalculates.
+     */
+    var ffPopupHeightFixes = function () {
+        uDom("body").attr("loaded", true);
+    };
+
 
     /***************************************************************************/
 
