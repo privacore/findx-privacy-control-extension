@@ -241,8 +241,8 @@ var onBeforeRootFrameRequest = function(details) {
         // the filter is specifically of type `other`.
         // https://github.com/gorhill/uBlock/issues/490
         // Removing this for the time being, will need a new, dedicated type.
-        if ( result.charAt(1) === 'b' ) {
-            result = toBlockDocResult(requestURL, requestHostname, result);
+        if ( result.str.charAt(1) === 'b' ) {
+            result.str = toBlockDocResult(requestURL, requestHostname, result.str);
         }
     }
 
@@ -271,9 +271,7 @@ var onBeforeRootFrameRequest = function(details) {
 
   
 
-    var compiled = result.slice(3);
-
-    var compiled = result.slice(3);
+    var compiled = result.str.slice(3);
 
     // Blocked
     var query = btoa(JSON.stringify({

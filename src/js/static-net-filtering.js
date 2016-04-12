@@ -1153,6 +1153,21 @@ FilterHostnameDict.prototype.add = function(hn, filterPath) {
 
 FilterHostnameDict.prototype.freeze = function() {
     var buckets = this.dict;
+
+    /**
+     * 12.04.2016 - save not freezed object for detecting "My filters".
+     * https://github.com/privacore/privacontrol/issues/6
+     * After using "this.freezeBucket" for all "FilterHostnameDict",
+     *      the list of user's custom filter rules will be merged with the rules of other filters,
+     *      for example EasyPrivacy. This will result in a situation when upon checking
+     *      in "matchesExactly" method we will not be able to determine which filter does the rule belong to.
+     *      For example, user adds blocking rule for some domain ( ||example.com^ ) to his filter
+     *      and sets EasyPrivacy filter to off by default in the "Filters list" tab.
+     *      In this case, the domain will not be blocked, since after checking in "matchesExactly" method,
+     *      the rule will be defined as a rule from EasyPrivacy filter and it will not work.
+     * this.notFreezed: {{key: {domain: filterPath}}[]}
+     */
+    this.notFreezed = JSON.parse(JSON.stringify(this.dict));
     var bucket;
     for ( var key in buckets ) {
         bucket = buckets[key];
@@ -1165,6 +1180,18 @@ FilterHostnameDict.prototype.freeze = function() {
 FilterHostnameDict.prototype.matchesExactly = function(hn) {
     // TODO: Handle IP address
     var key = this.makeKey(hn);
+
+    /**
+     * 12.04.2016 - Please see the reason of adding this code in the method
+     *      FilterHostnameDict.prototype.freeze
+     */
+    var notFreezedBucket = this.notFreezed[key];
+    if ( typeof notFreezedBucket === 'object' ) {
+        if (notFreezedBucket[hn] && notFreezedBucket[hn] == "assets/user/filters.txt") {
+            return notFreezedBucket[hn];
+        }
+    }
+
     var bucket = this.dict[key];
     if ( bucket === undefined ) {
         return false;
@@ -1211,6 +1238,7 @@ FilterHostnameDict.prototype.match = function() {
         
     }
     this.f =  new ResponseObject(path, '||' + hostname + '^');
+    this.h = hostname;
     return this;
 };
 
@@ -2633,7 +2661,8 @@ FilterContainer.prototype.matchString = function(context) {
                 s += this.fRegister.rtfid + '\v' + this.fRegister.rtCompile();
             }
             return  r.f ? {
-                str:s + r.f.s,
+                str:s,
+                //str:s + r.f.s,
                 filterPath: r.f.filterPath
             }
             : {

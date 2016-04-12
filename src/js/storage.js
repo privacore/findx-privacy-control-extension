@@ -511,7 +511,7 @@
         callback(details);
     };
 
-    var onCompiledListLoaded = function(details) {  
+    var onCompiledListLoaded = function(details) {
         if ( details.content === '' ) {
             //console.debug('µBlock.getCompiledFilterList/onCompiledListLoaded: no compiled version for "%s"', path);
             µb.assets.get(path, onRawListLoaded);
