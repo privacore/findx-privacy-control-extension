@@ -19,8 +19,6 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global µBlock, vAPI */
-
 /******************************************************************************/
 /******************************************************************************/
 
@@ -646,6 +644,7 @@ var onMessage = function(request, sender, callback) {
                 create: vAPI.i18n('pickerCreate'),
                 pick: vAPI.i18n('pickerPick'),
                 quit: vAPI.i18n('pickerQuit'),
+                preview: vAPI.i18n('pickerPreview'),
                 netFilters: vAPI.i18n('pickerNetFilters'),
                 cosmeticFilters: vAPI.i18n('pickerCosmeticFilters'),
                 cosmeticFiltersHint: vAPI.i18n('pickerCosmeticFiltersHint')
