@@ -1185,10 +1185,12 @@ FilterHostnameDict.prototype.matchesExactly = function(hn) {
      * 12.04.2016 - Please see the reason of adding this code in the method
      *      FilterHostnameDict.prototype.freeze
      */
-    var notFreezedBucket = this.notFreezed[key];
-    if ( typeof notFreezedBucket === 'object' ) {
-        if (notFreezedBucket[hn] && notFreezedBucket[hn] == "assets/user/filters.txt") {
-            return notFreezedBucket[hn];
+    if (this.notFreezed) {
+        var notFreezedBucket = this.notFreezed[key];
+        if ( typeof notFreezedBucket === 'object' ) {
+            if (notFreezedBucket[hn] && notFreezedBucket[hn] == "assets/user/filters.txt") {
+                return notFreezedBucket[hn];
+            }
         }
     }
 
@@ -1254,7 +1256,8 @@ FilterHostnameDict.prototype.toSelfie = function() {
     return JSON.stringify({
         count: this.count,
         dict: this.dict,
-        filterPath:  this.filterPath
+        filterPath:  this.filterPath,
+        notFreezed: this.notFreezed
     });
 };
 
@@ -1264,6 +1267,7 @@ FilterHostnameDict.fromSelfie = function(s) {
     f.count = o.count;
     f.dict = o.dict;
     f.filterPath = o.filterPath;
+    f.notFreezed = o.notFreezed;
     return f;
 };
 
