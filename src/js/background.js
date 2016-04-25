@@ -118,7 +118,8 @@ return {
         'assets/user/filters.txt': {
             group: 'default',
             off:   false,
-            inUse: true
+            inUse: true,
+            title: "My filters"
         }
         // uBlock
         //'assets/ublock/filters.txt': {
