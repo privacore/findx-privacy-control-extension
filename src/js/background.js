@@ -217,7 +217,7 @@ return {
     // so that I don't have to care for last comma
     dummy: 0,
     optionsUrl: "dashboard.html",
-    helpPageUrl: "http://www.bing.com/"
+    helpPageUrl: "https://help.privacontrol.com"
 };
 
 /******************************************************************************/
