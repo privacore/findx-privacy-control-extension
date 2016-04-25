@@ -2,10 +2,10 @@
 #
 # This script assumes a linux environment
 
-echo "*** PrivaControl.ch: Creating web store package"
-echo "*** PrivaControl.ch: Copying files"
+echo "*** Privacontrol.ch: Creating web store package"
+echo "*** Privacontrol.ch: Copying files"
 
-DES=dist/build/PrivaControl.ch
+DES=dist/build/Privacontrol.ch
 rm -rf $DES
 mkdir -p $DES
 
@@ -25,10 +25,10 @@ cp platform/chromium/*.json $DES/
 cp LICENSE.txt              $DES/
 
 if [ "$1" = all ]; then
-    echo "*** PrivaControl.chromium: Creating package..."
+    echo "*** Privacontrol.chromium: Creating package..."
     pushd $(dirname $DES/) > /dev/null
     zip uBlock0.chromium.zip -qr $(basename $DES/)/*
     popd > /dev/null
 fi
 
-echo "*** PrivaControl.ch: Package done."
+echo "*** Privacontrol.ch: Package done."

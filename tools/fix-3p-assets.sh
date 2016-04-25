@@ -7,7 +7,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-echo "*** PrivaControl: zeroing remote assets..."
+echo "*** Privacontrol: zeroing remote assets..."
 
 TARGETS=(
     "adblock.gardar.net/is.abp.txt"

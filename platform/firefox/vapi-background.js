@@ -72,7 +72,7 @@ var deferUntil = function(testFn, mainFn, details) {
 /******************************************************************************/
 
 vAPI.app = {
-    name: 'PrivaControl',
+    name: 'Privacontrol',
     version: location.hash.slice(1)
 };
 

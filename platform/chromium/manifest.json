@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
 
-    "name": "PrivaControl",
+    "name": "Privacontrol",
     "version": "1.6.9",
 
     "default_locale": "en",
@@ -16,11 +16,11 @@
             "19": "img/browsericons/icon19.png",
             "38": "img/browsericons/icon38.png"
         },
-        "default_title": "PrivaControl",
+        "default_title": "Privacontrol",
         "default_popup": "popup.html"
     },
 
-    "author": "All PrivaControl contributors",
+    "author": "All Privacontrol contributors",
     "background": {
         "page": "background.html"
     },
@@ -62,7 +62,7 @@
         "http://*/*",
         "https://*/*"
     ],
-    "short_name": "PrivaControl",
+    "short_name": "Privacontrol",
     "storage": {
         "managed_schema": "managed_storage.json"
     }

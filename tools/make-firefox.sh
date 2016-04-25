@@ -2,7 +2,7 @@
 #
 # This script assumes a linux environment
 
-echo "*** PrivaControl.FF: Copying files"
+echo "*** Privacontrol.FF: Copying files"
 
 DES=dist/build/privacontrol@privacore.com
 rm -rf $DES
@@ -31,16 +31,16 @@ cp    platform/firefox/install.rdf      $DES/
 cp    platform/firefox/*.xul            $DES/
 cp    LICENSE.txt                       $DES/
 
-echo "*** PrivaControl.FF: Generating meta..."
+echo "*** Privacontrol.FF: Generating meta..."
 python tools/make-firefox-meta.py $DES/
 
 
 if [ "$1" = all ]; then
     set +v
-    echo "*** PrivaControl.firefox: Creating package..."
+    echo "*** Privacontrol.firefox: Creating package..."
     pushd $DES/ > /dev/null
     zip ../uBlock0.firefox.xpi -qr *
     popd > /dev/null
 fi
 
-echo "*** PrivaControl.FF: Package done."
+echo "*** Privacontrol.FF: Package done."
