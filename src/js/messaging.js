@@ -805,7 +805,7 @@ var backupUserData = function(callback) {
         userData.filterLists = filterLists;
 
         var now = new Date();
-        var filename = vAPI.i18n('aboutBackupFilename')
+        var filename = 'my-privacontrol-backup_{{datetime}}.txt'
             .replace('{{datetime}}', now.toLocaleString())
             .replace(/ +/g, '_');
 

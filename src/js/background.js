@@ -67,7 +67,7 @@ return {
         requestLogMaxEntries: 1000,
         showIconBadge: true,
         tooltipsDisabled: false,
-        webrtcIPAddressHidden: false
+        webrtcIPAddressHidden: true
     },
 
     // https://github.com/chrisaljoudi/uBlock/issues/180
