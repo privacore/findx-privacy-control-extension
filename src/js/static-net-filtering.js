@@ -967,7 +967,7 @@ FilterGenericHnAnchoredHostname.fromSelfie = function(s) {
 // Regex-based filters
 
 var FilterRegex = function(s, filterPath) {
-    this.re = new RegExp(s);
+    this.re = new RegExp(s, 'i');
     this.filterPath = filterPath || "";
 };
 
@@ -997,7 +997,7 @@ FilterRegex.fromSelfie = function(s) {
 /******************************************************************************/
 
 var FilterRegexHostname = function(s, domainOpt, filterPath) {
-    this.re = new RegExp(s);
+    this.re = new RegExp(s, 'i');
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
