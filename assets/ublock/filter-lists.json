@@ -246,13 +246,6 @@
         "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D98",
         "defaultOff": true
     },
-    "http://www.privacontrol.com/filters/https.liste.ar.adblock.googlecode.com.hg.liste.ar.txt": {
-        "off": true,
-        "title": "ara: Liste AR (obsolete, will be removed soon)",
-        "group": "regions",
-        "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fcode.google.com%2Fp%2Fliste-ar-adblock%2F",
-        "defaultOff": true
-    },
     "http://www.privacontrol.com/filters/http.margevicius.lt.easylistlithuania.txt": {
         "off": true,
         "title": "LTU: Adblock Plus Lithuania",
@@ -286,10 +279,17 @@
     },
     "http://www.privacontrol.com/filters/https.raw.githubusercontent.com.adblockplusisrael.easylisthebrew.master.easylisthebrew.txt": {
         "off": true,
+        "title": "ISR: EasyList Hebrew (obsolete, will be removed soon)",
+        "group": "regions",
+        "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdBlockPlusIsrael%2FEasyListHebrew",
+        "defaultOff": true
+    },
+    "http://www.privacontrol.com/filters/https.raw.githubusercontent.com.easylist.easylisthebrew.master.easylisthebrew.txt": {
+        "off": true,
         "title": "ISR: EasyList Hebrew",
         "group": "regions",
         "lang": "he",
-        "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdBlockPlusIsrael%2FEasyListHebrew",
+        "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Feasylist%2FEasyListHebrew",
         "defaultOff": true
     },
     "http://www.privacontrol.com/filters/https.raw.githubusercontent.com.reek.anti.adblock.killer.master.anti.adblock.killer.filters.txt": {
