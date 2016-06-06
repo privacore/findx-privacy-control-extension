@@ -128,7 +128,7 @@ var exportUserFiltersToFile = function() {
         return;
     }
     var now = new Date();
-    var filename = vAPI.i18n('1pExportFilename')
+    var filename = "my-privacontrol-tracking-filters_{{datetime}}.txt"
         .replace('{{datetime}}', now.toLocaleString())
         .replace(/ +/g, '_');
     vAPI.download({

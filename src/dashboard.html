@@ -15,30 +15,27 @@
 
     <body>
 
+        <div id="dashboard_bg"></div>
+
         <table id="title">
             <tr>
-                <td style="padding-right: 8px">
-                    <img src="img/logo-32.png">
-                </td>
                 <td>
-                    <h1><span data-i18n="extName"></span> options</h1>
+                    <img src="img/dashboard_logo.png" class="dashboard-title-logo">
                 </td>
             </tr>
         </table>
 
         <div id="tabs">
             <ul id="tabs_nav">
-                <li><a href="#settings" class="tabButton"><span data-i18n="settingsPageName"></span></a></li>
-                <li><a href="#3p-filters-incognitor" class="tabButton"><span data-i18n="3pPageName"></span></a></li>
-                <li><a href="#1p-filters" class="tabButton"><span data-i18n="1pPageName"></span></a></li>
-                <li><a href="#dyna-rules" class="tabButton"><span data-i18n="rulesPageName"></span></a></li>
-                <li><a href="#whitelist" class="tabButton"><span data-i18n="whitelistPageName"></span></a></li>
-                <li><a href="#about" class="tabButton"><span data-i18n="aboutPageName"></span></a></li></ul>
+                <li><a href="#3p-filters-incognitor" class="tabButton"><span>Global Privacy lists</span></a></li>
+                <li><a href="#1p-filters" class="tabButton"><span>My tracking filter</span></a></li>
+                <li><a href="#dyna-rules" class="tabButton"><span>My detailed rules</span></a></li>
+                <li><a href="#whitelist" class="tabButton"><span>My Whitelist</span></a></li>
+                <li><a href="#settings" class="tabButton"><span>Settings</span></a></li>
+                <!--<li><a href="#about" class="tabButton"><span>About</span></a></li>-->
+            </ul>
 
             <div id="panels">
-                <div id="settings">
-                    <iframe src=""></iframe>
-                </div>
                 <div id="3p-filters-incognitor">
                     <iframe src=""></iframe>
                 </div>
@@ -51,12 +48,26 @@
                 <div id="whitelist">
                     <iframe src=""></iframe>
                 </div>
-                <div id="about">
+                <div id="settings">
                     <iframe src=""></iframe>
                 </div>
+                <!--<div id="about">-->
+                    <!--<iframe src=""></iframe>-->
+                <!--</div>-->
                 
             </div>
         </div>
+
+
+        <div id="dashboard_footer">
+            <div class="table full">
+                <div class="table-cell vertical-middle full">
+                    <span class="attribution">Attribution text -: <span class="light-grey">CC Attribution-Share Alike 3.0 Unported</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
 
         <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
         <script src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>

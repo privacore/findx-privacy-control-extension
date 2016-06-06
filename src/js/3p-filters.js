@@ -812,6 +812,23 @@ var groupEntryClickHandler = function() {
     };
 
 
+    var addExternal = function () {
+        var filterData = {
+            title: $("#customSubscriptionTitle").val() || "",
+            group: $("#customSubscriptionGroup").val() || "",
+            location: $("#customSubscriptionLocation").val() || ""
+        };
+
+        renderBusyOverlay(true);
+        messaging.send('dashboard', {
+            what: 'addExternalFilter',
+            filter: filterData,
+            update: true
+        });
+        return true;
+    };
+
+
 /******************************************************************************/
 
 uDom.onLoad(function() {

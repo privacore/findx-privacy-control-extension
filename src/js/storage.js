@@ -242,8 +242,9 @@
             }
             availableEntry = availableLists[location];
             if ( availableEntry === undefined ) {
+                availableEntry = availableLists[location] = storedEntry;
                 µb.purgeFilterList(location);
-//                continue;
+                //continue;
             }
             
             availableEntry.off = off;
@@ -958,8 +959,8 @@
     }
 };
 
-/*Custom methods*/
-µBlock.reloadPresetBlacklists = function (switches, update) {
+    /*Custom methods*/
+    µBlock.reloadPresetBlacklists = function (switches, update) {
         var µb = µBlock;
         var onFilterListsReady = function () {
             µb.loadUpdatableAssets({update: update, psl: update});
@@ -976,6 +977,39 @@
                 filterLists[switches[i].location].defaultOff = !!switches[i].defaultOff;
                 filterLists[switches[i].location].inUse = !!switches[i].inUse;
             }
+            // Save switch states
+            vAPI.storage.set({'remoteBlacklists': filterLists}, onFilterListsReady);
+        } else {
+            onFilterListsReady();
+        }
+    };
+
+
+    /** Custom methods
+     * Add external filter ("Add different filter" feature)
+     * 31.05.2016 Igor
+     */
+    µBlock.addExternalFilter = function (filter, update) {
+        var µb = µBlock;
+        var onFilterListsReady = function () {
+            µb.loadUpdatableAssets({update: update, psl: update});
+        };
+
+        if (filter !== undefined && filter.location) {
+            var filterLists = this.remoteBlacklists;
+            if (filterLists.hasOwnProperty(filter.location) !== false) {
+                onFilterListsReady();
+                return;
+            }
+
+            filterLists[filter.location] = {
+                "off": false,
+                "defaultOff": true,
+                "inUse": true,
+                "title": filter.title || "Custom filter",
+                "group": filter.group || "default",
+                "supportURL": filter.location || ""
+            };
             // Save switch states
             vAPI.storage.set({'remoteBlacklists': filterLists}, onFilterListsReady);
         } else {

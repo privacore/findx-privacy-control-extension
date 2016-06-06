@@ -92,7 +92,7 @@ uDom.onLoad(function() {
         }
     }
     if ( !tab ) {
-        tab = 'settings';
+        tab = '3p-filters-incognitor';
     }
 
     //resizeFrame();

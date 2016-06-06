@@ -102,6 +102,10 @@ var onMessage = function(request, sender, callback) {
         µb.reloadPresetBlacklists(request.switches, request.update);
         µb.reloadAllFilters(callback);
         return;
+    case 'addExternalFilter':
+        µb.addExternalFilter(request.filter, request.update);
+        µb.reloadAllFilters(callback);
+        return;
     case 'cosmeticFiltersInjected':
         µb.cosmeticFilteringEngine.addToSelectorCache(request);
         /* falls through */
