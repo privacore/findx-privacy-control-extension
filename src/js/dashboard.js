@@ -52,7 +52,17 @@ var loadDashboardPanel = function(tab, q) {
         return;
     }
     q = q || '';
-    uDom('div:not(.ui-tabs-hide) iframe').attr('src', tab + ".html" + q);
+
+    var iframe = $('#panels div:not(.ui-tabs-hide) iframe');
+    if (!iframe || !iframe.length)
+        return;
+
+    var src = iframe.attr("src");
+    if (src !== tab + ".html" + q)
+        iframe.attr('src', tab + ".html" + q);
+
+    //uDom('#panels div:not(.ui-tabs-hide) iframe').attr('src', tab + ".html" + q);
+
     //uDom('.tabButton').toggleClass('selected', false);
     //tabButton.toggleClass('selected', true);
 };
@@ -92,15 +102,29 @@ uDom.onLoad(function() {
         }
     }
     if ( !tab ) {
-        tab = '3p-filters-incognitor';
+        tab = '3p-filters-privacontrol';
     }
 
     //resizeFrame();
     //window.addEventListener('resize', resizeFrame);
     uDom('.tabButton').on('click', onTabClickHandler);
     loadDashboardPanel(tab, q);
+
+
+    niceScroll();
 });
 
 /******************************************************************************/
+
+
+    uDom('#teaser_btn').on('click', function() {
+        var win = window.open("https://www.privacore.com/takecontrol", '_blank');
+        win.focus();
+    });
+
+
+    var niceScroll = function () {
+        $("html").niceScroll({cursorcolor:"#49854F", zindex: 5, autohidemode: false});
+    };
 
 })();

@@ -38,8 +38,10 @@ var cachedUserFilters = '';
 
 function userFiltersChanged() {
     var changed = uDom.nodeFromId('userFilters').value.trim() !== cachedUserFilters;
-    uDom.nodeFromId('userFiltersApply').disabled = !changed;
-    uDom.nodeFromId('userFiltersRevert').disabled = !changed;
+    $('#userFiltersApply').attr("disabled", !changed);
+    $('#userFiltersRevert').attr("disabled", !changed);
+    //uDom.nodeFromId('userFiltersApply').disabled = !changed;
+    //uDom.nodeFromId('userFiltersRevert').disabled = !changed;
 }
 
 /******************************************************************************/
@@ -60,7 +62,7 @@ function renderUserFilters() {
 
 function allFiltersApplyHandler() {
     messaging.send('dashboard', { what: 'reloadAllFilters' });
-    uDom('#userFiltersApply').prop('disabled', true );
+    uDom('#userFiltersApply').attr('disabled', true );
 }
 
 /******************************************************************************/
@@ -188,6 +190,12 @@ self.cloud.onPull = setCloudData;
 
 /******************************************************************************/
 
+    var niceScroll = function () {
+        $("html").niceScroll({cursorcolor:"#49854F", autohidemode: false});
+    };
+
+/******************************************************************************/
+
 // Handle user interaction
 uDom('#importUserFiltersFromFile').on('click', startImportFilePicker);
 uDom('#importFilePicker').on('change', handleImportFilePicker);
@@ -198,6 +206,7 @@ uDom('#userFiltersRevert').on('click', revertChanges);
 
 
 renderUserFilters();
+niceScroll();
 
 /******************************************************************************/
 

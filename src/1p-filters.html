@@ -5,25 +5,55 @@
 <title>uBlock — Your filters</title>
 <link rel="stylesheet" type="text/css" href="css/common.css">
 <link rel="stylesheet" type="text/css" href="css/dashboard-common.css">
+<link rel="stylesheet" type="text/css" href="css/dashboard-common-privacontrol.css">
 <link rel="stylesheet" type="text/css" href="css/cloud-ui.css">
-<link rel="stylesheet" type="text/css" href="css/1p-filters.css">
+<!--<link rel="stylesheet" type="text/css" href="css/1p-filters.css">-->
+<link rel="stylesheet" type="text/css" href="css/1p-filters-privacontrol.css">
 </head>
 
 <body>
 
-<div id="cloudWidget" class="hide" data-cloud-entry="myFiltersPane"></div>
+<div>
+    <div id="cloudWidget" class="hide" data-cloud-entry="myFiltersPane"></div>
+    <div class="marg-bot">
+        <span data-i18n="1pFormatHint"></span>
+        <a class="fa info" href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax" target="_blank">&#xf05a;</a>
+    </div>
+    <div class="marg-top marg-bot">
+        <!--<button id="userFiltersApply" class="custom important" type="button" disabled="true" data-i18n="1pApplyChanges"></button>-->
+        <div id="userFiltersApply" class="button btn-green" DISABLED>apply changes</div>
+        <div id="userFiltersRevert" class="button btn-green" DISABLED>revert</div>
+    </div>
+    <div class="marg-top">
+        <textarea class="userFilters" id="userFilters" dir="auto" spellcheck="false"></textarea>
+    </div>
+    <div class="marg-top">
+        <div id="importUserFiltersFromFile" class="button btn-green">import and append</div>
+        <div id="exportUserFiltersToFile" class="button btn-green">Export</div>
 
-<p><span data-i18n="1pFormatHint"></span> <a class="fa info" href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax" target="_blank">&#xf05a;</a></p>
-<p>
-    <button id="userFiltersApply" class="custom important" type="button" disabled="true" data-i18n="1pApplyChanges"></button>&ensp;
-    <button id="userFiltersRevert" class="custom" type="button" disabled="true" data-i18n="genericRevert"></button>
-</p>
-<p><textarea class="userFilters" id="userFilters" dir="auto" spellcheck="false"></textarea></p>
-<p>
-    <button id="importUserFiltersFromFile" class="custom" data-i18n="1pImport"></button>&ensp;
-    <button id="exportUserFiltersToFile" class="custom" data-i18n="1pExport"></button>
-    <input id="importFilePicker" type="file" accept="text/plain" class="hiddenFileInput">
-</p>
+        <input id="importFilePicker" type="file" accept="text/plain" class="hiddenFileInput">
+    </div>
+</div>
+
+<div class="community-teaser">
+    <div class="f14">Do you find it hard to protect your self?</div>
+
+    <ul class="dash-list">
+        <li>Do you feel in control?</li>
+        <li>Do you find it hard to control tracking?</li>
+        <li>Have you found tools to prevent tracking?</li>
+    </ul>
+
+    <div class="green marg-top">
+        <a href="https://forum.privacore.com/categories/stories" target="_blank">Find out what people do to control behavourial tracking</a>
+    </div>
+</div>
+
+
+
+
+<script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+<script src="lib/jquery.nicescroll.min.js"></script>
 
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-client.js"></script>

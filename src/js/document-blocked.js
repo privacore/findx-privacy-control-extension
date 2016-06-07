@@ -288,6 +288,10 @@ uDom.nodeFromId('disable_blocking').textContent = details.hn || details.dn;
 //}
 
 uDom('#bye').on('click', function() { window.close(); });
+uDom('#teaser_btn').on('click', function() {
+    var win = window.open("https://www.privacore.com/takecontrol", '_blank');
+    win.focus();
+});
 
 uDom('#proceedTemporary').attr('href', details.url).on('click', proceedTemporary);
 uDom('#proceedPermanent').attr('href', details.url).on('click', proceedPermanent);

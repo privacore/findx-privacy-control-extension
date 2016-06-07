@@ -42,8 +42,12 @@ var whitelistChanged = function() {
     var s = textarea.value.trim();
     var changed = s === cachedWhitelist;
     var bad = reUnwantedChars.test(s);
-    uDom.nodeFromId('whitelistApply').disabled = changed || bad;
-    uDom.nodeFromId('whitelistRevert').disabled = changed;
+
+    $('#whitelistApply').attr("disabled", changed || bad);
+    $('#whitelistRevert').attr("disabled", changed);
+    //uDom.nodeFromId('whitelistApply').disabled = changed || bad;
+    //uDom.nodeFromId('whitelistRevert').disabled = changed;
+
     textarea.classList.toggle('bad', bad);
 };
 
@@ -97,7 +101,7 @@ var exportWhitelistToFile = function() {
         return;
     }
     var now = new Date();
-    var filename = vAPI.i18n('whitelistExportFilename')
+    var filename = 'my-privacontrol-whitelist_{{datetime}}.txt'
         .replace('{{datetime}}', now.toLocaleString())
         .replace(/ +/g, '_');
     vAPI.download({
@@ -145,6 +149,12 @@ self.cloud.onPull = setCloudData;
 
 /******************************************************************************/
 
+var niceScroll = function () {
+    $("html").niceScroll({cursorcolor:"#49854F", autohidemode: false});
+};
+
+/******************************************************************************/
+
 uDom('#importWhitelistFromFile').on('click', startImportFilePicker);
 uDom('#importFilePicker').on('change', handleImportFilePicker);
 uDom('#exportWhitelistToFile').on('click', exportWhitelistToFile);
@@ -153,6 +163,7 @@ uDom('#whitelistApply').on('click', applyChanges);
 uDom('#whitelistRevert').on('click', revertChanges);
 
 renderWhitelist();
+niceScroll();
 
 /******************************************************************************/
 

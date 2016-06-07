@@ -1,0 +1,8 @@
+#userSettings {
+    margin-top: 0px;
+}
+
+div[type="checkbox"] {
+    top: 2px;
+    position: relative;
+}

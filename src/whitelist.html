@@ -5,6 +5,7 @@
 <title>Privacontrol — Whitelist</title>
 <link rel="stylesheet" type="text/css" href="css/common.css">
 <link rel="stylesheet" type="text/css" href="css/dashboard-common.css">
+<link rel="stylesheet" type="text/css" href="css/dashboard-common-privacontrol.css">
 <link rel="stylesheet" type="text/css" href="css/cloud-ui.css">
 <link rel="stylesheet" type="text/css" href="css/whitelist.css">
 </head>
@@ -13,17 +14,39 @@
 
 <div id="cloudWidget" class="hide" data-cloud-entry="whitelistPane"></div>
 
-<p data-i18n="whitelistPrompt"></p>
-<p>
-    <button id="whitelistApply" class="custom important" type="button" disabled="true" data-i18n="whitelistApply"></button>&ensp;
-    <button id="whitelistRevert" class="custom" type="button" disabled="true" data-i18n="genericRevert"></button>
-</p>
-<p><textarea id="whitelist" dir="auto" spellcheck="false"></textarea></p>
-<p>
-    <button id="importWhitelistFromFile" class="custom" data-i18n="whitelistImport"></button>&ensp;
-    <button id="exportWhitelistToFile" class="custom" data-i18n="whitelistExport"></button>
-    <input id="importFilePicker" type="file" accept="text/plain" class="hiddenFileInput">
-</p>
+<div data-i18n="whitelistPrompt"></div>
+<div class="marg-top marg-bot">
+    <div id="whitelistApply" class="button btn-green" DISABLED>apply changes</div>
+    <div id="whitelistRevert" class="button btn-green" DISABLED>revert</div>
+</div>
+
+<textarea id="whitelist" dir="auto" spellcheck="false"></textarea>
+<br/>
+
+<div id="importWhitelistFromFile" class="button btn-green">import and append</div>
+<div id="exportWhitelistToFile" class="button btn-green">export</div>
+
+<input id="importFilePicker" type="file" accept="text/plain" class="hiddenFileInput">
+
+
+
+<div class="community-teaser">
+    <div class="f14">Do you find it hard to protect your self?</div>
+
+    <ul class="dash-list">
+        <li>Do you feel in control?</li>
+        <li>Do you find it hard to control tracking?</li>
+        <li>Have you found tools to prevent tracking?</li>
+    </ul>
+
+    <div class="green marg-top">
+        <a href="https://forum.privacore.com/categories/stories" target="_blank">Find out what people do to control behavourial tracking</a>
+    </div>
+</div>
+
+
+<script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+<script src="lib/jquery.nicescroll.min.js"></script>
 
 <script src="lib/punycode.js"></script>
 <script src="js/vapi-common.js"></script>

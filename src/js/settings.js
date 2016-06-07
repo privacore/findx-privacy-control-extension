@@ -190,17 +190,41 @@ var onPreventDefault = function(ev) {
 
 /******************************************************************************/
 
+    var handleCheckboxes = function () {
+        $("div[type='checkbox']").on("mouseup", function (ev) {
+            $(this).toggleClass("checked");
+        });
+    };
+
+    var toggleCheckbox = function (checkbox, val) {
+        try {
+            if (val)
+                $(checkbox).addClass("checked");
+            else
+                $(checkbox).removeClass("checked");
+        }
+        catch (exception) {
+            console.error("Exception in 'toggleCheckbox' (settings.js) :\n\t", exception);
+        }
+    };
+
+    var isChecked = function (checkbox) {
+        return $(checkbox).hasClass("checked");
+    };
+
+/******************************************************************************/
+
 // TODO: use data-* to declare simple settings
 
 var onUserSettingsReceived = function(details) {
     uDom('[data-setting-type="bool"]').forEach(function(uNode) {
-        uNode.prop('checked', details[uNode.attr('data-setting-name')] === true)
-             .on('change', function() {
-                    changeUserSettings(
-                        this.getAttribute('data-setting-name'),
-                        this.checked
-                    );
-                });
+        toggleCheckbox(uNode.nodes[0], details[uNode.attr('data-setting-name')] === true);
+        uNode.on('click', function() {
+            changeUserSettings(
+                this.getAttribute('data-setting-name'),
+                isChecked(this)
+            );
+        });
     });
 
     uDom('[data-setting-name="noLargeMedia"] ~ label:first-of-type > input[type="number"]')
@@ -221,9 +245,18 @@ var onUserSettingsReceived = function(details) {
 
 /******************************************************************************/
 
+var niceScroll = function () {
+    $("html").niceScroll({cursorcolor:"#49854F", autohidemode: false});
+};
+
+/******************************************************************************/
+
 uDom.onLoad(function() {
+    handleCheckboxes();
     messaging.send('dashboard', { what: 'userSettings' }, onUserSettingsReceived);
     messaging.send('dashboard', { what: 'getLocalData' }, onLocalDataReceived);
+
+    niceScroll();
 });
 
 /******************************************************************************/

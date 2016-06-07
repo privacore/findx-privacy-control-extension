@@ -95,7 +95,8 @@ var renderFilterLists = function() {
         var li = listEntryTemplate.clone();
 
         if ( entry.off !== true ) {
-            li.descendants('input').attr('checked', '');
+            li.descendants('div[type="checkbox"]').addClass('checked');
+            //li.descendants('input').attr('checked', '');
         }
 
         var elem = li.descendants('a:nth-of-type(1)');
@@ -258,9 +259,10 @@ var renderFilterLists = function() {
                 .replace('{{netFilterCount}}', renderNumber(details.netFilterCount))
                 .replace('{{cosmeticFilterCount}}', renderNumber(details.cosmeticFilterCount))
         );
-        uDom('#autoUpdate').prop('checked', listDetails.autoUpdate === true);
-        uDom('#parseCosmeticFilters').prop('checked', listDetails.cosmetic === true);
-//
+
+        toggleCheckbox(('#autoUpdate'), listDetails.autoUpdate === true);
+        toggleCheckbox(('#parseCosmeticFilters'), listDetails.cosmetic === true);
+
         renderWidgets();
         renderBusyOverlay(details.manualUpdate, details.manualUpdateProgress);
     };
@@ -290,7 +292,7 @@ var renderFilterLists = function() {
             });
             $('.subscriptionRemoveButton ').on('click', rmSubscriptionBtnClick);
             $('.default-enabling-control').on('click', defaultOffBtnClick);
-            $('.subscriptionInUse').on('change', inUseCheckboxChange);
+            $('.subscriptionInUse').on('click', inUseCheckboxChange);
         };
         
         var fillAvailableFiltersList = function () {
@@ -628,8 +630,7 @@ var selectFilterLists = function(callback) {
 };
 
 var buttonApplyHandler = function() {
-      listDetails.cosmetic = this.checked;
-//    uDom('#buttonApply').removeClass('enabled');
+      listDetails.cosmetic = isChecked(this);
 
     renderBusyOverlay(true);
 
@@ -683,7 +684,7 @@ var autoUpdateCheckboxChanged = function() {
         {
             what: 'userSettings',
             name: 'autoUpdate',
-            value: this.checked
+            value: isChecked(this)
         }
     );
 };
@@ -831,21 +832,50 @@ var groupEntryClickHandler = function() {
 
 /******************************************************************************/
 
+    var handleCheckboxes = function () {
+        $("div[type='checkbox']").on("mouseup", function (ev) {
+            $(this).toggleClass("checked");
+        });
+    };
+
+    var toggleCheckbox = function (checkbox, val) {
+        if (val)
+            $(checkbox).addClass("checked");
+        else
+            $(checkbox).removeClass("checked");
+    };
+
+    var isChecked = function (checkbox) {
+        return $(checkbox).hasClass("checked");
+    };
+
+/******************************************************************************/
+
+    var niceScroll = function () {
+        $("html").niceScroll({cursorcolor:"#49854F", autohidemode: false});
+    };
+
+/******************************************************************************/
+
 uDom.onLoad(function() {
     //*************************************************************
     uDom("#startSubscriptionSelection").on("click", startSubscriptionSelection);
     uDom('#addSubscription').on('click', addSubscriptionBtnClick);
     //*************************************************************
-    uDom('#autoUpdate').on('change', autoUpdateCheckboxChanged);
-    uDom('#parseCosmeticFilters').on('change', buttonApplyHandler);
+    uDom('#autoUpdate').on('click', autoUpdateCheckboxChanged);
+    uDom('#parseCosmeticFilters').on('click', buttonApplyHandler);
     uDom('#buttonUpdate').on('click', buttonUpdateHandler);
     uDom('#buttonPurgeAll').on('click', buttonPurgeAllHandler);
     $(".refreshButton").button("option", "icons", {primary: "ui-icon-refresh"});
     $(".addButton").button("option", "icons", {primary: "ui-icon-plus"});
     $(".removeButton").button("option", "icons", {primary: "ui-icon-minus"});
 
+    handleCheckboxes();
+
     renderFilterLists();
     renderExternalLists();
+
+    niceScroll();
 });
 
 /******************************************************************************/

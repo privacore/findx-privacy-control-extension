@@ -154,7 +154,7 @@ var startImportFilePicker = function() {
 
 function exportUserRulesToFile() {
     var now = new Date();
-    var filename = vAPI.i18n('rulesDefaultFileName')
+    var filename = "my-privacontrol-dynamic-rules_{{datetime}}.txt"
         .replace('{{datetime}}', now.toLocaleString())
         .replace(/ +/g, '_');
     vAPI.download({
@@ -258,6 +258,12 @@ var editCancelHandler = function() {
 
 /******************************************************************************/
 
+    var niceScroll = function () {
+        $("html").niceScroll({cursorcolor:"#49854F", autohidemode: false});
+    };
+
+/******************************************************************************/
+
 // Handle user interaction
 uDom('#importButton').on('click', startImportFilePicker);
 uDom('#importFilePicker').on('change', handleImportFilePicker);
@@ -271,6 +277,8 @@ uDom('#editStopButton').on('click', editStopHandler);
 uDom('#editCancelButton').on('click', editCancelHandler);
 
 messaging.send('dashboard', { what: 'getRules' }, renderRules);
+
+niceScroll();
 
 /******************************************************************************/
 

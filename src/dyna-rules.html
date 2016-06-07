@@ -4,47 +4,78 @@
 <meta charset="utf-8">
 <title>Privacontrol — Dynamic filtering rules</title>
 <link rel="stylesheet" type="text/css" href="css/common-incognito.css">
-<link rel="stylesheet" type="text/css" href="css/dashboard-common-incognito.css">
+<link rel="stylesheet" type="text/css" href="css/dashboard-common-privacontrol.css">
 <link rel="stylesheet" type="text/css" href="css/dyna-rules.css">
 </head>
 
 <body>
 
-<p data-i18n="rulesHint"></p>
-<p data-i18n="rulesFormatHint"></p>
-<div id="diff">
-    <div class="pane left">
-        <div class="ruleActions">
-            <h2 data-i18n="rulesPermanentHeader"></h2>
-            <button type="button" id="exportButton" data-i18n="rulesExport"></button>
-            <button type="button" id="revertButton" data-i18n="rulesRevert"></button>
-        </div>
-        <div class="rulesContainer">
-            <ul></ul>
-        </div>
-        </div>
-    <div class="pane right">
-        <div class="ruleActions">
-            <h2 data-i18n="rulesTemporaryHeader"></h2>
-            <button type="button" id="commitButton" data-i18n="rulesCommit"></button>
-            <button type="button" id="editEnterButton" data-i18n="rulesEdit"></button>
-            <button type="button" id="editStopButton" data-i18n="rulesEditSave"></button>
-            <button type="button" id="editCancelButton" data-i18n="rulesEditDiscard"></button>
-            <button type="button" id="importButton" data-i18n="rulesImport"></button>
-        </div>
-        <div class="rulesContainer">
-            <textarea spellcheck="false"></textarea>
-            <ul></ul>
-        </div>
-    </div>
+<div>
+    <div data-i18n="rulesHint"></div>
+    <p data-i18n="rulesFormatHint"></p>
+    <div id="diff">
+        <div class="pane left">
+            <div class="ruleActions">
+                <h2 data-i18n="rulesPermanentHeader"></h2>
 
-<div id="templates" style="display: none;">
-    <input class="hidden" id="importFilePicker" type="file" accept="text/plain">
-    <span class="hidden" data-i18n="rulesDefaultFileName"></span>
-    <ul>
-        <li>&nbsp;</li>
-        </ul>
+                <div id="exportButton" class="button btn-green">export to file</div>
+                <div id="revertButton" class="button btn-green">revert</div>
+            </div>
+            <div class="rulesContainer">
+                <ul></ul>
+            </div>
+        </div>
+        <div class="pane right">
+            <div class="ruleActions">
+                <h2 data-i18n="rulesTemporaryHeader"></h2>
+
+                <div id="commitButton" class="button btn-green">commit</div>
+                <div id="editEnterButton" class="button btn-green">edit</div>
+                <div id="editStopButton" class="button btn-green">save</div>
+                <div id="editCancelButton" class="button btn-green">discard</div>
+                <div id="importButton" class="button btn-green">import from file</div>
+
+                <!--<button type="button" id="commitButton" data-i18n="rulesCommit"></button>-->
+                <!--<button type="button" id="editEnterButton" data-i18n="rulesEdit"></button>-->
+                <!--<button type="button" id="editStopButton" data-i18n="rulesEditSave"></button>-->
+                <!--<button type="button" id="editCancelButton" data-i18n="rulesEditDiscard"></button>-->
+                <!--<button type="button" id="importButton" data-i18n="rulesImport"></button>-->
+            </div>
+            <div class="rulesContainer">
+                <textarea spellcheck="false"></textarea>
+                <ul></ul>
+            </div>
+        </div>
+
+        <div id="templates" style="display: none;">
+            <input class="hidden" id="importFilePicker" type="file" accept="text/plain">
+            <span class="hidden" data-i18n="rulesDefaultFileName"></span>
+            <ul>
+                <li>&nbsp;</li>
+            </ul>
+        </div>
+
     </div>
+</div>
+
+
+<div class="community-teaser">
+    <div class="f14">Do you find it hard to protect your self?</div>
+
+    <ul class="dash-list">
+        <li>Do you feel in control?</li>
+        <li>Do you find it hard to control tracking?</li>
+        <li>Have you found tools to prevent tracking?</li>
+    </ul>
+
+    <div class="green marg-top">
+        <a href="https://forum.privacore.com/categories/stories" target="_blank">Find out what people do to control behavourial tracking</a>
+    </div>
+</div>
+
+
+<script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+<script src="lib/jquery.nicescroll.min.js"></script>
 
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-client.js"></script>

@@ -6,6 +6,7 @@
 
 
         <link type="text/css" href="lib/jquery-ui/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
         <!--<link type="text/css" href="css/options.css" rel="stylesheet"/>-->
         <link href="css/dashboard.css" rel="stylesheet" type="text/css">
         <!--<link href="css/common.css" rel="stylesheet" type="text/css">-->
@@ -17,60 +18,95 @@
 
         <div id="dashboard_bg"></div>
 
-        <table id="title">
-            <tr>
-                <td>
-                    <img src="img/dashboard_logo.png" class="dashboard-title-logo">
-                </td>
-            </tr>
-        </table>
+        <div id="wrapper">
 
-        <div id="tabs">
-            <ul id="tabs_nav">
-                <li><a href="#3p-filters-incognitor" class="tabButton"><span>Global Privacy lists</span></a></li>
-                <li><a href="#1p-filters" class="tabButton"><span>My tracking filter</span></a></li>
-                <li><a href="#dyna-rules" class="tabButton"><span>My detailed rules</span></a></li>
-                <li><a href="#whitelist" class="tabButton"><span>My Whitelist</span></a></li>
-                <li><a href="#settings" class="tabButton"><span>Settings</span></a></li>
-                <!--<li><a href="#about" class="tabButton"><span>About</span></a></li>-->
-            </ul>
-
-            <div id="panels">
-                <div id="3p-filters-incognitor">
-                    <iframe src=""></iframe>
+            <div id="sidebar">
+                <div class="sidebar-top-block"></div>
+                <div class="sidebar-bot-block">
+                    <div id="teaser_area">
+                        <div class="teaser-text">Find more ways to control online tracking</div>
+                        <div id="teaser_btn" class="button btn-red raised">take control</div>
+                    </div>
                 </div>
-                <div id="1p-filters">
-                    <iframe src=""></iframe>
-                </div>
-                <div id="dyna-rules">
-                    <iframe src=""></iframe>
-                </div>
-                <div id="whitelist">
-                    <iframe src=""></iframe>
-                </div>
-                <div id="settings">
-                    <iframe src=""></iframe>
-                </div>
-                <!--<div id="about">-->
-                    <!--<iframe src=""></iframe>-->
-                <!--</div>-->
-                
             </div>
-        </div>
+
+            <div id="content-wrapper">
+                <table id="title">
+                    <tr>
+                        <td>
+                            <img src="img/dashboard_logo.png" class="dashboard-title-logo">
+                        </td>
+                    </tr>
+                </table>
 
 
-        <div id="dashboard_footer">
-            <div class="table full">
-                <div class="table-cell vertical-middle full">
-                    <span class="attribution">Attribution text -: <span class="light-grey">CC Attribution-Share Alike 3.0 Unported</span>
-                    </span>
+                <div id="content">
+                    <div id="tabs">
+                        <ul id="tabs_nav">
+                            <li><a href="#3p-filters-privacontrol" class="tabButton"><span>Global Privacy lists</span></a></li>
+                            <li><a href="#1p-filters" class="tabButton"><span>My tracking filter</span></a></li>
+                            <li><a href="#dyna-rules" class="tabButton"><span>My detailed rules</span></a></li>
+                            <li><a href="#whitelist" class="tabButton"><span>My Whitelist</span></a></li>
+                            <li><a href="#settings" class="tabButton"><span>Settings</span></a></li>
+                            <!--<li><a href="#about" class="tabButton"><span>About</span></a></li>-->
+                        </ul>
+
+                        <div id="panels">
+                            <div id="3p-filters-privacontrol">
+                                <iframe src=""></iframe>
+                            </div>
+                            <div id="1p-filters">
+                                <iframe src=""></iframe>
+                            </div>
+                            <div id="dyna-rules">
+                                <iframe src=""></iframe>
+                            </div>
+                            <div id="whitelist">
+                                <iframe src=""></iframe>
+                            </div>
+                            <div id="settings">
+                                <iframe src=""></iframe>
+                            </div>
+                            <!--<div id="about">-->
+                            <!--<iframe src=""></iframe>-->
+                            <!--</div>-->
+
+                        </div>
+
+                        <div id="content_footer">
+                            <div id="content_footer_controls">
+                                <a id="content_footer_logo" class="content-footer-control" href="https://www.privacore.com/" target="_blank"></a>
+                                <a class="content-footer-control twiet" href="https://www.twitter.com/privacore" target="_blank">
+                                    <i class="fa fa-twitter-square"></i>
+                                </a>
+                                <a class="content-footer-control github" href="https://github.com/privacore/" target="_blank">
+                                    <i class="fa fa-github-square"></i>
+                                </a>
+                                <a class="content-footer-control linkedin" href="https:/www.linkedin.com/company/privacore" target="_blank">
+                                    <i class="fa fa-linkedin-square"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+
+                <div id="footer">
+                    <div class="table full">
+                        <div class="table-cell vertical-middle full">
+                            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Content on this page</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="Https://www.privacore.com" property="cc:attributionName" rel="cc:attributionURL">Privacore</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://github.com/privacore/privacontrol/" rel="dct:source">http://github.com/privacore/privacontrol/</a>.<br />Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="Https://www.privacore.com/privacontrol/license" rel="cc:morePermissions">Https://www.privacore.com/privacontrol/license</a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
 
         <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
         <script src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script src="lib/jquery.nicescroll.min.js"></script>
+
         <script src="js/vapi-common.js"></script>
         <script src="js/udom.js"></script>
         <script src="js/i18n.js"></script>

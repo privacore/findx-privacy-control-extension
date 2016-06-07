@@ -89,7 +89,7 @@ body[dir="rtl"] #commitButton:before {
     }
 #diff.edit #editStopButton,
 #diff.edit #editCancelButton {
-    display: initial;
+    display: inline-block;
     }
 #diff.edit #importButton,
 #diff.edit #exportButton {
@@ -169,3 +169,8 @@ body[dir="rtl"] #commitButton:before {
 #diff.edit textarea {
     visibility: visible;
     }
+
+.ruleActions {
+    font-family: Roboto-regular;
+    font-size: 11pt;
+}

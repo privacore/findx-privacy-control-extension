@@ -49,7 +49,7 @@ button.custom.reloadAll:not(.disabled) {
     float: left;
     text-align: center;
     margin-right: 10px;
-    min-height: 20px;
+    min-height: 22px;
     line-height: 20px;
     white-space: nowrap;
     overflow: hidden;
@@ -68,9 +68,9 @@ button.custom.reloadAll:not(.disabled) {
 }
 .deleteColumn .subscriptionRemoveButton:not(.disabled) {
     width: 20px;
-    height: 13px;
-    margin: 4px auto;
-    background-image: url("../img/red_cross.png");
+    height: 16px;
+    margin: 2px auto;
+    background-image: url("../img/bucket.png");
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
@@ -84,7 +84,7 @@ button.custom.reloadAll:not(.disabled) {
     height: 15px;
 }
 .onOffColumn {
-    width:90px;
+    width:95px;
 }
 .nameColumn {
     width: 200px;
@@ -107,22 +107,21 @@ button.custom.reloadAll:not(.disabled) {
 
 .default-enabling-control {
     width: 60px;
-    height: 20px;
+    height: 22px;
     cursor: pointer;
     margin: 0 auto;
 }
 .default-enabling-control .default-enabling-icon {
-    /*float: left;*/
     margin: 0 auto;
     width: 100%;
-    height: 20px;
-    width: 49px;
+    height: 22px;
+    width: 40px;
     cursor: pointer;
-    background: url('../img/on.png');
+    background: url('../img/switcher_on.png');
     background-repeat: no-repeat;
 }
 .default-enabling-control.disabled .default-enabling-icon {
-    background: url('../img/off.png');
+    background: url('../img/switcher_off.png');
     background-repeat: no-repeat;
 }
 .nameColumn a {
@@ -365,3 +364,15 @@ body.busy #busyOverlay {
     top: 0;
     width: 100%;
     }
+
+
+
+#options div[type="checkbox"] {
+    top: 2px;
+    position: relative;
+}
+
+.subscriptionInUse {
+    position: relative;
+    top: 3px;
+}

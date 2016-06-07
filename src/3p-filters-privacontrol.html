@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Privacontrol - Filters lists</title>
+        <link type="text/css" href="lib/jquery-ui/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
+
+        <link rel="stylesheet" type="text/css" href="css/common-incognito.css">
+        <link rel="stylesheet" type="text/css" href="css/dashboard-common-privacontrol.css">
+        <link rel="stylesheet" type="text/css" href="css/3p-filters-privacontrol.css">
+    </head>
+
+    <body>
+
+        <div>
+
+            <div class="f25">Privacy lists</div>
+            <p>
+                <label>Enable only the filter lists you need. Too many can make your browser unresponsive.</label>
+            </p>
+
+            <!--<p>-->
+            <label>Out-of-date lists are updated periodically.</label>
+            <ul id="options">
+                <li>
+
+                    <!--<input type="checkbox" id="autoUpdate">-->
+                    <div type="checkbox" id="autoUpdate"></div>
+                    <label data-i18n="3pAutoUpdatePrompt1" for="autoUpdate"></label>
+
+                    &ensp;
+                    <!--<button class="important disabled" id="buttonUpdate" data-i18n="3pUpdateNow"></button>-->
+
+                    <div id="buttonUpdate" class="button btn-green disabled">update now</div>
+                    <div id="buttonPurgeAll" class="button btn-green">purge all caches</div>
+                </li>
+                <li>
+                    <!--<input type="checkbox" id="parseCosmeticFilters">-->
+                    <div type="checkbox" id="parseCosmeticFilters"></div>
+                    <label data-i18n="3pParseAllABPHideFiltersPrompt1" for="parseCosmeticFilters"></label>
+                    <button class="whatisthis"></button>
+                    <div class="whatisthis-expandable para" data-i18n="3pParseAllABPHideFiltersInfo"></div>
+                </li>
+            </ul>
+
+
+            <!-- Titles of list columns -->
+            <div id="filterListsHeader">
+                <div class="deleteColumn listColumn bold">Delete</div>
+                <div class="inUseColumn listColumn bold">In Use</div>
+                <div class="onOffColumn listColumn bold">Default on/off</div>
+                <div class="nameColumn listColumn bold">Name</div>
+                <div class="groupColumn listColumn bold">Group</div>
+                <div class="updateColumn listColumn bold">Latest update</div>
+            </div>
+
+            <div id="filterLists"></div>
+            <ul id="lists"></ul>
+            <br/>
+
+
+            <!-- Placeholder for user's filter list URLs -->
+            <div id="userFilterLists" style="margin-bottom: 8px"></div>
+
+
+            <div id="addSubscriptionButton">
+                <div id="startSubscriptionSelection" class="button btn-green">Add filter subscription</div>
+            </div>
+
+            <div id="addSubscriptionContainer">
+                <span>Please choose a filter subscription from the list:</span><br/>
+
+                <select id="subscriptionSelector" style="width:500px"></select>
+
+                <div id="addSubscription" class="button btn-green">Add</div>
+            </div>
+
+            <div id="customSubscriptionContainer">
+                <p>
+                    <span>Title:</span><br/>
+                    <input type="text" id="customSubscriptionTitle" style="width:500px"/>
+                </p>
+
+                <p>
+                    <span>Group:</span><br/>
+                    <input type="text" id="customSubscriptionGroup" style="width:500px"/>
+                </p>
+
+                <p>
+                    <span>Location:</span><br/>
+                    <input type="text" id="customSubscriptionLocation" style="width:500px"/>
+                </p>
+            </div>
+        </div>
+
+
+        <div class="community-teaser">
+            <div class="f14">Do you find it hard to protect your self?</div>
+
+            <ul class="dash-list">
+                <li>Do you feel in control?</li>
+                <li>Do you find it hard to control tracking?</li>
+                <li>Have you found tools to prevent tracking?</li>
+            </ul>
+
+            <div class="green marg-top">
+                <a href="https://forum.privacore.com/categories/stories" target="_blank">Find out what people do to control behavourial tracking</a>
+            </div>
+        </div>
+
+
+
+        <!-- Subscription entry template -->
+        <script id="filter_template" type="text/html">
+            <div id="{{path}}" class="subscription listRow">
+                <div class="deleteColumn listColumn">
+                    <div class="subscriptionRemoveButton {{delete_possibility}}" title="delete"
+                         data-path="{{path}}"></div>
+                </div>
+                <div class="inUseColumn listColumn">
+                    <div class="subscriptionInUse {{inuse_checked}}" type="checkbox"></div>
+                    <!--<input class="subscriptionInUse" type="checkbox" {{inuse_checked}}/>-->
+                </div>
+                <div class="onOffColumn listColumn">
+                    <div class="default-enabling-control {{default_disabled}}">
+                        <div class="default-enabling-icon"></div>
+                    </div>
+                </div>
+                <div class="nameColumn listColumn">
+                    <a class="subscriptionTitle" title="{{title}}" href="{{url}}" target="_blank">{{title}}</a>
+                </div>
+                <div class="groupColumn listColumn">
+                    <input class="groupField" type="text" readonly="true" placeholder="group"
+                           title="{{group}}" value="{{group}}">
+                </div>
+                <div class="updateColumn listColumn">
+                    <div class="subscriptionUpdate listColumn" {{error}}>{{last_update}}</div>
+                </div>
+            </div>
+        </script>
+
+
+
+        <div id="busyOverlay">
+            <div></div>
+            <!-- progress bar widget -->
+            <div><div></div><div></div></div>
+        </div>
+
+
+        <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+        <script src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script src="lib/jquery.nicescroll.min.js"></script>
+
+        <script src="js/vapi-common.js"></script>
+        <script src="js/vapi-client.js"></script>
+        <script src="js/udom.js"></script>
+        <script src="js/i18n.js"></script>
+        <script src="js/dashboard-common.js"></script>
+        <script src="js/3p-filters.js"></script>
+
+    </body>
+</html>

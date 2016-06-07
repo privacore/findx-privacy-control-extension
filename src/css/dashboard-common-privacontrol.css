@@ -1,0 +1,205 @@
+@font-face {
+    font-family: "Roboto-regular";
+    src: url(fonts/Roboto-Regular.ttf) format("truetype");
+}
+@font-face {
+    font-family: "Roboto-medium";
+    src: url(fonts/Roboto-Medium.ttf) format("truetype");
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Roboto-regular;
+    font-size: 11pt;
+}
+/*body {*/
+    /*margin: 0;*/
+    /*padding: 0 0.5em 0.5em 0.5em;*/
+    /*font: 14px sans-serif;*/
+/*}*/
+h2, h3 {
+    margin: 1em 0;
+    font-family: sans-serif;
+    }
+h2 {
+    font-size: 18px;
+    }
+h2:nth-of-type(1) {
+    margin-top: 0;
+    }
+h3 {
+    font-size: 16px;
+    }
+a {
+    text-decoration: none;
+    }
+button {
+    padding: 0.33em;
+    }
+div > p:first-child {
+    margin-top: 0;
+    }
+div > p:last-child {
+    margin-bottom: 0;
+    }
+
+.para {
+    width: 40em;
+    }
+.whatisthis {
+    margin: 0 0 0 8px;
+    border: 0;
+    padding: 0 0 4px 0;
+    width: 16px;
+    height: 16px;
+    background: url('../img/help16.png') no-repeat;
+    cursor: pointer;
+    opacity: 0.5;
+    vertical-align: middle;
+    }
+.whatisthis:hover {
+    opacity: 1.0;
+    }
+.whatisthis-expandable {
+    margin: 0.5em 0 1em 1.25em;
+    padding: 0.5em;
+    display: none;
+    border: 1px dotted black;
+    background-color: #F8F8F8;
+    font-size: 13px;
+    }
+.whatisthis-expandable > p {
+    margin-top: 1em;
+    margin-bottom: 0;
+    }
+.whatisthis-expandable > p:first-child {
+    margin-top: 0;
+    }
+.whatisthis-expandable.whatisthis-expanded {
+    display: block;
+    }
+.warn {
+    margin: 0;
+    padding: 5px;
+    background-color: #FEDAE0;
+    }
+
+
+
+.f25 {
+    font-size: 25pt;
+}
+.f22 {
+    font-size: 22pt;
+}
+.f14 {
+    font-size: 14pt;
+}
+
+.green {
+    color: #609465;
+}
+
+.dash-list {
+    padding: 0;
+    list-style-type: none;
+}
+.dash-list li {
+    list-style: none;
+}
+.dash-list li:before {
+    content: " - ";
+}
+
+.button {
+    color: #E4574C;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    font-family: Roboto-medium;
+    margin: 5pt;
+    padding: 6pt 10pt;
+    box-sizing: border-box;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    border-radius: 2px;
+}
+.button.btn-green, .button.btn-green:focus,
+.button.btn-green:visited, .button.btn-green:active {
+    background-color: #6BAD70;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.26);
+    color: #ffffff;
+}
+.button.btn-green:hover {
+    background-color: #4A854F;
+}
+
+.button.disabled,
+.button[disabled] {
+    pointer-events: none;
+    background-color: #EEEFEF;
+    color: #6BAD70;
+}
+
+
+.marg-bot {
+    margin-bottom: 5pt;
+}
+.marg-top {
+    margin-top: 5pt;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.table {
+    display: table;
+}
+.table-cell {
+    display: table-cell;
+}
+
+.full {
+    width: 100%;
+    height: 100%;
+}
+.full-width {
+    width: 100%;
+}
+
+.vertical-middle {
+    vertical-align: middle;
+}
+
+
+*[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-image: url("../img/checkbox_unchecked.png");
+}
+*[type="checkbox"].checked {
+    background-image: url("../img/checkbox_checked.png");
+}
+
+
+.community-teaser {
+    margin-top: 20pt;
+}
+.community-teaser * {
+    cursor: default;
+}
+.community-teaser a, .community-teaser a:hover,
+.community-teaser a:active, .community-teaser a:focus,
+.community-teaser a:visited {
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+}
