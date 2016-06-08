@@ -117,6 +117,11 @@ var onVersionReady = function(lastVersion) {
     if ( lastVersion !== vAPI.app.version ) {
         vAPI.storage.set({ version: vAPI.app.version });
     }
+
+    console.log ("onVersionReady ()            start.js" +
+                    "\n\t lastVersion: ", lastVersion,
+                    "\n\t vAPI: ", vAPI,
+                    "\n\t vAPI.storage: ", vAPI.storage);
 };
 
 /******************************************************************************/
@@ -205,9 +210,33 @@ var onSystemSettingsReady = function(fetched) {
 
 /******************************************************************************/
 
+    /**
+     * In a version 1.7.5.4 we start loading filters from a privacontrol server.
+     * So we need to clear all earlier filters from the storage, because if we don't clear it -
+     *      previous filters from ublock server will  be displayed too.
+ *      We must clear it only once, so we set "isFiltersErased" item to a storage.
+     */
+    var checkFiltersListsSources = function () {
+        if (vAPI.app.version.localeCompare("1.7.5.4") <= 0 ) { // is current version higher or equal
+            vAPI.storage.get('isFiltersErased', function (data) {
+                if (!data || !Object.keys(data).length || !data.isFiltersErased) {
+                    vAPI.storage.set({ 'isFiltersErased': true }, null);
+
+                    vAPI.storage.get('remoteBlacklists', function (list) {
+                        vAPI.storage.set({ 'remoteBlacklists': {} }, null);
+                    });
+                }
+            });
+        }
+    };
+
+/******************************************************************************/
+
 var onFirstFetchReady = function(fetched) {
     // https://github.com/gorhill/uBlock/issues/747
     µb.firstInstall = fetched.version === '0.0.0.0';
+
+    checkFiltersListsSources();
 
     // Order is important -- do not change:
     onSystemSettingsReady(fetched);
