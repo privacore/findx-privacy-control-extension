@@ -212,17 +212,34 @@ var onSystemSettingsReady = function(fetched) {
  *      We must clear it only once, so we set "isFiltersErased" item to a storage.
      */
     var checkFiltersListsSources = function () {
-        if (vAPI.app.version.localeCompare("1.7.5.4") <= 0 ) { // is current version higher or equal
-            vAPI.storage.get('isFiltersErased', function (data) {
-                if (!data || !Object.keys(data).length || !data.isFiltersErased) {
-                    vAPI.storage.set({ 'isFiltersErased': true }, null);
-
-                    vAPI.storage.get('remoteBlacklists', function (list) {
-                        vAPI.storage.set({ 'remoteBlacklists': {} }, null);
-                    });
-                }
-            });
+        if (vAPI.app.version.localeCompare("1.7.5.4") >= 0 ) { // is current version higher or equal
+            if (vAPI.app.version.localeCompare("1.7.5.6") >= 0 ) {
+                vAPI.storage.get('isFiltersErased_1.7.5.6', function (data) {
+                    if (!data || !Object.keys(data).length || !data.isFiltersErased) {
+                        vAPI.storage.set({ 'isFiltersErased_1.7.5.6': true }, null);
+                        vAPI.storage.remove("isFiltersErased");
+                        µb.assets.purgeAll();
+                        clearStoredFilters();
+                    }
+                });
+            }
+            else {
+                clearStoredFilters();
+                µb.assets.purgeAll();
+            }
         }
+    };
+
+    var clearStoredFilters = function () {
+        vAPI.storage.get('isFiltersErased', function (data) {
+            if (!data || !Object.keys(data).length || !data.isFiltersErased) {
+                vAPI.storage.set({ 'isFiltersErased': true }, null);
+
+                vAPI.storage.get('remoteBlacklists', function (list) {
+                    vAPI.storage.set({ 'remoteBlacklists': {} }, null);
+                });
+            }
+        });
     };
 
 /******************************************************************************/
