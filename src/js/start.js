@@ -117,11 +117,6 @@ var onVersionReady = function(lastVersion) {
     if ( lastVersion !== vAPI.app.version ) {
         vAPI.storage.set({ version: vAPI.app.version });
     }
-
-    console.log ("onVersionReady ()            start.js" +
-                    "\n\t lastVersion: ", lastVersion,
-                    "\n\t vAPI: ", vAPI,
-                    "\n\t vAPI.storage: ", vAPI.storage);
 };
 
 /******************************************************************************/

@@ -139,9 +139,6 @@
             }
         }
 
-        console.log ("onBuiltinListsLoaded ()            storage.js" +
-                        "\n\t result: ", result);
-
         callback(result);
     };
 
@@ -232,9 +229,6 @@
         var location, availableEntry, storedEntry;
         var off;
 
-        console.log ("onSelectedListsLoaded ()            storage.js" +
-                        "\n\t store: ", JSON.parse(JSON.stringify(store)));
-
         while ( (location = locations.pop()) ) {
             storedEntry = lists[location];
             off = storedEntry.off === true;
@@ -306,9 +300,6 @@
             µb.autoSelectFilterLists(availableLists);
         }
 
-        console.log ("onSelectedListsLoaded ()            storage.js" +
-                        "\n\t availableLists: ", availableLists);
-
         callback(availableLists);
     };
 
@@ -321,10 +312,6 @@
         } catch (e) {
             locations = {};
         }
-
-        console.log ("onBuiltinListsLoaded ()            storage.js" +
-            "\n\t locations: ", locations,
-            "\n\t availableLists: ", JSON.parse(JSON.stringify(availableLists)));
 
         var entry;
         for ( location in locations ) {
@@ -340,9 +327,6 @@
             }
             availableLists[location] = entry;
         }
-
-        console.log ("onBuiltinListsLoaded ()            storage.js" +
-            "\n\t availableLists: ", JSON.parse(JSON.stringify(availableLists)));
 
         // Now get user's selection of lists
         vAPI.storage.get(
@@ -365,9 +349,6 @@
     for (var path in this.userSettings.externalLists) {
         availableLists[path] = this.userSettings.externalLists[path];
     }
-
-    console.log ("getAvailableLists ()            storage.js" +
-                    "\n\t availableLists (permanent and custom): ", JSON.parse(JSON.stringify(availableLists)));
 
     // get built-in block lists.
     this.loadAndPatchStockFilterLists(onBuiltinListsLoaded);
@@ -492,9 +473,6 @@
         if ( filterlistsCount === 0 ) {
             return onDone();
         }
-
-        console.log ("onFilterListsReady ()            storage.js" +
-                        "\n\t toLoad: ", toLoad);
         var i = toLoad.length;
         while ( i-- ) {
             µb.getCompiledFilterList(toLoad[i], onCompiledListLoaded);
@@ -1185,8 +1163,6 @@
 
 µBlock.loadAndPatchStockFilterLists = function(callback) {
     var onStockListsLoaded = function(details) {
-        console.log ("onStockListsLoaded ()            storage.js" +
-                        "\n\t details: ", details);
         var µb = µBlock;
         var stockLists;
         try {
@@ -1228,8 +1204,6 @@
         // Stock lists information cascades into
         // - In-storage user's selected filter lists, so we need to patch this.
         vAPI.storage.get('remoteBlacklists', function(bin) {
-            console.log ("loadAndPatchStockFilterLists ()            storage.js" +
-                            "\n\t remoteBlacklists from storage: ", bin);
             var userLists = bin.remoteBlacklists || {};
             if ( µb.patchFilterLists(userLists) ) {
                 µb.keyvalSetOne('remoteBlacklists', userLists);

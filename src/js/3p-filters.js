@@ -269,7 +269,7 @@ var renderFilterLists = function() {
     
     //Custom methods
     /**************************************************************************/
-    var fillFiltersList = function (filtersList) {
+        var fillFiltersList = function (filtersList) {
             var filtersContainer = $("#filterLists");
             filtersContainer.html("");
             var fragment = document.createDocumentFragment();
@@ -443,15 +443,40 @@ var renderFilterLists = function() {
                     template = template.replace(new RegExp("{{error}}", 'g'), "error");
                 }
                 else {
-                      var date = new Date(asset.lastModified);
-                      var dateString = !(date instanceof Date && isFinite(date)) ? "-" :
-                            (date.getFullYear() + "-" +
-                                    ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
-                                    ("0" + date.getDate()).slice(-2) + "  " +
-                                    ("0" + date.getHours()).slice(-2) + ":" +
-                                    ("0" + date.getMinutes()).slice(-2));
+                    var date = null;
+                    if (asset && asset.lastModified) {
+                        date = new Date(asset.lastModified);
+                    }
+                    else if (data.lastModified) {
+                        date = new Date(data.lastModified);
+                    }
+                    //date = new Date(asset.lastModified);
+
+                    var dateString = !(date instanceof Date && isFinite(date)) ? "-" :
+                        (date.getFullYear() + "-" +
+                        ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
+                        ("0" + date.getDate()).slice(-2) + "  " +
+                        ("0" + date.getHours()).slice(-2) + ":" +
+                        ("0" + date.getMinutes()).slice(-2));
                     template = template.replace(new RegExp("{{last_update}}", 'g'), dateString);
                     template = template.replace(new RegExp("{{error}}", 'g'), "");
+
+                    console.groupCollapsed(data.path);
+                    console.log("data: ", data);
+                    console.log("asset: ", asset);
+                    console.log("date: ", date);
+                    console.log("dateString: ", dateString);
+
+                    date = new Date(data.lastUpdate);
+                    dateString = !(date instanceof Date && isFinite(date)) ? "-" :
+                        (date.getFullYear() + "-" +
+                        ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
+                        ("0" + date.getDate()).slice(-2) + "  " +
+                        ("0" + date.getHours()).slice(-2) + ":" +
+                        ("0" + date.getMinutes()).slice(-2));
+                    console.log("date last update: ", date);
+                    console.log("dateString last update: ", dateString);
+                    console.groupEnd();
                 }
                 return $(template)[0];
             }
@@ -459,7 +484,7 @@ var renderFilterLists = function() {
                 console.error("Exception in 'createFilterItem' (3p-filters.js) :\n\t", exception);
                 return null;
             }
-        }
+        };
     
     /**************************************************************************/
 
@@ -609,13 +634,19 @@ var selectFilterLists = function(callback) {
 
     // Filter lists
     var switches = [];
-    var lis = uDom('#lists .listEntry'), li;
+    //var lis = uDom('#lists .listEntry'), li;
+    var lis = uDom('#filterLists .listRow'), li;
     var i = lis.length;
     while ( i-- ) {
         li = lis.at(i);
+        //switches.push({
+        //    location: li.descendants('a').attr('data-listkey'),
+        //    off: li.descendants('input').prop('checked') === false
+        //});
+
         switches.push({
-            location: li.descendants('a').attr('data-listkey'),
-            off: li.descendants('input').prop('checked') === false
+            location: li.attr('id'),
+            off: li.descendants('.subscriptionInUse').hasClass('checked') === false
         });
     }
 
@@ -666,6 +697,11 @@ var buttonPurgeAllHandler = function() {
     renderBusyOverlay(true);
 
     var onCompleted = function() {
+        //needUpdate = true;
+        //cacheWasPurged = true;
+        //renderWidgets();
+        //renderBusyOverlay(false);
+
         cacheWasPurged = true;
         renderFilterLists();
     };

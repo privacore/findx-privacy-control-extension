@@ -1286,9 +1286,11 @@ var µb = µBlock;
 
 var updateDaemonTimer = null;
 var autoUpdateDaemonTimerPeriod   = 11 * 60 * 1000; // 11 minutes
+//var autoUpdateDaemonTimerPeriod   = 1 * 60 * 1000; // 1 minutes
 var manualUpdateDaemonTimerPeriod =       5 * 1000; //  5 seconds
 
 var updateCycleFirstPeriod  =       7 * 60 * 1000; //  7 minutes
+//var updateCycleFirstPeriod  =       1 * 60 * 1000; //  1 minutes
 var updateCycleNextPeriod   = 11 * 60 * 60 * 1000; // 11 hours
 var updateCycleTime = 0;
 
