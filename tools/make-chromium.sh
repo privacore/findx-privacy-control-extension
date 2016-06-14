@@ -9,7 +9,7 @@ DES=dist/build/Privacontrol.ch
 rm -rf $DES
 mkdir -p $DES
 
-./tools/make-assets.sh $DES
+bash ./tools/make-assets.sh $DES
 
 cp -R src/css               $DES/
 cp -R src/img               $DES/
