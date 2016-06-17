@@ -243,7 +243,7 @@
             availableEntry = availableLists[location];
             if ( availableEntry === undefined ) {
                 availableEntry = availableLists[location] = storedEntry;
-                µb.purgeFilterList(location);
+                //µb.purgeFilterList(location);
                 //continue;
             }
             

@@ -104,7 +104,7 @@ var onMessage = function(request, sender, callback) {
         return;
     case 'addExternalFilter':
         µb.addExternalFilter(request.filter, request.update);
-        µb.reloadAllFilters(callback);
+        //µb.reloadAllFilters(callback);
         return;
     case 'cosmeticFiltersInjected':
         µb.cosmeticFilteringEngine.addToSelectorCache(request);

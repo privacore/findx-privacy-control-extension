@@ -211,22 +211,35 @@ var onSystemSettingsReady = function(fetched) {
      *      previous filters from ublock server will  be displayed too.
  *      We must clear it only once, so we set "isFiltersErased" item to a storage.
      */
-    var checkFiltersListsSources = function () {
-        if (vAPI.app.version.localeCompare("1.7.5.4") >= 0 ) { // is current version higher or equal
-            if (vAPI.app.version.localeCompare("1.7.5.6") >= 0 ) {
-                vAPI.storage.get('isFiltersErased_1.7.5.6', function (data) {
-                    if (!data || !Object.keys(data).length || !data.isFiltersErased) {
-                        vAPI.storage.set({ 'isFiltersErased_1.7.5.6': true }, null);
-                        vAPI.storage.remove("isFiltersErased");
-                        µb.assets.purgeAll();
-                        clearStoredFilters();
-                    }
-                });
+    var checkFiltersListsSources = function (callback) {
+        try {
+            if (vAPI.app.version.localeCompare("1.7.5.4") >= 0 ) { // is current version higher or equal
+                if (vAPI.app.version.localeCompare("1.7.5.6") >= 0 ) {
+                    // We don't clear cache when remote blacklists removed in 1.7.5.4
+                    // so we make it in a 1.7.5.6
+                    vAPI.storage.get('isFiltersErased_1.7.5.6', function (data) {
+                        if (!data || !Object.keys(data).length || !data["isFiltersErased_1.7.5.6"]) {
+                            vAPI.storage.set({ 'isFiltersErased_1.7.5.6': true }, null);
+                            vAPI.storage.remove("isFiltersErased");
+                            µb.assets.purgeAll();
+                            clearStoredFilters();
+                        }
+                        if (callback) callback();
+                    });
+                }
+                else {
+                    µb.assets.purgeAll();
+                    clearStoredFilters();
+
+                    if (callback) callback();
+                }
             }
-            else {
-                clearStoredFilters();
-                µb.assets.purgeAll();
-            }
+
+            if (callback) callback();
+        }
+        catch (exception) {
+            console.error("Exception in 'checkFiltersListsSources' (start.js) :\n\t", exception);
+            if (callback) callback();
         }
     };
 
@@ -248,23 +261,23 @@ var onFirstFetchReady = function(fetched) {
     // https://github.com/gorhill/uBlock/issues/747
     µb.firstInstall = fetched.version === '0.0.0.0';
 
-    checkFiltersListsSources();
+    checkFiltersListsSources(function () {
+        // Order is important -- do not change:
+        onSystemSettingsReady(fetched);
+        fromFetch(µb.localSettings, fetched);
+        onUserSettingsReady(fetched);
+        fromFetch(µb.restoreBackupSettings, fetched);
+        onNetWhitelistReady(fetched.netWhitelist);
+        onVersionReady(fetched.version);
 
-    // Order is important -- do not change:
-    onSystemSettingsReady(fetched);
-    fromFetch(µb.localSettings, fetched);
-    onUserSettingsReady(fetched);
-    fromFetch(µb.restoreBackupSettings, fetched);
-    onNetWhitelistReady(fetched.netWhitelist);
-    onVersionReady(fetched.version);
+        // If we have a selfie, skip loading PSL, filters
+        if ( onSelfieReady(fetched.selfie) ) {
+            onAllReady();
+            return;
+        }
 
-    // If we have a selfie, skip loading PSL, filters
-    if ( onSelfieReady(fetched.selfie) ) {
-        onAllReady();
-        return;
-    }
-
-    µb.loadPublicSuffixList(onPSLReady);
+        µb.loadPublicSuffixList(onPSLReady);
+    });
 };
 
 /******************************************************************************/

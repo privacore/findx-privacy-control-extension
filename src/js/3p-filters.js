@@ -218,41 +218,43 @@ var renderFilterLists = function() {
         // Before all, set context vars
         listDetails = details;
         cosmeticSwitch = details.cosmetic;
-        needUpdate = false;
+        //needUpdate = false;
+        needUpdate = true; //16.06 - Igor. Always enable Update button
         hasCachedContent = false;
 
         // Visually split the filter lists in purpose-based groups
-        var ulLists = uDom('#lists').empty(), liGroup;
-        var groups = groupsFromLists(details.available);
-        var groupKey, i;
-        var groupKeys = [
-            'default',
-            'ads',
-            'privacy',
-            'malware',
-            'social',
-            'multipurpose',
-            'regions',
-            'custom'
-        ];
+        //var ulLists = uDom('#lists').empty(), liGroup;
+        //var groups = groupsFromLists(details.available);
+        //var groupKey, i;
+        //var groupKeys = [
+        //    'default',
+        //    'ads',
+        //    'privacy',
+        //    'malware',
+        //    'social',
+        //    'multipurpose',
+        //    'regions',
+        //    'custom'
+        //];
         fillFiltersList(getSelectedFilters(listDetails));
         fillAvailableFiltersList();
-        for ( i = 0; i < groupKeys.length; i++ ) {
-            groupKey = groupKeys[i];
-            liGroup = liFromListGroup(groupKey, groups[groupKey]);
-            liGroup.toggleClass(
-                'collapsed',
-                vAPI.localStorage.getItem('collapseGroup' + (i + 1)) === 'y'
-            );
-            ulLists.append(liGroup);
-            delete groups[groupKey];
-        }
-        // For all groups not covered above (if any left)
-        groupKeys = Object.keys(groups);
-        for ( i = 0; i < groupKeys.length; i++ ) {
-            groupKey = groupKeys[i];
-            ulLists.append(liFromListGroup(groupKey, groups[groupKey]));
-        }
+        // * 16.06 - Igor
+        //for ( i = 0; i < groupKeys.length; i++ ) {
+        //    groupKey = groupKeys[i];
+        //    liGroup = liFromListGroup(groupKey, groups[groupKey]);
+        //    liGroup.toggleClass(
+        //        'collapsed',
+        //        vAPI.localStorage.getItem('collapseGroup' + (i + 1)) === 'y'
+        //    );
+        //    ulLists.append(liGroup);
+        //    delete groups[groupKey];
+        //}
+        //// For all groups not covered above (if any left)
+        //groupKeys = Object.keys(groups);
+        //for ( i = 0; i < groupKeys.length; i++ ) {
+        //    groupKey = groupKeys[i];
+        //    ulLists.append(liFromListGroup(groupKey, groups[groupKey]));
+        //}
 
         uDom('#listsOfBlockedHostsPrompt').text(
             vAPI.i18n('3pListsOfBlockedHostsPrompt')
@@ -269,222 +271,207 @@ var renderFilterLists = function() {
     
     //Custom methods
     /**************************************************************************/
-        var fillFiltersList = function (filtersList) {
-            var filtersContainer = $("#filterLists");
-            filtersContainer.html("");
-            var fragment = document.createDocumentFragment();
-            for (var path in filtersList) {
-                try {
-                    var data = filtersList[path];
-                    data.path = path;
-                    var filter = createFilterItem(data);
-                    filter._data = data;
-                    fragment.appendChild(filter);
-                }
-                catch (exception) {
-                    console.error("Exception in 'fillFiltersList' (3p-filters.js) :\n\t", exception);
-                }
+    var fillFiltersList = function (filtersList) {
+        var filtersContainer = $("#filterLists");
+        filtersContainer.html("");
+        var fragment = document.createDocumentFragment();
+        for (var path in filtersList) {
+            try {
+                var data = filtersList[path];
+                data.path = path;
+                var filter = createFilterItem(data);
+                filter._data = data;
+                fragment.appendChild(filter);
+
+                checkIsCached(data);
             }
-            filtersContainer.html(fragment);
-            // Remove а possibility of default filters opening.
-            $(filtersContainer).find('.subscription .subscriptionTitle[ href="#"]').on('click', function (e) {
-                e.preventDefault();
-            });
-            $('.subscriptionRemoveButton ').on('click', rmSubscriptionBtnClick);
-            $('.default-enabling-control').on('click', defaultOffBtnClick);
-            $('.subscriptionInUse').on('click', inUseCheckboxChange);
-        };
-        
-        var fillAvailableFiltersList = function () {
-            var selectorContainer = $("#subscriptionSelector");
-            selectorContainer.change(updateSubscriptionSelection);
-
-            selectorContainer.html("");
-            var fragment = document.createDocumentFragment();
-
-            var groups = groupsFromLists(listDetails.available);
-
-            for (var group in groups) {
-                var groupTitle = createTitleOption(group);
-                var filterOptions = createFilterOptions(groups[group]);
-
-                fragment.appendChild(groupTitle);
-                fragment.appendChild(filterOptions);
+            catch (exception) {
+                console.error("Exception in 'fillFiltersList' (3p-filters.js) :\n\t", exception);
             }
-            fragment.appendChild(createCustomFilterOption());
-            selectorContainer.html(fragment);
-        };
-        
+        }
+        filtersContainer.html(fragment);
+        // Remove а possibility of default filters opening.
+        $(filtersContainer).find('.subscription .subscriptionTitle[ href="#"]').on('click', function (e) {
+            e.preventDefault();
+        });
+        $('.subscriptionRemoveButton ').on('click', rmSubscriptionBtnClick);
+        $('.default-enabling-control').on('click', defaultOffBtnClick);
+        $('.subscriptionInUse').on('click', inUseCheckboxChange);
+    };
 
-        var createTitleOption = function (text) {
-            var option = new Option(text.toUpperCase());
-            option.disabled = true;
-            return option;
-        };
-        var createCustomFilterOption = function () {
-            var option = new Option("Add a different filter...");
-            option._data = null;
-            return option;
-        };
+    var fillAvailableFiltersList = function () {
+        var selectorContainer = $("#subscriptionSelector");
+        selectorContainer.change(updateSubscriptionSelection);
 
-        var updateSubscriptionSelection = function () {
-            var list = document.querySelector("#subscriptionSelector");
-            var data = list.options[list.selectedIndex]._data;
-            if (data)
-                $("#customSubscriptionContainer").hide();
-            else {
-                $("#customSubscriptionContainer").show();
-                $("#customSubscriptionTitle").focus();
-            }
-        };
+        selectorContainer.html("");
+        var fragment = document.createDocumentFragment();
 
-        var createFilterOptions = function (filtersNames) {
-            var fragment = document.createDocumentFragment();
+        var groups = groupsFromLists(listDetails.available);
 
-            var filter = null;
-            for (var i = 0; i < filtersNames.length; i++) {
-                filter = listDetails.available[filtersNames[i]];
-                filter.path = filtersNames[i];
-                var option = new Option(listNameFromListKey(filtersNames[i]));
-                option._data = filter;
+        for (var group in groups) {
+            var groupTitle = createTitleOption(group);
+            var filterOptions = createFilterOptions(groups[group]);
+
+            fragment.appendChild(groupTitle);
+            fragment.appendChild(filterOptions);
+        }
+        fragment.appendChild(createCustomFilterOption());
+        selectorContainer.html(fragment);
+    };
 
 
-                if (!filter.off || (listDetails.current[filtersNames[i]] && !listDetails.current[filtersNames[i]].off))
-                    option.classList.add("selected");
+    var createTitleOption = function (text) {
+        var option = new Option(text.toUpperCase());
+        option.disabled = true;
+        return option;
+    };
+    var createCustomFilterOption = function () {
+        var option = new Option("Add a different filter...");
+        option._data = null;
+        return option;
+    };
 
-                fragment.appendChild(option);
-            }
-            return fragment;
-        };
-        
-        
-        var rmSubscriptionBtnClick = function (ev) {
+    var updateSubscriptionSelection = function () {
+        var list = document.querySelector("#subscriptionSelector");
+        var data = list.options[list.selectedIndex]._data;
+        if (data)
+            $("#customSubscriptionContainer").hide();
+        else {
+            $("#customSubscriptionContainer").show();
+            $("#customSubscriptionTitle").focus();
+        }
+    };
+
+    var createFilterOptions = function (filtersNames) {
+        var fragment = document.createDocumentFragment();
+
+        var filter = null;
+        for (var i = 0; i < filtersNames.length; i++) {
+            filter = listDetails.available[filtersNames[i]];
+            filter.path = filtersNames[i];
+            var option = new Option(listNameFromListKey(filtersNames[i]));
+            option._data = filter;
+
+
+            if (!filter.off || (listDetails.current[filtersNames[i]] && !listDetails.current[filtersNames[i]].off))
+                option.classList.add("selected");
+
+            fragment.appendChild(option);
+        }
+        return fragment;
+    };
+
+
+    var rmSubscriptionBtnClick = function (ev) {
+        var data = getFilterData(ev.currentTarget);
+        updateSubscriptions(data.path || "", !data.off, data.inUse, data.defaultOff);
+    };
+
+    var defaultOffBtnClick = function (ev) {
+        try {
             var data = getFilterData(ev.currentTarget);
-            updateSubscriptions(data.path || "", !data.off, data.inUse, data.defaultOff);
-        };
-        
-        var defaultOffBtnClick = function (ev) {
-            try {
-                var data = getFilterData(ev.currentTarget);
-                if (data.defaultOff) {
-                    ev.currentTarget.classList.remove("disabled");
-                }
-                else {
-                    ev.currentTarget.classList.add("disabled");
-                }
+            if (data.defaultOff) {
+                ev.currentTarget.classList.remove("disabled");
+            }
+            else {
+                ev.currentTarget.classList.add("disabled");
+            }
 
-                updateSubscriptions(data.path || "", data.off, data.inUse, !data.defaultOff);
+            updateSubscriptions(data.path || "", data.off, data.inUse, !data.defaultOff);
+        }
+        catch (exception) {
+            console.error("Exception in 'defaultOffBtnClick' (3p-filters.js) :\n\t", exception);
+        }
+    };
+
+    var inUseCheckboxChange = function (ev) {
+        try {
+            var data = getFilterData(ev.currentTarget);
+            updateSubscriptions(data.path || "", data.off, !data.inUse, data.defaultOff);
+        }
+        catch (exception) {
+            console.error("Exception in 'inUseCheckboxChange' (3p-filters.js) :\n\t", exception);
+        }
+    };
+
+     var getFilterData = function (clickedElement) {
+        try {
+            return $(clickedElement).closest(".subscription")[0]._data;
+        }
+        catch (exception) {
+            console.error("Exception in 'getFilterData' (3p-filters.js) :\n\t", exception);
+        }
+    };
+
+
+    var getSelectedFilters = function (listDetails) {
+        var selectedFilters = {};
+        for (var path in listDetails.current) {
+            try {
+                var current = listDetails.current[path];
+                var available = listDetails.available[path];
+                if ((typeof current.off == "boolean" && !current.off)
+                        || (typeof available.off == "boolean" && !available.off))
+                {
+
+
+                    selectedFilters[path] = current;
+                    if (!selectedFilters[path].title)
+                        selectedFilters[path].title = listNameFromListKey(path);
+                    if (listDetails.cache[path] && listDetails.cache[path].lastModified)
+                        selectedFilters[path].lastModified = listDetails.cache[path].lastModified;
+                    else
+                        selectedFilters[path].lastModified = current.lastUpdate;
+                }
             }
             catch (exception) {
-                console.error("Exception in 'defaultOffBtnClick' (3p-filters.js) :\n\t", exception);
+                console.error("Exception in 'getSelectedFilters' (3p-filters.js) :\n\t", exception);
             }
-        };
-        
-        var inUseCheckboxChange = function (ev) {
-            try {
-                var data = getFilterData(ev.currentTarget);
-                updateSubscriptions(data.path || "", data.off, !data.inUse, data.defaultOff);
-            }
-            catch (exception) {
-                console.error("Exception in 'inUseCheckboxChange' (3p-filters.js) :\n\t", exception);
-            }
-        };
-        
-         var getFilterData = function (clickedElement) {
-            try {
-                return $(clickedElement).closest(".subscription")[0]._data;
-            }
-            catch (exception) {
-                console.error("Exception in 'getFilterData' (3p-filters.js) :\n\t", exception);
-            }
-        };
-        
-        
-        var getSelectedFilters = function (listDetails) {
-            var selectedFilters = {};
-            for (var path in listDetails.current) {
-                try {
-                    var current = listDetails.current[path];
-                    var available = listDetails.available[path];
-                    if ((typeof current.off == "boolean" && !current.off)
-                            || (typeof available.off == "boolean" && !available.off))
-                    {
-                       
-                        
-                        selectedFilters[path] = current;
-                        if (!selectedFilters[path].title)
-                            selectedFilters[path].title = listNameFromListKey(path);
-                        if (listDetails.cache[path] && listDetails.cache[path].lastModified)
-                            selectedFilters[path].lastModified = listDetails.cache[path].lastModified;
-                        else
-                            selectedFilters[path].lastModified = current.lastUpdate;
-                    }
-                }
-                catch (exception) {
-                    console.error("Exception in 'getSelectedFilters' (3p-filters.js) :\n\t", exception);
-                }
-            }
-            return selectedFilters;
-        };
-        
-        var createFilterItem = function (data) {
-            var asset = listDetails.cache[data.path] || {};
-            try {
-                var template = $("#filter_template").html();
-                template = template.replace(new RegExp('{{delete_possibility}}', 'g'), (data.path === listDetails.userFiltersPath ? "disabled" : ""));
-                template = template.replace(new RegExp('{{path}}', 'g'), data.path);
-                template = template.replace(new RegExp('{{inuse_checked}}', 'g'), (data.inUse ? "checked" : ""));
-                template = template.replace(new RegExp('{{default_disabled}}', 'g'), data.defaultOff ? "disabled" : "");
-                template = template.replace(new RegExp("{{title}}", 'g'), data.title || "");
-                template = template.replace(new RegExp("{{url}}", 'g'), data.homeURL || "#");
-                template = template.replace(new RegExp("{{group}}", 'g'), data.group || "");
-                if (data.error) {
-                    template = template.replace(new RegExp("{{last_update}}", 'g'), data.error);
-                    template = template.replace(new RegExp("{{error}}", 'g'), "error");
-                }
-                else {
-                    var date = null;
-                    if (asset && asset.lastModified) {
-                        date = new Date(asset.lastModified);
-                    }
-                    else if (data.lastModified) {
-                        date = new Date(data.lastModified);
-                    }
-                    //date = new Date(asset.lastModified);
+        }
+        return selectedFilters;
+    };
 
-                    var dateString = !(date instanceof Date && isFinite(date)) ? "-" :
-                        (date.getFullYear() + "-" +
-                        ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
-                        ("0" + date.getDate()).slice(-2) + "  " +
-                        ("0" + date.getHours()).slice(-2) + ":" +
-                        ("0" + date.getMinutes()).slice(-2));
-                    template = template.replace(new RegExp("{{last_update}}", 'g'), dateString);
-                    template = template.replace(new RegExp("{{error}}", 'g'), "");
-
-                    console.groupCollapsed(data.path);
-                    console.log("data: ", data);
-                    console.log("asset: ", asset);
-                    console.log("date: ", date);
-                    console.log("dateString: ", dateString);
-
-                    date = new Date(data.lastUpdate);
-                    dateString = !(date instanceof Date && isFinite(date)) ? "-" :
-                        (date.getFullYear() + "-" +
-                        ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
-                        ("0" + date.getDate()).slice(-2) + "  " +
-                        ("0" + date.getHours()).slice(-2) + ":" +
-                        ("0" + date.getMinutes()).slice(-2));
-                    console.log("date last update: ", date);
-                    console.log("dateString last update: ", dateString);
-                    console.groupEnd();
-                }
-                return $(template)[0];
+    var createFilterItem = function (data) {
+        var asset = listDetails.cache[data.path] || {};
+        try {
+            var template = $("#filter_template").html();
+            template = template.replace(new RegExp('{{delete_possibility}}', 'g'), (data.path === listDetails.userFiltersPath ? "disabled" : ""));
+            template = template.replace(new RegExp('{{path}}', 'g'), data.path);
+            template = template.replace(new RegExp('{{inuse_checked}}', 'g'), (data.inUse ? "checked" : ""));
+            template = template.replace(new RegExp('{{default_disabled}}', 'g'), data.defaultOff ? "disabled" : "");
+            template = template.replace(new RegExp("{{title}}", 'g'), data.title || "");
+            template = template.replace(new RegExp("{{url}}", 'g'), data.homeURL || data.path || "#");
+            template = template.replace(new RegExp("{{group}}", 'g'), data.group || "");
+            if (data.error) {
+                template = template.replace(new RegExp("{{last_update}}", 'g'), data.error);
+                template = template.replace(new RegExp("{{error}}", 'g'), "error");
             }
-            catch (exception) {
-                console.error("Exception in 'createFilterItem' (3p-filters.js) :\n\t", exception);
-                return null;
+            else {
+                var date = new Date(asset.lastModified);
+
+                var dateString = !(date instanceof Date && isFinite(date)) ? "-" :
+                    (date.getFullYear() + "-" +
+                    ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + date.getDate()).slice(-2) + "  " +
+                    ("0" + date.getHours()).slice(-2) + ":" +
+                    ("0" + date.getMinutes()).slice(-2));
+                template = template.replace(new RegExp("{{last_update}}", 'g'), dateString);
+                template = template.replace(new RegExp("{{error}}", 'g'), "");
             }
-        };
+            return $(template)[0];
+        }
+        catch (exception) {
+            console.error("Exception in 'createFilterItem' (3p-filters.js) :\n\t", exception);
+            return null;
+        }
+    };
+
+    var checkIsCached = function (filterData) {
+        var asset = listDetails.cache[filterData.path] || {};
+        if (asset && asset.cached) {
+            hasCachedContent = true;
+        }
+    };
     
     /**************************************************************************/
 
@@ -517,7 +504,7 @@ var renderBusyOverlay = function(state, progress) {
 // This is to give a visual hint that the selection of blacklists has changed.
 
 var renderWidgets = function() {
-    uDom('#buttonApply').toggleClass('disabled', !listsSelectionChanged());
+    //uDom('#buttonApply').toggleClass('disabled', !listsSelectionChanged());
     uDom('#buttonUpdate').toggleClass('disabled', !listsContentChanged());
     uDom('#buttonPurgeAll').toggleClass('disabled', !hasCachedContent);
 };

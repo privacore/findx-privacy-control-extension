@@ -110,10 +110,10 @@ var cachedAssetsManager = (function() {
     var cachedAssetPathPrefix = 'cached_asset_content://';
 
     var getEntries = function(callback) {
-        if ( entries !== null ) {
-            callback(entries);
-            return;
-        }
+        //if ( entries !== null ) {
+        //    callback(entries);
+        //    return;
+        //}
         // Flush cached non-user assets if these are from a prior version.
         // https://github.com/gorhill/httpswitchboard/issues/212
         var onLastVersionRead = function(store) {
@@ -1286,11 +1286,9 @@ var µb = µBlock;
 
 var updateDaemonTimer = null;
 var autoUpdateDaemonTimerPeriod   = 11 * 60 * 1000; // 11 minutes
-//var autoUpdateDaemonTimerPeriod   = 1 * 60 * 1000; // 1 minutes
 var manualUpdateDaemonTimerPeriod =       5 * 1000; //  5 seconds
 
 var updateCycleFirstPeriod  =       7 * 60 * 1000; //  7 minutes
-//var updateCycleFirstPeriod  =       1 * 60 * 1000; //  1 minutes
 var updateCycleNextPeriod   = 11 * 60 * 60 * 1000; // 11 hours
 var updateCycleTime = 0;
 
@@ -1355,13 +1353,13 @@ var updateOne = function() {
         }
         toUpdate[path] = false;
         toUpdateCount -= 1;
-        if ( metadata.hasOwnProperty(path) === false ) {
-            continue;
-        }
-        metaEntry = metadata[path];
-        if ( !metaEntry.cacheObsolete && !metaEntry.repoObsolete ) {
-            continue;
-        }
+        //if ( metadata.hasOwnProperty(path) === false ) {
+        //    continue;
+        //}
+        //metaEntry = metadata[path];
+        //if ( !metaEntry.cacheObsolete && !metaEntry.repoObsolete ) {
+        //    continue;
+        //}
 
         // Will restart the update daemon once the resource is received: the
         // fetching of a resource may take some time, possibly beyond the
@@ -1372,7 +1370,8 @@ var updateOne = function() {
         //console.debug('µBlock.assetUpdater/updateOne: assets.get("%s")', path);
         µb.assets.get(path, onOneUpdated);
         updatingCount = 1;
-        updatingText = metaEntry.homeURL || path;
+        //updatingText = metaEntry.homeURL || path;
+        updatingText = path || "";
         break;
     }
 
