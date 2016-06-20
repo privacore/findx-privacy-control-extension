@@ -243,9 +243,11 @@ vAPI.browserSettings = {
                 if ( settingVal ) {
                     this.clear('network', 'prefetch-next');
                     this.clear('network.http', 'speculative-parallel-limit');
+                    this.clear('network.dns', 'disablePrefetch');
                 } else {
                     this.setValue('network', 'prefetch-next', false);
                     this.setValue('network.http', 'speculative-parallel-limit', 0);
+                    this.setValue('network.dns', 'disablePrefetch', true);
                 }
                 break;
 
@@ -2104,7 +2106,7 @@ var httpObserver = {
             return;
         }
 
-        if ( result.responseHeaders ) {
+        if ( result.responseHeaders && result.responseHeaders.length ) {
             channel.setResponseHeader(
                 'Content-Security-Policy',
                 result.responseHeaders.pop().value,
