@@ -1,38 +1,38 @@
 /*******************************************************************************
- 
- µBlock - a browser extension to block requests.
- Copyright (C) 2014 Raymond Hill
- 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see {http://www.gnu.org/licenses/}.
- 
- Home: https://github.com/gorhill/uBlock
- */
+
+    uBlock Origin - a browser extension to block requests.
+    Copyright (C) 2014-2016 Raymond Hill
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see {http://www.gnu.org/licenses/}.
+
+    Home: https://github.com/gorhill/uBlock
+*/
 
 /* jshint bitwise: false */
-/* global punycode, µBlock */
+/* global punycode */
+
+'use strict';
 
 /******************************************************************************/
 
 µBlock.cosmeticFilteringEngine = (function () {
 
-    'use strict';
+/******************************************************************************/
 
-    /******************************************************************************/
+var µb = µBlock;
 
-    var µb = µBlock;
-
-    /******************************************************************************/
+/******************************************************************************/
 
 // Could be replaced with encodeURIComponent/decodeURIComponent,
 // which seems faster on Firefox.
@@ -151,42 +151,6 @@ FilterPlain.fromSelfie = function (s) {
 
     /******************************************************************************/
 
-    var FilterBucket = function (a, b, filterPath) {
-        this.filterPath = filterPath || "";
-        this.f = null;
-        this.filters = [];
-        if (a && a !== undefined) {
-            this.filters[0] = a;
-            if (b && b !== undefined) {
-                this.filters[1] = b;
-            }
-        }
-    };
-
-    FilterBucket.prototype.add = function (a) {
-        this.filters.push(a);
-    };
-
-    FilterBucket.prototype.retrieve = function (s, out, domain) {
-        var i = this.filters.length;
-        while (i--) {
-            this.filters[i].retrieve(s, out, domain);
-        }
-    };
-
-    FilterBucket.prototype.fid = '[]';
-
-    FilterBucket.prototype.toSelfie = function () {
-        return this.filters.length.toString() + '\t' + this.filterPath;
-    };
-
-    FilterBucket.fromSelfie = function (s) {
-        var args = s.split('\t');
-        return new FilterBucket(null, null, args[1]);
-    };
-
-    /******************************************************************************/
-
 // Any selector specific to a hostname
 // Examples:
 //   search.snapdo.com###ABottomD
@@ -262,40 +226,78 @@ FilterPlain.fromSelfie = function (s) {
         return encode(this.s) + '\t' + this.entity + '\t' + this.filterPath;
     };
 
-
     FilterEntity.fromSelfie = function(s) {
         var pos = s.indexOf('\t');
         return new FilterEntity(decode(s.slice(0, pos)), s.slice(pos + 1));
     };
 
-    /******************************************************************************/
-    /******************************************************************************/
-
-    var FilterParser = function() {
-        this.prefix = this.suffix = this.style = '';
-        this.unhide = 0;
-        this.hostnames = [];
-        this.invalid = false;
-        this.cosmetic = true;
-        this.reScriptTagFilter = /^script:(contains|inject)\((.+?)\)$/;
+/******************************************************************************/
+    var FilterBucket = function (a, b, filterPath) {
+        this.filterPath = filterPath || "";
+        this.f = null;
+        this.filters = [];
+        if (a && a !== undefined) {
+            this.filters[0] = a;
+            if (b && b !== undefined) {
+                this.filters[1] = b;
+            }
+        }
     };
 
-    /******************************************************************************/
-
-    FilterParser.prototype.reset = function() {
-        this.prefix = this.suffix = this.style = '';
-        this.unhide = 0;
-        this.hostnames.length = 0;
-        this.invalid = false;
-        this.cosmetic = true;
-        return this;
+    FilterBucket.prototype.add = function (a) {
+        this.filters.push(a);
     };
 
-    /******************************************************************************/
+    FilterBucket.prototype.retrieve = function (s, out, domain) {
+        var i = this.filters.length;
+        while (i--) {
+            this.filters[i].retrieve(s, out, domain);
+        }
+    };
+
+    FilterBucket.prototype.fid = '[]';
+
+    FilterBucket.prototype.toSelfie = function () {
+        return this.filters.length.toString() + '\t' + this.filterPath;
+    };
+
+    FilterBucket.fromSelfie = function (s) {
+        var args = s.split('\t');
+        return new FilterBucket(null, null, args[1]);
+    };
+
+/******************************************************************************/
+/******************************************************************************/
+
+var FilterParser = function() {
+    this.prefix =  this.suffix = this.style = '';
+    this.unhide = 0;
+    this.hostnames = [];
+    this.invalid = false;
+    this.cosmetic = true;
+    this.reScriptTagFilter = /^script:(contains|inject)\((.+?)\)$/;
+    this.reNeedHostname = /^(?:.+?:has|:xpath)\(.+?\)$/;
+};
+
+/******************************************************************************/
+
+FilterParser.prototype.reset = function() {
+    this.raw = '';
+    this.prefix = this.suffix = this.style = '';
+    this.unhide = 0;
+    this.hostnames.length = 0;
+    this.invalid = false;
+    this.cosmetic = true;
+    return this;
+};
+
+/******************************************************************************/
   
     FilterParser.prototype.parse = function(raw) {
         // important!
         this.reset();
+
+        this.raw = raw;
 
         // Find the bounds of the anchor.
         var lpos = raw.indexOf('#');
@@ -382,6 +384,16 @@ FilterPlain.fromSelfie = function (s) {
             this.hostnames = this.prefix.split(/\s*,\s*/);
         }
 
+        // For some selectors, it is mandatory to have a hostname or entity.
+        if (
+            this.hostnames.length === 0 &&
+            this.unhide === 0 &&
+            this.reNeedHostname.test(this.suffix)
+        ) {
+            this.invalid = true;
+            return this;
+        }
+
         // Script tag filters: pre-process them so that can be used with minimal
         // overhead in the content script.
         // Examples:
@@ -390,187 +402,192 @@ FilterPlain.fromSelfie = function (s) {
         //   focus.de##script:inject(uabinject-defuser.js)
 
         var matches = this.reScriptTagFilter.exec(this.suffix);
-        if ( matches === null ) {
-            return this;
+        if ( matches !== null ) {
+            return this.parseScriptTagFilter(matches);
         }
 
-        // Currently supported only as non-generic selector. Also, exception
-        // script tag filter makes no sense, ignore.
-        if ( this.hostnames.length === 0 || this.unhide === 1 ) {
-            this.invalid = true;
-            return this;
-        }
-
-        var token = matches[2];
-
-        switch ( matches[1] ) {
-        case 'contains':
-            // Plain string- or regex-based?
-            if ( token.startsWith('/') === false || token.endsWith('/') === false ) {
-                token += token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            } else {
-                token += token.slice(1, -1);
-                if ( isBadRegex(token) ) {
-                    µb.logger.writeOne('', 'error', 'Cosmetic filtering – bad regular expression: ' + raw + ' (' + isBadRegex.message + ')');
-                    this.invalid = true;
-                }
-            }
-            this.suffix = 'script?' + token;
-            break;
-        case 'inject':
-            this.suffix = 'script+' + token;
-            break;
-        default:
-            this.invalid = true;
-            break;
-        }
-
-    return this;
-};
-       
-   
-
-    /******************************************************************************/
-    /******************************************************************************/
-
-    var SelectorCacheEntry = function () {
-        this.reset();
-    };
-
-    /******************************************************************************/
-
-    SelectorCacheEntry.junkyard = [];
-
-    SelectorCacheEntry.factory = function () {
-        var entry = SelectorCacheEntry.junkyard.pop();
-        if (entry) {
-            return entry.reset();
-        }
-        return new SelectorCacheEntry();
-    };
-
-    /******************************************************************************/
-
-    SelectorCacheEntry.prototype.netLowWaterMark = 20;
-    SelectorCacheEntry.prototype.netHighWaterMark = 30;
-
-    /******************************************************************************/
-
-    SelectorCacheEntry.prototype.reset = function () {
-        this.cosmetic = {};
-        this.net = {};
-        this.netCount = 0;
-        this.lastAccessTime = Date.now();
         return this;
     };
 
-    /******************************************************************************/
+/******************************************************************************/
 
-    SelectorCacheEntry.prototype.dispose = function () {
-        this.cosmetic = this.net = null;
-        if (SelectorCacheEntry.junkyard.length < 25) {
-            SelectorCacheEntry.junkyard.push(this);
-        }
-    };
+FilterParser.prototype.parseScriptTagFilter = function(matches) {
+    // Currently supported only as non-generic selector. Also, exception
+    // script tag filter makes no sense, ignore.
+    if ( this.hostnames.length === 0 || this.unhide === 1 ) {
+        this.invalid = true;
+        return this;
+    }
 
-    /******************************************************************************/
+    var token = matches[2];
 
-    SelectorCacheEntry.prototype.addCosmetic = function (selectors) {
-        var dict = this.cosmetic;
-        var i = selectors.length || 0;
-        while (i--) {
-            dict[selectors[i]] = true;
-        }
-    };
-
-    /******************************************************************************/
-
-    SelectorCacheEntry.prototype.addNet = function (selectors) {
-        if (typeof selectors === 'string') {
-            this.addNetOne(selectors, Date.now());
+    switch ( matches[1] ) {
+    case 'contains':
+        // Plain string- or regex-based?
+        if ( token.startsWith('/') === false || token.endsWith('/') === false ) {
+            token += token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         } else {
-            this.addNetMany(selectors, Date.now());
+            token += token.slice(1, -1);
+            if ( isBadRegex(token) ) {
+                µb.logger.writeOne('', 'error', 'Cosmetic filtering – bad regular expression: ' + this.raw + ' (' + isBadRegex.message + ')');
+                this.invalid = true;
+            }
         }
-        // Net request-derived selectors: I limit the number of cached selectors,
-        // as I expect cases where the blocked net-requests are never the
-        // exact same URL.
-        if (this.netCount < this.netHighWaterMark) {
-            return;
-        }
-        var dict = this.net;
-        var keys = Object.keys(dict).sort(function (a, b) {
-            return dict[b] - dict[a];
-        }).slice(this.netLowWaterMark);
-        var i = keys.length;
-        while (i--) {
-            delete dict[keys[i]];
-        }
-    };
+        this.suffix = 'script?' + token;
+        break;
+    case 'inject':
+        this.suffix = 'script+' + token;
+        break;
+    default:
+        this.invalid = true;
+        break;
+    }
 
-    /******************************************************************************/
+    return this;
+};
 
-    SelectorCacheEntry.prototype.addNetOne = function (selector, now) {
-        var dict = this.net;
+
+/******************************************************************************/
+/******************************************************************************/
+
+var SelectorCacheEntry = function () {
+    this.reset();
+};
+
+/******************************************************************************/
+
+SelectorCacheEntry.junkyard = [];
+
+SelectorCacheEntry.factory = function () {
+    var entry = SelectorCacheEntry.junkyard.pop();
+    if (entry) {
+        return entry.reset();
+    }
+    return new SelectorCacheEntry();
+};
+
+/******************************************************************************/
+
+SelectorCacheEntry.prototype.netLowWaterMark = 20;
+SelectorCacheEntry.prototype.netHighWaterMark = 30;
+
+/******************************************************************************/
+
+SelectorCacheEntry.prototype.reset = function () {
+    this.cosmetic = {};
+    this.net = {};
+    this.netCount = 0;
+    this.lastAccessTime = Date.now();
+    return this;
+};
+
+/******************************************************************************/
+
+SelectorCacheEntry.prototype.dispose = function () {
+    this.cosmetic = this.net = null;
+    if (SelectorCacheEntry.junkyard.length < 25) {
+        SelectorCacheEntry.junkyard.push(this);
+    }
+};
+
+/******************************************************************************/
+
+SelectorCacheEntry.prototype.addCosmetic = function (selectors) {
+    var dict = this.cosmetic;
+    var i = selectors.length || 0;
+    while (i--) {
+        dict[selectors[i]] = true;
+    }
+};
+
+/******************************************************************************/
+
+SelectorCacheEntry.prototype.addNet = function (selectors) {
+    if (typeof selectors === 'string') {
+        this.addNetOne(selectors, Date.now());
+    } else {
+        this.addNetMany(selectors, Date.now());
+    }
+    // Net request-derived selectors: I limit the number of cached selectors,
+    // as I expect cases where the blocked net-requests are never the
+    // exact same URL.
+    if (this.netCount < this.netHighWaterMark) {
+        return;
+    }
+    var dict = this.net;
+    var keys = Object.keys(dict).sort(function (a, b) {
+        return dict[b] - dict[a];
+    }).slice(this.netLowWaterMark);
+    var i = keys.length;
+    while (i--) {
+        delete dict[keys[i]];
+    }
+};
+
+/******************************************************************************/
+
+SelectorCacheEntry.prototype.addNetOne = function (selector, now) {
+    var dict = this.net;
+    if (dict[selector] === undefined) {
+        this.netCount += 1;
+    }
+    dict[selector] = now;
+};
+
+/******************************************************************************/
+
+SelectorCacheEntry.prototype.addNetMany = function (selectors, now) {
+    var dict = this.net;
+    var i = selectors.length || 0;
+    var selector;
+    while (i--) {
+        selector = selectors[i];
         if (dict[selector] === undefined) {
             this.netCount += 1;
         }
         dict[selector] = now;
-    };
+    }
+};
 
-    /******************************************************************************/
+/******************************************************************************/
 
-    SelectorCacheEntry.prototype.addNetMany = function (selectors, now) {
-        var dict = this.net;
-        var i = selectors.length || 0;
-        var selector;
-        while (i--) {
-            selector = selectors[i];
-            if (dict[selector] === undefined) {
-                this.netCount += 1;
-            }
-            dict[selector] = now;
-        }
-    };
+SelectorCacheEntry.prototype.add = function (selectors, type) {
+    this.lastAccessTime = Date.now();
+    if (type === 'cosmetic') {
+        this.addCosmetic(selectors);
+    } else {
+        this.addNet(selectors);
+    }
+};
 
-    /******************************************************************************/
-
-    SelectorCacheEntry.prototype.add = function (selectors, type) {
-        this.lastAccessTime = Date.now();
-        if (type === 'cosmetic') {
-            this.addCosmetic(selectors);
-        } else {
-            this.addNet(selectors);
-        }
-    };
-
-    /******************************************************************************/
+/******************************************************************************/
 
 // https://github.com/chrisaljoudi/uBlock/issues/420
-    SelectorCacheEntry.prototype.remove = function (type) {
-        this.lastAccessTime = Date.now();
-        if (type === undefined || type === 'cosmetic') {
-            this.cosmetic = {};
-        }
-        if (type === undefined || type === 'net') {
-            this.net = {};
-            this.netCount = 0;
-        }
-    };
+SelectorCacheEntry.prototype.remove = function (type) {
+    this.lastAccessTime = Date.now();
+    if (type === undefined || type === 'cosmetic') {
+        this.cosmetic = {};
+    }
+    if (type === undefined || type === 'net') {
+        this.net = {};
+        this.netCount = 0;
+    }
+};
 
-    /******************************************************************************/
+/******************************************************************************/
 
-    SelectorCacheEntry.prototype.retrieve = function (type, out) {
-        this.lastAccessTime = Date.now();
-        var dict = type === 'cosmetic' ? this.cosmetic : this.net;
-        for (var selector in dict) {
-            if (dict.hasOwnProperty(selector)) {
-                out.push(selector);
-            }
+SelectorCacheEntry.prototype.retrieve = function (type, out) {
+    this.lastAccessTime = Date.now();
+    var dict = type === 'cosmetic' ? this.cosmetic : this.net;
+    for (var selector in dict) {
+        if (dict.hasOwnProperty(selector)) {
+            out.push(selector);
         }
-    };
+    }
+};
 
-    /******************************************************************************/
-    /******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
 
 // Two Unicode characters:
 // T0HHHHHHH HHHHHHHHH
@@ -584,48 +601,48 @@ FilterPlain.fromSelfie = function (s) {
 // +-- filter type (0=hide 1=unhide)
 //
 
-    var makeHash = function (unhide, token, mask) {
-        // Ref: Given a URL, returns a unique 4-character long hash string
-        // Based on: FNV32a
-        // http://www.isthe.com/chongo/tech/comp/fnv/index.html#FNV-reference-source
-        // The rest is custom, suited for µBlock.
-        var i1 = token.length;
-        var i2 = i1 >> 1;
-        var i4 = i1 >> 2;
-        var i8 = i1 >> 3;
-        var hval = (0x811c9dc5 ^ token.charCodeAt(0)) >>> 0;
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-        hval >>>= 0;
-        hval ^= token.charCodeAt(i8);
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-        hval >>>= 0;
-        hval ^= token.charCodeAt(i4);
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-        hval >>>= 0;
-        hval ^= token.charCodeAt(i4 + i8);
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-        hval >>>= 0;
-        hval ^= token.charCodeAt(i2);
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-        hval >>>= 0;
-        hval ^= token.charCodeAt(i2 + i8);
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-        hval >>>= 0;
-        hval ^= token.charCodeAt(i2 + i4);
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-        hval >>>= 0;
-        hval ^= token.charCodeAt(i1 - 1);
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-        hval >>>= 0;
-        hval &= mask;
-        if (unhide !== 0) {
-            hval |= 0x20000;
-        }
-        return hval.toString(36);
-    };
+var makeHash = function (unhide, token, mask) {
+    // Ref: Given a URL, returns a unique 4-character long hash string
+    // Based on: FNV32a
+    // http://www.isthe.com/chongo/tech/comp/fnv/index.html#FNV-reference-source
+    // The rest is custom, suited for µBlock.
+    var i1 = token.length;
+    var i2 = i1 >> 1;
+    var i4 = i1 >> 2;
+    var i8 = i1 >> 3;
+    var hval = (0x811c9dc5 ^ token.charCodeAt(0)) >>> 0;
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    hval >>>= 0;
+    hval ^= token.charCodeAt(i8);
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    hval >>>= 0;
+    hval ^= token.charCodeAt(i4);
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    hval >>>= 0;
+    hval ^= token.charCodeAt(i4 + i8);
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    hval >>>= 0;
+    hval ^= token.charCodeAt(i2);
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    hval >>>= 0;
+    hval ^= token.charCodeAt(i2 + i8);
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    hval >>>= 0;
+    hval ^= token.charCodeAt(i2 + i4);
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    hval >>>= 0;
+    hval ^= token.charCodeAt(i1 - 1);
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    hval >>>= 0;
+    hval &= mask;
+    if (unhide !== 0) {
+        hval |= 0x20000;
+    }
+    return hval.toString(36);
+};
 
-    /******************************************************************************/
-    /******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
 
 // Cosmetic filter family tree:
 //
@@ -642,19 +659,19 @@ FilterPlain.fromSelfie = function (s) {
 // Generic filters can only be enforced once the main document is loaded.
 // Specific filers can be enforced before the main document is loaded.
 
-    var FilterContainer = function () {
-        this.domainHashMask = (1 << 10) - 1; // 10 bits
-        this.type0NoDomainHash = 'type0NoDomain';
-        this.type1NoDomainHash = 'type1NoDomain';
-        this.parser = new FilterParser();
-        this.selectorCachePruneDelay = 5 * 60 * 1000; // 5 minutes
-        this.selectorCacheAgeMax = 20 * 60 * 1000; // 20 minutes
-        this.selectorCacheCountMin = 10;
-        this.selectorCacheTimer = null;
-        this.reHasUnicode = /[^\x00-\x7F]/;
-        this.punycode = punycode;
-        this.reset();
-    };
+var FilterContainer = function () {
+    this.domainHashMask = (1 << 10) - 1; // 10 bits
+    this.type0NoDomainHash = 'type0NoDomain';
+    this.type1NoDomainHash = 'type1NoDomain';
+    this.parser = new FilterParser();
+    this.selectorCachePruneDelay = 5 * 60 * 1000; // 5 minutes
+    this.selectorCacheAgeMax = 20 * 60 * 1000; // 20 minutes
+    this.selectorCacheCountMin = 10;
+    this.selectorCacheTimer = null;
+    this.reHasUnicode = /[^\x00-\x7F]/;
+    this.punycode = punycode;
+    this.reset();
+};
 
     /******************************************************************************/
 
@@ -706,235 +723,265 @@ FilterPlain.fromSelfie = function (s) {
 
     /******************************************************************************/
 
-    // https://github.com/chrisaljoudi/uBlock/issues/1004
-    // Detect and report invalid CSS selectors.
 
-    FilterContainer.prototype.isValidSelector = (function () {
-        var div = document.createElement('div');
-
-        // Not all browsers support `Element.matches`:
-        // http://caniuse.com/#feat=matchesselector
-        if (typeof div.matches !== 'function') {
-            return function () {
-                return true;
-            };
+FilterContainer.prototype.isValidSelector = (function() {
+    var div = document.createElement('div');
+    var matchesProp = (function() {
+        if ( typeof div.matches === 'function' ) {
+            return 'matches';
         }
-
-        return function(s) {
-            try {
-                // https://github.com/gorhill/uBlock/issues/693
-                div.matches(s + ',\n#foo');
-                // Discard new ABP's `-abp-properties` directive until it is
-                // implemented (if ever).
-                if ( s.indexOf('[-abp-properties=') === -1 ) {
-                    return true;
-                }
-            } catch (e) {
-            }
-            // We reach this point very rarely.
-            if ( s.startsWith('script') ) {
-                if ( s.startsWith('?', 6) || s.startsWith('+', 6) ) {
-                    return true;
-                }
-            }
-            µb.logger.writeOne('', 'error', 'Cosmetic filtering – invalid filter: ' + s);
-            return false;
-        };
+        if ( typeof div.mozMatchesSelector === 'function' ) {
+            return 'mozMatchesSelector';
+        }
+        if ( typeof div.webkitMatchesSelector === 'function' ) {
+            return 'webkitMatchesSelector';
+        }
+        return '';
     })();
-
-    /******************************************************************************/
-
-    FilterContainer.prototype.compile = function (s, out, filterPath) {
-        if (µb.isDefaultOff(filterPath))
-            return;
-        var parsed = this.parser.parse(s);
-        if (parsed.cosmetic === false) {
-            return false;
-        }
-        if (parsed.invalid) {
-            //console.error("uBlock Origin> discarding invalid cosmetic filter '%s'", s);
+    // Not all browsers support `Element.matches`:
+    // http://caniuse.com/#feat=matchesselector
+    if ( matchesProp === '' ) {
+        return function() {
             return true;
-        }
+        };
+    }
 
-        var hostnames = parsed.hostnames;
-        var i = hostnames.length;
-        if (i === 0) {
-            this.compileGenericSelector(parsed, out, filterPath);
-            return true;
-        }
+    var reHasSelector = /^(.+?):has\((.+?)\)$/;
+    var reXpathSelector = /^:xpath\((.+?)\)$/;
 
-        // For hostname- or entity-based filters, class- or id-based selectors are
-        // still the most common, and can easily be tested using a plain regex.
-        if (
-                this.reClassOrIdSelector.test(parsed.suffix) === false &&
-                this.isValidSelector(parsed.suffix) === false
-        ) {
-            return true;
-        }
-
-        // https://github.com/chrisaljoudi/uBlock/issues/151
-        // Negated hostname means the filter applies to all non-negated hostnames
-        // of same filter OR globally if there is no non-negated hostnames.
-        var applyGlobally = true;
-        var hostname;
-        while (i--) {
-            hostname = hostnames[i];
-            if ( hostname.startsWith('~') === false ) {
-                applyGlobally = false;
+    return function(s) {
+        try {
+            // https://github.com/gorhill/uBlock/issues/693
+            div[matchesProp](s + ',\n#foo');
+            // Discard new ABP's `-abp-properties` directive until it is
+            // implemented (if ever).
+            if ( s.indexOf('[-abp-properties=') === -1 ) {
+                return true;
             }
-            if (hostname.endsWith('.*')) {
-                this.compileEntitySelector(hostname, parsed, out, filterPath);
-            } else {
-                this.compileHostnameSelector(hostname, parsed, out, filterPath);
-            }
+        } catch (e) {
         }
-        if (applyGlobally) {
-            this.compileGenericSelector(parsed, out, filterPath);
-        }
-
-        return true;
-    };
-
-    /******************************************************************************/
-
-    FilterContainer.prototype.compileGenericSelector = function (parsed, out, filterPath) {
-        if (µb.isDefaultOff(filterPath))
-            return;
-        var selector = parsed.suffix;
-        // https://github.com/chrisaljoudi/uBlock/issues/497
-        // All generic exception filters are put in the same bucket: they are
-        // expected to be very rare.
-        if (parsed.unhide) {
-            if (this.isValidSelector(selector)) {
-                out.push('c\vg1\v' + selector);
-            }
-            return;
-        }
-
-        var type = selector.charAt(0);
+        // We reach this point very rarely.
         var matches;
 
-        if (type === '#' || type === '.') {
-            matches = this.rePlainSelector.exec(selector);
-            if (matches === null) {
-                return;
+        // Future `:has`-based filter? If so, validate both parts of the whole
+        // selector.
+        matches = reHasSelector.exec(s);
+        if ( matches !== null ) {
+            return this.isValidSelector(matches[1]) && this.isValidSelector(matches[2]);
+        }
+        // Custom `:xpath`-based filter?
+        matches = reXpathSelector.exec(s);
+        if ( matches !== null ) {
+            try {
+                return document.createExpression(matches[1], null) instanceof XPathExpression;
+            } catch (e) {
             }
-            // Single-CSS rule: no need to test for whether the selector
-            // is valid, the regex took care of this. Most generic selector falls
-            // into that category.
-            if (matches[0] === selector) {
-                out.push(
-                    'c\vlg\v' +
-                    matches[0]
-                );
-                return;
+            return false;
+        }
+        // Special `script:` filter?
+        if ( s.startsWith('script') ) {
+            if (s.startsWith('?', 6) || s.startsWith('+', 6)) {
+                return true;
             }
-            // Many-CSS rules
-            if (this.isValidSelector(selector)) {
-                out.push(
-                    'c\vlg+\v' +
-                    matches[0] + '\v' +
-                    selector
-                );
-            }
+        }
+        µb.logger.writeOne('', 'error', 'Cosmetic filtering – invalid filter: ' + s);
+        return false;
+    };
+})();
+
+/******************************************************************************/
+
+FilterContainer.prototype.compile = function (s, out, filterPath) {
+    if (µb.isDefaultOff(filterPath))
+        return;
+    var parsed = this.parser.parse(s);
+    if (parsed.cosmetic === false) {
+        return false;
+    }
+    if (parsed.invalid) {
+        //console.error("uBlock Origin> discarding invalid cosmetic filter '%s'", s);
+        return true;
+    }
+
+    var hostnames = parsed.hostnames;
+    var i = hostnames.length;
+    if (i === 0) {
+        this.compileGenericSelector(parsed, out, filterPath);
+        return true;
+    }
+
+    // For hostname- or entity-based filters, class- or id-based selectors are
+    // still the most common, and can easily be tested using a plain regex.
+    if (
+            this.reClassOrIdSelector.test(parsed.suffix) === false &&
+            this.isValidSelector(parsed.suffix) === false
+    ) {
+        return true;
+    }
+
+    // https://github.com/chrisaljoudi/uBlock/issues/151
+    // Negated hostname means the filter applies to all non-negated hostnames
+    // of same filter OR globally if there is no non-negated hostnames.
+    var applyGlobally = true;
+    var hostname;
+    while (i--) {
+        hostname = hostnames[i];
+        if ( hostname.startsWith('~') === false ) {
+            applyGlobally = false;
+        }
+        if (hostname.endsWith('.*')) {
+            this.compileEntitySelector(hostname, parsed, out, filterPath);
+        } else {
+            this.compileHostnameSelector(hostname, parsed, out, filterPath);
+        }
+    }
+    if (applyGlobally) {
+        this.compileGenericSelector(parsed, out, filterPath);
+    }
+
+    return true;
+};
+
+/******************************************************************************/
+
+FilterContainer.prototype.compileGenericSelector = function (parsed, out, filterPath) {
+    if (µb.isDefaultOff(filterPath))
+        return;
+    var selector = parsed.suffix;
+    // https://github.com/chrisaljoudi/uBlock/issues/497
+    // All generic exception filters are put in the same bucket: they are
+    // expected to be very rare.
+    if (parsed.unhide) {
+        if (this.isValidSelector(selector)) {
+            out.push('c\vg1\v' + selector);
+        }
+        return;
+    }
+
+    var type = selector.charAt(0);
+    var matches;
+
+    if (type === '#' || type === '.') {
+        matches = this.rePlainSelector.exec(selector);
+        if (matches === null) {
             return;
         }
-
-        if ( this.isValidSelector(selector) !== true ) {
-            return;
-        }
-
-        // ["title"] and ["alt"] will go in high-low generic bin.
-        if ( this.reHighLow.test(selector) ) {
-            out.push('c\vhlg0\v' + selector);
-            return;
-        }
-
-        // [href^="..."] will go in high-medium generic bin.
-        matches = this.reHighMedium.exec(selector);
-        if ( matches && matches.length === 2 ) {
+        // Single-CSS rule: no need to test for whether the selector
+        // is valid, the regex took care of this. Most generic selector falls
+        // into that category.
+        if (matches[0] === selector) {
             out.push(
-                'c\vhmg0\v' +
-                matches[1] + '\v' +
-                selector
+                'c\vlg\v' +
+                matches[0]
             );
             return;
         }
-
-        // https://github.com/gorhill/uBlock/issues/909
-        // Anything which contains a plain id/class selector can be classified
-        // as a low generic cosmetic filter.
-        matches = this.rePlainSelectorEx.exec(selector);
-        if ( matches && matches.length === 2 ) {
+        // Many-CSS rules
+        if (this.isValidSelector(selector)) {
             out.push(
                 'c\vlg+\v' +
-                matches[1] + '\v' +
+                matches[0] + '\v' +
                 selector
             );
-            return;
         }
+        return;
+    }
 
-        // All else
-        out.push('c\vhhg0\v' + selector);
-    };
+    if ( this.isValidSelector(selector) !== true ) {
+        return;
+    }
 
-    FilterContainer.prototype.reClassOrIdSelector = /^[#.][\w-]+$/;
-    FilterContainer.prototype.rePlainSelector = /^[#.][\w-]+/;
-    FilterContainer.prototype.rePlainSelectorEx = /^[^#.\[(]+([#.][\w-]+)/;
-    FilterContainer.prototype.reHighLow = /^[a-z]*\[(?:alt|title)="[^"]+"\]$/;
-    FilterContainer.prototype.reHighMedium = /^\[href\^="https?:\/\/([^"]{8})[^"]*"\]$/;
+    // ["title"] and ["alt"] will go in high-low generic bin.
+    if ( this.reHighLow.test(selector) ) {
+        out.push('c\vhlg0\v' + selector);
+        return;
+    }
 
-    /******************************************************************************/
-
-    FilterContainer.prototype.compileHostnameSelector = function (hostname, parsed, out, filterPath) {
-        if (µb.isDefaultOff(filterPath))
-            return;
-        // https://github.com/chrisaljoudi/uBlock/issues/145
-        var unhide = parsed.unhide;
-        if (hostname.startsWith('~')) {
-            hostname = hostname.slice(1);
-            unhide ^= 1;
-        }
-
-        // punycode if needed
-        if (this.reHasUnicode.test(hostname)) {
-            //console.debug('µBlock.cosmeticFilteringEngine/FilterContainer.compileHostnameSelector> punycoding:', hostname);
-            hostname = this.punycode.toASCII(hostname);
-        }
-
-        // https://github.com/chrisaljoudi/uBlock/issues/188
-        // If not a real domain as per PSL, assign a synthetic one
-        var hash;
-        var domain = this.µburi.domainFromHostname(hostname);
-        if (domain === '') {
-            hash = unhide === 0 ? this.type0NoDomainHash : this.type1NoDomainHash;
-        } else {
-            hash = makeHash(unhide, domain, this.domainHashMask);
-        }
+    // [href^="..."] will go in high-medium generic bin.
+    matches = this.reHighMedium.exec(selector);
+    if ( matches && matches.length === 2 ) {
         out.push(
-                'c\v' +
-                'h\v' +
-                hash + '\v' +
-                hostname + '\v' +
-                parsed.suffix
-                );
-    };
-
-    /******************************************************************************/
-
-    FilterContainer.prototype.compileEntitySelector = function (hostname, parsed, out, filterPath) {
-        if (µb.isDefaultOff(filterPath))
-            return;
-        var entity = hostname.slice(0, -2);
-        out.push(
-            'c\v' +
-            'e\v' +
-            entity + '\v' +
-            parsed.suffix
+            'c\vhmg0\v' +
+            matches[1] + '\v' +
+            selector
         );
-    };
+        return;
+    }
 
-    /******************************************************************************/
+    // https://github.com/gorhill/uBlock/issues/909
+    // Anything which contains a plain id/class selector can be classified
+    // as a low generic cosmetic filter.
+    matches = this.rePlainSelectorEx.exec(selector);
+    if ( matches && matches.length === 2 ) {
+        out.push(
+            'c\vlg+\v' +
+            matches[1] + '\v' +
+            selector
+        );
+        return;
+    }
+
+    // All else
+    out.push('c\vhhg0\v' + selector);
+};
+
+FilterContainer.prototype.reClassOrIdSelector = /^[#.][\w-]+$/;
+FilterContainer.prototype.rePlainSelector = /^[#.][\w-]+/;
+FilterContainer.prototype.rePlainSelectorEx = /^[^#.\[(]+([#.][\w-]+)/;
+FilterContainer.prototype.reHighLow = /^[a-z]*\[(?:alt|title)="[^"]+"\]$/;
+FilterContainer.prototype.reHighMedium = /^\[href\^="https?:\/\/([^"]{8})[^"]*"\]$/;
+
+/******************************************************************************/
+
+FilterContainer.prototype.compileHostnameSelector = function (hostname, parsed, out, filterPath) {
+    if (µb.isDefaultOff(filterPath))
+        return;
+    // https://github.com/chrisaljoudi/uBlock/issues/145
+    var unhide = parsed.unhide;
+    if (hostname.startsWith('~')) {
+        hostname = hostname.slice(1);
+        unhide ^= 1;
+    }
+
+    // punycode if needed
+    if (this.reHasUnicode.test(hostname)) {
+        //console.debug('µBlock.cosmeticFilteringEngine/FilterContainer.compileHostnameSelector> punycoding:', hostname);
+        hostname = this.punycode.toASCII(hostname);
+    }
+
+    // https://github.com/chrisaljoudi/uBlock/issues/188
+    // If not a real domain as per PSL, assign a synthetic one
+    var hash;
+    var domain = this.µburi.domainFromHostname(hostname);
+    if (domain === '') {
+        hash = unhide === 0 ? this.type0NoDomainHash : this.type1NoDomainHash;
+    } else {
+        hash = makeHash(unhide, domain, this.domainHashMask);
+    }
+    out.push(
+            'c\v' +
+            'h\v' +
+            hash + '\v' +
+            hostname + '\v' +
+            parsed.suffix
+            );
+};
+
+/******************************************************************************/
+
+FilterContainer.prototype.compileEntitySelector = function (hostname, parsed, out, filterPath) {
+    if (µb.isDefaultOff(filterPath))
+        return;
+    var entity = hostname.slice(0, -2);
+    out.push(
+        'c\v' +
+        'e\v' +
+        entity + '\v' +
+        parsed.suffix
+    );
+};
+
+/******************************************************************************/
 
 FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, path) {
     if (skip) {
@@ -966,8 +1013,8 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
 
         fields = line.split('\v');
 
-        // h	ir	twitter.com	.promoted-tweet
-        if (fields[0] === 'h') {
+        // h  [\t]  ir  [\t]  twitter.com  [\t]  .promoted-tweet
+        if ( fields[0] === 'h' ) {
             // Special filter: script tags. Not a real CSS selector.
             if (fields[3].startsWith('script')) {
                 this.createScriptFilter(fields[2], fields[3].slice(6));
@@ -985,9 +1032,9 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             continue;
         }
 
-        // lg	105	.largeAd
-        // lg+	2jx	.Mpopup + #Mad > #MadZone
-        if (fields[0] === 'lg' || fields[0] === 'lg+') {
+        // lg  [\t]  105  [\t]  .largeAd
+        // lg+  [\t]  2jx  [\t]  .Mpopup + #Mad > #MadZone
+        if ( fields[0] === 'lg' || fields[0] === 'lg+' ) {
             filter = fields[0] === 'lg' ?
                     new FilterPlain(path) :
                     new FilterPlainMore(fields[2], path);
@@ -1002,8 +1049,8 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             continue;
         }
 
-        // entity	selector
-        if (fields[0] === 'e') {
+        // entity  [\t]  selector
+        if ( fields[0] === 'e' ) {
             // Special filter: script tags. Not a real CSS selector.
             if (fields[2].startsWith('script')) {
                 this.createScriptFilter(fields[1], fields[2].slice(6), path);
@@ -1443,8 +1490,6 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
                 hideHigh:        this.highHighGenericHide,
                 hideHighCount:   this.highHighGenericHideCount
             };
-            // https://github.com/chrisaljoudi/uBlock/issues/497
-            r.donthide = this.genericDonthide;
         }
 
         var hideSelectors = r.hide;
@@ -1488,13 +1533,16 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
         // r.ready will tell the content script the cosmetic filtering engine is
         // up and ready.
 
+        // https://github.com/chrisaljoudi/uBlock/issues/497
+        // Generic exception filters are to be applied on all pages
+
         var r = {
             ready: this.frozen,
             domain: domain,
             entity: pos === -1 ? domain : domain.slice(0, pos - domain.length),
             skipCosmeticFiltering: this.acceptedCount === 0,
             cosmeticHide: [],
-            cosmeticDonthide: [],
+            cosmeticDonthide: this.genericDonthide,
             netHide: [],
             netCollapse: µb.userSettings.collapseBlocked,
             scripts: this.retrieveScriptTags(domain, hostname)

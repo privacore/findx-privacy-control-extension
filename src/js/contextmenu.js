@@ -104,6 +104,8 @@ var menuEntries = [
 /******************************************************************************/
 
 var update = function(tabId) {
+    return;
+    
     var newBits = 0;
     if ( µb.userSettings.contextMenuEnabled && tabId !== null ) {
         var pageStore = µb.pageStoreFromTabId(tabId);
