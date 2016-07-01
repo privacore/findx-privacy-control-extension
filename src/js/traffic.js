@@ -19,15 +19,13 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global µBlock, vAPI */
+'use strict';
 
 /******************************************************************************/
 
 // Start isolation from global scope
 
 µBlock.webRequest = (function() {
-
-'use strict';
 
 /******************************************************************************/
 
@@ -131,6 +129,7 @@ var onBeforeRequest = function(details) {
         if ( frameId > 0 && isFrame ) {
             pageStore.setFrame(frameId, requestURL);
         }
+        requestContext.dispose();
         return;
     }
 
@@ -171,9 +170,11 @@ var onBeforeRequest = function(details) {
                 requestContext.pageHostname
             );
         }
+        requestContext.dispose();
         return { redirectUrl: url };
     }
 
+    requestContext.dispose();
     return { cancel: true };
 };
 
@@ -342,6 +343,7 @@ var onBeforeBeacon = function(details) {
             context.rootHostname
         );
     }
+    context.dispose();
     if ( result !== '' ) {
         return { cancel: true };
     }
@@ -373,6 +375,7 @@ var onBeforeBehindTheSceneRequest = function(details) {
         result = pageStore.filterRequestNoCache(context);
     }
     if (isFilterAllowed(result, context)) {
+        context.dispose();
         return;
     }
     pageStore.logRequest(context, result);
@@ -389,10 +392,12 @@ var onBeforeBehindTheSceneRequest = function(details) {
         );
     }
 
-    // Not blocked
-    if ( µb.isAllowResult(result, context) ) {
-        return;
-    }
+    context.dispose();
+
+    //// Not blocked
+    //if ( µb.isAllowResult(result, context) ) {
+    //    return;
+    //}
 
     // Blocked
     return { 'cancel': true };
@@ -448,10 +453,13 @@ var onRootFrameHeadersReceived = function(details) {
     context.requestType = 'inline-script';
 
     var result = pageStore.filterRequestNoCache(context);
+
      // Don't block
     if (isFilterAllowed(result, context)) {
+        context.dispose();
         return;
     }
+
     pageStore.logRequest(context, result);
 
     if ( µb.logger.isEnabled() ) {
@@ -466,7 +474,8 @@ var onRootFrameHeadersReceived = function(details) {
         );
     }
 
-   
+    context.dispose();
+
     µb.updateBadgeAsync(tabId);
 
     return { 'responseHeaders': foilInlineScripts(details.responseHeaders) };
@@ -495,6 +504,7 @@ var onFrameHeadersReceived = function(details) {
     var result = pageStore.filterRequestNoCache(context);
      // Don't block
     if (isFilterAllowed(result, context)) {
+        context.dispose();
         return;
     }
     pageStore.logRequest(context, result);
@@ -511,7 +521,8 @@ var onFrameHeadersReceived = function(details) {
         );
     }
 
-   
+    context.dispose();
+
     µb.updateBadgeAsync(tabId);
 
     return { 'responseHeaders': foilInlineScripts(details.responseHeaders) };

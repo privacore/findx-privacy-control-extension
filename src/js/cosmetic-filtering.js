@@ -328,17 +328,29 @@ FilterParser.prototype.reset = function() {
 
         // https://github.com/gorhill/uBlock/issues/952
         // Find out whether we are dealing with an Adguard-specific cosmetic
-        // filter, and if so, discard the filter.
+        // filter, and if so, translate it if supported, or discard it if not
+        // supported.
         var cCode = raw.charCodeAt(rpos - 1);
         if ( cCode !== 0x23 /* '#' */ && cCode !== 0x40 /* '@' */ ) {
             // We have an Adguard cosmetic filter if and only if the character is
             // `$` or `%`, otherwise it's not a cosmetic filter.
-            if ( cCode === 0x24 /* '$' */ || cCode === 0x25 /* '%' */ ) {
-                this.invalid = true;
-            } else {
+            // Not a cosmetic filter.
+            if ( cCode !== 0x24 /* '$' */ && cCode !== 0x25 /* '%' */ ) {
                 this.cosmetic = false;
+                return this;
             }
-            return this;
+            // Not supported.
+            if ( cCode !== 0x24 /* '$' */ ) {
+                this.invalid = true;
+                return this;
+            }
+            // CSS injection rule: supported, but translate into uBO's own format.
+            raw = this.translateAdguardCSSInjectionFilter(raw);
+            if ( raw === '' ) {
+                this.invalid = true;
+                return this;
+            }
+            rpos = raw.indexOf('#', lpos + 1);
         }
 
         // Extract the hostname(s).
@@ -350,17 +362,6 @@ FilterParser.prototype.reset = function() {
         this.suffix = raw.slice(rpos + 1);
         if ( this.suffix.length === 0 ) {
             this.cosmetic = false;
-            return this;
-        }
-
-        // Cosmetic filters with explicit style properties can apply only:
-        // - to specific cosmetic filters (those which apply to a specific site)
-        // - to block cosmetic filters (not exception cosmetic filters)
-        if ( this.suffix.endsWith('}') ) {
-            // Not supported for now: this code will ensure some backward
-            // compatibility for when cosmetic filters with explicit style
-            // properties start to be in use.
-            this.invalid = true;
             return this;
         }
 
@@ -408,6 +409,25 @@ FilterParser.prototype.reset = function() {
 
         return this;
     };
+
+/******************************************************************************/
+
+// Reference: https://adguard.com/en/filterrules.html#cssInjection
+
+FilterParser.prototype.translateAdguardCSSInjectionFilter = function(raw) {
+    var matches = /^([^#]*)#(@?)\$#([^{]+)\{([^}]+)\}$/.exec(raw);
+    if ( matches === null ) {
+        return '';
+    }
+    // For now we do not allow generic CSS injections (prolly never).
+    if ( matches[1] === '' && matches[2] !== '@' ) {
+        return '';
+    }
+    return matches[1] +
+           '#' + matches[2] + '#' +
+           matches[3].trim() +
+           ':style(' +  matches[4].trim() + ')';
+};
 
 /******************************************************************************/
 
@@ -704,10 +724,15 @@ var FilterContainer = function () {
         this.highMediumGenericHide = {};
         this.highMediumGenericHideCount = 0;
 
-        // everything else
-        this.highHighGenericHideArray = [];
-        this.highHighGenericHide = '';
-        this.highHighGenericHideCount = 0;
+        // high-high-simple selectors
+        this.highHighSimpleGenericHideArray = [];
+        this.highHighSimpleGenericHide = '';
+        this.highHighSimpleGenericHideCount = 0;
+
+        // high-high-complex selectors
+        this.highHighComplexGenericHideArray = [];
+        this.highHighComplexGenericHide = '';
+        this.highHighComplexGenericHideCount = 0;
 
         // generic exception filters
         this.genericDonthide = [];
@@ -723,6 +748,10 @@ var FilterContainer = function () {
 
     /******************************************************************************/
 
+
+// Discard new ABP's `-abp-properties` directive until it is
+// implemented (if ever). Unlikely, see:
+// https://github.com/gorhill/uBlock/issues/1752
 
 FilterContainer.prototype.isValidSelector = (function() {
     var div = document.createElement('div');
@@ -747,18 +776,22 @@ FilterContainer.prototype.isValidSelector = (function() {
     }
 
     var reHasSelector = /^(.+?):has\((.+?)\)$/;
+    var reStyleSelector = /^(.+?):style\((.+?)\)$/;
     var reXpathSelector = /^:xpath\((.+?)\)$/;
 
-    return function(s) {
+    // Keep in mind: https://github.com/gorhill/uBlock/issues/693
+    var isValidCSSSelector = function(s) {
         try {
-            // https://github.com/gorhill/uBlock/issues/693
             div[matchesProp](s + ',\n#foo');
-            // Discard new ABP's `-abp-properties` directive until it is
-            // implemented (if ever).
-            if ( s.indexOf('[-abp-properties=') === -1 ) {
-                return true;
-            }
-        } catch (e) {
+        } catch (ex) {
+            return false;
+        }
+        return true;
+    };
+
+    return function(s) {
+        if ( isValidCSSSelector(s) && s.indexOf('[-abp-properties=') === -1 ) {
+            return true;
         }
         // We reach this point very rarely.
         var matches;
@@ -777,6 +810,11 @@ FilterContainer.prototype.isValidSelector = (function() {
             } catch (e) {
             }
             return false;
+        }
+        // `:style` selector?
+        matches = reStyleSelector.exec(s);
+        if ( matches !== null ) {
+            return isValidCSSSelector(matches[1]);
         }
         // Special `script:` filter?
         if ( s.startsWith('script') ) {
@@ -921,8 +959,13 @@ FilterContainer.prototype.compileGenericSelector = function (parsed, out, filter
         return;
     }
 
-    // All else
-    out.push('c\vhhg0\v' + selector);
+    // All else: high-high generics.
+    // Distinguish simple vs complex selectors.
+    if ( selector.indexOf(' ') === -1 ) {
+        out.push('c\vhhsg0\v' + selector);
+    } else {
+        out.push('c\vhhcg0\v' + selector);
+    }
 };
 
 FilterContainer.prototype.reClassOrIdSelector = /^[#.][\w-]+$/;
@@ -1085,9 +1128,15 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             continue;
         }
 
-        if (fields[0] === 'hhg0') {
-            this.highHighGenericHideArray.push(fields[1]);
-            this.highHighGenericHideCount += 1;
+        if ( fields[0] === 'hhsg0' ) {
+            this.highHighSimpleGenericHideArray.push(fields[1]);
+            this.highHighSimpleGenericHideCount += 1;
+            continue;
+        }
+
+        if ( fields[0] === 'hhcg0' ) {
+            this.highHighComplexGenericHideArray.push(fields[1]);
+            this.highHighComplexGenericHideCount += 1;
             continue;
         }
 
@@ -1238,14 +1287,20 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
 
     /******************************************************************************/
 
-    FilterContainer.prototype.freeze = function () {
+    FilterContainer.prototype.freeze = function() {
         this.duplicateBuster = {};
 
-        if (this.highHighGenericHide !== '') {
-            this.highHighGenericHideArray.unshift(this.highHighGenericHide);
+        if ( this.highHighSimpleGenericHide !== '' ) {
+            this.highHighSimpleGenericHideArray.unshift(this.highHighSimpleGenericHide);
         }
-        this.highHighGenericHide = this.highHighGenericHideArray.join(',\n');
-        this.highHighGenericHideArray = [];
+        this.highHighSimpleGenericHide = this.highHighSimpleGenericHideArray.join(',\n');
+        this.highHighSimpleGenericHideArray = [];
+
+        if ( this.highHighComplexGenericHide !== '' ) {
+            this.highHighComplexGenericHideArray.unshift(this.highHighComplexGenericHide);
+        }
+        this.highHighComplexGenericHide = this.highHighComplexGenericHideArray.join(',\n');
+        this.highHighComplexGenericHideArray = [];
 
         this.parser.reset();
         this.frozen = true;
@@ -1289,8 +1344,10 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             highLowGenericHideCount: this.highLowGenericHideCount,
             highMediumGenericHide: this.highMediumGenericHide,
             highMediumGenericHideCount: this.highMediumGenericHideCount,
-            highHighGenericHide: this.highHighGenericHide,
-            highHighGenericHideCount: this.highHighGenericHideCount,
+            highHighSimpleGenericHide: this.highHighSimpleGenericHide,
+            highHighSimpleGenericHideCount: this.highHighSimpleGenericHideCount,
+            highHighComplexGenericHide: this.highHighComplexGenericHide,
+            highHighComplexGenericHideCount: this.highHighComplexGenericHideCount,
             genericDonthide: this.genericDonthide,
             scriptTagFilters: this.scriptTagFilters,
             scriptTagFilterCount: this.scriptTagFilterCount,
@@ -1353,8 +1410,10 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
         this.highLowGenericHideCount = selfie.highLowGenericHideCount;
         this.highMediumGenericHide = selfie.highMediumGenericHide;
         this.highMediumGenericHideCount = selfie.highMediumGenericHideCount;
-        this.highHighGenericHide = selfie.highHighGenericHide;
-        this.highHighGenericHideCount = selfie.highHighGenericHideCount;
+        this.highHighSimpleGenericHide = selfie.highHighSimpleGenericHide;
+        this.highHighSimpleGenericHideCount = selfie.highHighSimpleGenericHideCount;
+        this.highHighComplexGenericHide = selfie.highHighComplexGenericHide;
+        this.highHighComplexGenericHideCount = selfie.highHighComplexGenericHideCount;
         this.genericDonthide = selfie.genericDonthide;
         this.scriptTagFilters = selfie.scriptTagFilters;
         this.scriptTagFilterCount = selfie.scriptTagFilterCount;
@@ -1481,14 +1540,16 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             hide: []
         };
 
-        if (request.firstSurvey) {
+        if ( request.firstSurvey ) {
             r.highGenerics = {
-                hideLow:         this.highLowGenericHide,
-                hideLowCount:    this.highLowGenericHideCount,
-                hideMedium:      this.highMediumGenericHide,
+                hideLow: this.highLowGenericHide,
+                hideLowCount: this.highLowGenericHideCount,
+                hideMedium: this.highMediumGenericHide,
                 hideMediumCount: this.highMediumGenericHideCount,
-                hideHigh:        this.highHighGenericHide,
-                hideHighCount:   this.highHighGenericHideCount
+                hideHighSimple: this.highHighSimpleGenericHide,
+                hideHighSimpleCount: this.highHighSimpleGenericHideCount,
+                hideHighComplex: this.highHighComplexGenericHide,
+                hideHighComplexCount: this.highHighComplexGenericHideCount
             };
         }
 

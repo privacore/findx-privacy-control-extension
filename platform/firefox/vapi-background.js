@@ -314,8 +314,9 @@ cleanupTasks.push(vAPI.browserSettings.restoreAll.bind(vAPI.browserSettings));
 vAPI.storage = (function() {
     var db = null;
     var vacuumTimer = null;
+    var dbOpenError = '';
 
-    var close = function() {
+    var close = function(now) {
         if ( vacuumTimer !== null ) {
             clearTimeout(vacuumTimer);
             vacuumTimer = null;
@@ -323,7 +324,11 @@ vAPI.storage = (function() {
         if ( db === null ) {
             return;
         }
-        db.asyncClose();
+        if ( now ) {
+            db.close();
+        } else {
+            db.asyncClose();
+        }
         db = null;
     };
 
@@ -343,7 +348,10 @@ vAPI.storage = (function() {
         }
         path.append(location.host + '.sqlite');
 
-        // Open database
+        // Open database.
+        // https://github.com/gorhill/uBlock/issues/1768
+        // If the SQL file is found to be corrupted at launch time, nuke
+        // existing SQL file so that a new one can be created.
         try {
             db = Services.storage.openDatabase(path);
             if ( db.connectionReady === false ) {
@@ -351,11 +359,22 @@ vAPI.storage = (function() {
                 db = null;
             }
         } catch (ex) {
+            if ( dbOpenError === '' ) {
+                console.error('vAPI.storage/open() error: ', ex.message);
+                dbOpenError = ex.name;
+                if ( ex.name === 'NS_ERROR_FILE_CORRUPTED' ) {
+                    nuke();
+                }
+            }
         }
 
         if ( db === null ) {
             return null;
         }
+
+        // Since database could be opened successfully, reset error flag (its
+        // purpose is to avoid spamming console with error messages).
+        dbOpenError = '';
 
         // Database was opened, register cleanup task
         cleanupTasks.push(close);
@@ -369,6 +388,22 @@ vAPI.storage = (function() {
         }
 
         return db;
+    };
+
+    var nuke = function() {
+        var removeDB = function() {
+            close(true);
+            var path = Services.dirsvc.get('ProfD', Ci.nsIFile);
+            path.append('extension-data');
+            if ( !path.exists() || !path.isDirectory() ) {
+                return;
+            }
+            path.append(location.host + '.sqlite');
+            if ( path.exists() ) {
+                path.remove(false);
+            }
+        };
+        vAPI.setTimeout(removeDB, 1);
     };
 
     // https://developer.mozilla.org/en-US/docs/Storage/Performance#Vacuuming_and_zero-fill
@@ -416,9 +451,17 @@ vAPI.storage = (function() {
                 console.error('SQLite error ', error.result, error.message);
                 // Caller expects an answer regardless of failure.
                 if ( typeof callback === 'function' ) {
-                    callback(null);
+                    callback({});
                 }
                 result = null;
+                // https://github.com/gorhill/uBlock/issues/1768
+                // Error cases which warrant a removal of the SQL file, so far:
+                // - SQLLite error 11 database disk image is malformed
+                // Can't find doc on MDN about the type of error.result, so I
+                // force a string comparison.
+                if ( error.result.toString() === '11' ) {
+                    nuke();
+                }
             }
         });
     };
@@ -466,7 +509,7 @@ vAPI.storage = (function() {
         }
 
         runStatement(stmt, function(result) {
-            callback(result.size);
+            callback(result.size || 0);
         });
     };
 
@@ -2286,15 +2329,8 @@ vAPI.net.registerListeners = function() {
     }
 
     var shouldLoadPopupListenerMessageName = location.host + ':shouldLoadPopup';
-    var shouldLoadPopupListener = function(e) {
-        if ( typeof vAPI.tabs.onPopupCreated !== 'function' ) {
-            return;
-        }
-
-        var openerURL = e.data;
-        var popupTabId = tabWatcher.tabIdFromTarget(e.target);
+    var shouldLoadPopupListener = function(openerURL, popupTabId) {
         var uri, openerTabId;
-
         for ( var browser of tabWatcher.browsers() ) {
             uri = browser.currentURI;
 
@@ -2317,10 +2353,20 @@ vAPI.net.registerListeners = function() {
             }
         }
     };
+    var shouldLoadPopupListenerAsync = function(e) {
+        if ( typeof vAPI.tabs.onPopupCreated !== 'function' ) {
+            return;
+        }
+        // We are handling a synchronous message: do not block.
+        vAPI.setTimeout(
+            shouldLoadPopupListener.bind(null, e.data, tabWatcher.tabIdFromTarget(e.target)),
+            1
+        );
+    };
 
     vAPI.messaging.globalMessageManager.addMessageListener(
         shouldLoadPopupListenerMessageName,
-        shouldLoadPopupListener
+        shouldLoadPopupListenerAsync
     );
 
     var shouldLoadListenerMessageName = location.host + ':shouldLoad';
@@ -2406,7 +2452,7 @@ vAPI.net.registerListeners = function() {
     cleanupTasks.push(function() {
         vAPI.messaging.globalMessageManager.removeMessageListener(
             shouldLoadPopupListenerMessageName,
-            shouldLoadPopupListener
+            shouldLoadPopupListenerAsync
         );
 
         vAPI.messaging.globalMessageManager.removeMessageListener(

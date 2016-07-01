@@ -19,6 +19,8 @@
     Home: https://github.com/gorhill/uBlock
 */
 
+'use strict';
+
 /*******************************************************************************
 
 A PageRequestStore object is used to store net requests in two ways:
@@ -32,8 +34,6 @@ To create a log of net requests
 /******************************************************************************/
 
 µBlock.PageStore = (function() {
-
-'use strict';
 
 /******************************************************************************/
 
@@ -60,13 +60,13 @@ NetFilteringResultCacheEntry.prototype.init = function(result, type) {
     this.time = Date.now();
     this.filterPath = result.filterPath || "";
     this.quantity = 1;
+    return this;
 };
 
 /******************************************************************************/
 
 NetFilteringResultCacheEntry.prototype.dispose = function() {
-    this.result = '';
-    this.type = '';
+    this.result = this.type = '';
     if ( netFilteringResultCacheEntryJunkyard.length < netFilteringResultCacheEntryJunkyardMax ) {
         netFilteringResultCacheEntryJunkyard.push(this);
     }
@@ -75,13 +75,10 @@ NetFilteringResultCacheEntry.prototype.dispose = function() {
 /******************************************************************************/
 
 NetFilteringResultCacheEntry.factory = function(result, type) {
-    var entry = netFilteringResultCacheEntryJunkyard.pop();
-    if ( entry === undefined ) {
-        entry = new NetFilteringResultCacheEntry(result, type);
-    } else {
-        entry.init(result, type);
+    if ( netFilteringResultCacheEntryJunkyard.length ) {
+        return netFilteringResultCacheEntryJunkyard.pop().init(result, type);
     }
-    return entry;
+    return new NetFilteringResultCacheEntry(result, type);
 };
 
 /******************************************************************************/
@@ -112,7 +109,7 @@ NetFilteringResultCache.factory = function() {
 /******************************************************************************/
 
 NetFilteringResultCache.prototype.init = function() {
-    this.urls = {};
+    this.urls = Object.create(null);
     this.count = 0;
     this.shelfLife = 15 * 1000;
     this.timer = null;
@@ -137,9 +134,10 @@ NetFilteringResultCache.prototype.add = function(context, result) {
         return;
     var str = result.str ?result.str: 'test';
     var filterPath = result.filterPath ? result.filterPath:'test';
-    var url = context.requestURL;
-    var type = context.requestType;
-    var entry = this.urls[url];
+    var url = context.requestURL,
+        type = context.requestType,
+        key = type + ' ' + url,
+        entry = this.urls[key];
     if ( entry !== undefined ) {
         entry.result = str;
         entry.type = type;
@@ -148,7 +146,10 @@ NetFilteringResultCache.prototype.add = function(context, result) {
         entry.time = Date.now();
         return;
     }
-    this.urls[url] = NetFilteringResultCacheEntry.factory(result, type);
+    this.urls[key] = NetFilteringResultCacheEntry.factory(result, type);
+    if ( this.count === 0 ) {
+        this.pruneAsync();
+    }
     this.count += 1;
 };
 
@@ -165,12 +166,9 @@ NetFilteringResultCache.prototype.add = function(context, result) {
 
 NetFilteringResultCache.prototype.empty = function() {
     for ( var key in this.urls ) {
-        if ( this.urls.hasOwnProperty(key) === false ) {
-            continue;
-        }
         this.urls[key].dispose();
     }
-    this.urls = {};
+    this.urls = Object.create(null);
     this.count = 0;
     if ( this.timer !== null ) {
         clearTimeout(this.timer);
@@ -442,14 +440,14 @@ PageStore.prototype.setFrame = function(frameId, frameURL) {
 /******************************************************************************/
 
 PageStore.prototype.createContextFromPage = function() {
-    var context = new µb.tabContextManager.createContext(this.tabId);
+    var context = µb.tabContextManager.createContext(this.tabId);
     context.pageHostname = context.rootHostname;
     context.pageDomain = context.rootDomain;
     return context;
 };
 
 PageStore.prototype.createContextFromFrameId = function(frameId) {
-    var context = new µb.tabContextManager.createContext(this.tabId);
+    var context = µb.tabContextManager.createContext(this.tabId);
     var frameStore = this.frames[frameId];
     if ( frameStore ) {
         context.pageHostname = frameStore.pageHostname;
@@ -462,7 +460,7 @@ PageStore.prototype.createContextFromFrameId = function(frameId) {
 };
 
 PageStore.prototype.createContextFromFrameHostname = function(frameHostname) {
-    var context = new µb.tabContextManager.createContext(this.tabId);
+    var context = µb.tabContextManager.createContext(this.tabId);
     context.pageHostname = frameHostname;
     context.pageDomain = µb.URI.domainFromHostname(frameHostname) || frameHostname;
     return context;

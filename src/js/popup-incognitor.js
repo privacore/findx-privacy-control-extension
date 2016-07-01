@@ -320,7 +320,9 @@
 
     var renderTrackedUrls = function () {
         popupData.trackedUrls = {};
-        if (!popupData.urls) return;
+        if (!popupData.urls) {
+            return;
+        }
         var filterPath;
         for (var url in popupData.urls) {
             if (popupData.urls[url].quantity)
@@ -422,8 +424,12 @@
     /***************************************************************************/
 
     var isRuleBlocked = function  (filter, link) {
+        console.log ("isRuleBlocked ()            popup-incognitor.js" +
+                        "\n\t filter: ", filter,
+                        "\n\t link: ", link,
+                        "\n\t URL: ", URL);
         var isBlocked = false;
-        var urlObj = new URL(link);
+        var urlObj = new URL(getUrlFromStr(link));
         var url = urlObj.href.replace(urlObj.search, "");
 
         if (filter.exceptions && filter.exceptions.links
@@ -434,6 +440,24 @@
             isBlocked = true;
 
         return isBlocked;
+    };
+
+
+    /**
+     * 01.07.2016 Igor
+     * uBlock add links with their types, like:
+     *    "script http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+     * We need to receive only url without it type.
+     * @param {string} str
+     */
+    var getUrlFromStr = function (str) {
+        if (!str) return str;
+        var arr = str.split(" ");
+        if (arr.length > 1) {
+            return arr[1];
+        }
+        else
+            return str;
     };
 
     /***************************************************************************/
@@ -556,7 +580,8 @@
         var updates = {
             filterPath: data.id,
             links: {
-                url: url,
+                url: getUrlFromStr(url),
+                //url: url,
                 domain: popupData.pageDomain,
                 state: !isBlocked
             }
@@ -893,6 +918,7 @@
 
     var getPopupData = function () {
         var onDataReceived = function (response) {
+            console.log(response);
             cachePopupData(response);
             renderPopup();
             hashFromPopupData(true);
