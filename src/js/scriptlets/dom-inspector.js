@@ -35,7 +35,6 @@ if ( typeof vAPI !== 'object' || typeof vAPI.domFilterer !== 'object' ) {
 /******************************************************************************/
 
 var sessionId = vAPI.sessionId;
-var shadowId = vAPI.domFilterer.shadowId;
 
 if ( document.querySelector('iframe.dom-inspector.' + sessionId) !== null ) {
     return;
@@ -695,11 +694,10 @@ var cosmeticFilterMapper = (function() {
         var filterMap = nodeToCosmeticFilterMap,
             selectors, selector,
             nodes, node,
-            entries, entry,
             i, j;
 
         // CSS-based selectors: simple one.
-        selectors = vAPI.domFilterer.simpleSelectors;
+        selectors = vAPI.domFilterer.job2._0;
         i = selectors.length;
         while ( i-- ) {
             selector = selectors[i];
@@ -717,7 +715,7 @@ var cosmeticFilterMapper = (function() {
         }
     
         // CSS-based selectors: complex one (must query from doc root).
-        selectors = vAPI.domFilterer.complexSelectors;
+        selectors = vAPI.domFilterer.job3._0;
         i = selectors.length;
         while ( i-- ) {
             selector = selectors[i];
@@ -731,72 +729,14 @@ var cosmeticFilterMapper = (function() {
             }
         }
 
-        // `:has()`-based selectors: simple ones.
-        entries = vAPI.domFilterer.simpleHasSelectors;
-        i = entries.length;
-        while ( i-- ) {
-            entry = entries[i];
-            selector = entries.a + ':has(' + entries.b + ')';
-            if (
-                filterMap.has(rootNode) === false &&
-                rootNode[matchesFnName](entry.a) &&
-                rootNode.querySelector(entry.b) !== null
-            ) {
-                filterMap.set(rootNode, selector);
+        // Non-CSS selectors.
+        var runJobCallback = function(node, job) {
+            if ( filterMap.has(node) === false ) {
+                filterMap.set(node, job.raw);
             }
-            nodes = rootNode.querySelectorAll(entries.a);
-            j = nodes.length;
-            while ( j-- ) {
-                node = nodes[j];
-                if (
-                    filterMap.has(node) === false &&
-                    node.querySelector(entry.b) !== null
-                ) {
-                    filterMap.set(node, selector);
-                }
-            }
-        }
-
-        // `:has()`-based selectors: complex ones (must query from doc root).
-        entries = vAPI.domFilterer.complexHasSelectors;
-        i = entries.length;
-        while ( i-- ) {
-            entry = entries[i];
-            selector = entries.a + ':has(' + entries.b + ')';
-            nodes = document.querySelectorAll(entries.a);
-            j = nodes.length;
-            while ( j-- ) {
-                node = nodes[j];
-                if (
-                    filterMap.has(node) === false &&
-                    node.querySelector(entry.b) !== null
-                ) {
-                    filterMap.set(node, selector);
-                }
-            }
-        }
-
-        // `:xpath()`-based selectors.
-        var xpr;
-        entries = vAPI.domFilterer.xpathSelectors;
-        i = entries.length;
-        while ( i-- ) {
-            entry = entries[i];
-            selector = ':xpath(' + entry + ')';
-            xpr = document.evaluate(
-                entry,
-                document,
-                null,
-                XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
-                xpr
-            );
-            j = xpr.snapshotLength;
-            while ( j-- ) {
-                node = xpr.snapshotItem(j);
-                if ( filterMap.has(node) === false ) {
-                    filterMap.set(node, selector);
-                }
-            }
+        };
+        for ( i = 4; i < vAPI.domFilterer.jobQueue.length; i++ ) {
+            vAPI.domFilterer.runJob(vAPI.domFilterer.jobQueue[i], runJobCallback);
         }
     };
 
@@ -864,7 +804,7 @@ var elementsFromSpecialSelector = function(selector) {
     var out = [], i;
     var matches = /^(.+?):has\((.+?)\)$/.exec(selector);
     if ( matches !== null ) {
-        var nodes = document.querySelector(matches[1]);
+        var nodes = document.querySelectorAll(matches[1]);
         i = nodes.length;
         while ( i-- ) {
             var node = nodes[i];
@@ -1086,39 +1026,18 @@ var toggleNodes = function(nodes, originalState, targetState) {
 /******************************************************************************/
 
 var showNode = function(node, v1, v2) {
-    var shadow = node.shadowRoot;
-    if ( shadow === undefined ) {
-        if ( !v1 ) {
-            node.style.removeProperty('display');
-        } else {
-            node.style.setProperty('display', v1, v2);
-        }
-    } else if ( shadow !== null && shadow.className === shadowId && shadow.firstElementChild === null ) {
-        shadow.appendChild(document.createElement('content'));
+    vAPI.domFilterer.showNode(node);
+    if ( !v1 ) {
+        node.style.removeProperty('display');
+    } else {
+        node.style.setProperty('display', v1, v2);
     }
 };
 
 /******************************************************************************/
 
 var hideNode = function(node) {
-    var shadow = node.shadowRoot;
-    if ( shadow === undefined ) {
-        node.style.setProperty('display', 'none', 'important');
-        return;
-    }
-    if ( shadow !== null && shadow.className === shadowId ) {
-        if ( shadow.firstElementChild !== null ) {
-            shadow.removeChild(shadow.firstElementChild);
-        }
-        return;
-    }
-    // not all nodes can be shadowed
-    try {
-        shadow = node.createShadowRoot();
-    } catch (ex) {
-        return;
-    }
-    shadow.className = shadowId;
+    vAPI.domFilterer.unshowNode(node);
 };
 
 /******************************************************************************/

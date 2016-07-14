@@ -118,6 +118,8 @@ var onMessage = function(request, sender, callback) {
 
     case 'createUserFilter':
         µb.appendUserFilters(request.filters);
+        // https://github.com/gorhill/uBlock/issues/1786
+        µb.cosmeticFilteringEngine.removeFromSelectorCache(request.pageDomain);
         break;
 
     case 'forceUpdateAssets':

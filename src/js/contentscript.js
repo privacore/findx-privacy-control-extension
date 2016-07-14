@@ -33,7 +33,7 @@
 // - https://github.com/chrisaljoudi/uBlock/issues/456
 
 if ( typeof vAPI !== 'object' || vAPI.contentscriptInjected ) {
-    throw new Error('Unexpected condition: aborting.');
+    throw new Error('uBlock Origin: aborting content scripts for ' + window.location);
 }
 
 vAPI.executionCost.start();
@@ -58,90 +58,172 @@ vAPI.matchesProp = (function() {
 
 // The DOM filterer is the heart of uBO's cosmetic filtering.
 
-vAPI.domFilterer = {
-    allExceptions: Object.create(null),
-    allSelectors: Object.create(null),
-    cosmeticFiltersActivatedTimer: null,
-    cssNotHiddenId: '',
-    disabledId: String.fromCharCode(Date.now() % 26 + 97) + Math.floor(Math.random() * 982451653 + 982451653).toString(36),
+vAPI.domFilterer = (function() {
+
+/******************************************************************************/
+
+if ( typeof self.Set !== 'function' ) {
+    self.Set = function() {
+        this._set = [];
+        this._i = 0;
+        this.value = undefined;
+    };
+    self.Set.prototype = {
+        polyfill: true,
+        clear: function() {
+            this._set = [];
+        },
+        add: function(k) {
+            if ( this._set.indexOf(k) === -1 ) {
+                this._set.push(k);
+            }
+        },
+        delete: function(k) {
+            var pos = this._set.indexOf(k);
+            if ( pos !== -1 ) {
+                this._set.splice(pos, 1);
+                return true;
+            }
+            return false;
+        },
+        has: function(k) {
+            return this._set.indexOf(k) !== -1;
+        },
+        values: function() {
+            this._i = 0;
+            return this;
+        },
+        next: function() {
+            this.value = this._set[this._i];
+            this._i += 1;
+            return this;
+        }
+    };
+    Object.defineProperty(self.Set.prototype, 'size', {
+        get: function() { return this._set.length; }
+    });
+}
+
+/******************************************************************************/
+
+var shadowId = document.documentElement.shadowRoot !== undefined ?
+    vAPI.randomToken():
+    undefined;
+
+var jobQueue = [
+    { t: 'css-hide',  _0: [] }, // to inject in style tag
+    { t: 'css-style', _0: [] }, // to inject in style tag
+    { t: 'css-ssel',  _0: [] }, // to manually hide (incremental)
+    { t: 'css-csel',  _0: [] }  // to manually hide (not incremental)
+];
+
+var reParserEx = /^(.*?(:has\(.+?\)|:xpath\(.+?\))?)(:style\(.+?\))?$/;
+
+var allExceptions = Object.create(null);
+var allSelectors = Object.create(null);
+var stagedNodes = [];
+
+// Complex selectors, due to their nature may need to be "de-committed". A
+// Set() is used to implement this functionality.
+
+var complexSelectorsOldResultSet;
+var complexSelectorsCurrentResultSet = new Set();
+
+/******************************************************************************/
+
+var cosmeticFiltersActivatedTimer = null;
+
+var cosmeticFiltersActivated = function() {
+    cosmeticFiltersActivatedTimer = null;
+    vAPI.messaging.send(
+        'contentscript',
+        { what: 'cosmeticFiltersActivated' }
+    );
+};
+
+/******************************************************************************/
+
+var domFilterer = {
+    commitMissCount: 0,
+    disabledId: vAPI.randomToken(),
     enabled: true,
-    hiddenId: String.fromCharCode(Date.now() % 26 + 97) + Math.floor(Math.random() * 982451653 + 982451653).toString(36),
+    hiddenId: vAPI.randomToken(),
     hiddenNodeCount: 0,
     matchesProp: vAPI.matchesProp,
-    newCSSRules: [],
-    newDeclarativeSelectors: [],
-    shadowId: String.fromCharCode(Date.now() % 26 + 97) + Math.floor(Math.random() * 982451653 + 982451653).toString(36),
     styleTags: [],
 
-    simpleGroupSelector: null,
-    simpleSelectors: [],
-
-    complexGroupSelector: null,
-    complexSelectors: [],
-    complexSelectorsCost: 0,
-    complexSelectorsNodeSet: null,
-
-    complexHasSelectors: [],
-    complexHasSelectorsCost: 0,
-    simpleHasSelectors: [],
-
-    xpathExpression: null,
-    xpathResult: null,
-    xpathSelectors: [],
-    xpathSelectorsCost: 0,
+    jobQueue: jobQueue,
+    // Stock jobs.
+    job0: jobQueue[0],
+    job1: jobQueue[1],
+    job2: jobQueue[2],
+    job3: jobQueue[3],
 
     addExceptions: function(aa) {
         for ( var i = 0, n = aa.length; i < n; i++ ) {
-            this.allExceptions[aa[i]] = true;
+            allExceptions[aa[i]] = true;
         }
     },
+
+    // Job:
+    // Stock jobs in job queue:
+    //     0 = css rules/css declaration to remove visibility
+    //     1 = css rules/any css declaration
+    //     2 = simple css selectors/hide
+    //     3 = complex css selectors/hide
+    // Custom jobs:
+    //     has/hide
+    //     xpath/hide
+    //     has/inline css declaration (not supported yet)
+    //     xpath/inline css declaration (not supported yet)
 
     addSelector: function(s) {
-        if ( this.allSelectors[s] || this.allExceptions[s] ) {
-            return;
+        if ( allSelectors[s] || allExceptions[s] ) {
+            return this;
         }
-        this.allSelectors[s] = true;
-        if ( s.charCodeAt(s.length-1) === 0x29 && this.addSelectorEx(s) ) {
-            return;
-        }
-        if ( s.indexOf(' ') === -1 ) {
-            this.simpleSelectors.push(s);
-            this.simpleGroupSelector = null;
-        } else {
-            this.complexSelectors.push(s);
-            this.complexGroupSelector = null;
-            this.complexSelectorsCost = 0;
-        }
-        this.newDeclarativeSelectors.push(s);
-    },
+        allSelectors[s] = true;
+        var parts = reParserEx.exec(s);
+        if ( parts === null ) { return this; }
+        var sel0 = parts[1], sel1 = parts[2], style = parts[3];
 
-    addSelectorEx: function(s) {
-        var pos = s.indexOf(':has(');
-        if ( pos !== -1 ) {
-            var entry = {
-                a: s.slice(0, pos),
-                b: s.slice(pos + 5, -1)
-            };
-            if ( entry.a.indexOf(' ') === -1 ) {
-                this.simpleHasSelectors.push(entry);
-            } else {
-                this.complexHasSelectors.push(entry);
-                this.complexHasSelectorsCost = 0;
+        // Hide
+        if ( style === undefined ) {
+            if ( sel1 === undefined ) {
+                this.job0._0.push(sel0);
+                if ( sel0.indexOf(' ') === -1 ) {
+                    this.job2._0.push(sel0);
+                    this.job2._1 = undefined;
+                } else {
+                    this.job3._0.push(sel0);
+                    this.job3._1 = undefined;
+                }
+                return this;
             }
-            return true;
+            if ( sel1.lastIndexOf(':has', 0) === 0 ) {
+                this.jobQueue.push({ t: 'has-hide', raw: s, _0: sel0.slice(0, sel0.length - sel1.length), _1: sel1.slice(5, -1) });
+                return this;
+            }
+            if ( sel1.lastIndexOf(':xpath',0) === 0 ) {
+                this.jobQueue.push({ t: 'xpath-hide', raw: s, _0: sel1.slice(7, -1) });
+                return this;
+            }
+            // ignore unknown selector
+            return this;
         }
-        pos = s.indexOf(':style(');
-        if ( pos !== -1 ) {
-            this.newCSSRules.push(s.slice(0, pos) + ' {' + s.slice(pos + 7, -1) + '}');
-            return true;
+
+        // Modify style
+        if ( sel1 === undefined ) {
+            this.job1._0.push(sel0 + ' { ' + style.slice(7, -1) + ' }');
+            this.job1._1 = undefined;
+            return this;
         }
-        if ( s.lastIndexOf(':xpath(', 0) === 0 ) {
-            this.xpathExpression = null;
-            this.xpathSelectorsCost = 0;
-            this.xpathSelectors.push(s.slice(7, -1));
-            return true;
+        if ( sel1.lastIndexOf(':has', 0) === 0 ) {
+            return this;
         }
-        return false;
+        if ( sel1.lastIndexOf(':xpath',0) === 0 ) {
+            if ( sel0 !== sel1 ) { return this; }
+            return this;
+        }
     },
 
     addSelectors: function(aa) {
@@ -186,233 +268,220 @@ vAPI.domFilterer = {
         }
     },
 
-    commit: function(stagedNodes) {
-        var beforeHiddenNodeCount = this.hiddenNodeCount;
+    commit_: function() {
+        var beforeHiddenNodeCount = this.hiddenNodeCount,
+            styleText = '', i, n;
 
-        if ( stagedNodes === undefined ) {
-            stagedNodes = [ document.documentElement ];
+        // Stock job 0 = css rules/hide
+        if ( this.job0._0.length ) {
+            styleText = '\n:root ' + this.job0._0.join(',\n:root ') + '\n{ display: none !important; }';
+            this.job0._0.length = 0;
         }
 
-        // Inject new declarative selectors.
-        var styleTag;
-        if ( this.newDeclarativeSelectors.length ) {
-            styleTag = document.createElement('style');
+        // Stock job 1 = css rules/any css declaration
+        if ( this.job1._0.length ) {
+            styleText += '\n:root ' + this.job1._0.join('\n:root ');
+            this.job1._0.length = 0;
+        }
+
+        if ( styleText !== '' ) {
+            var styleTag = document.createElement('style');
             styleTag.setAttribute('type', 'text/css');
-            styleTag.textContent =
-                ':root ' +
-                this.newDeclarativeSelectors.join(',\n:root ') +
-                '\n{ display: none !important; }';
+            styleTag.textContent = styleText;
             document.head.appendChild(styleTag);
             this.styleTags.push(styleTag);
-            this.newDeclarativeSelectors.length = 0;
-        }
-        // Inject new CSS rules.
-        if ( this.newCSSRules.length ) {
-            styleTag = document.createElement('style');
-            styleTag.setAttribute('type', 'text/css');
-            styleTag.textContent = ':root ' + this.newCSSRules.join('\n:root ');
-            document.head.appendChild(styleTag);
-            this.styleTags.push(styleTag);
-            this.newCSSRules.length = 0;
         }
 
-        // Simple `:has()` selectors.
-        if ( this.simpleHasSelectors.length ) {
-            this.commitSimpleHasSelectors(stagedNodes);
+        // Simple selectors: incremental.
+
+        // Stock job 2 = simple css selectors/hide
+        if ( this.job2._0.length ) {
+            i = stagedNodes.length;
+            while ( i-- ) {
+                this.runSimpleSelectorJob(this.job2, stagedNodes[i], hideNode);
+            }
+        }
+        stagedNodes = [];
+
+        // Complex selectors: non-incremental.
+        complexSelectorsOldResultSet = complexSelectorsCurrentResultSet;
+        complexSelectorsCurrentResultSet = new Set();
+
+        // Stock job 3 = complex css selectors/hide
+        // The handling of these can be considered optional, since they are
+        // also applied declaratively using a style tag.
+        if ( this.job3._0.length ) {
+            this.runComplexSelectorJob(this.job3, complexHideNode);
         }
 
-        // Complex `:has()` selectors.
-        if ( this.complexHasSelectorsCost < 10 && this.complexHasSelectors.length ) {
-            this.commitComplexHasSelectors();
+        // Custom jobs. No optional since they can't be applied in a
+        // declarative way.
+        for ( i = 4, n = this.jobQueue.length; i < n; i++ ) {
+            this.runJob(this.jobQueue[i], complexHideNode);
         }
 
-        // `:xpath()` selectors.
-        if ( this.xpathSelectorsCost < 10 && this.xpathSelectors.length ) {
-            this.commitXpathSelectors();
+        var commitHit = this.hiddenNodeCount !== beforeHiddenNodeCount;
+        if ( commitHit ) {
+            this.commitMissCount = 0;
+        } else {
+            this.commitMissCount += 1;
         }
 
-        // Committing declarative selectors is entirely optional, but it helps
-        // harden uBO against sites which try to bypass uBO's injected styles.
-
-        // Simple selectors.
-        if ( this.simpleSelectors.length ) {
-            this.commitSimpleSelectors(stagedNodes);
-        }
-
-        // Complex selectors.
-        if ( this.complexSelectorsCost < 10 && this.complexSelectors.length ) {
-            this.commitComplexSelectors();
+        // Un-hide nodes previously hidden.
+        i = complexSelectorsOldResultSet.size;
+        if ( i !== 0 ) {
+            var iter = complexSelectorsOldResultSet.values();
+            while ( i-- ) {
+                this.unhideNode(iter.next().value);
+            }
+            complexSelectorsOldResultSet.clear();
         }
 
         // If DOM nodes have been affected, lazily notify core process.
-        if (
-            this.hiddenNodeCount !== beforeHiddenNodeCount &&
-            this.cosmeticFiltersActivatedTimer === null
-        ) {
-            this.cosmeticFiltersActivatedTimer = vAPI.setTimeout(
-                this.cosmeticFiltersActivated.bind(this),
+        if ( commitHit && cosmeticFiltersActivatedTimer === null ) {
+            cosmeticFiltersActivatedTimer = vAPI.setTimeout(
+                cosmeticFiltersActivated,
                 503
             );
         }
     },
 
-    commitComplexHasSelectors: function() {
-        var tstart = window.performance.now(),
-            entry, nodes, j, node,
-            i = this.complexHasSelectors.length;
-        while ( i-- ) {
-            entry = this.complexHasSelectors[i];
-            nodes = document.querySelectorAll(entry.a);
-            j = nodes.length;
-            while ( j-- ) {
-                node = nodes[j];
-                if ( node.querySelector(entry.b) !== null ) {
-                    this.hideNode(node);
-                }
-            }
+    commit: function(nodes) {
+        if ( stagedNodes.length === 0 ) {
+            window.requestAnimationFrame(this.commit_.bind(this));
         }
-        this.complexHasSelectorsCost = window.performance.now() - tstart;
+        if ( nodes === undefined ) {
+            stagedNodes = [ document.documentElement ];
+        } else if ( stagedNodes[0] !== document.documentElement ) {
+            stagedNodes = stagedNodes.concat(nodes);
+        }
     },
 
-    commitComplexSelectors: function() {
-        if ( this.complexSelectorsNodeSet === null ) {
+    hideNode: function(node) {
+        if ( node[this.hiddenId] !== undefined ) {
             return;
         }
-        var tstart = window.performance.now(),
-            newNodeSet = new Set();
-        if ( this.complexGroupSelector === null ) {
-            this.complexGroupSelector = this.complexSelectors.join(',');
+        node.setAttribute(this.hiddenId, '');
+        this.hiddenNodeCount += 1;
+        node.hidden = true;
+        node[this.hiddenId] = null;
+        var style = window.getComputedStyle(node),
+            display = style.getPropertyValue('display');
+        if ( display !== '' && display !== 'none' ) {
+            var styleAttr = node.getAttribute('style') || '';
+            node[this.hiddenId] = node.hasAttribute('style') && styleAttr;
+            if ( styleAttr !== '' ) {
+                styleAttr += '; ';
+            }
+            node.setAttribute('style', styleAttr + 'display: none !important;');
         }
-        var nodes = document.querySelectorAll(this.complexGroupSelector),
+        if ( shadowId === undefined ) {
+            return;
+        }
+        var shadow = node.shadowRoot;
+        if ( shadow ) {
+            if ( shadow[shadowId] && shadow.firstElementChild !== null ) {
+                shadow.removeChild(shadow.firstElementChild);
+            }
+            return;
+        }
+        // https://github.com/gorhill/uBlock/pull/555
+        // Not all nodes can be shadowed:
+        //   https://github.com/w3c/webcomponents/issues/102
+        try {
+            shadow = node.createShadowRoot();
+            shadow[shadowId] = true;
+        } catch (ex) {
+        }
+    },
+
+    runSimpleSelectorJob: function(job, root, fn) {
+        if ( job._1 === undefined ) {
+            job._1 = job._0.join(cssNotHiddenId + ',');
+        }
+        if ( root[this.matchesProp](job._1) ) {
+            fn(root);
+        }
+        var nodes = root.querySelectorAll(job._1),
+            i = nodes.length;
+        while ( i-- ) {
+            fn(nodes[i], job);
+        }
+    },
+
+    runComplexSelectorJob: function(job, fn) {
+        if ( job._1 === undefined ) {
+            job._1 = job._0.join(',');
+        }
+        var nodes = document.querySelectorAll(job._1),
+            i = nodes.length;
+        while ( i-- ) {
+            fn(nodes[i], job);
+        }
+    },
+
+    runHasJob: function(job, fn) {
+        var nodes = document.querySelectorAll(job._0),
             i = nodes.length, node;
         while ( i-- ) {
             node = nodes[i];
-            newNodeSet.add(node);
-            if ( !this.complexSelectorsNodeSet.delete(node) ) {
-                this.hideNode(node);
-            }
-        }
-        var iter = this.complexSelectorsNodeSet.values();
-        while ( (node = iter.next().value) ) {
-            this.unhideNode(node);
-        }
-        this.complexSelectorsNodeSet = newNodeSet;
-        this.complexSelectorsCost = window.performance.now() - tstart;
-    },
-
-    commitSimpleHasSelectors: function(stagedNodes) {
-        var i = this.simpleHasSelectors.length,
-            entry, j, parent, nodes, k, node;
-        while ( i-- ) {
-            entry = this.simpleHasSelectors[i];
-            j = stagedNodes.length;
-            while ( j-- ) {
-                parent = stagedNodes[j];
-                if ( parent[this.matchesProp](entry.a) && parent.querySelector(entry.b) !== null ) {
-                    this.hideNode(parent);
-                }
-                nodes = parent.querySelectorAll(entry.a);
-                k = nodes.length;
-                while ( k-- ) {
-                    node = nodes[k];
-                    if ( node.querySelector(entry.b) !== null ) {
-                        this.hideNode(node);
-                    }
-                }
+            if ( node.querySelector(job._1) !== null ) {
+                fn(node, job);
             }
         }
     },
 
-    commitSimpleSelectors: function(stagedNodes) {
-        if ( this.simpleGroupSelector === null ) {
-            this.simpleGroupSelector =
-                this.simpleSelectors.join(this.cssNotHiddenId + ',') +
-                this.cssNotHiddenId;
+    runXpathJob: function(job, fn) {
+        if ( job._1 === undefined ) {
+            job._1 = document.createExpression(job._0, null);
         }
-        var i = stagedNodes.length, stagedNode, nodes, j;
-        while ( i-- ) {
-            stagedNode = stagedNodes[i];
-            if ( stagedNode[this.matchesProp](this.simpleGroupSelector) ) {
-                this.hideNode(stagedNode);
-            }
-            nodes = stagedNode.querySelectorAll(this.simpleGroupSelector);
-            j = nodes.length;
-            while ( j-- ) {
-                this.hideNode(nodes[j]);
-            }
-        }
-    },
-
-    commitXpathSelectors: function() {
-        var tstart = window.performance.now();
-        if ( this.xpathExpression === null ) {
-            this.xpathExpression = document.createExpression(
-                this.xpathSelectors.join('|'),
-                null
-            );
-        }
-        this.xpathResult = this.xpathExpression.evaluate(
+        var xpr = job._2 = job._1.evaluate(
             document,
             XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
-            this.xpathResult
+            job._2 || null
         );
-        var i = this.xpathResult.snapshotLength, node;
+        var i = xpr.snapshotLength, node;
         while ( i-- ) {
-            node = this.xpathResult.snapshotItem(i);
+            node = xpr.snapshotItem(i);
             if ( node.nodeType === 1 ) {
-                this.hideNode(node);
+                fn(node, job);
             }
         }
-        this.xpathSelectorsCost = window.performance.now() - tstart;
     },
 
-    cosmeticFiltersActivated: function() {
-        this.cosmeticFiltersActivatedTimer = null;
-        vAPI.messaging.send(
-            'contentscript',
-            { what: 'cosmeticFiltersActivated' }
-        );
-    },
-
-    hideNode: (function() {
-        if ( document.documentElement.shadowRoot === undefined ) {
-            return function(node) {
-                this.hiddenNodeCount += 1;
-                node.setAttribute(this.hiddenId, '');
-                if ( this.enabled ) {
-                    node.style.setProperty('display', 'none', 'important');
-                }
-            };
+    runJob: function(job, fn) {
+        switch ( job.t ) {
+        case 'has-hide':
+            this.runHasJob(job, fn);
+            break;
+        case 'xpath-hide':
+            this.runXpathJob(job, fn);
+            break;
+        case 'has-style':
+            // not supported yet
+            break;
+        case 'xpath-style':
+            // not supported yet
+            break;
         }
-        return function(node) {
-            this.hiddenNodeCount += 1;
-            node.setAttribute(this.hiddenId, '');
-            var shadow = node.shadowRoot;
-            // https://www.chromestatus.com/features/4668884095336448
-            // "Multiple shadow roots is being deprecated."
-            if ( shadow !== null ) {
-                if ( shadow.className !== this.shadowId ) {
-                    node.style.setProperty('display', 'none', 'important');
-                } else if ( shadow.firstElementChild !== null ) {
-                    shadow.removeChild(shadow.firstElementChild);
-                }
-                return;
+    },
+
+    showNode: function(node) {
+        node.hidden = false;
+        var styleAttr = node[this.hiddenId];
+        if ( styleAttr === false ) {
+            node.removeAttribute('style');
+        } else if ( typeof styleAttr === 'string' ) {
+            node.setAttribute('style', node[this.hiddenId]);
+        }
+        var shadow = node.shadowRoot;
+        if ( shadow && shadow[shadowId] ) {
+            if ( shadow.firstElementChild !== null ) {
+                shadow.removeChild(shadow.firstElementChild);
             }
-            // https://github.com/gorhill/uBlock/pull/555
-            // Not all nodes can be shadowed:
-            //   https://github.com/w3c/webcomponents/issues/102
-            // https://github.com/gorhill/uBlock/issues/762
-            // Remove display style that might get in the way of the shadow
-            // node doing its magic.
-            try {
-                shadow = node.createShadowRoot();
-                shadow.className = this.shadowId;
-                node.style.removeProperty('display');
-            } catch (ex) {
-                node.style.setProperty('display', 'none', 'important');
-            }
-        };
-    })(),
+            shadow.appendChild(document.createElement('content'));
+        }
+    },
 
     toggleOff: function() {
         this.enabled = false;
@@ -423,38 +492,57 @@ vAPI.domFilterer = {
     },
 
     unhideNode: function(node) {
-        this.hiddenNodeCount--;
+        if ( node[this.hiddenId] !== undefined ) {
+            this.hiddenNodeCount--;
+        }
         node.removeAttribute(this.hiddenId);
+        node[this.hiddenId] = undefined;
+        node.hidden = false;
         var shadow = node.shadowRoot;
-        if ( shadow && shadow.className === this.shadowId ) {
+        if ( shadow && shadow[shadowId] ) {
             if ( shadow.firstElementChild !== null ) {
                 shadow.removeChild(shadow.firstElementChild);
             }
             shadow.appendChild(document.createElement('content'));
-        } else {
-            node.style.removeProperty('display');
+        }
+    },
+
+    unshowNode: function(node) {
+        node.hidden = true;
+        var styleAttr = node[this.hiddenId];
+        if ( styleAttr === false ) {
+            node.setAttribute('style', 'display: none !important;');
+        } else if ( typeof styleAttr === 'string' ) {
+            node.setAttribute('style', node[this.hiddenId] + '; display: none !important;');
+        }
+        var shadow = node.shadowRoot;
+        if ( shadow && shadow[shadowId] && shadow.firstElementChild !== null ) {
+            shadow.removeChild(shadow.firstElementChild);
         }
     }
 };
 
+/******************************************************************************/
 
-// Not everything could be initialized at declaration time.
-(function() {
-    var df = vAPI.domFilterer;
-    df.cssNotHiddenId = ':not([' + df.hiddenId + '])';
+var hideNode = domFilterer.hideNode.bind(domFilterer);
 
-    // Complex selectors, due to their nature may need to be "de-committed". A
-    // Set() is used to implement this functionality. For browser with no
-    // support of Set(), uBO will skip committing complex selectors.
-    if ( typeof window.Set === 'function' ) {
-        df.complexSelectorsNodeSet = new Set();
+var complexHideNode = function(node) {
+    complexSelectorsCurrentResultSet.add(node);
+    if ( !complexSelectorsOldResultSet.delete(node) ) {
+        hideNode(node);
     }
+};
 
-    // Theoretically, `:has`- and `:xpath`-based selectors may also need to
-    // be de-committed. But for performance purpose, this is not implemented,
-    // and anyways, the point of these selectors is to be very accurate, so
-    // I do not expect de-committing scenarios to occur with proper use of
-    // these selectors.
+/******************************************************************************/
+
+var cssNotHiddenId = ':not([' + domFilterer.hiddenId + '])';
+
+/******************************************************************************/
+
+return domFilterer;
+
+/******************************************************************************/
+
 })();
 
 /******************************************************************************/
@@ -466,121 +554,109 @@ vAPI.domFilterer = {
 
 (function domIsLoading() {
 
-/******************************************************************************/
+    // Domain-based ABP cosmetic filters.
+    // These can be inserted before the DOM is loaded.
 
-// Domain-based ABP cosmetic filters.
-// These can be inserted before the DOM is loaded.
+    var cosmeticFilters = function(details) {
+        var domFilterer = vAPI.domFilterer;
+        domFilterer.addExceptions(details.cosmeticDonthide);
+        // https://github.com/chrisaljoudi/uBlock/issues/143
+        domFilterer.addSelectors(details.cosmeticHide);
+        domFilterer.commit();
+    };
 
-var cosmeticFilters = function(details) {
-    var domFilterer = vAPI.domFilterer;
-    domFilterer.addExceptions(details.cosmeticDonthide);
-    // https://github.com/chrisaljoudi/uBlock/issues/143
-    domFilterer.addSelectors(details.cosmeticHide);
-    domFilterer.commit();
-};
-
-/******************************************************************************/
-
-var netFilters = function(details) {
-    var parent = document.head || document.documentElement;
-    if ( !parent ) {
-        return;
-    }
-    var styleTag = document.createElement('style');
-    styleTag.setAttribute('type', 'text/css');
-    var text = details.netHide.join(',\n');
-    var css = details.netCollapse ?
-        '\n{display:none !important;}' :
-        '\n{visibility:hidden !important;}';
-    styleTag.appendChild(document.createTextNode(text + css));
-    parent.appendChild(styleTag);
-};
-
-/******************************************************************************/
-
-// Create script tags and assign data URIs looked up from our library of
-// redirection resources: Sometimes it is useful to use these resources as
-// standalone scriptlets. These scriptlets are injected from within the
-// content scripts because what must be injected, if anything, depends on the
-// currently active filters, as selected by the user.
-// Library of redirection resources is located at:
-// https://github.com/gorhill/uBlock/blob/master/assets/ublock/resources.txt
-
-var injectScripts = function(scripts) {
-    var parent = document.head || document.documentElement;
-    if ( !parent ) {
-        return;
-    }
-    var scriptTag = document.createElement('script');
-    // Have the injected script tag remove itself when execution completes: to
-    // keep DOM as clean as possible.
-    scripts +=
-        "\n" +
-        "(function() {\n" +
-        "    var c = document.currentScript,\n" +
-        "        p = c && c.parentNode;\n" +
-        "    if ( p ) {\n" +
-        "        p.removeChild(c);\n" +
-        "    }\n" +
-        "})();";
-    scriptTag.appendChild(document.createTextNode(scripts));
-    parent.appendChild(scriptTag);
-    vAPI.injectedScripts = scripts;
-};
-
-/******************************************************************************/
-
-var responseHandler = function(details) {
-    vAPI.executionCost.start();
-
-    if ( details ) {
-        if (
-            (vAPI.skipCosmeticFiltering = details.skipCosmeticFiltering) !== true &&
-            (details.cosmeticHide.length !== 0 || details.cosmeticDonthide.length !== 0)
-        ) {
-            cosmeticFilters(details);
+    var netFilters = function(details) {
+        var parent = document.head || document.documentElement;
+        if ( !parent ) {
+            return;
         }
-        if ( details.netHide.length !== 0 ) {
-            netFilters(details);
+        var styleTag = document.createElement('style');
+        styleTag.setAttribute('type', 'text/css');
+        var text = details.netHide.join(',\n');
+        var css = details.netCollapse ?
+            '\n{display:none !important;}' :
+            '\n{visibility:hidden !important;}';
+        styleTag.appendChild(document.createTextNode(text + css));
+        parent.appendChild(styleTag);
+    };
+
+    // Create script tags and assign data URIs looked up from our library of
+    // redirection resources: Sometimes it is useful to use these resources as
+    // standalone scriptlets. These scriptlets are injected from within the
+    // content scripts because what must be injected, if anything, depends on
+    // the currently active filters, as selected by the user.
+    // Library of redirection resources is located at:
+    // https://github.com/gorhill/uBlock/blob/master/assets/ublock/resources.txt
+
+    var injectScripts = function(scripts) {
+        var parent = document.head || document.documentElement;
+        if ( !parent ) {
+            return;
         }
-        if ( details.scripts ) {
-            injectScripts(details.scripts);
+        var scriptTag = document.createElement('script');
+        // Have the injected script tag remove itself when execution completes:
+        // to keep DOM as clean as possible.
+        scripts +=
+            "\n" +
+            "(function() {\n" +
+            "    var c = document.currentScript,\n" +
+            "        p = c && c.parentNode;\n" +
+            "    if ( p ) {\n" +
+            "        p.removeChild(c);\n" +
+            "    }\n" +
+            "})();";
+        scriptTag.appendChild(document.createTextNode(scripts));
+        parent.appendChild(scriptTag);
+        vAPI.injectedScripts = scripts;
+    };
+
+    var responseHandler = function(details) {
+        vAPI.executionCost.start();
+
+        if ( details ) {
+            vAPI.skipCosmeticFiltering = details.skipCosmeticFiltering;
+            vAPI.skipCosmeticSurveying = details.skipCosmeticSurveying;
+            if (
+                (details.skipCosmeticFiltering !== true) &&
+                (details.cosmeticHide.length !== 0 || details.cosmeticDonthide.length !== 0)
+            ) {
+                cosmeticFilters(details);
+            }
+            if ( details.netHide.length !== 0 ) {
+                netFilters(details);
+            }
+            if ( details.scripts ) {
+                injectScripts(details.scripts);
+            }
+            // The port will never be used again at this point, disconnecting
+            // allows the browser to flush this script from memory.
         }
-        // The port will never be used again at this point, disconnecting allows
-        // the browser to flush this script from memory.
-    }
 
-    // https://github.com/chrisaljoudi/uBlock/issues/587
-    // If no filters were found, maybe the script was injected before uBlock's
-    // process was fully initialized. When this happens, pages won't be
-    // cleaned right after browser launch.
-    vAPI.contentscriptInjected = details && details.ready;
+        // https://github.com/chrisaljoudi/uBlock/issues/587
+        // If no filters were found, maybe the script was injected before
+        // uBlock's process was fully initialized. When this happens, pages
+        // won't be cleaned right after browser launch.
+        vAPI.contentscriptInjected = details && details.ready;
 
-    vAPI.executionCost.stop('domIsLoading/responseHandler');
-};
+        vAPI.executionCost.stop('domIsLoading/responseHandler');
+    };
 
-/******************************************************************************/
-
-var url = window.location.href;
-vAPI.messaging.send(
-    'contentscript',
-    {
-        what: 'retrieveDomainCosmeticSelectors',
-        pageURL: url,
-        locationURL: url
-    },
-    responseHandler
-);
-
-/******************************************************************************/
+    var url = window.location.href;
+    vAPI.messaging.send(
+        'contentscript',
+        {
+            what: 'retrieveDomainCosmeticSelectors',
+            pageURL: url,
+            locationURL: url
+        },
+        responseHandler
+    );
 
 })();
 
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
-
-// https://github.com/chrisaljoudi/uBlock/issues/7
 
 var domCollapser = (function() {
     var timer = null;
@@ -653,6 +729,7 @@ var domCollapser = (function() {
             // https://github.com/chrisaljoudi/uBlock/issues/399
             // Never remove elements from the DOM, just hide them
             target.style.setProperty('display', 'none', 'important');
+            target.hidden = true;
 
             // https://github.com/chrisaljoudi/uBlock/issues/1048
             // Use attribute to construct CSS rule
@@ -841,7 +918,12 @@ if ( !vAPI.contentscriptInjected ) {
 
 vAPI.executionCost.start();
 
-/******************************************************************************/
+/*******************************************************************************
+
+skip-survey=false: survey-phase-1 => survey-phase-2 => survey-phase-3 => commit
+ skip-survey=true: commit
+
+*/
 
 // Cosmetic filtering.
 
@@ -853,301 +935,327 @@ vAPI.executionCost.start();
 
     // https://github.com/chrisaljoudi/uBlock/issues/789
     // https://github.com/gorhill/uBlock/issues/873
-    // Be sure that our style tags used for cosmetic filtering are still applied.
+    // Be sure that our style tags used for cosmetic filtering are still
+    // applied.
     var domFilterer = vAPI.domFilterer;
     domFilterer.checkStyleTags(false);
     domFilterer.commit();
 
     var contextNodes = [ document.documentElement ],
-        messaging = vAPI.messaging,
-        highGenerics = null,
-        lowGenericSelectors = [],
-        queriedSelectors = Object.create(null);
+        messaging = vAPI.messaging;
 
-    var responseHandler = function(response) {
-        // https://github.com/gorhill/uMatrix/issues/144
-        if ( response && response.shutdown ) {
-            vAPI.shutdown.exec();
+    var domSurveyor = (function() {
+        if ( vAPI.skipCosmeticSurveying === true ) {
             return;
         }
 
-        vAPI.executionCost.start();
+        var cosmeticSurveyingMissCount = 0,
+            highGenerics = null,
+            lowGenericSelectors = [],
+            queriedSelectors = Object.create(null);
 
-        var result = response && response.result;
+        // Handle main process' response.
 
-        if ( result ) {
-            if ( result.hide.length ) {
-                processLowGenerics(result.hide);
+        var surveyPhase3 = function(response) {
+            // https://github.com/gorhill/uMatrix/issues/144
+            if ( response && response.shutdown ) {
+                vAPI.shutdown.exec();
+                return;
             }
-            if ( result.highGenerics ) {
-                highGenerics = result.highGenerics;
-            }
-        }
 
-        if ( highGenerics ) {
-            if ( highGenerics.hideLowCount ) {
-                processHighLowGenerics(highGenerics.hideLow);
-            }
-            if ( highGenerics.hideMediumCount ) {
-                processHighMediumGenerics(highGenerics.hideMedium);
-            }
-            if ( highGenerics.hideHighSimpleCount || highGenerics.hideHighComplexCount ) {
-                processHighHighGenerics();
-            }
-        }
+            vAPI.executionCost.start();
 
-        domFilterer.commit(contextNodes);
-        contextNodes = [];
+            var result = response && response.result,
+                firstSurvey = highGenerics === null;
 
-        vAPI.executionCost.stop('domIsLoaded/responseHandler');
-    };
-
-    var retrieveGenericSelectors = function() {
-        if ( lowGenericSelectors.length !== 0 || highGenerics === null ) {
-            messaging.send(
-                'contentscript',
-                {
-                    what: 'retrieveGenericCosmeticSelectors',
-                    pageURL: window.location.href,
-                    selectors: lowGenericSelectors,
-                    firstSurvey: highGenerics === null
-                },
-                responseHandler
-            );
-            lowGenericSelectors = [];
-        } else {
-            responseHandler(null);
-        }
-    };
-
-    // Extract and return the staged nodes which (may) match the selectors.
-
-    var selectNodes = function(selector) {
-        var stagedNodes = contextNodes,
-            i = stagedNodes.length;
-        if ( i === 1 && stagedNodes[0] === document.documentElement ) {
-            return document.querySelectorAll(selector);
-        }
-        var targetNodes = [],
-            node, nodeList, j;
-        while ( i-- ) {
-            node = stagedNodes[i];
-            targetNodes.push(node);
-            nodeList = node.querySelectorAll(selector);
-            j = nodeList.length;
-            while ( j-- ) {
-                targetNodes.push(nodeList[j]);
-            }
-        }
-        return targetNodes;
-    };
-
-    // Low generics:
-    // - [id]
-    // - [class]
-
-    var processLowGenerics = function(generics) {
-        domFilterer.addSelectors(generics);
-    };
-
-    // High-low generics:
-    // - [alt="..."]
-    // - [title="..."]
-
-    var processHighLowGenerics = function(generics) {
-        var attrs = ['title', 'alt'];
-        var attr, attrValue, nodeList, iNode, node;
-        var selector;
-        while ( (attr = attrs.pop()) ) {
-            nodeList = selectNodes('[' + attr + ']');
-            iNode = nodeList.length;
-            while ( iNode-- ) {
-                node = nodeList[iNode];
-                attrValue = node.getAttribute(attr);
-                if ( !attrValue ) { continue; }
-                // Candidate 1 = generic form
-                // If generic form is injected, no need to process the specific
-                // form, as the generic will affect all related specific forms
-                selector = '[' + attr + '="' + attrValue + '"]';
-                if ( generics.hasOwnProperty(selector) ) {
-                    domFilterer.addSelector(selector);
-                    domFilterer.hideNode(node);
-                    continue;
+            if ( result ) {
+                if ( result.hide.length ) {
+                    processLowGenerics(result.hide);
                 }
-                // Candidate 2 = specific form
-                selector = node.localName + selector;
-                if ( generics.hasOwnProperty(selector) ) {
-                    domFilterer.addSelector(selector);
-                    domFilterer.hideNode(node);
+                if ( result.highGenerics ) {
+                    highGenerics = result.highGenerics;
                 }
             }
-        }
-    };
 
-    // High-medium generics:
-    // - [href^="http"]
-
-    var processHighMediumGenerics = function(generics) {
-        var stagedNodes = contextNodes,
-            i = stagedNodes.length;
-        if ( i === 1 && stagedNodes[0] === document.documentElement ) {
-            processHighMediumGenericsForNodes(document.links, generics);
-            return;
-        }
-        var aa = [ null ],
-            node, nodes;
-        while ( i-- ) {
-            node = stagedNodes[i];
-            if ( node.localName === 'a' ) {
-                aa[0] = node;
-                processHighMediumGenericsForNodes(aa, generics);
-            }
-            nodes = node.getElementsByTagName('a');
-            if ( nodes.length !== 0 ) {
-                processHighMediumGenericsForNodes(nodes, generics);
-            }
-        }
-    };
-
-    var processHighMediumGenericsForNodes = function(nodes, generics) {
-        var i = nodes.length,
-            node, href, pos, hash, selectors, j, selector,
-            aa = [ '' ];
-        while ( i-- ) {
-            node = nodes[i];
-            href = node.getAttribute('href');
-            if ( !href ) { continue; }
-            pos = href.indexOf('://');
-            if ( pos === -1 ) { continue; }
-            hash = href.slice(pos + 3, pos + 11);
-            selectors = generics[hash];
-            if ( selectors === undefined ) { continue; }
-            // A string.
-            if ( typeof selectors === 'string' ) {
-                aa[0] = selectors;
-                selectors = aa;
-            }
-            // An array of strings.
-            j = selectors.length;
-            while ( j-- ) {
-                selector = selectors[j];
-                if ( href.lastIndexOf(selector, 8) === 8 ) {
-                    domFilterer.addSelector(selector);
-                    domFilterer.hideNode(node);
+            if ( highGenerics ) {
+                if ( highGenerics.hideLowCount ) {
+                    processHighLowGenerics(highGenerics.hideLow);
+                }
+                if ( highGenerics.hideMediumCount ) {
+                    processHighMediumGenerics(highGenerics.hideMedium);
+                }
+                if ( highGenerics.hideHighSimpleCount || highGenerics.hideHighComplexCount ) {
+                    processHighHighGenerics();
                 }
             }
-        }
-    };
 
-    var highHighSimpleGenericsCost = 0,
-        highHighSimpleGenericsInjected = false,
-        highHighComplexGenericsCost = 0,
-        highHighComplexGenericsInjected = false;
+            // Need to do this before committing DOM filterer, as needed info
+            // will no longer be there after commit.
+            if ( firstSurvey || domFilterer.job0._0.length ) {
+                messaging.send(
+                    'contentscript',
+                    {
+                        what: 'cosmeticFiltersInjected',
+                        type: 'cosmetic',
+                        hostname: window.location.hostname,
+                        selectors: domFilterer.job0._0
+                    }
+                );
+            }
 
-    var processHighHighGenerics = function() {
-        var tstart;
-        // Simple selectors.
-        if (
-            highHighSimpleGenericsInjected === false &&
-            highHighSimpleGenericsCost < 50 &&
-            highGenerics.hideHighSimpleCount !== 0
-        ) {
-            tstart = window.performance.now();
-            var matchesProp = vAPI.matchesProp,
-                nodes = contextNodes,
-                i = nodes.length, node;
+            // Shutdown surveyor if too many consecutive empty resultsets.
+            if ( domFilterer.job0._0.length === 0 ) {
+                cosmeticSurveyingMissCount += 1;
+                if ( cosmeticSurveyingMissCount > 255 ) {
+                    domSurveyor = undefined;
+                }
+            } else {
+                cosmeticSurveyingMissCount = 0;
+            }
+
+            domFilterer.commit(contextNodes);
+            contextNodes = [];
+
+            vAPI.executionCost.stop('domIsLoaded/surveyPhase2');
+        };
+
+        // Query main process.
+
+        var surveyPhase2 = function() {
+            if ( lowGenericSelectors.length !== 0 || highGenerics === null ) {
+                messaging.send(
+                    'contentscript',
+                    {
+                        what: 'retrieveGenericCosmeticSelectors',
+                        pageURL: window.location.href,
+                        selectors: lowGenericSelectors,
+                        firstSurvey: highGenerics === null
+                    },
+                    surveyPhase3
+                );
+                lowGenericSelectors = [];
+            } else {
+                surveyPhase3(null);
+            }
+        };
+
+        // Low generics:
+        // - [id]
+        // - [class]
+
+        var processLowGenerics = function(generics) {
+            domFilterer.addSelectors(generics);
+        };
+
+        // High-low generics:
+        // - [alt="..."]
+        // - [title="..."]
+
+        var processHighLowGenerics = function(generics) {
+            var attrs = ['title', 'alt'];
+            var attr, attrValue, nodeList, iNode, node;
+            var selector;
+            while ( (attr = attrs.pop()) ) {
+                nodeList = selectNodes('[' + attr + ']');
+                iNode = nodeList.length;
+                while ( iNode-- ) {
+                    node = nodeList[iNode];
+                    attrValue = node.getAttribute(attr);
+                    if ( !attrValue ) { continue; }
+                    // Candidate 1 = generic form
+                    // If generic form is injected, no need to process the
+                    // specific form, as the generic will affect all related
+                    // specific forms.
+                    selector = '[' + attr + '="' + attrValue + '"]';
+                    if ( generics.hasOwnProperty(selector) ) {
+                        domFilterer.addSelector(selector).hideNode(node);
+                        continue;
+                    }
+                    // Candidate 2 = specific form
+                    selector = node.localName + selector;
+                    if ( generics.hasOwnProperty(selector) ) {
+                        domFilterer.addSelector(selector).hideNode(node);
+                    }
+                }
+            }
+        };
+
+        // High-medium generics:
+        // - [href^="http"]
+
+        var processHighMediumGenerics = function(generics) {
+            var stagedNodes = contextNodes,
+                i = stagedNodes.length;
+            if ( i === 1 && stagedNodes[0] === document.documentElement ) {
+                processHighMediumGenericsForNodes(document.links, generics);
+                return;
+            }
+            var aa = [ null ],
+                node, nodes;
+            while ( i-- ) {
+                node = stagedNodes[i];
+                if ( node.localName === 'a' ) {
+                    aa[0] = node;
+                    processHighMediumGenericsForNodes(aa, generics);
+                }
+                nodes = node.getElementsByTagName('a');
+                if ( nodes.length !== 0 ) {
+                    processHighMediumGenericsForNodes(nodes, generics);
+                }
+            }
+        };
+
+        var processHighMediumGenericsForNodes = function(nodes, generics) {
+            var i = nodes.length,
+                node, href, pos, entry, j, selector;
             while ( i-- ) {
                 node = nodes[i];
-                if (
-                    node[matchesProp](highGenerics.hideHighSimple) ||
-                    node.querySelector(highGenerics.hideHighSimple) !== null
-                ) {
-                    highHighSimpleGenericsInjected = true;
-                    domFilterer.addSelectors(highGenerics.hideHighSimple.split(',\n'));
-                    break;
+                href = node.getAttribute('href');
+                if ( !href ) { continue; }
+                pos = href.indexOf('://');
+                if ( pos === -1 ) { continue; }
+                entry = generics[href.slice(pos + 3, pos + 11)];
+                if ( entry === undefined ) { continue; }
+                if ( typeof entry === 'string' ) {
+                    if ( href.lastIndexOf(entry.slice(8, -2), 0) === 0 ) {
+                        domFilterer.addSelector(entry).hideNode(node);
+                    }
+                    continue;
+                }
+                j = entry.length;
+                while ( j-- ) {
+                    selector = entry[j];
+                    if ( href.lastIndexOf(selector.slice(8, -2), 0) === 0 ) {
+                        domFilterer.addSelector(selector).hideNode(node);
+                    }
                 }
             }
-            highHighSimpleGenericsCost += window.performance.now() - tstart;
-        }
-        // Complex selectors.
-        if (
-            highHighComplexGenericsInjected === false &&
-            highHighComplexGenericsCost < 50 &&
-            highGenerics.hideHighComplexCount !== 0
-        ) {
-            tstart = window.performance.now();
-            if ( document.querySelector(highGenerics.hideHighComplex) !== null ) {
-                highHighComplexGenericsInjected = true;
-                domFilterer.addSelectors(highGenerics.hideHighComplex.split(',\n'));
-                domFilterer.commit();
-            }
-            highHighComplexGenericsCost += window.performance.now() - tstart;
-        }
-    };
+        };
 
-    // Extract all classes/ids: these will be passed to the cosmetic filtering
-    // engine, and in return we will obtain only the relevant CSS selectors.
+        var highHighSimpleGenericsCost = 0,
+            highHighSimpleGenericsInjected = false,
+            highHighComplexGenericsCost = 0,
+            highHighComplexGenericsInjected = false;
 
-    // https://github.com/gorhill/uBlock/issues/672
-    // http://www.w3.org/TR/2014/REC-html5-20141028/infrastructure.html#space-separated-tokens
-    // http://jsperf.com/enumerate-classes/6
+        var processHighHighGenerics = function() {
+            var tstart;
+            // Simple selectors.
+            if (
+                highHighSimpleGenericsInjected === false &&
+                highHighSimpleGenericsCost < 50 &&
+                highGenerics.hideHighSimpleCount !== 0
+            ) {
+                tstart = window.performance.now();
+                var matchesProp = vAPI.matchesProp,
+                    nodes = contextNodes,
+                    i = nodes.length, node;
+                while ( i-- ) {
+                    node = nodes[i];
+                    if (
+                        node[matchesProp](highGenerics.hideHighSimple) ||
+                        node.querySelector(highGenerics.hideHighSimple) !== null
+                    ) {
+                        highHighSimpleGenericsInjected = true;
+                        domFilterer.addSelectors(highGenerics.hideHighSimple.split(',\n'));
+                        break;
+                    }
+                }
+                highHighSimpleGenericsCost += window.performance.now() - tstart;
+            }
+            // Complex selectors.
+            if (
+                highHighComplexGenericsInjected === false &&
+                highHighComplexGenericsCost < 50 &&
+                highGenerics.hideHighComplexCount !== 0
+            ) {
+                tstart = window.performance.now();
+                if ( document.querySelector(highGenerics.hideHighComplex) !== null ) {
+                    highHighComplexGenericsInjected = true;
+                    domFilterer.addSelectors(highGenerics.hideHighComplex.split(',\n'));
+                    domFilterer.commit();
+                }
+                highHighComplexGenericsCost += window.performance.now() - tstart;
+            }
+        };
 
-    var classesAndIdsFromNodeList = function(nodes) {
-        if ( !nodes ) { return; }
-        var qq = queriedSelectors;
-        var ll = lowGenericSelectors;
-        var node, v, vv, len, c, beg, end;
-        var i = nodes.length;
-        while ( i-- ) {
-            node = nodes[i];
-            if ( node.nodeType !== 1 ) { continue; }
-            v = node.id;
-            if ( v !== '' && typeof v === 'string' ) {
-                v = '#' + v.trim();
-                if ( v !== '#' && qq[v] === undefined ) {
-                    ll.push(v);
-                    qq[v] = true;
+        // Extract and return the staged nodes which (may) match the selectors.
+
+        var selectNodes = function(selector) {
+            var stagedNodes = contextNodes,
+                i = stagedNodes.length;
+            if ( i === 1 && stagedNodes[0] === document.documentElement ) {
+                return document.querySelectorAll(selector);
+            }
+            var targetNodes = [],
+                node, nodeList, j;
+            while ( i-- ) {
+                node = stagedNodes[i];
+                targetNodes.push(node);
+                nodeList = node.querySelectorAll(selector);
+                j = nodeList.length;
+                while ( j-- ) {
+                    targetNodes.push(nodeList[j]);
                 }
             }
-            vv = node.className;
-            if ( vv === '' || typeof vv !== 'string' ) { continue; }
-            len = vv.length;
-            beg = 0;
-            for (;;) {
-                // Skip whitespaces
-                while ( beg !== len ) {
-                    c = vv.charCodeAt(beg);
-                    if ( c > 0x20 ) { break; }
-                    beg++;
+            return targetNodes;
+        };
+
+        // Extract all classes/ids: these will be passed to the cosmetic
+        // filtering engine, and in return we will obtain only the relevant
+        // CSS selectors.
+
+        // https://github.com/gorhill/uBlock/issues/672
+        // http://www.w3.org/TR/2014/REC-html5-20141028/infrastructure.html#space-separated-tokens
+        // http://jsperf.com/enumerate-classes/6
+
+        var surveyPhase1 = function() {
+            var nodes = selectNodes('[class],[id]');
+            var qq = queriedSelectors;
+            var ll = lowGenericSelectors;
+            var node, v, vv, j;
+            var i = nodes.length;
+            while ( i-- ) {
+                node = nodes[i];
+                if ( node.nodeType !== 1 ) { continue; }
+                v = node.id;
+                if ( v !== '' && typeof v === 'string' ) {
+                    v = '#' + v.trim();
+                    if ( v !== '#' && qq[v] === undefined ) {
+                        ll.push(v);
+                        qq[v] = true;
+                    }
                 }
-                if ( beg === len ) { break; }
-                end = beg + 1;
-                // Skip non-whitespaces
-                while ( end !== len ) {
-                    c = vv.charCodeAt(end);
-                    if ( c <= 0x20 ) { break; }
-                    end++;
+                vv = node.className;
+                if ( vv === '' || typeof vv !== 'string' ) { continue; }
+                if ( /\s/.test(vv) === false ) {
+                    v = '.' + vv;
+                    if ( qq[v] === undefined ) {
+                        ll.push(v);
+                        qq[v] = true;
+                    }
+                } else {
+                    vv = node.classList;
+                    j = vv.length;
+                    while ( j-- ) {
+                        v = '.' + vv[j];
+                        if ( qq[v] === undefined ) {
+                            ll.push(v);
+                            qq[v] = true;
+                        }
+                    }
                 }
-                v = '.' + vv.slice(beg, end);
-                if ( qq[v] === undefined ) {
-                    ll.push(v);
-                    qq[v] = true;
-                }
-                if ( end === len ) { break; }
-                beg = end + 1;
             }
-        }
-    };
+            surveyPhase2();
+        };
+
+        return surveyPhase1;
+    })();
 
     // Start cosmetic filtering.
 
-    var allElems = document.all;
-    classesAndIdsFromNodeList(
-        allElems instanceof Object ?
-            allElems :
-            document.querySelectorAll('[class],[id]')
-    );
-    retrieveGenericSelectors();
+    if ( domSurveyor ) {
+        domSurveyor();
+    }
 
     //console.debug('%f: uBlock: survey time', timer.now() - tStart);
 
@@ -1175,9 +1283,9 @@ vAPI.executionCost.start();
     // Added node lists will be cumulated here before being processed
     var addedNodeLists = [];
     var addedNodeListsTimer = null;
-    var addedNodeListsTimerDelay = 25;
+    var addedNodeListsTimerDelay = 0;
     var removedNodeListsTimer = null;
-    var removedNodeListsTimerDelay = 25;
+    var removedNodeListsTimerDelay = 5;
     var collapser = domCollapser;
 
     var addedNodesHandler = function() {
@@ -1185,7 +1293,7 @@ vAPI.executionCost.start();
 
         addedNodeListsTimer = null;
         if ( addedNodeListsTimerDelay < 100 ) {
-            addedNodeListsTimerDelay += 25;
+            addedNodeListsTimerDelay += 10;
         }
         var iNodeList = addedNodeLists.length,
             nodeList, iNode, node;
@@ -1206,11 +1314,18 @@ vAPI.executionCost.start();
         }
         addedNodeLists.length = 0;
         if ( contextNodes.length !== 0 ) {
-            classesAndIdsFromNodeList(selectNodes('[class],[id]'));
-            retrieveGenericSelectors();
+            if ( domSurveyor ) {
+                domSurveyor();
+            } else {
+                domFilterer.commit(contextNodes);
+                contextNodes = [];
+                if ( domFilterer.commitMissCount > 255 ) {
+                    domLayoutObserver.disconnect();
+                }
+            }
         }
 
-        vAPI.executionCost.stop('domIsLoaded/responseHandler');
+        vAPI.executionCost.stop('domIsLoaded/addedNodesHandler');
     };
 
     // https://github.com/gorhill/uBlock/issues/873
@@ -1310,7 +1425,7 @@ vAPI.executionCost.start();
 
 (function() {
     var collapser = domCollapser;
-    var elems = document.getElementsByTagName('img'),
+    var elems = document.images || document.getElementsByTagName('img'),
         i = elems.length, elem;
     while ( i-- ) {
         elem = elems[i];
@@ -1318,7 +1433,7 @@ vAPI.executionCost.start();
             collapser.add(elem);
         }
     }
-    collapser.addMany(document.getElementsByTagName('embed'));
+    collapser.addMany(document.embeds || document.getElementsByTagName('embed'));
     collapser.addMany(document.getElementsByTagName('object'));
     collapser.addIFrames(document.getElementsByTagName('iframe'));
     collapser.process(0);

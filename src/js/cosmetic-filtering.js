@@ -49,6 +49,8 @@ var isBadRegex = function(s) {
     return false;
 };
 
+var cosmeticSurveyingMissCountMax = parseInt(vAPI.localStorage.getItem('cosmeticSurveyingMissCountMax'), 10) || 15;
+
 /******************************************************************************/
 /*
 var histogram = function(label, buckets) {
@@ -495,6 +497,7 @@ SelectorCacheEntry.prototype.netHighWaterMark = 30;
 
 SelectorCacheEntry.prototype.reset = function () {
     this.cosmetic = {};
+    this.cosmeticSurveyingMissCount = 0;
     this.net = {};
     this.netCount = 0;
     this.lastAccessTime = Date.now();
@@ -512,10 +515,15 @@ SelectorCacheEntry.prototype.dispose = function () {
 
 /******************************************************************************/
 
-SelectorCacheEntry.prototype.addCosmetic = function (selectors) {
-    var dict = this.cosmetic;
+SelectorCacheEntry.prototype.addCosmetic = function(selectors) {
     var i = selectors.length || 0;
-    while (i--) {
+    if ( i === 0 ) {
+        this.cosmeticSurveyingMissCount += 1;
+        return;
+    }
+    this.cosmeticSurveyingMissCount = 0;
+    var dict = this.cosmetic;
+    while ( i-- ) {
         dict[selectors[i]] = true;
     }
 };
@@ -587,6 +595,7 @@ SelectorCacheEntry.prototype.remove = function (type) {
     this.lastAccessTime = Date.now();
     if (type === undefined || type === 'cosmetic') {
         this.cosmetic = {};
+        this.cosmeticSurveyingMissCount = 0;
     }
     if (type === undefined || type === 'net') {
         this.net = {};
@@ -684,9 +693,9 @@ var FilterContainer = function () {
     this.type0NoDomainHash = 'type0NoDomain';
     this.type1NoDomainHash = 'type1NoDomain';
     this.parser = new FilterParser();
-    this.selectorCachePruneDelay = 5 * 60 * 1000; // 5 minutes
-    this.selectorCacheAgeMax = 20 * 60 * 1000; // 20 minutes
-    this.selectorCacheCountMin = 10;
+    this.selectorCachePruneDelay = 10 * 60 * 1000; // 15 minutes
+    this.selectorCacheAgeMax = 120 * 60 * 1000; // 120 minutes
+    this.selectorCacheCountMin = 25;
     this.selectorCacheTimer = null;
     this.reHasUnicode = /[^\x00-\x7F]/;
     this.punycode = punycode;
@@ -1601,9 +1610,10 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
             ready: this.frozen,
             domain: domain,
             entity: pos === -1 ? domain : domain.slice(0, pos - domain.length),
+            skipCosmeticSurveying: false,
             skipCosmeticFiltering: this.acceptedCount === 0,
             cosmeticHide: [],
-            cosmeticDonthide: this.genericDonthide,
+            cosmeticDonthide: this.genericDonthide.slice(),
             netHide: [],
             netCollapse: µb.userSettings.collapseBlocked,
             scripts: this.retrieveScriptTags(domain, hostname)
@@ -1637,8 +1647,12 @@ FilterContainer.prototype.fromCompiledContent = function (text, lineBeg, skip, p
         //    bucket.retrieve(hostname, r.cosmeticDonthide);
         //}
         //
-        //this.retrieveFromSelectorCache(hostname, 'cosmetic', r.cosmeticHide);
-        //this.retrieveFromSelectorCache(hostname, 'net', r.netHide);
+        var cacheEntry = this.selectorCache[hostname];
+        if ( cacheEntry ) {
+            cacheEntry.retrieve('cosmetic', r.cosmeticHide);
+            cacheEntry.retrieve('net', r.netHide);
+            r.skipCosmeticSurveying = cacheEntry.cosmeticSurveyingMissCount > cosmeticSurveyingMissCountMax;
+        }
 
         //quickProfiler.stop();
 
