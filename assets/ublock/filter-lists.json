@@ -47,7 +47,7 @@
     "http://www.privacontrol.com/filters/easylist.downloads.adblockplus.org.easylist.txt": {
         "title": "EasyList",
         "group": "ads",
-        "homeURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Feasylist.github.io%2Feasylist%2Feasylist.txt",
+        "homeURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Feasylist.to%2Feasylist%2Feasylist.txt",
         "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
         "defaultOff": true,
         "off": false
@@ -108,7 +108,7 @@
     "http://www.privacontrol.com/filters/easylist.downloads.adblockplus.org.easyprivacy.txt": {
         "title": "EasyPrivacy",
         "group": "privacy",
-        "homeURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Feasylist.github.io%2Feasylist%2Feasyprivacy.txt",
+        "homeURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Feasylist.to%2Feasylist%2Feasyprivacy.txt",
         "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
         "defaultOff": false,
         "off": false
