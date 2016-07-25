@@ -785,8 +785,9 @@ FilterContainer.prototype.isValidSelector = (function() {
     }
 
     var reHasSelector = /^(.+?):has\((.+?)\)$/;
-    var reStyleSelector = /^(.+?):style\((.+?)\)$/;
     var reXpathSelector = /^:xpath\((.+?)\)$/;
+    var reStyleSelector = /^(.+?):style\((.+?)\)$/;
+    var reStyleBad = /url\([^)]+\)/;
 
     // Keep in mind: https://github.com/gorhill/uBlock/issues/693
     var isValidCSSSelector = function(s) {
@@ -823,7 +824,7 @@ FilterContainer.prototype.isValidSelector = (function() {
         // `:style` selector?
         matches = reStyleSelector.exec(s);
         if ( matches !== null ) {
-            return isValidCSSSelector(matches[1]);
+            return isValidCSSSelector(matches[1]) && reStyleBad.test(matches[2]) === false;
         }
         // Special `script:` filter?
         if ( s.startsWith('script') ) {
