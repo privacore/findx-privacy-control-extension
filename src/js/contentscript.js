@@ -288,7 +288,9 @@ var domFilterer = {
             var styleTag = document.createElement('style');
             styleTag.setAttribute('type', 'text/css');
             styleTag.textContent = styleText;
-            document.head.appendChild(styleTag);
+            if ( document.head ) {
+                document.head.appendChild(styleTag);
+            }
             this.styleTags.push(styleTag);
         }
 
@@ -346,14 +348,17 @@ var domFilterer = {
         }
     },
 
-    commit: function(nodes) {
-        if ( stagedNodes.length === 0 ) {
-            window.requestAnimationFrame(this.commit_.bind(this));
-        }
+    commit: function(nodes, commitNow) {
+        var firstCommit = stagedNodes.length === 0;
         if ( nodes === undefined ) {
             stagedNodes = [ document.documentElement ];
         } else if ( stagedNodes[0] !== document.documentElement ) {
             stagedNodes = stagedNodes.concat(nodes);
+        }
+        if ( commitNow ) {
+            this.commit_();
+        } else if ( firstCommit ) {
+            window.requestAnimationFrame(this.commit_.bind(this));
         }
     },
 
@@ -562,7 +567,7 @@ return domFilterer;
         domFilterer.addExceptions(details.cosmeticDonthide);
         // https://github.com/chrisaljoudi/uBlock/issues/143
         domFilterer.addSelectors(details.cosmeticHide);
-        domFilterer.commit();
+        domFilterer.commit(undefined, true);
     };
 
     var netFilters = function(details) {
@@ -802,6 +807,11 @@ var domCollapser = (function() {
             if ( typeof src !== 'string' || src.length === 0 ) {
                 return;
             }
+        }
+        // Some data: URI can be quite large: no point in taking into account
+        // the whole URI.
+        if ( src.lastIndexOf('data:', 0) === 0 ) {
+            src = src.slice(0, 255);
         }
         var req = new PendingRequest(target, tagName, prop);
         newRequests.push(new BouncingRequest(req.id, tagName, src));
