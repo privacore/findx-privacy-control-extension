@@ -34,7 +34,6 @@ cp    LICENSE.txt                       $DES/
 echo "*** Privacontrol.FF: Generating meta..."
 python tools/make-firefox-meta.py $DES/
 
-
 if [ "$1" = all ]; then
     set +v
     echo "*** Privacontrol.firefox: Creating package..."

@@ -2,6 +2,7 @@
 
 import os
 import json
+import re
 import sys
 from io import open
 from shutil import rmtree
@@ -73,6 +74,12 @@ chromium_manifest = pj(proj_dir, 'platform', 'chromium', 'manifest.json')
 with open(chromium_manifest, encoding='utf-8') as m:
     manifest = json.load(m)
 
+# https://developer.mozilla.org/en-US/Add-ons/AMO/Policy/Maintenance#How_do_I_submit_a_Beta_add-on.3F
+# "To create a beta channel [...] '(a|alpha|b|beta|pre|rc)\d*$' "
+
+match = re.search('^(\d+\.\d+\.\d+)(\.\d+)$', manifest['version'])
+#if match:
+#    manifest['version'] = match.group(1) + 'b' + match.group(2)[1:]
 
 manifest['homepage'] = 'https://github.com/privacore/privacontrol'
 manifest['description'] = descriptions['en']
