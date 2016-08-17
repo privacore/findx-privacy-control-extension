@@ -641,14 +641,14 @@
 //   applying 1st-party filters.
 
 µBlock.applyCompiledFilters = function(rawText, firstparty, filterPath) {
-    var skipCosmetic = !firstparty && !this.userSettings.parseAllABPHideFilters;
-    var staticNetFilteringEngine = this.staticNetFilteringEngine;
-    var cosmeticFilteringEngine = this.cosmeticFilteringEngine;
-    var lineBeg = 0;
-    var rawEnd = rawText.length;
-    while ( lineBeg < rawEnd ) {
-        lineBeg = cosmeticFilteringEngine.fromCompiledContent(rawText, lineBeg, skipCosmetic, filterPath);
-        lineBeg = staticNetFilteringEngine.fromCompiledContent(rawText, lineBeg, filterPath);
+    var skipCosmetic = !firstparty && !this.userSettings.parseAllABPHideFilters,
+        skipGenericCosmetic = this.userSettings.ignoreGenericCosmeticFilters,
+        staticNetFilteringEngine = this.staticNetFilteringEngine,
+        cosmeticFilteringEngine = this.cosmeticFilteringEngine,
+        lineIter = new this.LineIterator(rawText);
+    while ( lineIter.eot() === false ) {
+        cosmeticFilteringEngine.fromCompiledContent(lineIter, skipGenericCosmetic, skipCosmetic, filterPath);
+        staticNetFilteringEngine.fromCompiledContent(lineIter, filterPath);
     }
 };
 

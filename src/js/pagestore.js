@@ -216,7 +216,7 @@ NetFilteringResultCache.prototype.pruneAsync = function() {
 
 NetFilteringResultCache.prototype.pruneAsyncCallback = function() {
     this.timer = null;
-    this.prune();
+    //this.prune(); // 17.08.2016 Igor Petrenko. Without this comment blocked filters not displayed in a popup after 30 sec
 };
 
 /******************************************************************************/
@@ -327,27 +327,44 @@ PageStore.prototype.init = function(tabId) {
     this.largeMediaTimer = null;
     this.netFilteringCache = NetFilteringResultCache.factory();
 
-    // Support `elemhide` filter option. Called at this point so the required
-    // context is all setup at this point.
-    this.skipCosmeticFiltering = (µb.staticNetFilteringEngine.matchStringExactType(
-        this.createContextFromPage(),
-        tabContext.normalURL,
-        //'cosmetic-filtering'
-        'elemhide'
-    ) === false || µb.userSettings.pauseFiltering);
-    if ( this.skipCosmeticFiltering && µb.logger.isEnabled() ) {
-        // https://github.com/gorhill/uBlock/issues/370
-        // Log using `cosmetic-filtering`, not `elemhide`.
+    this.noCosmeticFiltering =
+        (µb.hnSwitches.evaluateZ('no-cosmetic-filtering', tabContext.rootHostname) === true
+        || µb.userSettings.pauseFiltering);
+    if ( µb.logger.isEnabled() && this.noCosmeticFiltering ) {
         µb.logger.writeOne(
             tabId,
-            'net',
-            µb.staticNetFilteringEngine.toResultString(true),
-            'elemhide',
+            'cosmetic',
+            µb.hnSwitches.toResultString(),
+            'dom',
             tabContext.rawURL,
             this.tabHostname,
             this.tabHostname
         );
     }
+
+    // Support `generichide` filter option.
+    this.noGenericCosmeticFiltering = this.noCosmeticFiltering;
+    if ( this.noGenericCosmeticFiltering !== true ) {
+        this.noGenericCosmeticFiltering = µb.staticNetFilteringEngine.matchStringExactType(
+            this.createContextFromPage(),
+            tabContext.normalURL,
+            'elemhide'
+        ) === false;
+        if ( µb.logger.isEnabled() && this.noGenericCosmeticFiltering ) {
+            // https://github.com/gorhill/uBlock/issues/370
+            // Log using `cosmetic-filtering`, not `elemhide`.
+            µb.logger.writeOne(
+                tabId,
+                'net',
+                µb.staticNetFilteringEngine.toResultString(true),
+                'elemhide',
+                tabContext.rawURL,
+                this.tabHostname,
+                this.tabHostname
+            );
+        }
+    }
+
     return this;
 };
 
@@ -476,9 +493,7 @@ PageStore.prototype.getNetFilteringSwitch = function() {
 /******************************************************************************/
 
 PageStore.prototype.getSpecificCosmeticFilteringSwitch = function() {
-    var tabContext = µb.tabContextManager.lookup(this.tabId);
-    return tabContext !== null &&
-           µb.hnSwitches.evaluateZ('no-cosmetic-filtering', tabContext.rootHostname) !== true;
+    return this.noCosmeticFiltering !== true;
 };
 
 /******************************************************************************/
@@ -488,8 +503,8 @@ PageStore.prototype.getIsPauseFiltering = function() {
 
 /******************************************************************************/
 PageStore.prototype.getGenericCosmeticFilteringSwitch = function() {
-    return this.skipCosmeticFiltering !== true &&
-           this.getSpecificCosmeticFilteringSwitch();
+    return this.noGenericCosmeticFiltering !== true &&
+           this.noCosmeticFiltering !== true;
 };
 
 /******************************************************************************/

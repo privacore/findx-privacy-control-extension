@@ -60,6 +60,7 @@ return {
         externalLists: {},//defaultExternalLists,
         firewallPaneMinimized: true,
         hyperlinkAuditingDisabled: true,
+        ignoreGenericCosmeticFilters: false,
         largeMediaSize: 50,
         parseAllABPHideFilters: true,
         prefetchingDisabled: true,
@@ -93,7 +94,7 @@ return {
     // read-only
     systemSettings: {
         compiledMagic: 'splsmclwnvoj',
-        selfieMagic: 'splsmclwnvoj'
+        selfieMagic: 'rkzqonintytj'
     },
 
     restoreBackupSettings: {

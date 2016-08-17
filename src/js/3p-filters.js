@@ -31,7 +31,8 @@
 
 var userListName = "Your own filter";//vAPI.i18n('1pPageName');
 var listDetails = {};
-var cosmeticSwitch = true;
+var parseCosmeticFilters = true;
+var ignoreGenericCosmeticFilters = false;
 var externalLists = '';
 var cacheWasPurged = false;
 var needUpdate = false;
@@ -217,7 +218,9 @@ var renderFilterLists = function() {
     var onListsReceived = function(details) {
         // Before all, set context vars
         listDetails = details;
-        cosmeticSwitch = details.cosmetic;
+
+        parseCosmeticFilters = details.parseCosmeticFilters;
+        ignoreGenericCosmeticFilters = details.ignoreGenericCosmeticFilters;
         //needUpdate = false;
         needUpdate = true; //16.06 - Igor. Always enable Update button
         hasCachedContent = false;
@@ -264,6 +267,10 @@ var renderFilterLists = function() {
 
         toggleCheckbox(('#autoUpdate'), listDetails.autoUpdate === true);
         toggleCheckbox(('#parseCosmeticFilters'), listDetails.cosmetic === true);
+
+        //uDom('#autoUpdate').prop('checked', listDetails.autoUpdate === true);
+        //uDom('#parseCosmeticFilters').prop('checked', listDetails.parseCosmeticFilters === true);
+        //uDom('#ignoreGenericCosmeticFilters').prop('checked', listDetails.ignoreGenericCosmeticFilters === true);
 
         renderWidgets();
         renderBusyOverlay(details.manualUpdate, details.manualUpdateProgress);
@@ -513,8 +520,11 @@ var renderWidgets = function() {
 
 // Return whether selection of lists changed.
 
-var listsSelectionChanged = function() {   
-    if ( listDetails.cosmetic !== cosmeticSwitch ) {
+var listsSelectionChanged = function() {
+    if (
+        listDetails.parseCosmeticFilters !== parseCosmeticFilters ||
+        listDetails.parseCosmeticFilters && listDetails.ignoreGenericCosmeticFilters !== ignoreGenericCosmeticFilters
+    ) {
         return true;
     }
 
@@ -613,14 +623,16 @@ var onPurgeClicked = function() {
 
 var selectFilterLists = function(callback) {
     // Cosmetic filtering switch
-    messaging.send(
-        'dashboard',
-        {
-            what: 'userSettings',
-            name: 'parseAllABPHideFilters',
-            value: listDetails.cosmetic
-        }
-    );
+    messaging.send('dashboard', {
+        what: 'userSettings',
+        name: 'parseAllABPHideFilters',
+        value: listDetails.parseCosmeticFilters
+    });
+    messaging.send('dashboard', {
+        what: 'userSettings',
+        name: 'ignoreGenericCosmeticFilters',
+        value: listDetails.ignoreGenericCosmeticFilters
+    });
 
     // Filter lists
     var switches = [];
@@ -717,8 +729,10 @@ var autoUpdateCheckboxChanged = function() {
 
 /******************************************************************************/
 
+    // TODO: (Igor Petrenko 15.08.2016) check is it a correct logic for us
 var cosmeticSwitchChanged = function() {
-    listDetails.cosmetic = this.checked;
+    listDetails.parseCosmeticFilters = uDom.nodeFromId('parseCosmeticFilters').checked;
+    listDetails.ignoreGenericCosmeticFilters = uDom.nodeFromId('ignoreGenericCosmeticFilters').checked;
     renderWidgets();
 };
 
@@ -772,21 +786,20 @@ var groupEntryClickHandler = function() {
 };
 
  function startSubscriptionSelection(title, group, url) {
-        var list = document.querySelector("#subscriptionSelector");
-        $("#addSubscriptionContainer").show();
-        $("#addSubscriptionButton").hide();
-        $("#subscriptionSelector").focus();
-        if (typeof url != "undefined") {
-            list.selectedIndex = list.length - 1;
-            document.getElementById("customSubscriptionTitle").value = title;
-            document.getElementById("customSubscriptionGroup").value = group;
-            document.getElementById("customSubscriptionLocation").value = url;
-        }
-        updateSubscriptionSelection();
-        document.getElementById("addSubscriptionContainer").scrollIntoView(true);
+    var list = document.querySelector("#subscriptionSelector");
+    $("#addSubscriptionContainer").show();
+    $("#addSubscriptionButton").hide();
+    $("#subscriptionSelector").focus();
+    if (typeof url != "undefined") {
+        list.selectedIndex = list.length - 1;
+        document.getElementById("customSubscriptionTitle").value = title;
+        document.getElementById("customSubscriptionGroup").value = group;
+        document.getElementById("customSubscriptionLocation").value = url;
     }
-    
-    
+     updateSubscriptionSelection();
+     document.getElementById("addSubscriptionContainer").scrollIntoView(true);
+ }
+
     var updateSubscriptionSelection = function () {
         var list = document.querySelector("#subscriptionSelector");
         var data = list.options[list.selectedIndex]._data;
@@ -854,7 +867,6 @@ var groupEntryClickHandler = function() {
         });
         return true;
     };
-
 
 /******************************************************************************/
 

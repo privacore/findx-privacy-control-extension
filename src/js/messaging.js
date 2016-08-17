@@ -525,7 +525,7 @@ var filterRequests = function(pageStore, details) {
             context.requestURL = punycodeURL(request.url);
             context.requestHostname = hostnameFromURI(context.requestURL);
         }
-        context.requestType = tagNameToRequestTypeMap[request.tagName];
+        context.requestType = tagNameToRequestTypeMap[request.tag];
         r = pageStore.filterRequest(context);
         if ( typeof r !== 'string' || r.charAt(1) !== 'b' ) {
             continue;
@@ -559,38 +559,43 @@ var onMessage = function(request, sender, callback) {
     }
 
     switch ( request.what ) {
-    case 'retrieveDomainCosmeticSelectors':
-        if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering()) {
-            response = µb.cosmeticFilteringEngine.retrieveDomainSelectors(request,  pageStore.tabHostname);
-            if ( response && response.skipCosmeticFiltering !== true ) {
-                response.skipCosmeticFiltering = !pageStore.getSpecificCosmeticFilteringSwitch();
-            }
+    case 'retrieveContentScriptParameters':
+        if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
+            response = {
+                loggerEnabled: µb.logger.isEnabled(),
+                collapseBlocked: µb.userSettings.collapseBlocked,
+                noCosmeticFiltering: µb.cosmeticFilteringEngine.acceptedCount === 0 || pageStore.noCosmeticFiltering === true,
+                noGenericCosmeticFiltering: pageStore.noGenericCosmeticFiltering === true
+            };
+            response.specificCosmeticFilters = µb.cosmeticFilteringEngine.retrieveDomainSelectors(
+                request,
+                response.noCosmeticFiltering,
+                pageStore.tabHostname
+            );
         }
         // Changed from 11.01.2016 by Igor Petrenko. Don't know what is it.
         // If leave it as default - skipCosmeticFiltering always be false and in case when EasyList filter
         //      disabled for some domain - ads will be blocked anyway.
         // And if it set as true if you enable EasyList on a domain it will blocks ads.
         if (response)
-            response.skipCosmeticFiltering = true;
+            response.noCosmeticFiltering = true;
+            //response.skipCosmeticFiltering = true;
         break;
 
     case 'retrieveGenericCosmeticSelectors':
-        response = {
-            shutdown: !pageStore || !pageStore.getNetFilteringSwitch(),
-            result: null
-        };
-        if ( !response.shutdown && pageStore.getGenericCosmeticFilteringSwitch() ) {
-            response.result = µb.cosmeticFilteringEngine.retrieveGenericSelectors(request, pageStore.tabHostname);
+        if ( pageStore && pageStore.getGenericCosmeticFilteringSwitch() ) {
+            response = {
+                result: µb.cosmeticFilteringEngine.retrieveGenericSelectors(request, pageStore.tabHostname)
+            };
         }
         break;
 
     case 'filterRequests':
-        response = {
-            shutdown: !pageStore || !pageStore.getNetFilteringSwitch(),
-            result: null
-        };
-        if ( !response.shutdown && !pageStore.getIsPauseFiltering() ) {
-            response.result = filterRequests(pageStore, request);
+        if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
+            response = {
+                result: filterRequests(pageStore, request),
+                netSelectorCacheCountMax: µb.cosmeticFilteringEngine.netSelectorCacheCountMax
+            };
         }
         break;
 
@@ -895,9 +900,10 @@ var getLists = function(callback) {
         autoUpdate: µb.userSettings.autoUpdate,
         available: null,
         cache: null,
-        cosmetic: µb.userSettings.parseAllABPHideFilters,
+        parseCosmeticFilters: µb.userSettings.parseAllABPHideFilters,
         cosmeticFilterCount: µb.cosmeticFilteringEngine.getFilterCount(),
         current: µb.remoteBlacklists,
+        ignoreGenericCosmeticFilters: µb.userSettings.ignoreGenericCosmeticFilters,
         manualUpdate: false,
         netFilterCount: µb.staticNetFilteringEngine.getFilterCount(),
         userFiltersPath: µb.userFiltersPath
