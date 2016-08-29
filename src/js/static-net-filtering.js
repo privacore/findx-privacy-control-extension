@@ -104,8 +104,6 @@ var AllowAnyTypeAnyParty = AllowAction | AnyType | AnyParty;
 var AllowAnyType = AllowAction | AnyType;
 var AllowAnyParty = AllowAction | AnyParty;
 
-var reURLPostHostnameAnchors = /[\/?#]/;
-
 // ABP filters: https://adblockplus.org/en/filters
 // regex tester: http://regex101.com/
 
@@ -205,7 +203,11 @@ var strToRegex = function(s, anchor, flags) {
     if ( s === '*' ) {
         return alwaysTruePseudoRegex;
     }
-
+    var anchorToHnStart;
+    if ( s.startsWith('||') ) {
+        s = s.slice(2);
+        anchorToHnStart = s.charCodeAt(0) === 0x2A;
+    }
     // https://www.loggly.com/blog/five-invaluable-techniques-to-improve-regex-performance/
     // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
     // Also: remove leading/trailing wildcards -- there is no point.
@@ -219,7 +221,9 @@ var strToRegex = function(s, anchor, flags) {
     } else if ( anchor > 0 ) {
         reStr += '$';
     }
-
+    if ( anchorToHnStart ) {
+        reStr = '[0-9a-z.-]*?' + reStr;
+    }
     //console.debug('µBlock.staticNetFilteringEngine: created RegExp("%s")', reStr);
     return new RegExp(reStr, flags);
 };
@@ -227,6 +231,26 @@ var strToRegex = function(s, anchor, flags) {
 var toHex = function(n) {
     return n.toString(16);
 };
+
+// First character of match must be within the hostname part of the url.
+var isHnAnchored = function(url, matchStart) {
+    var hnStart = url.indexOf('://');
+    if ( hnStart === -1 ) {
+        return false;
+    }
+    hnStart += 3;
+    if ( matchStart <= hnStart ) {
+        return true;
+    }
+    if ( reURLPostHostnameAnchors.test(url.slice(hnStart, matchStart)) ) {
+        return false;
+    }
+    // https://github.com/gorhill/uBlock/issues/1929
+    // Match only hostname label boundaries.
+    return url.charCodeAt(matchStart - 1) === 0x2E;
+};
+
+var reURLPostHostnameAnchors = /[\/?#]/;
 
 /******************************************************************************/
 
@@ -734,13 +758,8 @@ var FilterPlainHnAnchored = function(s, filterPath) {
 };
 
 FilterPlainHnAnchored.prototype.match = function(url, tokenBeg) {
-    if ( url.startsWith(this.s, tokenBeg) === false ) {
-        return false;
-    }
-    // Valid only if hostname-valid characters to the left of token
-    var pos = url.indexOf('://');
-    return pos !== -1 &&
-           reURLPostHostnameAnchors.test(url.slice(pos + 3, tokenBeg)) === false;
+    return url.startsWith(this.s, tokenBeg) &&
+           isHnAnchored(url, tokenBeg);
 };
 
 FilterPlainHnAnchored.fid =
@@ -777,16 +796,9 @@ var FilterPlainHnAnchoredHostname = function(s, domainOpt, filterPath) {
 };
 
 FilterPlainHnAnchoredHostname.prototype.match = function(url, tokenBeg) {
-    if (
-        url.startsWith(this.s, tokenBeg) === false ||
-        this.hostnameTest(this) === false
-    ) {
-        return false;
-    }
-    // Valid only if hostname-valid characters to the left of token
-    var pos = url.indexOf('://');
-    return pos !== -1 &&
-           reURLPostHostnameAnchors.test(url.slice(pos + 3, tokenBeg)) === false;
+    return url.startsWith(this.s, tokenBeg) &&
+           this.hostnameTest(this) &&
+           isHnAnchored(url, tokenBeg);
 };
 
 FilterPlainHnAnchoredHostname.fid =
@@ -896,18 +908,10 @@ var FilterGenericHnAnchored = function(s, filterPath) {
 
 FilterGenericHnAnchored.prototype.match = function(url) {
     if ( this.re === null ) {
-        this.re = strToRegex(this.s, 0);
+        this.re = strToRegex('||' + this.s, 0);
     }
-    // Quick test first
-    if ( this.re.test(url) === false ) {
-        return false;
-    }
-    // Valid only if begininning of match is within the hostname
-    // part of the url
-    var match = this.re.exec(url);
-    var pos = url.indexOf('://');
-    return pos !== -1 &&
-           reURLPostHostnameAnchors.test(url.slice(pos + 3, match.index)) === false;
+    var matchStart = url.search(this.re);
+    return matchStart !== -1 && isHnAnchored(url, matchStart);
 };
 
 FilterGenericHnAnchored.fid =
@@ -2325,11 +2329,13 @@ FilterContainer.prototype.filterRegexFromCompiled = function(compiled, flags) {
     case '1ah':
     case '_':
     case '_h':
+        re = strToRegex(tfields[0], 0, flags);
+        break;
     case '||a':
     case '||ah':
     case '||_':
     case '||_h':
-        re = strToRegex(tfields[0], 0, flags);
+        re = strToRegex('||' + tfields[0], 0, flags);
         break;
     case '|a':
     case '|ah':
