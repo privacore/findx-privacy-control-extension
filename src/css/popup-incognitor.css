@@ -6,7 +6,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 13px;
     color: #545454;
-    background-color: #e9eef1;
+    background-color: #eeefef;
 }
 
 body.local #enabled,
@@ -62,7 +62,7 @@ label {
 header {
     height: 55px;
     border-bottom: 1px solid #e1ddd8;
-    background-color:white;
+    background-color: #444a4c;
 }
 header .hdr-privacy-status {
     float: left;
@@ -72,12 +72,21 @@ header .hdr-privacy-status {
     margin-left: 15px;
     cursor: default;
     color: #2c5b72;
-    font-weight: bold;
-    padding: 10px 0 0;
+    /*font-weight: bold;*/
+    /*padding: 10px 0 0;*/
     box-sizing: border-box;
 }
+header .hader-logo {
+    width: 147px;
+    height: 23px;
+    padding-top: 5px;
+}
+header .hader-logo > img {
+    width: 100%;
+}
 header .hdr-privacy-status a {
-    color: #0ea8b3;
+    /*color: #0ea8b3;*/
+    color: #6bad70;
     font-size: 0.8em;
 }
 header .hdr-buttons {
@@ -141,10 +150,10 @@ header .hdr-buttons {
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: default;
-    color: #0cc4ca;
+    color: #6bad70;
 }
 #stats-page .blocked-quantity.empty {
-    color: #959fa3;
+    color: #6bad70;
 }
 #stats-page .blocked-info {
     height: 45px;
@@ -158,7 +167,7 @@ header .hdr-buttons {
     text-overflow: ellipsis;
     float: left;
     cursor: default;
-    color: #2c5b72;
+    color: #727b81;
     margin-top: 8px;
     line-height: 17px;
 }
@@ -172,7 +181,7 @@ header .hdr-buttons {
     text-overflow: ellipsis;
     padding-left: 2px;
     cursor: default;
-    color: #7f878e;
+    color: #444a4c;
 }
 
 
@@ -193,7 +202,7 @@ header .hdr-buttons {
     box-sizing: border-box;
     padding: 60px 0 45px 15px;
     cursor: default;
-    color: #2c5b72;
+    color: #5b5c5d;
     font-size: 16px;
     background-image: url(../img/whitelist_block_icon.png);
     background-repeat: no-repeat;
@@ -205,7 +214,7 @@ header .hdr-buttons {
 #subscription-list-wrapper {
     width: 100%;
     min-height: 130px;
-    max-height: 380px;
+    max-height: 350px;
     overflow: auto;
     box-sizing: border-box;
     padding: 3px 0;
@@ -221,7 +230,7 @@ header .hdr-buttons {
 .subscription > div {
     background-color: white;
     border-radius: 4px;
-    border: 1px solid #D8D8D8;
+    /*border: 1px solid #D8D8D8;*/
     -webkit-box-shadow: 0 4px 8px -4px rgb(202, 202, 202);
     -moz-box-shadow: 0 4px 8px -4px rgb(202, 202, 202);
     box-shadow: 0 4px 8px -4px rgb(202, 202, 202);
@@ -279,7 +288,7 @@ header .hdr-buttons {
 .info-container .subscription-title {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
-    color: #2c5b72;
+    color: #444a4c;
     width: 100%;
     font-weight: bold;
     line-height: 1.2;
@@ -288,7 +297,7 @@ header .hdr-buttons {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     font-size: 10px;
-    color: #7f878e;
+    color: #727b81;
     text-transform: uppercase;
     line-height: 1.5;
 }
@@ -311,12 +320,12 @@ header .hdr-buttons {
     height: 22px;
     width: 38px;
     cursor: pointer;
-    background: url('../img/switch_on.png');
+    background: url('../img/switcher_on.png');
     background-repeat: no-repeat;
     margin: auto;
 }
 .subscription .blocking-control.disabled .blocking-control-icon {
-    background: url('../img/switch_off.png');
+    background: url('../img/switcher_off.png');
 }
 
 
@@ -325,7 +334,7 @@ header .hdr-buttons {
 .subscription .filters-list {
     width: 100%;
     max-height: 150px;
-    border-top: 1px solid rgba(191, 195, 197, 0.75);
+    border-top: 1px solid #fafafa;
     margin: auto;
     overflow: hidden;
     box-sizing: border-box;
@@ -351,7 +360,7 @@ header .hdr-buttons {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     font-size: 11px;
-    color: #959fa3;
+    color: #727b81;
     cursor: default;
     margin: 2px 0 0 5px;
     width: 67%;
@@ -384,13 +393,13 @@ header .hdr-buttons {
     cursor: pointer;
     width: 22%;
     height: 15px;
-    color: #e74c3c;
+    color: #e84853;
     text-align: center;
     text-transform: capitalize;
     margin-left: 5px;
 }
 .subscription .filter .filter-blocking-button.blocked {
-    color: rgb(0, 188, 255);
+    color: #6bad70;
     margin-left: 0px;
 }
 
@@ -427,10 +436,11 @@ header .hdr-buttons {
 
 
 footer {
-    height: 90px;
+    /*height: 90px;*/
     line-height: 25px;
-    border-top: 1px solid #e1ddd8;
-    background-color:white;
+    /*border-top: 1px solid #e1ddd8;*/
+    background-color: #fafafa;
+    padding-top: 1px;
 }
 footer #footer-btn-panel {
     width: 100%;
@@ -442,25 +452,34 @@ footer #footer-btn-panel {
     padding: 0 4px;
 }
 footer .footer-button {
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 13px;
+    /*font-weight: bold;*/
     color: #fff;
     text-align: center;
     width: 142px;
     height: 45px;
     cursor: pointer;
-    line-height: 4;
+    line-height: 3.7;
     margin-top: 3px;
     margin-left: 5px;
     display: inline-block;
     border: 1px solid #ddd;
-    background-color: #2c5b72;
+    background-color: #444a4c;
     border-radius: 4px;
 }
+footer .footer-button.pressed {
+    background-color: #6bad70;
+}
+
+
+
 footer .footer-button.disabled,
 footer .footer-button.off {
     opacity: 0.5;
 }
+
+
+
 
 footer #pause-blocking-button {
     margin-left: 3px;
@@ -471,7 +490,7 @@ footer #pause-blocking-button {
 }
 
 footer .button-icon {
-    width: 16px;
+    width: 15px;
     height: 17px;
     background-repeat: no-repeat;
     background-position: center;
@@ -485,12 +504,15 @@ footer .button-icon.pause-icon {
     margin: 14px -5px 0 11px;
     width: 12px;
 }
-.footer-button.start .button-icon.pause-icon {
+.footer-button.pressed .button-icon.pause-icon {
     background-image: url("../img/start_icon.png");
 }
 footer .button-icon.whitelist-icon {
     background-image: url("../img/whitelist_icon.png");
     margin: 14px -7px 0 12px;
+}
+.footer-button.pressed .button-icon.whitelist-icon {
+    background-image: url("../img/whitelist_icon_pressed.png");
 }
 footer .button-icon.help-icon {
     background-image: url("../img/help_icon.png");
@@ -504,35 +526,27 @@ footer .footer-button .button-label {
 footer #stats-total {
     margin: 0 auto;
     text-align: center;
-    font-size: 1.1em;
+    font-size: 13px;
+    font-weight: bold;
     cursor: default;
-    color: #7f878e;
+    color: #444a4c;
     height: 30px;
     line-height: 38px;
 }
 footer #stats-total > span {
-    color: #0cc4ca;
-}
-footer #stats-total > span.empty {
-    color: #959fa3;
+    color: #539558;
 }
 
 footer .reloader {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 5px;
     width: 100%;
-    height: 23px;
-    line-height: 1.8;
+    height: 40px;
+    line-height: 3.2;
     box-sizing: border-box;
     padding: 0 8px;
-    margin: 0 auto;
-    text-align: left;
-    font-family: Arial, Helvetica, sans-serif;
+    margin: 10pt auto 2pt;
     color: #fff;
     cursor: default;
-    z-index: 10;
+    position: relative;
 }
 footer .reloader.disabled {
     display: none;
@@ -540,7 +554,7 @@ footer .reloader.disabled {
 footer .reloader > div {
     width: 100%;
     height: 100%;
-    background-color: #0ea8b3;
+    background-color: #e84853;
     border-radius: 2px;
     box-sizing: border-box;
     padding-left: 10px;
@@ -555,7 +569,16 @@ footer .reloader .reload-close {
     background: url('../img/notification_close_icon.png') no-repeat center;
     height: 20px;
     width: 20px;
-    top: 2px;
-    right: 9px;
+    top: 10px;
+    right: 15px;
     cursor: pointer;
+}
+footer .reloader .reload-refresh {
+    position: relative;
+    background: url('../img/refresh.png') no-repeat center;
+    height: 20px;
+    width: 20px;
+    margin: 7pt 3pt 0 0;
+    cursor: pointer;
+    float: left;
 }

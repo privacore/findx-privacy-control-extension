@@ -60,10 +60,11 @@
         optionsBtn: ".options-button",
         helpBtn: "#help-button",
         reloadPanel: ".reloader",
-        reloadBtn: ".reloader span",
+        reloadBtn: ".reloader .reload-refresh",
         closeReloadPanelBtn: ".reload-close",
         whiteListBlock: "#whitelist_block",
         whiteListBtn: "#whitelist-button",
+        whiteListBtnLabel: "#whitelist-button .button-label",
         pauseBtn: "#pause-blocking-button",
         pauseBtnLabel: "#pause-blocking-button .button-label",
         filtersContainer: "#subscription-list-wrapper",
@@ -366,6 +367,12 @@
     var displayUsedFilters = function () {
         var listContainer = uDom(selectors.filtersContainer);
         listContainer.empty();
+
+        if (!popupData.urls || !Object.keys(popupData.urls).length) {
+            return;
+        }
+
+
         var template = uDom(selectors.subscriptionTemplate).text();
 
         var usedFilters = popupData.usedFilters || {};
@@ -379,6 +386,7 @@
         });
 
         listContainer.append(fragment);
+        $(".subscription .filters-list > div").niceScroll({cursorcolor:"#bec0c1", autohidemode: false, cursorwidth: "3px"});
     };
 
     /**
@@ -424,10 +432,6 @@
     /***************************************************************************/
 
     var isRuleBlocked = function  (filter, link) {
-        console.log ("isRuleBlocked ()            popup-incognitor.js" +
-                        "\n\t filter: ", filter,
-                        "\n\t link: ", link,
-                        "\n\t URL: ", URL);
         var isBlocked = false;
         var urlObj = new URL(getUrlFromStr(link));
         var url = urlObj.href.replace(urlObj.search, "");
@@ -606,14 +610,16 @@
     var renderPopup = function () {
         uDom(selectors.tabDomain).text(popupData.pageHostname);
 
-        if (uDom(selectors.whiteListBtn).toggleClass('off', popupData.pageURL === '' || !popupData.netFilteringSwitch).hasClass("off")) {
+        if (uDom(selectors.whiteListBtn).toggleClass('pressed', popupData.pageURL === '' || !popupData.netFilteringSwitch).hasClass("pressed")) {
             uDom(selectors.whiteListBlock).removeClass('hidden');
+            uDom(selectors.whiteListBtnLabel).text('Un-Whitelist');
         }
         else {
             uDom(selectors.whiteListBlock).addClass('hidden');
+            uDom(selectors.whiteListBtnLabel).text('Whitelist Site');
         }
 
-        if (uDom(selectors.pauseBtn).toggleClass('start', popupData.pauseFiltering).hasClass("start")) {
+        if (uDom(selectors.pauseBtn).toggleClass('pressed', popupData.pauseFiltering).hasClass("pressed")) {
             uDom(selectors.pauseBtnLabel).text('Start blocking');
         }
         else {
@@ -660,7 +666,7 @@
             return;
         }
 
-        var state = uDom(this).toggleClass('start').hasClass('start');
+        var state = uDom(this).toggleClass('pressed').hasClass('pressed');
         if (state) {
             uDom(selectors.pauseBtnLabel).text('Start blocking');
         }
@@ -683,11 +689,20 @@
         if (!popupData || !popupData.pageURL) {
             return;
         }
+
+        var state = uDom(this).toggleClass('pressed').hasClass('pressed');
+        if (state) {
+            uDom(selectors.whiteListBtnLabel).text('Un-Whitelist');
+        }
+        else {
+            uDom(selectors.whiteListBtnLabel).text('Whitelist Site');
+        }
+
         messager.send('popupPanel', {
             what:  'toggleNetFiltering',
             url:   popupData.pageURL,
             scope: ev.ctrlKey || ev.metaKey ? 'page' : '',
-            state: !uDom(this).toggleClass('off').hasClass('off'),
+            state: !state,
             tabId: popupData.tabId
         });
 
@@ -918,7 +933,6 @@
 
     var getPopupData = function () {
         var onDataReceived = function (response) {
-            console.log(response);
             cachePopupData(response);
             renderPopup();
             hashFromPopupData(true);
@@ -954,6 +968,8 @@
         uDom(selectors.closeReloadPanelBtn).on('click', hideReloadNotification);
         uDom(selectors.whiteListBtn).on('click', toggleNetFilteringSwitch);
         uDom(selectors.pauseBtn).on('click', togglePauseFiltering);
+
+        $("#subscription-list-wrapper").niceScroll({cursorcolor:"#bec0c1", autohidemode: false, cursorwidth: "3px"});
     });
 
     /***************************************************************************/

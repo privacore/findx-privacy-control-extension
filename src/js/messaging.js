@@ -307,6 +307,17 @@ var getUsedFilters = function (pageStore) {
     return usedFilters;
 };
 
+var getAllFiltersInUse = function () {
+    var filters = {};
+    var filter = null;
+    for (var filterPath in µb.remoteBlacklists) {
+        filter = µb.remoteBlacklists[filterPath];
+        if (!filterPath || !filter || !filter.inUse || filter.off) continue;
+        filters[filterPath] = filter;
+    }
+    return filters;
+};
+
 /******************************************************************************/
 
 var popupDataFromTabId = function(tabId, tabTitle) {
@@ -355,7 +366,8 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.noRemoteFonts = µb.hnSwitches.evaluateZ('no-remote-fonts', rootHostname);
         r.remoteFontCount = pageStore.remoteFontCount;
 
-        r.usedFilters = getUsedFilters(pageStore);
+        //r.usedFilters = getUsedFilters(pageStore);
+        r.usedFilters = getAllFiltersInUse();
         r.urls = pageStore.netFilteringCache.urls;
     } else {
         r.hostnameDict = {};

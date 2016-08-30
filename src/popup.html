@@ -12,8 +12,11 @@
 <body tabindex="1" style="overflow: hidden;">
 
 <header>
-    <div class="hdr-privacy-status">Protection by Privacontrol<br>
-        <a target='_blank' href="http://www.privacore.com">View our other privacy solutions</a></div>
+    <div class="hdr-privacy-status">
+        <div class="hader-logo">
+            <img src="img/header_logo.png" alt=""/>
+        </div>
+        <a target='_blank' href="http://www.privacore.com">> Get more privacy tools</a></div>
     <div class="hdr-buttons">
         <div class="hdr-btn close-button"></div>
         <div class="hdr-btn options-button"></div>
@@ -41,6 +44,13 @@
 </div>
 
 <footer>
+    <div class="reloader disabled">
+        <div>
+            <div class="reload-refresh"></div>
+            <div>Please reload the page to see your changes</div>
+            <div class="reload-close"></div>
+        </div>
+    </div>
     <div id="footer-btn-panel">
         <div class="footer-button" id="pause-blocking-button" title="Pause Blocking">
             <div class="button-icon pause-icon"></div>
@@ -56,12 +66,6 @@
         </div>
     </div>
     <div id="stats-total"><span></span> TRACKERS/ADS BLOCKED IN TOTAL</div>
-    <div class="reloader disabled">
-        <div>
-            Please <span>reload</span> the page to see your changes.
-            <div class="reload-close"></div>
-        </div>
-    </div>
 </footer>
 
 
@@ -102,6 +106,8 @@
 
 
 
+<script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+<script src="lib/jquery.nicescroll.min.js"></script>
 <script src="lib/punycode.js"></script>
 <script src="lib/mustache.js"></script>
 <script src="js/vapi-common.js"></script>
