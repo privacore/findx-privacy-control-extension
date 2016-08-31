@@ -354,6 +354,9 @@ var renderFilterLists = function() {
 
         var filter = null;
         for (var i = 0; i < filtersNames.length; i++) {
+            if (filtersNames[i] == "assets/user/filters.txt")
+                continue;
+
             filter = listDetails.available[filtersNames[i]];
             filter.path = filtersNames[i];
             var option = new Option(listNameFromListKey(filtersNames[i]));
