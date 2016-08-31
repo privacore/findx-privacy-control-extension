@@ -43,32 +43,42 @@ var fromNetFilter = function(details) {
     var lists = [];
     var compiledFilter = details.compiledFilter;
     var entry, content, pos, c;
-    for ( var path in listEntries ) {
-        entry = listEntries[path];
-        if ( entry === undefined ) {
-            continue;
-        }
-        content = entry.content;
-        pos = 0;
-        for (;;) {
-            pos = content.indexOf(compiledFilter, pos);
-            if ( pos === -1 ) {
-                break;
+
+    if (details.filterPath && listEntries[details.filterPath]) {
+        var entry = listEntries[details.filterPath];
+        lists.push({
+            title: entry.title,
+            supportURL: entry.supportURL
+        });
+    }
+    else {
+        for ( var path in listEntries ) {
+            entry = listEntries[path];
+            if ( entry === undefined ) {
+                continue;
             }
-            // We need an exact match.
-            // https://github.com/gorhill/uBlock/issues/1392
-            // https://github.com/gorhill/uBlock/issues/835
-            if ( pos === 0 || reSpecialChars.test(content.charAt(pos - 1)) ) {
-                c = content.charAt(pos + compiledFilter.length);
-                if ( c === '' || reSpecialChars.test(c) ) {
-                    lists.push({
-                        title: entry.title,
-                        supportURL: entry.supportURL
-                    });
+            content = entry.content;
+            pos = 0;
+            for (;;) {
+                pos = content.indexOf(compiledFilter, pos);
+                if ( pos === -1 ) {
                     break;
                 }
+                // We need an exact match.
+                // https://github.com/gorhill/uBlock/issues/1392
+                // https://github.com/gorhill/uBlock/issues/835
+                if ( pos === 0 || reSpecialChars.test(content.charAt(pos - 1)) ) {
+                    c = content.charAt(pos + compiledFilter.length);
+                    if ( c === '' || reSpecialChars.test(c) ) {
+                        lists.push({
+                            title: entry.title,
+                            supportURL: entry.supportURL
+                        });
+                        break;
+                    }
+                }
+                pos += compiledFilter.length;
             }
-            pos += compiledFilter.length;
         }
     }
 

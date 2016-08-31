@@ -463,6 +463,13 @@ var renderNetLogEntry = function(tr, entry) {
         tr.setAttribute('data-hn-frame', entry.d4);
     }
 
+    var filterPath = "";
+    if (typeof filter == "object") {
+        filterPath = filter.filterPath;
+        filter = filter.str;
+    }
+    tr.setAttribute('data-filter-path', filterPath);
+
     var filterCat = filter.slice(0, 3);
     if ( filterCat.charAt(2) === ':' ) {
         trcl.add(filterCat.slice(0, 2));
@@ -1490,6 +1497,7 @@ var reverseLookupManager = (function() {
                 {
                     what: 'listsFromNetFilter',
                     compiledFilter: row.getAttribute('data-filter') || '',
+                    filterPath: row.getAttribute('data-filter-path') || '',
                     rawFilter: rawFilter
                 },
                 reverseLookupDone

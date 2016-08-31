@@ -128,7 +128,7 @@ var initWorker = function(callback) {
 
 /******************************************************************************/
 
-var fromNetFilter = function(compiledFilter, rawFilter, callback) {
+var fromNetFilter = function(compiledFilter, rawFilter, callback, filterPath) {
     if ( typeof callback !== 'function' ) {
         return;
     }
@@ -149,7 +149,8 @@ var fromNetFilter = function(compiledFilter, rawFilter, callback) {
             what: 'fromNetFilter',
             id: id,
             compiledFilter: compiledFilter,
-            rawFilter: rawFilter
+            rawFilter: rawFilter,
+            filterPath: filterPath
         };
         pendingResponses[id] = callback;
         worker.postMessage(message);

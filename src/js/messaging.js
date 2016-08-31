@@ -66,7 +66,8 @@ var onMessage = function(request, sender, callback) {
         µb.staticFilteringReverseLookup.fromNetFilter(
             request.compiledFilter,
             request.rawFilter,
-            callback
+            callback,
+            request.filterPath || ""
         );
         return;
     case 'listsFromCosmeticFilter':
