@@ -54,6 +54,7 @@ var ThirdParty = 2 << 2;
 
 var AnyType = 0 << 4;
 var typeNameToTypeValue = {
+           'no_type':  0 << 4,
         'stylesheet':  1 << 4,
              'image':  2 << 4,
             'object':  3 << 4,
@@ -1392,6 +1393,7 @@ FilterBucket.fromSelfie = function(s) {
 /******************************************************************************/
 
 var FilterParser = function() {
+    this.cantWebsocket = vAPI.cantWebsocket;
     this.reHostnameRule1 = /^[0-9a-z][0-9a-z.-]*[0-9a-z]$/i;
     this.reHostnameRule2 = /^\**[0-9a-z][0-9a-z.-]*[0-9a-z]\^?$/i;
     this.reCleanupHostnameRule2 = /^\**|\^$/g;
@@ -1401,6 +1403,7 @@ var FilterParser = function() {
     this.reHasUppercase = /[A-Z]/;
     this.reIsolateHostname = /^(\*?\.)?([^\x00-\x24\x26-\x2C\x2F\x3A-\x5E\x60\x7B-\x7F]+)(.*)/;
     this.reHasUnicode = /[^\x00-\x7F]/;
+    this.reWebsocketAny = /^wss?:(?:\/\/)?$/;
     this.domainOpt = '';
     this.reset();
 };
@@ -1452,11 +1455,17 @@ FilterParser.prototype.reset = function() {
 
 /******************************************************************************/
 
+FilterParser.prototype.bitFromType = function(type) {
+    return 1 << ((typeNameToTypeValue[type] >>> 4) - 1);
+};
+
+/******************************************************************************/
+
 // https://github.com/chrisaljoudi/uBlock/issues/589
 // Be ready to handle multiple negated types
 
 FilterParser.prototype.parseOptType = function(raw, not) {
-    var typeBit = 1 << ((typeNameToTypeValue[this.toNormalizedType[raw]] >>> 4) - 1);
+    var typeBit = this.bitFromType(this.toNormalizedType[raw]);
 
     if ( !not ) {
         this.types |= typeBit;
@@ -1523,6 +1532,11 @@ FilterParser.prototype.parseOptions = function(s) {
         }
         if ( this.toNormalizedType.hasOwnProperty(opt) ) {
             this.parseOptType(opt, not);
+            // Due to ABP categorizing `websocket` requests as `other`, we need
+            // to add `websocket` for when `other` is used.
+            if ( opt === 'other' ) {
+                this.parseOptType('websocket', not);
+            }
             continue;
         }
         if ( opt.startsWith('domain=') ) {
@@ -1699,6 +1713,21 @@ FilterParser.prototype.parse = function(raw) {
     // toLowerCase(), at least on Chromium. Because copy-on-write?
 
     this.f = this.reHasUppercase.test(s) ? s.toLowerCase() : s;
+
+    // https://github.com/gorhill/uBlock/issues/1943#issuecomment-243188946
+    // Convert websocket-related filter where possible to a format which
+    // can be handled using CSP injection.
+    if (
+        this.cantWebsocket &&
+        this.anchor === -1 &&
+        this.firstParty === false &&
+        this.thirdParty === false &&
+        this.reWebsocketAny.test(this.f)
+    ) {
+        this.f = '*';
+        this.types = this.bitFromType('websocket');
+    }
+
     return this;
 };
 
@@ -2404,8 +2433,8 @@ FilterContainer.prototype.matchTokens = function(bucket, url) {
 
 FilterContainer.prototype.matchStringExactType = function(context, requestURL, requestType) {
     // Be prepared to support unknown types
-    var type = typeNameToTypeValue[requestType] || 0;
-    if ( type === 0 ) {
+    var type = typeNameToTypeValue[requestType];
+    if ( type === undefined ) {
         return undefined;
     }
 
@@ -2500,8 +2529,10 @@ FilterContainer.prototype.matchString = function(context) {
     // https://github.com/chrisaljoudi/uBlock/issues/519
     // Use exact type match for anything beyond `other`
     // Also, be prepared to support unknown types
-    var type = typeNameToTypeValue[context.requestType] || typeOtherValue;
-    if ( type > typeOtherValue ) {
+    var type = typeNameToTypeValue[context.requestType];
+    if ( type === undefined ) {
+         type = typeOtherValue;
+    } else if ( type === 0 || type > typeOtherValue ) {
         return this.matchStringExactType(context, context.requestURL, context.requestType);
     }
 
