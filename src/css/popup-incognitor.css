@@ -302,6 +302,13 @@ header .hdr-buttons {
     line-height: 1.5;
 }
 
+span.subscription-usage-amount {
+    display: none;
+}
+span.subscription-usage-amount.visible-amount {
+    display: initial;
+}
+
 /**** Blocking button ****/
 .subscription .blocking-control-container {
     height: 100%;

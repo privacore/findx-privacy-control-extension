@@ -79,7 +79,10 @@
                 <div class="subscription-text">
                     <div>
                         <div class="subscription-title ellipsis " title="{{title}}">{{title}}</div>
-                        <div class="subscription-group ellipsis" title="{{group}}">{{group}}</div>
+                        <div class="subscription-group ellipsis" title="{{group}}">
+                            {{group}}
+                            <span class="subscription-usage-amount {{#blockedUrlsQty}}visible-amount{{/blockedUrlsQty}}">(<span>{{blockedUrlsQty}}</span>)</span>
+                        </div>
                     </div>
                 </div>
             </div>
