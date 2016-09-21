@@ -51,6 +51,7 @@ return {
     userSettings: {
         pauseFiltering: false,
         advancedUserEnabled: true,
+        alwaysDetachLogger: false,
         autoUpdate: true,
         cloudStorageEnabled: false,
         collapseBlocked: true,
@@ -94,8 +95,8 @@ return {
 
     // read-only
     systemSettings: {
-        compiledMagic: 'splsmclwnvoj',
-        selfieMagic: 'rkzqonintytj'
+        compiledMagic: 'ryegxvatkfxe',
+        selfieMagic: 'ryegxvatkfxe'
     },
 
     restoreBackupSettings: {

@@ -688,7 +688,9 @@ PageStore.prototype.logRequest = function(context, result) {
     var c = (result.str || result).charAt(1);
     try {
         if ( c === 'b' ) {
-            this.hostnameToCountMap[requestHostname].value += 0x00000001;
+            if (this.hostnameToCountMap[requestHostname]
+                && typeof this.hostnameToCountMap[requestHostname] == "object")
+                this.hostnameToCountMap[requestHostname].value += 0x00000001;
             this.perLoadBlockedRequestCount++;
             µb.localSettings.blockedRequestCount++;
         } else /* if ( c === '' || c === 'a' || c === 'n' ) */ {
