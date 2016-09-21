@@ -1054,96 +1054,6 @@ var FilterHostnameDict = function(filterPath) {
     this.dict = new Set();
 };
 
-
-FilterHostnameDict.prototype.add_old = function(hn, filterPath) {
-    var key = this.makeKey(hn);
-    var bucket = this.dict[key];
-    if ( bucket === undefined ) {
-        bucket = this.dict[key] = {};
-        bucket[hn] = filterPath;
-        this.count += 1;
-        return filterPath;
-    }
-    if ( typeof bucket === 'string' ) {
-        bucket = this.dict[key] = this.meltBucket(hn.length, bucket);
-    }
-    if ( bucket.hasOwnProperty(hn) ) {
-        return false;
-    }
-    bucket[hn] = filterPath;
-    this.count += 1;
-    return filterPath;
-};
-
-FilterHostnameDict.prototype.freeze_old = function() {
-    var buckets = this.dict;
-
-
-    this.notFreezed = JSON.parse(JSON.stringify(this.dict));
-    var bucket;
-    for ( var key in buckets ) {
-        bucket = buckets[key];
-        if ( typeof bucket === 'object' ) {
-            buckets[key] = this.freezeBucket(bucket);
-        }
-    }
-};
-
-FilterHostnameDict.prototype.matchesExactly_old = function(hn) {
-    // TODO: Handle IP address
-    var key = this.makeKey(hn);
-
-
-    if (this.notFreezed) {
-        var notFreezedBucket = this.notFreezed[key];
-        if ( typeof notFreezedBucket === 'object' ) {
-            if (notFreezedBucket[hn] && notFreezedBucket[hn] == "assets/user/filters.txt") {
-                return notFreezedBucket[hn];
-            }
-        }
-    }
-
-    var bucket = this.dict[key];
-    if ( bucket === undefined ) {
-        return false;
-    }
-    if ( typeof bucket === 'object' ) {
-         return ((bucket[hn] !== undefined) ? this.filterPath : false);
-    }
-    if ( bucket.startsWith(' ') ) {
-        if(bucket.indexOf(' ' + hn + ' ') !== -1)
-            return this.filterPath;
-    }
-    // binary search
-    var len = hn.length;
-    var left = 0;
-    // http://jsperf.com/or-vs-floor/17
-    var right = (bucket.length / len + 0.5) | 0;
-    var i, needle;
-    while ( left < right ) {
-        i = left + right >> 1;
-        needle = bucket.substr( len * i, len );
-        if ( hn < needle ) {
-            right = i;
-        } else if ( hn > needle ) {
-            left = i + 1;
-        } else {
-            return this.filterPath;
-        }
-    }
-    return false;
-};
-
-FilterHostnameDict.prototype.match_old = function() {
-    // TODO: mind IP addresses
-    var pos,
-        hostname = requestHostnameRegister,
-        path;
-    while ((path = this.matchesExactly(hostname)) === false) {
-    }
-}
-
-////////////////////////////////////////////////////////////////////////
 FilterHostnameDict.prototype.add = function(hn) {
     if ( this.dict.has(hn) ) {
         return false;
@@ -1179,30 +1089,11 @@ FilterHostnameDict.prototype.rtCompile = function() {
 };
 
 FilterHostnameDict.prototype.toSelfie = function() {
-
-    /* OLD
-    return JSON.stringify({
-        count: this.count,
-        dict: this.dict,
-        filterPath:  this.filterPath,
-        notFreezed: this.notFreezed
-    });
-    */
-
     return JSON.stringify(µb.setToArray(this.dict));
 };
 
 FilterHostnameDict.fromSelfie = function(s) {
     var f = new FilterHostnameDict();
-
-    /*
-    var o = JSON.parse(s);
-    f.count = o.count;
-    f.dict = o.dict;
-    f.filterPath = o.filterPath;
-    f.notFreezed = o.notFreezed;
-    */
-
     f.dict = µb.setFromArray(JSON.parse(s));
     return f;
 };
@@ -2115,8 +2006,6 @@ FilterContainer.prototype.compileToAtomicFilter = function(filterClass, parsed, 
 
 /******************************************************************************/
 
-//FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
-//    var line, fields, bucket, entry, factory, filter;
 FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
     var line, hash, token, fclass, fdata,
         bucket, entry, factory, filter,
@@ -2153,11 +2042,6 @@ FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
 
         if ( token === '.' ) {
             if ( entry === undefined ) {
-
-            //    entry = bucket['.'] = new FilterHostnameDict(path);
-            //}
-            //if ( entry.add(fields[2], path) === false ) {
-
                 entry = new FilterHostnameDict(path);
                 bucket.set('.', new FilterHostnameDict(path));
             }
@@ -2174,8 +2058,6 @@ FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
         }
         this.duplicateBuster.add(line);
 
-        //filter = factory.fromSelfie(fields[3]);
-
         factory = this.factories[fclass];
 
         filter = factory.fromSelfie(fdata);
@@ -2188,8 +2070,6 @@ FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
             entry.add(filter);
             continue;
         }
-
-        //bucket[fields[1]] = new FilterBucket(entry, filter, path);
 
         bucket.set(token, new FilterBucket(entry, filter, path));
     }

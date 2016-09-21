@@ -202,37 +202,7 @@ FilterPlain.fromSelfie = function (s) {
         return new FilterHostname(decode(args[0]), args[1], decode(args[2]), args[3]);
     };
 
-    /******************************************************************************/
-
-// Any selector specific to an entity
-// Examples:
-//   google.*###cnt #center_col > #res > #topstuff > .ts
-
-    var FilterEntity_old = function (s, entity, filterPath) {
-        this.s = s;
-        this.entity = entity;
-        this.filterPath = filterPath || "";
-    };
-
-    FilterEntity_old.prototype.retrieve = function (entity, out) {
-        if (µb.isDefaultOff(this.filterPath))
-            return;
-        if ( entity.endsWith(this.entity) ) {
-            out.push(this.s);
-        }
-    };
-
-    FilterEntity_old.prototype.fid = 'e';
-
-    FilterEntity_old.prototype.toSelfie = function () {
-        return encode(this.s) + '\t' + this.entity + '\t' + this.filterPath;
-    };
-
-    FilterEntity_old.fromSelfie = function(s) {
-        var pos = s.indexOf('\t');
-        return new FilterEntity_old(decode(s.slice(0, pos)), s.slice(pos + 1));
-    };
-
+/******************************************************************************/
 /******************************************************************************/
 
     var FilterBucket = function(a, b, filterPath) {
@@ -1051,7 +1021,7 @@ FilterContainer.prototype.fromCompiledContent = function(lineIter, skipGenericCo
         return;
     }
     if ( skipGenericCosmetic ) {
-        this.skipGenericCompiledContent(lineIter);
+        this.skipGenericCompiledContent(lineIter, path);
         return;
     }
 
@@ -1197,7 +1167,7 @@ FilterContainer.prototype.fromCompiledContent = function(lineIter, skipGenericCo
 
     /******************************************************************************/
 
-FilterContainer.prototype.skipGenericCompiledContent = function(lineIter) {
+FilterContainer.prototype.skipGenericCompiledContent = function(lineIter, filterPath) {
     var line, field0, field1, field2, field3, filter, bucket,
         fieldIter = new µb.FieldIterator('\v');
 
@@ -1223,14 +1193,14 @@ FilterContainer.prototype.skipGenericCompiledContent = function(lineIter) {
             field2 = fieldIter.next();
             field3 = fieldIter.next();
             this.duplicateBuster.add(line);
-            filter = new FilterHostname(field3, field2);
+            filter = new FilterHostname(field3, field2, null, filterPath);
             bucket = this.specificFilters.get(field1);
             if ( bucket === undefined ) {
                 this.specificFilters.set(field1, filter);
             } else if ( bucket instanceof FilterBucket ) {
                 bucket.add(filter);
             } else {
-                this.specificFilters.set(field1, new FilterBucket(bucket, filter));
+                this.specificFilters.set(field1, new FilterBucket(bucket, filter, filterPath));
             }
             continue;
         }
@@ -1300,10 +1270,10 @@ FilterContainer.prototype.createScriptFilter = function(hash, hostname, selector
     if (µb.isDefaultOff(filterPath))
         return;
     if ( selector.startsWith('script:contains') ) {
-        return this.createScriptTagFilter(hash, hostname, selector);
+        return this.createScriptTagFilter(hash, hostname, selector, filterPath);
     }
     if ( selector.startsWith('script:inject') ) {
-        return this.createUserScriptRule(hash, hostname, selector);
+        return this.createUserScriptRule(hash, hostname, selector, filterPath);
     }
 };
 
