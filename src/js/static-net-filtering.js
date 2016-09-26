@@ -2043,7 +2043,7 @@ FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
         if ( token === '.' ) {
             if ( entry === undefined ) {
                 entry = new FilterHostnameDict(path);
-                bucket.set('.', new FilterHostnameDict(path));
+                bucket.set('.', entry);
             }
             // 'fclass' is hostname
             if ( entry.add(fclass) === false ) {
