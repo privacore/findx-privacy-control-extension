@@ -420,6 +420,7 @@
             filterData.filterBlockBtnTitle = "Click to " +
             (isFilterEnabled(filter) === "disabled" ? "block" : "unblock") + " filter on current domain";
             filterData.trackedUrls = getTrackedUrlsData(path);
+            //filterData.blockedUrlsQty = filterData.trackedUrls.length;
             filterData.blockedUrlsQty = getBlockedUrlsQty(path);
 
             response.push(filterData);
