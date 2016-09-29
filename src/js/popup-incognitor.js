@@ -375,6 +375,18 @@
         return quantity;
     };
 
+    var getTrackedUrlsQty = function (path) {
+        var quantity = 0;
+        var urls = popupData.trackedUrls[path] || [];
+        var filter = popupData.usedFilters[path];
+
+        for (var i = 0; i < urls.length; i++) {
+            quantity += popupData.urls[urls[i]].quantity;
+        }
+
+        return quantity;
+    };
+
     /***************************************************************************/
 
     var displayUsedFilters = function () {
@@ -420,7 +432,7 @@
             filterData.filterBlockBtnTitle = "Click to " +
             (isFilterEnabled(filter) === "disabled" ? "block" : "unblock") + " filter on current domain";
             filterData.trackedUrls = getTrackedUrlsData(path);
-            //filterData.blockedUrlsQty = filterData.trackedUrls.length;
+            filterData.trackedUrlsQty = getTrackedUrlsQty(path);
             filterData.blockedUrlsQty = getBlockedUrlsQty(path);
 
             response.push(filterData);
