@@ -901,15 +901,16 @@ FilterGenericHostname.fromSelfie = function(s) {
 // whether the start of the match falls within the hostname part of the
 // URL.
 
-var FilterGenericHnAnchored = function(s, filterPath) {
+var FilterGenericHnAnchored = function(s, anchor, filterPath) {
     this.s = s;
+    this.anchor = anchor;
     this.re = null;
     this.filterPath = filterPath || "";
 };
 
 FilterGenericHnAnchored.prototype.match = function(url) {
     if ( this.re === null ) {
-        this.re = strToRegex('||' + this.s, 0);
+        this.re = strToRegex('||' + this.s, this.anchor);
     }
     var matchStart = url.search(this.re);
     return matchStart !== -1 && isHnAnchored(url, matchStart);
@@ -921,23 +922,26 @@ FilterGenericHnAnchored.prototype.rtfid = '||_';
 
 FilterGenericHnAnchored.prototype.toSelfie = 
 FilterGenericHnAnchored.prototype.rtCompile = function() {
-    return this.s + '\t' +
-           this.filterPath;
+    return this.s + '\t' + this.anchor + '\t' + this.filterPath;
 };
 
 FilterGenericHnAnchored.compile = function(details) {
-    return details.f + '\t' + details.path;
+    return details.f + '\t' + details.anchor + '\t' + details.path;
 };
 
 FilterGenericHnAnchored.fromSelfie = function(s) {
     var args = s.split('\t');
-    return new FilterGenericHnAnchored(args[0], args[1]);
+    return new FilterGenericHnAnchored(args[0], parseInt(args[1], 10), args[2]);
+
+    //TODO: Igor 10.10.2016. Remove commented code if all works good.
+    //var pos = s.indexOf('\t');
+    //return new FilterGenericHnAnchored(s.slice(0, pos), parseInt(s.slice(pos + 1), 10));
 };
 
 /******************************************************************************/
 
-var FilterGenericHnAnchoredHostname = function(s, domainOpt, filterPath) {
-    FilterGenericHnAnchored.call(this, s);
+var FilterGenericHnAnchoredHostname = function(s, anchor, domainOpt, filterPath) {
+    FilterGenericHnAnchored.call(this, s, anchor);
     this.filterPath = filterPath || "";
     this.domainOpt = domainOpt;
     this.hostnameTest = hostnameTestPicker(this);
@@ -956,17 +960,16 @@ FilterGenericHnAnchoredHostname.prototype.rtfid = '||_h';
 
 FilterGenericHnAnchoredHostname.prototype.toSelfie = 
 FilterGenericHnAnchoredHostname.prototype.rtCompile = function() {
-    return this.s + '\t' + this.domainOpt + '\t' +
-           this.filterPath;
+    return this.s + '\t' + this.anchor + '\t' + this.domainOpt + '\t' + this.filterPath;
 };
 
 FilterGenericHnAnchoredHostname.compile = function(details) {
-    return details.f + '\t' + details.domainOpt + '\t' + details.path;
+    return details.f + '\t' + details.anchor + '\t' + details.domainOpt + '\t' + details.path;
 };
 
 FilterGenericHnAnchoredHostname.fromSelfie = function(s) {
-    var args = s.split('\t');
-    return new FilterGenericHnAnchoredHostname(args[0], args[1], args[2]);
+    var fields = s.split('\t');
+    return new FilterGenericHnAnchoredHostname(fields[0], parseInt(fields[1], 10), fields[2], fields[3]);
 };
 
 /******************************************************************************/
@@ -1815,6 +1818,10 @@ FilterContainer.prototype.getFilterClass = function(details) {
             return FilterPlainLeftAnchoredHostname;
         }
         if ( details.anchor > 0 ) {
+            // https://github.com/gorhill/uBlock/issues/1669
+            if ( details.hostnameAnchored ) {
+                return FilterGenericHnAnchoredHostname;
+            }
             return FilterPlainRightAnchoredHostname;
         }
         if ( details.hostnameAnchored ) {
@@ -1842,6 +1849,10 @@ FilterContainer.prototype.getFilterClass = function(details) {
         return FilterPlainLeftAnchored;
     }
     if ( details.anchor > 0 ) {
+        // https://github.com/gorhill/uBlock/issues/1669
+        if ( details.hostnameAnchored ) {
+            return FilterGenericHnAnchored;
+        }
         return FilterPlainRightAnchored;
     }
     if ( details.hostnameAnchored ) {
