@@ -330,6 +330,7 @@ PageStore.prototype.init = function(tabId) {
     this.largeMediaCount = 0;
     this.largeMediaTimer = null;
     this.netFilteringCache = NetFilteringResultCache.factory();
+    this.internalRedirectionCount = 0;
 
     this.noCosmeticFiltering =
         (µb.hnSwitches.evaluateZ('no-cosmetic-filtering', tabContext.rootHostname) === true
@@ -654,10 +655,16 @@ PageStore.prototype.journalProcess = function(fromTimer) {
 
 PageStore.prototype.filterRequest = function(context, isNotRequest) {
     var requestType = context.requestType;
+
+    // We want to short-term cache filtering results of collapsible types,
+    // because they are likely to be reused, from network request handler and
+    // from content script handler.
+    //if ( 'image sub_frame object'.indexOf(requestType) === -1 ) {
+    //    return this.filterRequestNoCache(context);
+    //}
+
     if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
-        if ( collapsibleRequestTypes.indexOf(requestType) !== -1 ) {
-            this.netFilteringCache.add(context, '');
-        }
+        this.netFilteringCache.add(context, '');
         return '';
     }
 
@@ -675,23 +682,13 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
 
     var result = '';
 
-    if ( requestType === 'font' ) {
-        if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
-            result = µb.hnSwitches.toResultString();
-        }
-        this.remoteFontCount += 1;
-    }
-
+    // Dynamic URL filtering.
     if ( result === '' ) {
         µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, requestType);
         result = µb.sessionURLFiltering.toFilterString();
     }
 
-    // Given that:
-    // - Dynamic filtering override static filtering
-    // - Evaluating dynamic filtering is much faster than static filtering
-    // We evaluate dynamic filtering first, and hopefully we can skip
-    // evaluation of static filtering.
+    // Dynamic hostname/type filtering.
     if ( result === '' && µb.userSettings.advancedUserEnabled ) {
         µb.sessionFirewall.evaluateCellZY( context.rootHostname, context.requestHostname, requestType);
         if ( µb.sessionFirewall.mustBlockOrAllow() ) {
@@ -699,7 +696,7 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
         }
     }
 
-    // Static filtering never override dynamic filtering
+    // Static filtering has lowest precedence.
     if ( result === '' || result.charAt(1) === 'n' ) {
         if ( µb.staticNetFilteringEngine.matchString(context) !== undefined ) {
             result = µb.staticNetFilteringEngine.toResultString(µb.logger.isEnabled());
@@ -707,57 +704,39 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
     }
 
     //console.debug('cache MISS: PageStore.filterRequest("%s")', context.requestURL);
+    this.netFilteringCache.add(context, result);
 
-        this.netFilteringCache.add(context, result);
-    
-    // console.debug('[%s, %s] = "%s"', context.requestHostname, requestType, result);
-    
     return result;
 };
-
-// http://jsperf.com/string-indexof-vs-object
-var collapsibleRequestTypes = 'image sub_frame object';
 
 /******************************************************************************/
 
 PageStore.prototype.filterRequestNoCache = function(context) {
-        if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
-            if ( collapsibleRequestTypes.indexOf(context.requestType) !== -1 ) {
-                this.netFilteringCache.add(context, '');
-        }
-            return '';
-        }
+    if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
+        return '';
+    }
 
-    var requestType = context.requestType;
-    var result = '';
+    var requestType = context.requestType,
+        result = '';
 
-    if ( requestType === 'font' ) {
+    if ( requestType === 'csp_report' ) {
+        if ( this.internalRedirectionCount !== 0 ) {
+            result = 'gb:no-spurious-csp-report';
+        }
+    } else if ( requestType === 'font' ) {
         if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
             result = µb.hnSwitches.toResultString();
         }
         this.remoteFontCount += 1;
     }
 
-    var requestType = context.requestType;
-    var result = '';
-
-    if ( requestType === 'font' ) {
-        if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
-            result = µb.hnSwitches.toResultString();
-        }
-        this.remoteFontCount += 1;
-    }
-
+    // Dynamic URL filtering.
     if ( result === '' ) {
         µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, requestType);
         result = µb.sessionURLFiltering.toFilterString();
     }
 
-    // Given that:
-    // - Dynamic filtering override static filtering
-    // - Evaluating dynamic filtering is much faster than static filtering
-    // We evaluate dynamic filtering first, and hopefully we can skip
-    // evaluation of static filtering.
+    // Dynamic hostname/type filtering.
     if ( result === '' && µb.userSettings.advancedUserEnabled ) {
         µb.sessionFirewall.evaluateCellZY(context.rootHostname, context.requestHostname, requestType);
         if ( µb.sessionFirewall.mustBlockOrAllow() ) {
@@ -765,7 +744,7 @@ PageStore.prototype.filterRequestNoCache = function(context) {
         }
     }
 
-    // Static filtering never override dynamic filtering
+    // Static filtering has lowest precedence.
     if ( result === '' || result.charAt(1) === 'n' ) {
         if ( µb.staticNetFilteringEngine.matchString(context) !== undefined ) {
             result = µb.staticNetFilteringEngine.toResultString(µb.logger.isEnabled());

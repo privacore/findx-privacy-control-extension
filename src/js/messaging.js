@@ -249,6 +249,8 @@ var getHostnameDict = function(hostnameToCountMap) {
         }
         counts = entry.value[1];
         //TODO: 10.10.2016 check is it works correctly
+        if (typeof counts == "object" && typeof counts.count == "number")
+            counts = counts.count;
         countObj = hostnameToCountMap.get(hostname);
         filterPath = countObj ? countObj.filterPath || "" : "";
         blockCount = counts & 0xFFFF;
@@ -712,16 +714,18 @@ vAPI.messaging.listen('elementPicker', onMessage);
 
 /******************************************************************************/
 
-var µb = µBlock;
-
-/******************************************************************************/
-
 var onMessage = function(request, sender, callback) {
+    // Cloud storage support is optional.
+    if ( vAPI.cloud instanceof Object === false ) {
+        callback();
+        return;
+    }
+
     // Async
     switch ( request.what ) {
     case 'cloudGetOptions':
         vAPI.cloud.getOptions(function(options) {
-            options.enabled = µb.userSettings.cloudStorageEnabled === true;
+            options.enabled = µBlock.userSettings.cloudStorageEnabled === true;
             callback(options);
         });
         return;
@@ -786,7 +790,8 @@ var getLocalData = function(callback) {
             lastRestoreFile: o.lastRestoreFile,
             lastRestoreTime: o.lastRestoreTime,
             lastBackupFile: o.lastBackupFile,
-            lastBackupTime: o.lastBackupTime
+            lastBackupTime: o.lastBackupTime,
+            cloudStorageSupported: vAPI.cloud instanceof Object
         });
     };
 
@@ -809,9 +814,8 @@ var backupUserData = function(callback) {
     var onSelectedListsReady = function(filterLists) {
         userData.filterLists = filterLists;
 
-        var now = new Date();
         var filename = 'my-privacontrol-backup_{{datetime}}.txt'
-            .replace('{{datetime}}', now.toLocaleString())
+            .replace('{{datetime}}', µb.dateNowToSensibleString())
             .replace(/ +/g, '_');
 
         vAPI.download({

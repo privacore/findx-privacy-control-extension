@@ -96,7 +96,7 @@ return {
     // read-only
     systemSettings: {
         compiledMagic: 'lbmqiweqbvha',
-        selfieMagic: 'lbmqiweqbvha'
+        selfieMagic: 'mhirtyetynnf'
     },
 
     restoreBackupSettings: {

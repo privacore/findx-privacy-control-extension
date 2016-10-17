@@ -52,6 +52,8 @@ vAPI.app.restart = function() {
     chrome.runtime.reload();
 };
 
+/******************************************************************************/
+/******************************************************************************/
 
 // chrome.storage.local.get(null, function(bin){ console.debug('%o', bin); });
 

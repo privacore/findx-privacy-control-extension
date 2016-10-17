@@ -1,8 +1,16 @@
 {
     "manifest_version": 2,
 
-    "name": "Privacontrol",
+    "name": "uBlock Origin",
     "version": "1.9.15.3",
+
+    "applications": {
+        "gecko": {
+            "id": "uBlock0@raymondhill.net",
+            "strict_min_version": "51.0",
+            "strict_max_version": "52.*"
+        }
+    },
 
     "default_locale": "en",
     "description": "__MSG_extShortDesc__",
@@ -16,11 +24,11 @@
             "19": "img/browsericons/icon19.png",
             "38": "img/browsericons/icon38.png"
         },
-        "default_title": "Privacontrol",
+        "default_title": "uBlock Origin",
         "default_popup": "popup.html"
     },
 
-    "author": "All Privacontrol contributors",
+    "author": "All uBlock Origin contributors",
     "background": {
         "page": "background.html"
     },
@@ -38,7 +46,6 @@
             "all_frames": false
         }
     ],
-    "incognito": "split",
     "minimum_chrome_version": "26.0",
     "optional_permissions": [ "file:///*" ],
     "options_page": "dashboard.html",
@@ -47,7 +54,6 @@
     },
     "permissions": [
         "contextMenus",
-        "privacy",
         "storage",
         "tabs",
         "unlimitedStorage",
@@ -57,7 +63,7 @@
         "http://*/*",
         "https://*/*"
     ],
-    "short_name": "Privacontrol",
+    "short_name": "uBlock₀",
     "storage": {
         "managed_schema": "managed_storage.json"
     }

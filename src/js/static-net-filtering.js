@@ -2242,9 +2242,7 @@ FilterContainer.prototype.matchTokens = function(bucket, url) {
     for (;;) {
         tokenEntry = tokens[i++];
         token = tokenEntry.token;
-        if ( token === '' ) {
-            break;
-        }
+        if ( !token ) { break; }
         f = bucket.get(token);
         if ( f !== undefined && f.match(url, tokenEntry.beg) ) {
             this.tokenRegister = token;
