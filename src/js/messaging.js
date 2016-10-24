@@ -716,7 +716,7 @@ vAPI.messaging.listen('elementPicker', onMessage);
 
 var onMessage = function(request, sender, callback) {
     // Cloud storage support is optional.
-    if ( vAPI.cloud instanceof Object === false ) {
+    if ( µBlock.cloudStorageSupported !== true ) {
         callback();
         return;
     }
@@ -791,7 +791,8 @@ var getLocalData = function(callback) {
             lastRestoreTime: o.lastRestoreTime,
             lastBackupFile: o.lastBackupFile,
             lastBackupTime: o.lastBackupTime,
-            cloudStorageSupported: vAPI.cloud instanceof Object
+            cloudStorageSupported: µb.cloudStorageSupported,
+            privacySettingsSupported: µb.privacySettingsSupported
         });
     };
 
