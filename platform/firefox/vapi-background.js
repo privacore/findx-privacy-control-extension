@@ -616,6 +616,8 @@ vAPI.storage = (function() {
     return api;
 })();
 
+vAPI.cacheStorage = vAPI.storage;
+
 /******************************************************************************/
 
 // This must be executed/setup early.
