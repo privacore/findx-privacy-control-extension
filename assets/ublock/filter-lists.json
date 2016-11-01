@@ -277,13 +277,6 @@
         "defaultOff": true,
         "off": true
     },
-    "http://www.privacontrol.com/filters/https.raw.githubusercontent.com.adblockplusisrael.easylisthebrew.master.easylisthebrew.txt": {
-        "off": true,
-        "title": "ISR: EasyList Hebrew (obsolete, will be removed soon)",
-        "group": "regions",
-        "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdBlockPlusIsrael%2FEasyListHebrew",
-        "defaultOff": true
-    },
     "http://www.privacontrol.com/filters/https.raw.githubusercontent.com.easylist.easylisthebrew.master.easylisthebrew.txt": {
         "off": true,
         "title": "ISR: EasyList Hebrew",
