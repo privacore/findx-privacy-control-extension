@@ -329,8 +329,8 @@ var getAllFiltersInUse = function () {
 /******************************************************************************/
 
 var popupDataFromTabId = function(tabId, tabTitle) {
-    var tabContext = µb.tabContextManager.mustLookup(tabId);
-    var rootHostname = tabContext.rootHostname;
+    var tabContext = µb.tabContextManager.mustLookup(tabId),
+        rootHostname = tabContext.rootHostname;
     var r = {
         advancedUserEnabled: µb.userSettings.advancedUserEnabled,
         appName: vAPI.app.name,
@@ -341,6 +341,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         firewallPaneMinimized: µb.userSettings.firewallPaneMinimized,
         globalAllowedRequestCount: µb.localSettings.allowedRequestCount,
         globalBlockedRequestCount: µb.localSettings.blockedRequestCount,
+        fontSize: µb.hiddenSettings.popupFontSize,
         netFilteringSwitch: false,
         pauseFiltering: µb.userSettings.pauseFiltering,
         rawURL: tabContext.rawURL,
@@ -816,6 +817,7 @@ var backupUserData = function(callback) {
         version: vAPI.app.version,
         userSettings: µb.userSettings,
         filterLists: {},
+        hiddenSettingsString: µb.stringFromHiddenSettings(),
         netWhitelist: µb.stringFromWhitelist(µb.netWhitelist),
         dynamicFilteringString: µb.permanentFirewall.toString(),
         urlFilteringString: µb.permanentURLFiltering.toString(),
@@ -866,13 +868,9 @@ var restoreUserData = function(request) {
         µBlock.saveLocalSettings();
         vAPI.storage.set(userData.userSettings, onCountdown);
         µb.keyvalSetOne('remoteBlacklists', userData.filterLists, onCountdown);
+        µb.hiddenSettingsFromString(userData.hiddenSettingsString || '');
         µb.keyvalSetOne('netWhitelist', userData.netWhitelist || '', onCountdown);
-
-        // With versions 0.9.2.4-, dynamic rules were saved within the
-        // `userSettings` object. No longer the case.
-        var s = userData.dynamicFilteringString || userData.userSettings.dynamicFilteringString || '';
-        µb.keyvalSetOne('dynamicFilteringString', s, onCountdown);
-
+        µb.keyvalSetOne('dynamicFilteringString', userData.dynamicFilteringString || '', onCountdown);
         µb.keyvalSetOne('urlFilteringString', userData.urlFilteringString || '', onCountdown);
         µb.keyvalSetOne('hostnameSwitchesString', userData.hostnameSwitchesString || '', onCountdown);
         µb.assets.put(µb.userFiltersPath, userData.userFilters, onCountdown);
@@ -897,6 +895,7 @@ var restoreUserData = function(request) {
 var resetUserData = function() {
     vAPI.cacheStorage.clear();
     vAPI.storage.clear();
+    vAPI.localStorage.removeItem('hiddenSettings');
 
     // Keep global counts, people can become quite attached to numbers
     µb.saveLocalSettings();
@@ -1041,6 +1040,10 @@ var onMessage = function(request, sender, callback) {
         µb.assets.purgeCacheableAsset(request.path);
         break;
 
+    case 'readHiddenSettings':
+        response = µb.stringFromHiddenSettings();
+        break;
+
     case 'restoreUserData':
         restoreUserData(request);
         break;
@@ -1069,6 +1072,10 @@ var onMessage = function(request, sender, callback) {
         µb.hnSwitches.fromString(response.switches);
         µb.saveHostnameSwitches();
         response = getRules();
+        break;
+
+    case 'writeHiddenSettings':
+        µb.hiddenSettingsFromString(request.content);
         break;
 
     default:

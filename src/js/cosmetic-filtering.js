@@ -236,7 +236,7 @@ FilterPlain.fromSelfie = function (s) {
 
     FilterBucket.fromSelfie = function (s) {
         var args = s.split('\t');
-        return new FilterBucket(null, null, args[1]);
+        return new FilterBucket(undefined, undefined, args[1]);
     };
 
 /******************************************************************************/
@@ -1419,6 +1419,7 @@ FilterContainer.prototype.retrieveScriptTagRegex = function(domain, hostname) {
 
 FilterContainer.prototype.retrieveUserScripts = function(domain, hostname) {
     if ( this.userScriptCount === 0 ) { return; }
+    if ( µb.hiddenSettings.ignoreScriptInjectFilters === true ) { return; }
 
     var reng = µb.redirectEngine;
     if ( !reng ) { return; }

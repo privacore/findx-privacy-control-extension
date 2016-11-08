@@ -19,7 +19,7 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global publicSuffixList */
+/* global objectAssign, publicSuffixList */
 
 'use strict';
 
@@ -79,9 +79,10 @@ var onAllReady = function() {
 
     //quickProfiler.stop(0);
 
-    vAPI.onLoadAllCompleted();
     //µb.contextMenu.update(null);
     µb.firstInstall = false;
+
+    vAPI.net.onReady();
 };
 
 /******************************************************************************/
@@ -182,10 +183,6 @@ var onUserSettingsReady = function(fetched) {
     if ( µb.firstInstall && vAPI.battery ) {
         userSettings.ignoreGenericCosmeticFilters = true;
     }
-
-    // Remove obsolete setting
-    delete userSettings.logRequests;
-    vAPI.storage.remove('logRequests');
 };
 
 /******************************************************************************/
@@ -323,7 +320,7 @@ var onAdminSettingsRestored = function() {
         'lastRestoreTime': 0,
         'lastBackupFile': '',
         'lastBackupTime': 0,
-        'netWhitelist': '',
+        'netWhitelist': µb.netWhitelistDefault,
         'selfie': null,
         'selfieMagic': '',
         'version': '0.0.0.0'
@@ -335,6 +332,28 @@ var onAdminSettingsRestored = function() {
 
     vAPI.storage.get(fetchableProps, onFirstFetchReady);
 };
+
+/******************************************************************************/
+
+µb.hiddenSettings = (function() {
+    var out = objectAssign({}, µb.hiddenSettingsDefault),
+        json = vAPI.localStorage.getItem('hiddenSettings');
+    if ( typeof json === 'string' ) {
+        try {
+            var o = JSON.parse(json);
+            if ( o instanceof Object ) {
+                for ( var k in o ) {
+                    if ( out.hasOwnProperty(k) ) {
+                        out[k] = o[k];
+                    }
+                }
+            }
+        }
+        catch(ex) {
+        }
+    }
+    return out;
+})();
 
 /******************************************************************************/
 

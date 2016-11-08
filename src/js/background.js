@@ -59,6 +59,9 @@ return {
         contextMenuEnabled: false,
         dynamicFilteringEnabled: true,
         externalLists: {},//defaultExternalLists,
+        //contextMenuEnabled: true,
+        //dynamicFilteringEnabled: false,
+        //externalLists: defaultExternalLists,
         firewallPaneMinimized: true,
         hyperlinkAuditingDisabled: true,
         ignoreGenericCosmeticFilters: false,
@@ -70,6 +73,15 @@ return {
         tooltipsDisabled: false,
         webrtcIPAddressHidden: true
     },
+
+    hiddenSettingsDefault: {
+        ignoreRedirectFilters: false,
+        ignoreScriptInjectFilters: false,
+        popupFontSize: 'unset',
+        suspendTabsUntilReady: false
+    },
+    // This will be filled ASAP:
+    hiddenSettings: {},
 
     // Features detection.
     privacySettingsSupported: vAPI.browserSettings instanceof Object,
