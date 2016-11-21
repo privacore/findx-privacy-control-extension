@@ -266,7 +266,7 @@ var renderFilterLists = function() {
         );
 
         toggleCheckbox(('#autoUpdate'), listDetails.autoUpdate === true);
-        toggleCheckbox(('#parseCosmeticFilters'), listDetails.cosmetic === true);
+        toggleCheckbox(('#parseCosmeticFilters'), listDetails.parseCosmeticFilters === true);
 
         //uDom('#autoUpdate').prop('checked', listDetails.autoUpdate === true);
         //uDom('#parseCosmeticFilters').prop('checked', listDetails.parseCosmeticFilters === true);
@@ -666,7 +666,7 @@ var selectFilterLists = function(callback) {
 };
 
 var buttonApplyHandler = function() {
-      listDetails.cosmetic = isChecked(this);
+      listDetails.parseCosmeticFilters = isChecked(this);
 
     renderBusyOverlay(true);
 
