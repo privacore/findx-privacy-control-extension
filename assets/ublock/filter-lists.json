@@ -270,8 +270,8 @@
         "off": false
     },
     "http://www.privacontrol.com/filters/pgl.yoyo.org.as.serverlist.txt": {
-        "title": "Peter Lowe\u2019s Ad server list",
-        "group": "ads",
+        "title": "Peter Lowe\u2019s Ad and tracking server list",
+        "group": "multipurpose",
         "homeURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fpgl.yoyo.org%2Fadservers%2Fserverlist.php%3Fhostformat%3Dhosts%26showintro%3D1%26mimetype%3Dplaintext",
         "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fpgl.yoyo.org%2Fadservers%2F",
         "defaultOff": true,
