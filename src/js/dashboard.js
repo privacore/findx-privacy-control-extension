@@ -37,15 +37,14 @@ var loadDashboardPanel = function(tab, q) {
     //TODO: 25.01.16 - uncomment after uBlock's logic will be complete
     //var pane = window.location.hash.slice(1);
     //if ( pane === '' ) {
-    //    pane = 'settings.html';
+    //pane = vAPI.localStorage.getItem('dashboardLastVisitedPane') || 'settings.html';
+    //} else {
+    //vAPI.localStorage.setItem('dashboardLastVisitedPane', pane);
     //}
     //var tabButton = uDom('[href="#' + pane + '"]');
     //if ( !tabButton || tabButton.hasClass('selected') ) {
     //    return;
     //}
-    //uDom('.tabButton.selected').toggleClass('selected', false);
-    //uDom('iframe').attr('src', pane);
-    //tabButton.toggleClass('selected', true);
 
     var tabButton = uDom('[href="#' + tab + '"]');
     if ( !tabButton ) {
