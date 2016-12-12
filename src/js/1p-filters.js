@@ -36,24 +36,32 @@ var cachedUserFilters = '';
 
 // This is to give a visual hint that the content of user blacklist has changed.
 
-function userFiltersChanged() {
+function userFiltersChanged(changed) {
     var changed = uDom.nodeFromId('userFilters').value.trim() !== cachedUserFilters;
     $('#userFiltersApply').attr("disabled", !changed);
     $('#userFiltersRevert').attr("disabled", !changed);
+    //if ( typeof changed !== 'boolean' ) {
+    //changed = uDom.nodeFromId('userFilters').value.trim() !== cachedUserFilters;
+    //}
     //uDom.nodeFromId('userFiltersApply').disabled = !changed;
     //uDom.nodeFromId('userFiltersRevert').disabled = !changed;
 }
 
 /******************************************************************************/
 
-function renderUserFilters() {
+function renderUserFilters(first) {
     var onRead = function(details) {
-        if ( details.error ) {
-            return;
-        }
+        if ( details.error ) { return; }
+        var textarea = uDom.nodeFromId('userFilters');
         cachedUserFilters = details.content.trim();
-        uDom.nodeFromId('userFilters').value = details.content;
-        userFiltersChanged();
+        textarea.value = details.content;
+        if ( first ) {
+            textarea.value += '\n';
+            var textlen = textarea.value.length;
+            textarea.setSelectionRange(textlen, textlen);
+            textarea.focus();
+        }
+        userFiltersChanged(false);
     };
     messaging.send('dashboard', { what: 'readUserFilters' }, onRead);
 }
@@ -204,9 +212,9 @@ uDom('#userFiltersApply').on('click', applyChanges);
 uDom('#userFiltersRevert').on('click', revertChanges);
 
 
-renderUserFilters();
+renderUserFilters(true);
 niceScroll();
-
+    
 /******************************************************************************/
 
 // https://www.youtube.com/watch?v=UNilsLf6eW4

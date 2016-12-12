@@ -52,6 +52,7 @@ uBlock Origin
   * [Chromium](#chromium)
   * [Firefox](#firefox--firefox-for-android)
   * [Microsoft Edge](#microsoft-edge)
+  - [Safari (macOS)](#safari-macos)
 * [Release History](#release-history)
 * [Privacy policy](https://github.com/gorhill/uBlock/wiki/Privacy-policy)
 * [Wiki](https://github.com/gorhill/uBlock/wiki)
@@ -133,14 +134,16 @@ The Firefox version of uBlock Origin has [an extra feature](https://github.com/g
 
 Also of interest: [Deploying uBlock Origin for Firefox with CCK2 and Group Policy](http://decentsecurity.com/ublock-for-firefox-deployment/).
 
-##### Debian/Ubuntu
-
 Thanks to Debian contributor [Sean Whitton](https://wiki.debian.org/SeanWhitton), users of Debian 9 or later or Ubuntu 16.04 or later may simply
 `apt-get install xul-ext-ublock-origin`.
 
 #### Microsoft Edge
 
 Early development version by [@nikrolls](https://github.com/nikrolls): <https://github.com/nikrolls/uBlock-Edge#edge>.
+
+#### Safari (macOS)
+
+Early development version by [@el1t](https://github.com/el1t): <https://github.com/el1t/uBlock-Safari#ublock-originfor-safari>.
 
 #### Note for all browsers
 

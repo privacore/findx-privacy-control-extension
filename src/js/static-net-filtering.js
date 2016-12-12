@@ -2269,6 +2269,10 @@ FilterContainer.prototype.matchTokens = function(bucket, url) {
 FilterContainer.prototype.matchStringGenericHide = function(context, requestURL) {
     var url = this.urlTokenizer.setURL(requestURL);
 
+    // https://github.com/gorhill/uBlock/issues/2225
+    //   Important: this is used by FilterHostnameDict.match().
+    requestHostnameRegister = µb.URI.hostnameFromURI(url);
+
     var bucket = this.categories.get(toHex(genericHideException));
     if ( !bucket || this.matchTokens(bucket, url) === false ) {
         this.fRegister = null;
@@ -2350,7 +2354,7 @@ FilterContainer.prototype.matchStringExactType = function(context, requestURL, r
 
     // If there is no block filter, no need to test against allow filters
     if ( this.fRegister === null ) {
-        return undefined;
+        return;
     }
 
     // Test against allow filters
@@ -2486,7 +2490,7 @@ FilterContainer.prototype.matchString = function(context) {
 
     // If there is no block filter, no need to test against allow filters
     if ( this.fRegister === null ) {
-        return undefined;
+        return;
     }
 
     // Test against allow filters
