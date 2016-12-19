@@ -1802,7 +1802,7 @@ FilterContainer.prototype.getFilterClass = function(details) {
         if ( details.isRegex ) {
             return FilterRegexHostname;
         }
-        if ( this.reIsGeneric.test(s) ) {
+        if ( this.reIsGeneric.test(s) || details.token === '*' ) {
             if ( details.hostnameAnchored ) {
                 return FilterGenericHnAnchoredHostname;
             }
@@ -1833,7 +1833,7 @@ FilterContainer.prototype.getFilterClass = function(details) {
     if ( details.isRegex ) {
         return FilterRegex;
     }
-    if ( this.reIsGeneric.test(s) ) {
+    if ( this.reIsGeneric.test(s) || details.token === '*' ) {
         if ( details.hostnameAnchored ) {
             return FilterGenericHnAnchored;
         }
