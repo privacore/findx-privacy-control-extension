@@ -96,6 +96,10 @@ var onMessage = function(request, sender, callback) {
         µb.mouseY = request.y;
         µb.mouseURL = request.url;
         break;
+    case 'compileCosmeticFilterSelector':
+        response = µb.cosmeticFilteringEngine.compileSelector(request.selector);
+        break;
+
     case 'reloadAllFilters':
        µb.reloadAllFilters(callback);
        return;
@@ -107,6 +111,7 @@ var onMessage = function(request, sender, callback) {
         µb.addExternalFilter(request.filter, request.update);
         //µb.reloadAllFilters(callback);
         return;
+
     case 'cosmeticFiltersInjected':
         µb.cosmeticFilteringEngine.addToSelectorCache(request);
         /* falls through */
