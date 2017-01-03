@@ -272,7 +272,7 @@ FilterPlain.fromSelfie = function (s) {
 /******************************************************************************/
 
 var FilterParser = function() {
-    this.prefix =  this.suffix = this.style = '';
+    this.prefix =  this.suffix = '';
     this.unhide = 0;
     this.hostnames = [];
     this.invalid = false;
@@ -284,7 +284,7 @@ var FilterParser = function() {
 
 FilterParser.prototype.reset = function() {
     this.raw = '';
-    this.prefix = this.suffix = this.style = '';
+    this.prefix = this.suffix = '';
     this.unhide = 0;
     this.hostnames.length = 0;
     this.invalid = false;
@@ -660,7 +660,6 @@ var FilterContainer = function() {
     this.netSelectorCacheCountMax = netSelectorCacheHighWaterMark;
     this.selectorCacheTimer = null;
     this.reHasUnicode = /[^\x00-\x7F]/;
-    this.reClassOrIdSelector = /^[#.][\w-]+$/;
     this.rePlainSelector = /^[#.][\w\\-]+/;
     this.rePlainSelectorEscaped = /^[#.](?:\\[0-9A-Fa-f]+ |\\.|\w|-)+/;
     this.rePlainSelectorEx = /^[^#.\[(]+([#.][\w-]+)/;
@@ -773,7 +772,16 @@ FilterContainer.prototype.freeze = function() {
 FilterContainer.prototype.compileSelector = (function() {
     var reStyleSelector = /^(.+?):style\((.+?)\)$/,
         reStyleBad = /url\([^)]+\)/,
-        reScriptSelector = /^script:(contains|inject)\((.+)\)$/;
+        reScriptSelector = /^script:(contains|inject)\((.+)\)$/,
+        div = document.createElement('div');
+
+    var isValidStyleProperty = function(cssText) {
+        if ( reStyleBad.test(cssText) ) { return false; }
+        div.style.cssText = cssText;
+        if ( div.style.cssText === '' ) { return false; }
+        div.style.cssText = '';
+        return true;
+    };
 
     return function(raw) {
         if ( isValidCSSSelector(raw) && raw.indexOf('[-abp-properties=') === -1 ) {
@@ -784,15 +792,15 @@ FilterContainer.prototype.compileSelector = (function() {
         var matches;
 
         // `:style` selector?
-        if ( (matches = reStyleSelector.exec(raw)) !== null ) {
-            if ( isValidCSSSelector(matches[1]) && reStyleBad.test(matches[2]) === false ) {
-                return JSON.stringify({
-                    style: true,
-                    raw: raw,
-                    parts: [ matches[1], '{' + matches[2] + '}' ]
-                });
-            }
-            return;
+        if (
+            (matches = reStyleSelector.exec(raw)) !== null &&
+            isValidCSSSelector(matches[1]) &&
+            isValidStyleProperty(matches[2])
+        ) {
+            return JSON.stringify({
+                raw: raw,
+                style: [ matches[1], '{' + matches[2] + '}' ]
+            });
         }
 
         // `script:` filter?
@@ -805,7 +813,6 @@ FilterContainer.prototype.compileSelector = (function() {
             if ( reIsRegexLiteral.test(matches[2]) === false || isBadRegex(matches[2].slice(1, -1)) === false ) {
                 return raw;
             }
-            return;
         }
 
         // Procedural selector?
@@ -815,14 +822,13 @@ FilterContainer.prototype.compileSelector = (function() {
         }
 
         µb.logger.writeOne('', 'error', 'Cosmetic filtering – invalid filter: ' + raw);
-        return;
     };
 })();
 
 /******************************************************************************/
 
 FilterContainer.prototype.compileProceduralSelector = (function() {
-    var reParserEx = /(:(?:has|has-text|if|if-not|matches-css|matches-css-after|matches-css-before|xpath))\(.+\)$/,
+    var reOperatorParser = /(:(?:has|has-text|if|if-not|matches-css|matches-css-after|matches-css-before|xpath))\(.+\)$/,
         reFirstParentheses = /^\(*/,
         reLastParentheses = /\)*$/,
         reEscapeRegex = /[.*+?^${}()|[\]\\]/g;
@@ -887,8 +893,11 @@ FilterContainer.prototype.compileProceduralSelector = (function() {
     ]);
 
     var compile = function(raw) {
-        var matches = reParserEx.exec(raw);
-        if ( matches === null ) { return; }
+        var matches = reOperatorParser.exec(raw);
+        if ( matches === null ) {
+            if ( isValidCSSSelector(raw) ) { return { selector: raw }; }
+            return;
+        }
         var tasks = [],
             firstOperand = raw.slice(0, matches.index),
             currentOperator = matches[1],
@@ -897,7 +906,7 @@ FilterContainer.prototype.compileProceduralSelector = (function() {
             depth = 0, opening, closing;
         if ( firstOperand !== '' && isValidCSSSelector(firstOperand) === false ) { return; }
         for (;;) {
-            matches = reParserEx.exec(selector);
+            matches = reOperatorParser.exec(selector);
             if ( matches !== null ) {
                 nextOperand = selector.slice(0, matches.index);
                 nextOperator = matches[1];
@@ -936,7 +945,6 @@ FilterContainer.prototype.compileProceduralSelector = (function() {
         lastProceduralSelector = raw;
         var compiled = compile(raw);
         if ( compiled !== undefined ) {
-            compiled.procedural = true;
             compiled.raw = raw;
             compiled = JSON.stringify(compiled);
         }
@@ -997,15 +1005,6 @@ FilterContainer.prototype.compile = function (s, out, filterPath) {
     var i = hostnames.length;
     if (i === 0) {
         this.compileGenericSelector(parsed, out, filterPath);
-        return true;
-    }
-
-    // For hostname- or entity-based filters, class- or id-based selectors are
-    // still the most common, and can easily be tested using a plain regex.
-    if (
-        this.reClassOrIdSelector.test(parsed.suffix) === false &&
-        this.compileSelector(parsed.suffix) === undefined
-    ) {
         return true;
     }
 

@@ -417,8 +417,9 @@ var PSelector = function(o) {
     this.raw = o.raw;
     this.selector = o.selector;
     this.tasks = [];
-    var tasks = o.tasks, task, ctor;
-    for ( var i = 0; i < tasks.length; i++ ) {
+    var tasks = o.tasks;
+    if ( !tasks ) { return; }
+    for ( var i = 0, task, ctor; i < tasks.length; i++ ) {
         task = tasks[i];
         ctor = this.operatorToTaskMap.get(task[0]);
         this.tasks.push(new ctor(task));
@@ -443,36 +444,16 @@ PSelector.prototype.exec = function(input) {
 };
 PSelector.prototype.test = function(input) {
     //var t0 = window.performance.now();
-    var tasks = this.tasks, nodes = this.prime(input), aa0 = [ null ], aa;
+    var tasks = this.tasks, nodes = this.prime(input), AA = [ null ], aa;
     for ( var i = 0, ni = nodes.length; i < ni; i++ ) {
-        aa0[0] = nodes[i]; aa = aa0;
+        AA[0] = nodes[i]; aa = AA;
         for ( var j = 0, nj = tasks.length; j < nj && aa.length !== 0; j++ ) {
-            aa = tasks[i].exec(aa);
+            aa = tasks[j].exec(aa);
         }
         if ( aa.length !== 0 ) { return true; }
     }
     //console.log('%s: %s ms', this.raw, (window.performance.now() - t0).toFixed(2));
     return false;
-};
-
-var PSelectors = function() {
-    this.entries = [];
-};
-PSelectors.prototype.add = function(o) {
-    this.entries.push(new PSelector(o));
-};
-PSelectors.prototype.forEachNode = function(callback) {
-    var pfilters = this.entries,
-        i = pfilters.length,
-        pfilter, nodes, j;
-    while ( i-- ) {
-        pfilter = pfilters[i];
-        nodes = pfilter.exec();
-        j = nodes.length;
-        while ( j-- ) {
-            callback(nodes[j], pfilter);
-        }
-    }
 };
 
 /******************************************************************************/
@@ -497,8 +478,6 @@ var domFilterer = {
         add: function(selector) {
             this.entries.push(selector);
             this.selector = undefined;
-        },
-        forEachNodeOfSelector: function(/*callback, root, extra*/) {
         },
         forEachNode: function(callback, root, extra) {
             if ( this.selector === undefined ) {
@@ -532,7 +511,29 @@ var domFilterer = {
             }
         }
     },
-    proceduralSelectors: new PSelectors(),           // Hiding filters: procedural
+    styleSelectors: {                           // Style filters
+        entries: [],
+        add: function(o) {
+            this.entries.push(o);
+        }
+    },
+    proceduralSelectors: {                      // Hiding filters: procedural
+        entries: [],
+        add: function(o) {
+            this.entries.push(new PSelector(o));
+        },
+        forEachNode: function(callback) {
+            var pfilters = this.entries, i = pfilters.length, pfilter, nodes, j;
+            while ( i-- ) {
+                pfilter = pfilters[i];
+                nodes = pfilter.exec();
+                j = nodes.length;
+                while ( j-- ) {
+                    callback(nodes[j], pfilter);
+                }
+            }
+        }
+    },
 
     addExceptions: function(aa) {
         for ( var i = 0, n = aa.length; i < n; i++ ) {
@@ -556,11 +557,13 @@ var domFilterer = {
         }
         var o = JSON.parse(selector);
         if ( o.style ) {
-            this.newStyleRuleBuffer.push(o.parts.join(' '));
+            this.newStyleRuleBuffer.push(o.style.join(' '));
+            this.styleSelectors.add(o);
             return;
         }
-        if ( o.procedural ) {
+        if ( o.tasks ) {
             this.proceduralSelectors.add(o);
+            return;
         }
     },
 
