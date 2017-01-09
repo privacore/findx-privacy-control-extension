@@ -24,9 +24,16 @@
     },
     "http://www.privacontrol.com/filters/https.adguard.com.en.filter.rules.html.id.1.txt": {
         "off": true,
+        "title": "RUS: Adguard Russian Filter (obsolete, will be removed)",
+        "group": "regions",
+        "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fforum.adguard.com%2Fforumdisplay.php%3F69-%25D0%25A4%25D0%25B8%25D0%25BB%25D1%258C%25D1%2582%25D1%2580%25D1%258B-Adguard",
+        "defaultOff": true
+    },
+    "http://www.privacontrol.com/filters/https.filters.adtidy.org.extension.chromium.filters.1.txt": {
+        "off": true,
         "title": "RUS: Adguard Russian Filter",
         "group": "regions",
-        "supportURL": "http://www.privacontrol.com/redir.html?u=http%3A%2F%2Fforum.adguard.com%2Fforumdisplay.php%3F69-%25D0%25A4%25D0%25B8%25D0%25BB%25D1%258C%25D1%2582%25D1%2580%25D1%258B-Adguard",
+        "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fforum.adguard.com%2Fforumdisplay.php%3F69-%25D0%25A4%25D0%25B8%25D0%25BB%25D1%258C%25D1%2582%25D1%2580%25D1%258B-Adguard",
         "defaultOff": true
     },
     "http://www.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.advblock.txt": {
@@ -384,10 +391,17 @@
     },
     "http://www.privacontrol.com/filters/https.adguard.com.filter.rules.html.id.13.txt": {
         "off": true,
+        "title": "TUR: Adguard Turkish Filter (obsolete, will be removed)",
+        "group": "regions",
+        "supportURL": "http://www.privacontrol.com/redir.html?u=http%3A%2F%2Fforum.adguard.com%2Fforumdisplay.php%3F51-Filter-Rules",
+        "defaultOff": true
+    },
+    "http://www.privacontrol.com/filters/https.filters.adtidy.org.extension.chromium.filters.13.txt": {
+        "off": true,
         "title": "TUR: Adguard Turkish Filter",
         "group": "regions",
         "lang": "tr",
-        "supportURL": "http://www.privacontrol.com/redir.html?u=http%3A%2F%2Fforum.adguard.com%2Fforumdisplay.php%3F51-Filter-Rules",
+        "supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fforum.adguard.com%2Fforumdisplay.php%3F51-Filter-Rules",
         "defaultOff": true
     },
     "http://www.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.vietnam.txt": {
