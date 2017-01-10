@@ -174,10 +174,9 @@ housekeep itself.
 
     vAPI.tabs.onPopupCreated = function(targetTabId, openerTabId) {
         var popup = popupCandidates[targetTabId];
-        if ( popup !== undefined ) {
-            return;
+        if ( popup === undefined ) {
+            popupCandidates[targetTabId] = new PopupCandidate(targetTabId, openerTabId);
         }
-        popupCandidates[targetTabId] = new PopupCandidate(targetTabId, openerTabId);
         popupCandidateTest(targetTabId);
     };
 
@@ -584,7 +583,7 @@ vAPI.tabs.onPopupUpdated = (function() {
         if ( openerHostname !== '' ) {
             // Check per-site switch first
             if ( µb.hnSwitches.evaluateZ('no-popups', openerHostname) ) {
-                if ( typeof clickedURL !== 'string' || areDifferentURLs(targetURL, clickedURL) ) {
+                if ( typeof clickedURL === 'string' && areDifferentURLs(targetURL, clickedURL) ) {
                     return 'ub:no-popups: ' + µb.hnSwitches.z + ' true';
                 }
             }

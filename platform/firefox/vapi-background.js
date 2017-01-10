@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2106 The uBlock Origin authors
+    Copyright (C) 2014-2107 The uBlock Origin authors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2359,61 +2359,52 @@ vAPI.net.registerListeners = function() {
             null;
     }
 
-    var shouldLoadPopupListenerMessageName = location.host + ':shouldLoadPopup',
-        shouldLoadPopupListenerMap = new Map(),
-        shouldLoadPopupListenerMapToD = 0;
-    var shouldLoadPopupListener = function(openerURL, target) {
-        var popupTabId = tabWatcher.tabIdFromTarget(target),
-            popupURL = target.currentURI && target.currentURI.asciiSpec || '',
-            openerTabId,
-            uri;
-        if ( shouldLoadPopupListenerMapToD > Date.now() ) {
-            openerTabId = shouldLoadPopupListenerMap.get(popupURL);
+    var shouldLoadPopupListenerMessageName = location.host + ':shouldLoadPopup';
+    var shouldLoadPopupListenerEntries = [];
+    var shouldLoadPopupListener = function(e) {
+        if ( typeof vAPI.tabs.onPopupCreated !== 'function' ) { return; }
+
+        var target = e.target,
+            data = e.data,
+            now = Date.now(),
+            entries = shouldLoadPopupListenerEntries,
+            entry;
+
+        var i = entries.length;
+        while ( i-- ) {
+            entry = entries[i];
+            if ( entry.id === data.id ) {
+                entries.splice(i, 1);
+                break;
+            }
+            if ( entry.expire <= now ) {
+                entries.splice(i, 1);
+            }
+            entry = undefined;
         }
-
-        // https://github.com/uBlockOrigin/uAssets/issues/255
-        //   Handle chained popups.
-        if ( openerTabId !== undefined ) {
-            shouldLoadPopupListenerMap.set(target.currentURI.asciiSpec, openerTabId);
-            shouldLoadPopupListenerMapToD = Date.now() + 10000;
-            vAPI.tabs.onPopupCreated(popupTabId, openerTabId);
-            return;
+        if ( !entry ) {
+            entry = {
+                id: data.id,
+                popupTabId: undefined,
+                openerTabId: undefined,
+                expire: now + 10000
+            };
+            entries.push(entry);
         }
-
-        for ( var browser of tabWatcher.browsers() ) {
-            uri = browser.currentURI;
-
-            // Probably isn't the best method to identify the source tab.
-
-            // https://github.com/gorhill/uBlock/issues/450
-            // Skip entry if no valid URI available.
-            // Apparently URI can be undefined under some circumstances: I
-            // believe this may have to do with those very temporary
-            // browser objects created when opening a new tab, i.e. related
-            // to https://github.com/gorhill/uBlock/issues/212
-            if ( !uri || uri.spec !== openerURL ) { continue; }
-
-            openerTabId = tabWatcher.tabIdFromTarget(browser);
-            if ( openerTabId === popupTabId ) { continue; }
-
-            shouldLoadPopupListenerMap = new Map();
-            shouldLoadPopupListenerMapToD = Date.now() + 10000;
-            shouldLoadPopupListenerMap.set(popupURL, openerTabId);
-            vAPI.tabs.onPopupCreated(popupTabId, openerTabId);
-            break;
+        var tabId = tabWatcher.tabIdFromTarget(target);
+        if ( data.popup ) {
+            entry.popupTabId = tabId;
+        } else /* if ( data.opener ) */ {
+            entry.openerTabId = tabId;
         }
-    };
-    var shouldLoadPopupListenerAsync = function(e) {
-        if ( typeof vAPI.tabs.onPopupCreated !== 'function' ) {
-            return;
+        if ( entry.popupTabId && entry.openerTabId ) {
+            vAPI.tabs.onPopupCreated(entry.popupTabId, entry.openerTabId);
         }
-        // We are handling a synchronous message: do not block.
-        vAPI.setTimeout(shouldLoadPopupListener.bind(null, e.data, e.target), 1);
     };
 
     vAPI.messaging.globalMessageManager.addMessageListener(
         shouldLoadPopupListenerMessageName,
-        shouldLoadPopupListenerAsync
+        shouldLoadPopupListener
     );
 
     var shouldLoadListenerMessageName = location.host + ':shouldLoad';
@@ -2499,7 +2490,7 @@ vAPI.net.registerListeners = function() {
     cleanupTasks.push(function() {
         vAPI.messaging.globalMessageManager.removeMessageListener(
             shouldLoadPopupListenerMessageName,
-            shouldLoadPopupListenerAsync
+            shouldLoadPopupListener
         );
 
         vAPI.messaging.globalMessageManager.removeMessageListener(
