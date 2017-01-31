@@ -5,7 +5,12 @@
 echo "*** Privacontrol.ch: Creating web store package"
 echo "*** Privacontrol.ch: Copying files"
 
-DES=dist/build/Privacontrol.ch
+
+if [ "$1" = experimental ]; then
+    DES=dist/build/experimental/Privacontrol.ch
+else
+    DES=dist/build/Privacontrol.ch
+fi
 rm -rf $DES
 mkdir -p $DES
 

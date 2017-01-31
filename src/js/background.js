@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2016 Raymond Hill
+    Copyright (C) 2014-2017 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,20 +19,18 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* exported µBlock */
-
 'use strict';
 
 /******************************************************************************/
 
-var µBlock = (function() {
+var µBlock = (function() { // jshint ignore:line
 
 /******************************************************************************/
 
 var oneSecond = 1000;
 var oneMinute = 60 * oneSecond;
 var oneHour = 60 * oneMinute;
-// var oneDay = 24 * oneHour;
+var oneDay = 24 * oneHour;
 
 /******************************************************************************/
 
@@ -58,7 +56,7 @@ return {
         colorBlindFriendly: false,
         contextMenuEnabled: false,
         dynamicFilteringEnabled: true,
-        externalLists: {},//defaultExternalLists,
+        externalLists: "",//defaultExternalLists,
         //contextMenuEnabled: true,
         //dynamicFilteringEnabled: false,
         //externalLists: defaultExternalLists,
@@ -75,8 +73,12 @@ return {
     },
 
     hiddenSettingsDefault: {
+        assetFetchTimeout: 30,
+        autoUpdateAssetFetchPeriod: 120,
+        autoUpdatePeriod: 7,
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
+        manualUpdateAssetFetchPeriod: 2000,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false
     },
@@ -85,7 +87,8 @@ return {
 
     // Features detection.
     privacySettingsSupported: vAPI.browserSettings instanceof Object,
-    cloudStorageSupported: vAPI.cloud instanceof Object,
+    //cloudStorageSupported: vAPI.cloud instanceof Object,
+    cloudStorageSupported: false, // 25.01.17 Igor
 
     // https://github.com/chrisaljoudi/uBlock/issues/180
     // Whitelist directives need to be loaded once the PSL is available
@@ -112,8 +115,8 @@ return {
 
     // read-only
     systemSettings: {
-        compiledMagic: 'zelhzxrhkfjr',
-        selfieMagic: 'zelhzxrhkfjr'
+        compiledMagic: 'fxtcjjhbhyiw',
+        selfieMagic: 'fxtcjjhbhyiw'
     },
 
     restoreBackupSettings: {
@@ -123,60 +126,21 @@ return {
         lastBackupTime: 0
     },
 
+    // 25.01.17 Igor.
     // EasyList, EasyPrivacy and many others have an 4-day update period,
     // as per list headers.
-    updateAssetsEvery: 97 * oneHour,
-    projectServerRoot: 'https://raw.githubusercontent.com/gorhill/uBlock/master/',
-    userFiltersPath: 'assets/user/filters.txt',
-    pslPath: 'assets/thirdparties/publicsuffix.org/list/effective_tld_names.dat',
+    updateAssetsEvery: 4 * oneDay,
 
-    // permanent lists
-    permanentLists: {
-        // User
-        'assets/user/filters.txt': {
-            group: 'default',
-            off:   false,
-            inUse: true,
-            title: "My filters"
-        }
-        // uBlock
-        //'assets/ublock/filters.txt': {
-        //    title: 'uBlock filters',
-        //    group: 'default'
-        //},
-        //'assets/ublock/privacy.txt': {
-        //    title: 'uBlock filters – Privacy',
-        //    group: 'default'
-        //},
-        //'assets/ublock/unbreak.txt': {
-        //    title: 'uBlock filters – Unbreak',
-        //    group: 'default'
-        //},
-        //'assets/ublock/badware.txt': {
-        //    title: 'uBlock filters – Badware risks',
-        //    group: 'default',
-        //    supportURL: 'https://github.com/gorhill/uBlock/wiki/Badware-risks',
-        //    instructionURL: 'https://github.com/gorhill/uBlock/wiki/Badware-risks'
-        //},
-        //'assets/ublock/experimental.txt': {
-        //    title: 'uBlock filters – Experimental',
-        //    group: 'default',
-        //    off: true,
-        //    supportURL: 'https://github.com/gorhill/uBlock/wiki/Experimental-filters',
-        //    instructionURL: 'https://github.com/gorhill/uBlock/wiki/Experimental-filters'
-        //}
-    },
+    // Allows to fully customize uBO's assets, typically set through admin
+    // settings. The content of 'assets.json' will also tell which filter
+    // lists to enable by default when uBO is first installed.
+    assetsBootstrapLocation: 'assets/assets.json',
 
-    // current lists
-    remoteBlacklists: {},
-    oldListToNewListMap: {
-        "assets/thirdparties/easylist-downloads.adblockplus.org/easylist.txt": false,
-        "assets/thirdparties/easylist-downloads.adblockplus.org/easyprivacy.txt": false,
-        "assets/thirdparties/mirror1.malwaredomains.com/files/justdomains": false,
-        "assets/thirdparties/pgl.yoyo.org/as/serverlist": false,
-        "assets/thirdparties/publicsuffix.org/list/effective_tld_names.dat": false,
-        "assets/thirdparties/www.malwaredomainlist.com/hostslist/hosts.txt": false
-    },
+    userFiltersPath: 'user-filters',
+    pslAssetKey: 'public_suffix_list.dat',
+
+    selectedFilterLists: [],
+    availableFilterLists: {},
 
     selfieAfter: 23 * oneMinute,
 

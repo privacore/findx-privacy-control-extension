@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2016 Raymond Hill
+    Copyright (C) 2014-2017 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ var matchBucket = function(url, hostname, bucket, start) {
             return url || "";
     };
     µBlock.isDomainInExceptions = function (path, domain) {
-        var filter = this.remoteBlacklists[path];
+        var filter = this.availableFilterLists[path];
         if (!filter || !filter.exceptions || !filter.exceptions.domains) return false;
         if (filter.exceptions.domains.hasOwnProperty(domain)) return true;
         return false;
@@ -112,7 +112,7 @@ var matchBucket = function(url, hostname, bucket, start) {
      * @returns {boolean}
      */
     µBlock.isBlockedForDomain = function (path, domain) {
-        var filter = this.remoteBlacklists[path];
+        var filter = this.availableFilterLists[path];
         try {
             return filter.exceptions.domains[domain] || false;
         }
@@ -124,20 +124,18 @@ var matchBucket = function(url, hostname, bucket, start) {
     µBlock.isInUse = function (path) {
         if (!path) return true;
      
-        var filter = this.remoteBlacklists[path];
+        var filter = this.availableFilterLists[path];
         return filter.hasOwnProperty("inUse") ? filter.inUse : true;
     };
     
      µBlock.isDefaultOff = function (path) {
         if (!path || path === 'undefined') return false;
-        var filter = this.remoteBlacklists[path];
+        var filter = this.availableFilterLists[path];
         return filter.hasOwnProperty("defaultOff") ? filter.defaultOff : false;
     };
 
-    /***************************************************************************/
-
     µBlock.isUrlInExceptions = function (path, url, pageDomain) {
-        var filter = this.remoteBlacklists[path];
+        var filter = this.availableFilterLists[path];
         if (!filter || !filter.exceptions || !filter.exceptions.links) return false;
         var links = filter.exceptions.links;
         if (links.hasOwnProperty(url) && links[url].hasOwnProperty(pageDomain)) return true;
@@ -145,7 +143,7 @@ var matchBucket = function(url, hostname, bucket, start) {
     };
 
     µBlock.isUrlBlockedForDomain = function (path, url, domain) {
-        var filter = this.remoteBlacklists[path];
+        var filter = this.availableFilterLists[path];
         try {
             return filter.exceptions.links[url][domain] || false;
         }
@@ -406,6 +404,9 @@ var reInvalidHostname = /[^a-z0-9.\-\[\]:]/,
         if ( value === true ) {
             us.dynamicFilteringEnabled = true;
         }
+        break;
+    case 'autoUpdate':
+        this.scheduleAssetUpdater(value ? 7 * 60 * 1000 : 0);
         break;
     case 'collapseBlocked':
         if ( value === false ) {

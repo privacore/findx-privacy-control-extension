@@ -958,7 +958,7 @@
 
     /***************************************************************************/
 
-    var getPopupData = function () {
+    var getPopupData = function (tabId) {
         var onDataReceived = function (response) {
             cachePopupData(response);
             renderPopup();
@@ -967,7 +967,10 @@
 
             ffPopupHeightFixes();
         };
-        messager.send('popupPanel', {what: 'getPopupData'}, onDataReceived);
+        messager.send('popupPanel',
+            { what: 'getPopupData', tabId: tabId },
+            onDataReceived
+        );
     };
 
     /***************************************************************************/
@@ -986,7 +989,18 @@
 
     // Make menu only when popup html is fully loaded
     uDom.onLoad(function () {
-        getPopupData();
+        // If there's no tab id specified in the query string,
+        // it will default to current tab.
+        var tabId = null;
+
+        console.log(JSON.parse(JSON.stringify(window.location)));
+
+        // Extract the tab id of the page this popup is for
+        var matches = window.location.search.match(/[\?&]tabId=([^&]+)/);
+        if ( matches && matches.length === 2 ) {
+            tabId = matches[1];
+        }
+        getPopupData(tabId);
 
         uDom(selectors.closeBtn).on('click', vAPI.closePopup);
         uDom(selectors.optionsBtn).on('click', openOptionsPage);
