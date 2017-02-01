@@ -295,7 +295,7 @@ var fromFetch = function(to, fetched) {
 
 /******************************************************************************/
 
-var onAdminSettingsRestored = function() {
+var onSelectedFilterListsLoaded = function() {
     var fetchableProps = {
         'compiledMagic': '',
         'dynamicFilteringString': 'behind-the-scene * 3p noop\nbehind-the-scene * 3p-frame noop',
@@ -316,6 +316,18 @@ var onAdminSettingsRestored = function() {
     toFetch(µb.restoreBackupSettings, fetchableProps);
 
     vAPI.storage.get(fetchableProps, onFirstFetchReady);
+};
+
+/******************************************************************************/
+
+// TODO(seamless migration):
+// Eventually selected filter list keys will be loaded as a fetchable
+// property. Until then we need to handle backward and forward
+// compatibility, this means a special asynchronous call to load selected
+// filter lists.
+
+var onAdminSettingsRestored = function() {
+    µb.loadSelectedFilterLists(onSelectedFilterListsLoaded);
 };
 
 /******************************************************************************/

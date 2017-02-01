@@ -32,7 +32,8 @@
 
 var listDetails = {},
     filteringSettingsHash = '',
-    lastUpdateTemplateString = vAPI.i18n('3pLastUpdate');
+    lastUpdateTemplateString = vAPI.i18n('3pLastUpdate'),
+    reValidExternalList = /[a-z-]+:\/\/\S*\/\S+/;
 
 var hasCachedContent = false;
 var needUpdate = false;
@@ -43,6 +44,9 @@ var onMessage = function(msg) {
     switch ( msg.what ) {
     case 'assetUpdated':
         updateAssetStatus(msg);
+        break;
+    case 'assetsUpdated':
+        document.body.classList.remove('updating');
         break;
     case 'staticFilteringDataChanged':
         renderFilterLists();
@@ -91,7 +95,8 @@ var renderFilterLists = function(soft) {
             elem = li.querySelector('a:nth-of-type(1)');
             elem.setAttribute('href', 'asset-viewer.html?url=' + encodeURI(listKey));
             elem.setAttribute('type', 'text/html');
-            elem.textContent = listNameFromListKey(listKey) + '\u200E';
+            elem.textContent = listNameFromListKey(listKey);
+            li.classList.remove('toRemove');
             if ( entry.supportName ) {
                 li.classList.add('support');
                 elem = li.querySelector('a.support');
@@ -144,7 +149,6 @@ var renderFilterLists = function(soft) {
                 lastUpdateTemplateString.replace('{{ago}}', renderElapsedTimeToString(asset.writeTime))
             );
         }
-        li.classList.remove('updating');
         li.classList.remove('discard');
         return li;
     };
@@ -291,7 +295,12 @@ var renderFilterLists = function(soft) {
                 data.path = path;
                 var filter = createFilterItem(data);
                 filter._data = data;
-                fragment.appendChild(filter);
+
+                if (path == "user-filters") { // always set user-filters to first position
+                    fragment.insertBefore(filter, fragment.firstChild)
+                }
+                else
+                    fragment.appendChild(filter);
 
                 checkIsCached(data);
             }
@@ -489,8 +498,6 @@ var renderFilterLists = function(soft) {
 
 /******************************************************************************/
 
-// This is to give a visual hint that the selection of blacklists has changed.
-
 var renderWidgets = function() {
     // 25.01.17 Igor. This code was here before merging.
     uDom('#buttonUpdate').toggleClass('disabled', !listsContentChanged());
@@ -499,19 +506,18 @@ var renderWidgets = function() {
 
     //uDom('#buttonApply').toggleClass('disabled', filteringSettingsHash === hashFromCurrentFromSettings());
     //uDom('#buttonPurgeAll').toggleClass('disabled', document.querySelector('#lists .listEntry.cached') === null);
-    //uDom('#buttonUpdate').toggleClass('disabled', document.querySelector('#lists .listEntry.obsolete:not(.updating) > input[type="checkbox"]:checked') === null);
-
+    //uDom('#buttonUpdate').toggleClass('disabled', document.querySelector('body:not(.updating) #lists .listEntry.obsolete > input[type="checkbox"]:checked') === null);
 };
 
 /******************************************************************************/
 
 var updateAssetStatus = function(details) {
+    return;
     var li = document.querySelector('#lists .listEntry[data-listkey="' + details.key + '"]');
     if ( li === null ) { return; }
     li.classList.toggle('failed', !!details.failed);
     li.classList.toggle('obsolete', !details.cached);
     li.classList.toggle('cached', !!details.cached);
-    li.classList.remove('updating');
     if ( details.cached ) {
         li.querySelector('.status.cache').setAttribute(
             'title',
@@ -546,8 +552,11 @@ var hashFromCurrentFromSettings = function() {
             listHash.push(liEntry.getAttribute('data-listkey'));
         }
     }
-    hash.push(listHash.sort().join());
-    hash.push(document.getElementById('externalLists').value.trim());
+    hash.push(
+        listHash.sort().join(),
+        reValidExternalList.test(document.getElementById('externalLists').value),
+        document.querySelector('#lists .listEntry.toRemove') !== null
+    );
     return hash.join();
 };
 
@@ -668,10 +677,6 @@ var buttonApplyHandler = function() {
 
 var buttonUpdateHandler = function() {
     var onSelectionDone = function() {
-        // 25.01.17 Igor. This code commented for tests. If all works - remove it, it is an old or unneed code
-        //uDom('#lists .listEntry.obsolete > input[type="checkbox"]:checked')
-        //    .ancestors('.listEntry[data-listkey]')
-        //    .addClass('updating');
         document.body.classList.add('updating');
         messaging.send('dashboard', { what: 'forceUpdateAssets' });
         renderWidgets();

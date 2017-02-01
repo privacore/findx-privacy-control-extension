@@ -529,7 +529,7 @@
 		"group": "regions",
 		"off": true,
 		"title": "RUS: RU AdList (Дополнительная региональная подписка)",
-		"lang": "ru",
+        "lang": "be ru uk",
 		"contentURL": "http://www.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.advblock.txt",
 		"supportURL": "http://www.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D102",
         "defaultOff": true,

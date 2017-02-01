@@ -29,7 +29,8 @@
 
 var reIsExternalPath = /^(?:[a-z-]+):\/\//,
     reIsUserAsset = /^user-/,
-    errorCantConnectTo = vAPI.i18n('errorCantConnectTo');
+    errorCantConnectTo = vAPI.i18n('errorCantConnectTo'),
+    noopfunc = function(){};
 
 var api = {
 };
@@ -340,7 +341,7 @@ var saveAssetSourceRegistry = (function() {
     };
 })();
 
-var updateAssetSourceRegistry = function(json) {
+var updateAssetSourceRegistry = function(json, silent) {
     var newDict;
     try {
         newDict = JSON.parse(json);
@@ -348,29 +349,29 @@ var updateAssetSourceRegistry = function(json) {
     }
     if ( newDict instanceof Object === false ) { return; }
 
-    getAssetSourceRegistry(function(oldDict) {
-        var assetKey;
-        // Remove obsolete entries (only those which were built-in).
-        for ( assetKey in oldDict ) {
-            if (
-                newDict[assetKey] === undefined &&
-                oldDict[assetKey].submitter === undefined
-            ) {
-                unregisterAssetSource(assetKey);
-            }
+    var oldDict = assetSourceRegistry,
+        assetKey;
+
+    // Remove obsolete entries (only those which were built-in).
+    for ( assetKey in oldDict ) {
+        if (
+            newDict[assetKey] === undefined &&
+            oldDict[assetKey].submitter === undefined
+        ) {
+            unregisterAssetSource(assetKey);
         }
-        // Add/update existing entries. Notify of new asset sources.
-        for ( assetKey in newDict ) {
-            if ( oldDict[assetKey] === undefined ) {
-                fireNotification(
-                    'builtin-asset-source-added',
-                    { assetKey: assetKey, entry: newDict[assetKey] }
-                );
-            }
-            registerAssetSource(assetKey, newDict[assetKey]);
+    }
+    // Add/update existing entries. Notify of new asset sources.
+    for ( assetKey in newDict ) {
+        if ( oldDict[assetKey] === undefined && !silent ) {
+            fireNotification(
+                'builtin-asset-source-added',
+                { assetKey: assetKey, entry: newDict[assetKey] }
+            );
         }
-        saveAssetSourceRegistry();
-    });
+        registerAssetSource(assetKey, newDict[assetKey]);
+    }
+    saveAssetSourceRegistry();
 };
 
 var getAssetSourceRegistry = function(callback) {
@@ -403,7 +404,7 @@ var getAssetSourceRegistry = function(callback) {
         getTextFileFromURL(
             µBlock.assetsBootstrapLocation || 'assets/assets.json',
             function() {
-                updateAssetSourceRegistry(this.responseText);
+                updateAssetSourceRegistry(this.responseText, true);
                 registryReady();
             }
         );
@@ -596,17 +597,25 @@ var assetCacheRemove = function(pattern, callback) {
     getAssetCacheRegistry(onReady);
 };
 
-var assetCacheMarkAsDirty = function(pattern, callback) {
+var assetCacheMarkAsDirty = function(pattern, exclude, callback) {
     var onReady = function() {
         var cacheDict = assetCacheRegistry,
             cacheEntry,
             mustSave = false;
         for ( var assetKey in cacheDict ) {
-            if ( pattern instanceof RegExp && !pattern.test(assetKey) ) {
-                continue;
+            if ( pattern instanceof RegExp ) {
+                if ( pattern.test(assetKey) === false ) { continue; }
+            } else if ( typeof pattern === 'string' ) {
+                if ( assetKey !== pattern ) { continue; }
+            } else if ( Array.isArray(pattern) ) {
+                if ( pattern.indexOf(assetKey) === -1 ) { continue; }
             }
-            if ( typeof pattern === 'string' && assetKey !== pattern ) {
-                continue;
+            if ( exclude instanceof RegExp ) {
+                if ( exclude.test(assetKey) ) { continue; }
+            } else if ( typeof exclude === 'string' ) {
+                if ( assetKey === exclude ) { continue; }
+            } else if ( Array.isArray(exclude) ) {
+                if ( exclude.indexOf(assetKey) !== -1 ) { continue; }
             }
             cacheEntry = cacheDict[assetKey];
             if ( !cacheEntry.writeTime ) { continue; }
@@ -621,7 +630,10 @@ var assetCacheMarkAsDirty = function(pattern, callback) {
             callback();
         }
     };
-
+    if ( typeof exclude === 'function' ) {
+        callback = exclude;
+        exclude = undefined;
+    }
     getAssetCacheRegistry(onReady);
 };
 
@@ -703,7 +715,14 @@ var saveUserAsset = function(assetKey, content, callback) {
 
 /******************************************************************************/
 
-api.get = function(assetKey, callback) {
+api.get = function(assetKey, options, callback) {
+    if ( typeof options === 'function' ) {
+        callback = options;
+        options = {};
+    } else if ( typeof callback !== 'function' ) {
+        callback = noopfunc;
+    }
+
     if ( assetKey === µBlock.userFiltersPath ) {
         readUserAsset(assetKey, callback);
         return;
@@ -742,7 +761,7 @@ api.get = function(assetKey, callback) {
             onContentNotLoaded();
             return;
         }
-        if ( reIsExternalPath.test(contentURL) ) {
+        if ( reIsExternalPath.test(contentURL) && options.dontCache !== true ) {
             assetCacheWrite(assetKey, {
                 content: this.responseText,
                 url: contentURL
@@ -878,16 +897,14 @@ api.metadata = function(callback) {
     });
 
     getAssetCacheRegistry(function() {
-        cacheRegistryReady = assetCacheRegistry;
+        cacheRegistryReady = true;
         if ( assetRegistryReady ) { onReady(); }
     });
 };
 
 /******************************************************************************/
 
-api.purge = function(pattern, callback) {
-    assetCacheMarkAsDirty(pattern, callback);
-};
+api.purge = assetCacheMarkAsDirty;
 
 api.remove = function(pattern, callback) {
     assetCacheRemove(pattern, callback);

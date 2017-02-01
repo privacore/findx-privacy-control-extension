@@ -539,7 +539,7 @@ var processCSP = function(pageStore, details) {
         );
     }
 
-    if ( loggerEnabled ) {
+    if ( loggerEnabled && details.type !== 'script' ) {
         if ( blockInlineScript !== undefined ) {
             µb.logger.writeOne(
                 tabId,
