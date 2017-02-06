@@ -196,7 +196,11 @@
     });
 };
 
-µBlock.saveSelectedFilterLists = function(newKeys, append) {
+µBlock.saveSelectedFilterLists = function(newKeys, append, callback) {
+    if ( typeof append === 'function' ) {
+        callback = append;
+        append = false;
+    }
     var oldKeys = this.selectedFilterLists.slice();
     if ( append ) {
         newKeys = newKeys.concat(oldKeys);
@@ -214,7 +218,7 @@
         remoteBlacklists: this.oldDataFromNewListKeys(newKeys)
     };
     this.selectedFilterLists = newKeys;
-    vAPI.storage.set(bin);
+    vAPI.storage.set(bin, callback);
 };
 
 // TODO(seamless migration):
@@ -1144,8 +1148,8 @@
             this.loadFilterLists();
         }
         if ( this.userSettings.autoUpdate ) {
-            //this.scheduleAssetUpdater(this.hiddenSettings.assetAutoUpdatePeriod * 3600000 || 25200000);
-            this.scheduleAssetUpdater(25200000); // 7 min
+            //this.scheduleAssetUpdater(this.hiddenSettings.autoUpdatePeriod * 3600000 || 25200000);
+            this.scheduleAssetUpdater(25200000); // 7 min. Set by igor. 25.01.17
             //this.scheduleAssetUpdater(this.updateAssetsEvery);
         } else {
             this.scheduleAssetUpdater(0);
