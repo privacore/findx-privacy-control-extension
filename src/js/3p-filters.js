@@ -439,7 +439,7 @@ var renderFilterLists = function(soft) {
             template = template.replace(new RegExp("{{url}}", 'g'), getFilterUrl(data));
             template = template.replace(new RegExp("{{group}}", 'g'), data.group || "");
             if (data.error) {
-                template = template.replace(new RegExp("{{last_update}}", 'g'), data.error);
+                template = template.replace(new RegExp("{{last_update}}", 'g'), data.error.error);
                 template = template.replace(new RegExp("{{error}}", 'g'), "error");
             }
             else {
