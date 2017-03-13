@@ -217,26 +217,16 @@ var onSystemSettingsReady = function(fetched) {
      */
     var checkFiltersListsSources = function (callback) {
         try {
-            if (vAPI.app.version.localeCompare("1.7.5.4") >= 0 ) { // is current version higher or equal
-                if (vAPI.app.version.localeCompare("1.7.5.6") >= 0 ) {
-                    // We don't clear cache when remote blacklists removed in 1.7.5.4
-                    // so we make it in a 1.7.5.6
-                    vAPI.storage.get('isFiltersErased_1.7.5.6', function (data) {
-                        if (!data || !Object.keys(data).length || !data["isFiltersErased_1.7.5.6"]) {
-                            vAPI.storage.set({ 'isFiltersErased_1.7.5.6': true }, null);
-                            vAPI.storage.remove("isFiltersErased");
-                            µb.assets.purgeAll();
-                            clearStoredFilters();
-                        }
-                        if (callback) callback();
-                    });
-                }
-                else {
-                    µb.assets.purgeAll();
-                    clearStoredFilters();
-
+            // In a 1.11.3.1 we change links to filters so we need to purge all cached data for loading filters from new links
+            if (compareVersions(vAPI.app.version, "1.11.3.0") >= 0) {
+                vAPI.storage.get('isCacheErased_1.11.3.0', function (data) {
+                    if (!data || !Object.keys(data).length || !data["isCacheErased_1.11.3.0"]) {
+                        µb.assets.remove(/./);
+                        vAPI.storage.set({ 'availableFilterLists': {} }, null);
+                        vAPI.storage.set({ 'isCacheErased_1.11.3.0': true });
+                    }
                     if (callback) callback();
-                }
+                });
             }
 
             if (callback) callback();
@@ -247,16 +237,28 @@ var onSystemSettingsReady = function(fetched) {
         }
     };
 
-    var clearStoredFilters = function () {
-        vAPI.storage.get('isFiltersErased', function (data) {
-            if (!data || !Object.keys(data).length || !data.isFiltersErased) {
-                vAPI.storage.set({ 'isFiltersErased': true }, null);
+    var compareVersions = function (version, compared) {
+        var response = 0;
 
-                vAPI.storage.get('availableFilterLists', function (list) {
-                    vAPI.storage.set({ 'availableFilterLists': {} }, null);
-                });
+        if (version != compared) {
+            var comparedNums = compared.split(".");
+            var versionNums = version.split(".");
+            for (var i = 0; i < versionNums.length; i++) {
+                var num = parseInt(versionNums[i]);
+                if (typeof comparedNums[i] != "undefined") {
+                    if (num > parseInt(comparedNums[i])) {
+                        response = 1;
+                        break;
+                    }
+                    else if (num < parseInt(comparedNums[i])) {
+                        response = -1;
+                        break;
+                    }
+                }
             }
-        });
+        }
+
+        return response;
     };
 
 /******************************************************************************/
