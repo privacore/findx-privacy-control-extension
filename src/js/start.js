@@ -217,13 +217,21 @@ var onSystemSettingsReady = function(fetched) {
      */
     var checkFiltersListsSources = function (callback) {
         try {
-            // In a 1.11.3.1 we change links to filters so we need to purge all cached data for loading filters from new links
+            // In a 1.11.3.0 we change links to filters so we need to purge all cached data for loading filters from new links
             if (compareVersions(vAPI.app.version, "1.11.3.0") >= 0) {
                 vAPI.storage.get('isCacheErased_1.11.3.0', function (data) {
                     if (!data || !Object.keys(data).length || !data["isCacheErased_1.11.3.0"]) {
                         µb.assets.remove(/./);
-                        vAPI.storage.set({ 'availableFilterLists': {} }, null);
+                        //vAPI.storage.set({ 'availableFilterLists': {} }, null);
+                        vAPI.cacheStorage.clear();
+                        vAPI.storage.clear();
+                        vAPI.localStorage.removeItem('hiddenSettings');
+
+                        // Keep global counts, people can become quite attached to numbers
+                        µb.saveLocalSettings();
                         vAPI.storage.set({ 'isCacheErased_1.11.3.0': true });
+
+                        vAPI.app.restart();
                     }
                     if (callback) callback();
                 });

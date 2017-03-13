@@ -1095,6 +1095,18 @@ vAPI.net.registerListeners = function() {
     if ( onBeforeRequest ) {
         urls = this.onBeforeRequest.urls || ['<all_urls>'];
         types = this.onBeforeRequest.types || undefined;
+        if (
+            (validTypes.websocket) &&
+            (types === undefined || types.indexOf('websocket') !== -1) &&
+            (urls.indexOf('<all_urls>') === -1)
+        ) {
+            if ( urls.indexOf('ws://*/*') === -1 ) {
+                urls.push('ws://*/*');
+            }
+            if ( urls.indexOf('wss://*/*') === -1 ) {
+                urls.push('wss://*/*');
+            }
+        }
         wrApi.onBeforeRequest.addListener(
             onBeforeRequest,
             { urls: urls, types: types },

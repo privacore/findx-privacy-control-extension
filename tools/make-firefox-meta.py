@@ -89,14 +89,14 @@ for alpha2 in descriptions:
     if alpha2 == 'en':
         continue
     manifest['localized'].append(
-        '\n' + t*2 + '<localized><r:Description>\n' +
-        t3 + '<locale>' + alpha2 + '</locale>\n' +
-        t3 + '<name>' + manifest['name'] + '</name>\n' +
-        t3 + '<description>  Control your privacy and block the data collectors.  </description>\n' +
-        t3 + '<creator> All Privacontrol and uBlock contributors </creator>\n' +
+        '\n' + t*2 + '<em:localized><Description>\n' +
+        t3 + '<em:locale>' + alpha2 + '</em:locale>\n' +
+        t3 + '<em:name>' + manifest['name'] + '</em:name>\n' +
+        t3 + '<em:description> Control your privacy and block the data collectors. </em:description>\n' +
+        t3 + '<em:creator> All Privacontrol and uBlock contributors </em:creator>\n' +
         # t3 + '<translator>' + ??? + '</translator>\n' +
-        t3 + '<homepageURL>https://github.com/privacore/privacontrol</homepageURL>\n' +
-        t*2 + '</r:Description></localized>'
+        t3 + '<em:homepageURL>https://github.com/privacore/privacontrol</em:homepageURL>\n' +
+        t*2 + '</Description></em:localized>'
     )
 manifest['localized'] = '\n'.join(manifest['localized'])
 
