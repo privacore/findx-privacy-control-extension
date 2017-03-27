@@ -1040,12 +1040,22 @@ var FilterHostnameDict = function(filterPath) {
     this.filterPath = filterPath;
 };
 
+Object.defineProperty(FilterHostnameDict.prototype, 'size', {
+    get: function() {
+        return this.dict.size;
+    }
+});
+
 FilterHostnameDict.prototype.add = function(hn) {
     if ( this.dict.has(hn) ) {
         return false;
     }
     this.dict.add(hn);
     return true;
+};
+
+FilterHostnameDict.prototype.remove = function(hn) {
+    return this.dict.delete(hn);
 };
 
 FilterHostnameDict.prototype.match = function() {
@@ -2164,13 +2174,6 @@ FilterContainer.prototype.removeBadFilters = function() {
         if ( entry === undefined ) {
             continue;
         }
-        if ( entry instanceof FilterHostnameDict ) {
-            entry.delete(fclass);  // 'fclass' is hostname
-            if ( entry.dict.size === 0 ) {
-                this.categories.delete(hash);
-            }
-            continue;
-        }
         if ( entry instanceof FilterBucket ) {
             entry.remove(fclass, fdata);
             if ( entry.filters.length === 1 ) {
@@ -2178,8 +2181,22 @@ FilterContainer.prototype.removeBadFilters = function() {
             }
             continue;
         }
+        if ( entry instanceof FilterHostnameDict ) {
+            entry.remove(fclass);  // 'fclass' is hostname
+            if ( entry.size === 0 ) {
+                bucket.delete(token);
+                if ( bucket.size === 0 ) {
+                    this.categories.delete(hash);
+                }
+            }
+            continue;
+        }
         if ( entry.fid === fclass && entry.toSelfie() === fdata ) {
-            this.categories.delete(hash);
+            bucket.delete(token);
+            if ( bucket.size === 0 ) {
+                this.categories.delete(hash);
+            }
+            continue;
         }
     }
 };
