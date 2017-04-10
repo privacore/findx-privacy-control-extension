@@ -843,15 +843,12 @@ var backupUserData = function(callback) {
         var filename = 'my-privacontrol-backup_{{datetime}}.txt'
             .replace('{{datetime}}', µb.dateNowToSensibleString())
             .replace(/ +/g, '_');
-
-        vAPI.download({
-            'url': 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(userData, null, '  ')),
-            'filename': filename
-        });
         µb.restoreBackupSettings.lastBackupFile = filename;
         µb.restoreBackupSettings.lastBackupTime = Date.now();
         vAPI.storage.set(µb.restoreBackupSettings);
-        getLocalData(callback);
+        getLocalData(function(localData) {
+            callback({ localData: localData, userData: userData });
+        });
     };
 
     µb.assets.get(µb.userFiltersPath, onUserFiltersReady);
