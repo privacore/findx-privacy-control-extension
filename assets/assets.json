@@ -14,6 +14,15 @@
 			"assets/thirdparties/publicsuffix.org/list/effective_tld_names.dat"
 		]
 	},
+    "abprotector-0": {
+        "content": "filters",
+        "group": "ads",
+        "off": true,
+        "title": "Adblock Protector List",
+        "contentURL": "https://raw.githubusercontent.com/jspenguin2017/AdBlockProtector/master/AdBlockProtectorList.txt",
+        "supportURL": "https://github.com/jspenguin2017/AdBlockProtector",
+        "instructionURL": "https://jspenguin2017.github.io/AdBlockProtector/"
+    },
 	"awrl-0": {
 		"content": "filters",
 		"group": "ads",
@@ -344,7 +353,7 @@
 		"group": "regions",
 		"off": true,
 		"title": "FRA: EasyList Liste FR",
-		"lang": "fr",
+		"lang": "ar fr",
 		"contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.liste.fr.txt",
 		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D91",
         "defaultOff": true,
