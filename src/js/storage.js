@@ -415,7 +415,7 @@
         µb.staticNetFilteringEngine.freeze();
         µb.redirectEngine.freeze();
         µb.cosmeticFilteringEngine.freeze();
-        µb.selfieManager.create();
+        µb.selfieManager.destroy();
     };
 
     var onLoaded = function(details) {
@@ -623,7 +623,7 @@
 
         callback();
 
-        µb.selfieManager.create();
+        µb.selfieManager.destroy();
         µb.loadingFilterLists = false;
     };
 
@@ -922,47 +922,35 @@
 // some set time.
 
 µBlock.selfieManager = (function() {
-    var µb = µBlock;
     var timer = null;
 
     var create = function() {
         timer = null;
-
         var selfie = {
-            magic: µb.systemSettings.selfieMagic,
+            magic: this.systemSettings.selfieMagic,
             publicSuffixList: publicSuffixList.toSelfie(),
-            availableFilterLists: µb.availableFilterLists,
-            staticNetFilteringEngine: µb.staticNetFilteringEngine.toSelfie(),
-            redirectEngine: µb.redirectEngine.toSelfie(),
-            cosmeticFilteringEngine: µb.cosmeticFilteringEngine.toSelfie()
+            availableFilterLists: this.availableFilterLists,
+            staticNetFilteringEngine: this.staticNetFilteringEngine.toSelfie(),
+            redirectEngine: this.redirectEngine.toSelfie(),
+            cosmeticFilteringEngine: this.cosmeticFilteringEngine.toSelfie()
         };
-
         vAPI.cacheStorage.set({ selfie: selfie });
-    };
+    }.bind(µBlock);
 
-    var createAsync = function(after) {
-        if ( typeof after !== 'number' ) {
-            after = µb.selfieAfter;
-        }
-
-        if ( timer !== null ) {
-            clearTimeout(timer);
-        }
-
-        timer = vAPI.setTimeout(create, after);
-    };
-
-    var destroy = function() {
+    var destroy = function(after) {
         if ( timer !== null ) {
             clearTimeout(timer);
             timer = null;
         }
-
         vAPI.cacheStorage.remove('selfie');
-    };
+
+        if ( typeof after !== 'number' ) {
+            after = this.selfieAfter;
+        }
+        timer = vAPI.setTimeout(create, after);
+    }.bind(µBlock);
 
     return {
-        create: createAsync,
         destroy: destroy
     };
 })();
@@ -1102,11 +1090,22 @@
 µBlock.assetObserver = function(topic, details) {
     // Do not update filter list if not in use.
     if ( topic === 'before-asset-updated' ) {
-        if (
-            this.availableFilterLists.hasOwnProperty(details.assetKey) &&
-            this.selectedFilterLists.indexOf(details.assetKey) === -1
-        ) {
-            return false;
+        if ( details.type === 'filters' ) {
+            if (
+                this.availableFilterLists.hasOwnProperty(details.assetKey) === false ||
+                this.selectedFilterLists.indexOf(details.assetKey) === -1
+            ) {
+                return false;
+            }
+        }
+        // https://github.com/gorhill/uBlock/issues/2594
+        if ( details.assetKey === 'ublock-resources' ) {
+            if (
+                this.hiddenSettings.ignoreRedirectFilters === true &&
+                this.hiddenSettings.ignoreScriptInjectFilters === true
+            ) {
+                return false;
+            }
         }
         return;
     }
@@ -1144,6 +1143,10 @@
             cached: cached
             
         });
+        // https://github.com/gorhill/uBlock/issues/2585
+        // Whenever an asset is overwritten, the current selfie is quite
+        // likely no longer valid.
+        this.selfieManager.destroy();
         return;
     }
 
@@ -1314,7 +1317,7 @@
 
 
     var onFilterListsReady = function() {
-        µb.selfieManager.create(0);
+        µb.selfieManager.destroy(0);
         if (callback) callback(true);
     };
     // Save changed state
