@@ -35,14 +35,14 @@ var reEscape = function(s) {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
-var reSpecialChars = /[\*\^\t\v\n]/;
+var reSpecialNetworkChars = /[a-d]/;
 
 /******************************************************************************/
 
 var fromNetFilter = function(details) {
     var lists = [];
     var compiledFilter = details.compiledFilter;
-    var entry, content, pos, c;
+    var entry, content, pos, notFound;
 
     if (details.filterPath && listEntries[details.filterPath]) {
         var entry = listEntries[details.filterPath];
@@ -52,32 +52,36 @@ var fromNetFilter = function(details) {
         });
     }
     else {
-        for ( var assetKey in listEntries ) {
+        for (var assetKey in listEntries) {
             entry = listEntries[assetKey];
-            if ( entry === undefined ) {
+            if (entry === undefined) {
                 continue;
             }
             content = entry.content;
             pos = 0;
-            for (;;) {
+            for (; ;) {
                 pos = content.indexOf(compiledFilter, pos);
-                if ( pos === -1 ) {
+                if (pos === -1) {
                     break;
                 }
                 // We need an exact match.
                 // https://github.com/gorhill/uBlock/issues/1392
                 // https://github.com/gorhill/uBlock/issues/835
-                if ( pos === 0 || reSpecialChars.test(content.charAt(pos - 1)) ) {
-                    c = content.charAt(pos + compiledFilter.length);
-                    if ( c === '' || reSpecialChars.test(c) ) {
-                        lists.push({
-                            title: entry.title,
-                            supportURL: entry.supportURL
-                        });
-                        break;
-                    }
+                pos -= 1;
+                notFound =
+                    reSpecialNetworkChars.test(content.charAt(pos)) === false ||
+                    pos !== 0 && content.charCodeAt(pos - 1) !== 0x0A /* '\n' */;
+                pos += 1 + compiledFilter.length;
+                if (notFound) {
+                    continue;
                 }
-                pos += compiledFilter.length;
+                if (pos === content.length || content.charCodeAt(pos) === 0x0A) {
+                    lists.push({
+                        title:      entry.title,
+                        supportURL: entry.supportURL
+                    });
+                    break;
+                }
             }
         }
     }
@@ -129,18 +133,18 @@ var fromCosmeticFilter = function(details) {
     var matches = rePlainSelector.exec(filter);
     if ( matches ) {
         if ( matches[0] === filter ) {          // simple CSS selector
-            reStr.push('c', 'lg', reEscape(filter));
+            reStr.push('[e-h]lg', reEscape(filter));
         } else {                                // complex CSS selector
-            reStr.push('c', reEscape('lg+'), reEscape(matches[0]), reEscape(filter));
+            reStr.push('[e-h]lg\\+', reEscape(matches[0]), reEscape(filter));
         }
     } else if ( reHighLow.test(filter) ) {      // [alt] or [title]
-        reStr.push('c', 'hlg0', reEscape(filter));
+        reStr.push('[e-h]hlg0', reEscape(filter));
     } else if ( reHighMedium.test(filter) ) {   // [href^="..."]
-        reStr.push('c', 'hmg0', '[^"]{8}', '[a-z]*' + reEscape(filter));
+        reStr.push('[e-h]hmg0', '[^"]{8}', '[a-z]*' + reEscape(filter));
     } else if ( filter.indexOf(' ') === -1 ) {  // high-high-simple selector
-        reStr.push('c', 'hhsg0', reEscape(filter));
+        reStr.push('[e-h]hhsg0', reEscape(filter));
     } else {                                    // high-high-complex selector
-        reStr.push('c', 'hhcg0', reEscape(filter));
+        reStr.push('[e-h]hhcg0', reEscape(filter));
     }
     candidates[details.rawFilter] = new RegExp(reStr.join('\\v') + '(?:\\n|$)');
 
@@ -160,7 +164,7 @@ var fromCosmeticFilter = function(details) {
     if ( hostname !== '' ) {
         for ( ;; ) {
             candidates[hostname + '##' + filter] = new RegExp(
-                ['c', 'h', '[^\\v]+', reEscape(hostname), filterEx].join('\\v') +
+                ['[e-h]h', '[^\\v]+', reEscape(hostname), filterEx].join('\\v') +
                 '(?:\\n|$)'
             );
             pos = hostname.indexOf('.');
@@ -178,7 +182,7 @@ var fromCosmeticFilter = function(details) {
     if ( pos !== -1 ) {
         var entity = domain.slice(0, pos) + '.*';
         candidates[entity + '##' + filter] = new RegExp(
-            ['c', 'h', '[^\\v]+', reEscape(entity), filterEx].join('\\v') +
+            ['[e-h]h', '[^\\v]+', reEscape(entity), filterEx].join('\\v') +
             '(?:\\n|$)'
         );
     }

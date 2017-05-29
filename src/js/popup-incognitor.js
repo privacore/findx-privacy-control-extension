@@ -393,7 +393,7 @@
         var listContainer = uDom(selectors.filtersContainer);
         listContainer.empty();
 
-        if (!popupData.urls || !Object.keys(popupData.urls).length) {
+        if (!popupData.urls || !Object.keys(popupData.urls).length || !popupData.netFilteringSwitch) {
             return;
         }
 

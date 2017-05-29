@@ -48,17 +48,23 @@ var netFilteringResultCacheEntryJunkyardMax = 200;
 
 /******************************************************************************/
 
-var NetFilteringResultCacheEntry = function(result, type) {
-    this.init(result, type);
+var NetFilteringResultCacheEntry = function(result, type, logData) {
+    this.init(result, type, logData);
 };
 
 /******************************************************************************/
 
-NetFilteringResultCacheEntry.prototype.init = function(result, type) {
-    this.result = result.str;
+NetFilteringResultCacheEntry.prototype.init = function(result, type, logData) {
+    this.result = (typeof result == "object" ? result.code : result);
     this.type = type;
     this.time = Date.now();
-    this.filterPath = result.filterPath || "";
+    this.logData = logData;
+    try {
+        this.filterPath = (typeof result == "object" ? result.filter.filterPath : "");
+    }
+    catch (exception) {
+        console.error("Exception in 'init' (pagestore.js) :\n\t", exception);
+    }
     this.quantity = 1;
     return this;
 };
@@ -67,6 +73,7 @@ NetFilteringResultCacheEntry.prototype.init = function(result, type) {
 
 NetFilteringResultCacheEntry.prototype.dispose = function() {
     this.result = this.type = '';
+    this.logData = undefined;
     if ( netFilteringResultCacheEntryJunkyard.length < netFilteringResultCacheEntryJunkyardMax ) {
         netFilteringResultCacheEntryJunkyard.push(this);
     }
@@ -74,11 +81,11 @@ NetFilteringResultCacheEntry.prototype.dispose = function() {
 
 /******************************************************************************/
 
-NetFilteringResultCacheEntry.factory = function(result, type) {
+NetFilteringResultCacheEntry.factory = function(result, type, logData) {
     if ( netFilteringResultCacheEntryJunkyard.length ) {
-        return netFilteringResultCacheEntryJunkyard.pop().init(result, type);
+        return netFilteringResultCacheEntryJunkyard.pop().init(result, type, logData);
     }
-    return new NetFilteringResultCacheEntry(result, type);
+    return new NetFilteringResultCacheEntry(result, type, logData);
 };
 
 /******************************************************************************/
@@ -129,24 +136,28 @@ NetFilteringResultCache.prototype.dispose = function() {
 
 /******************************************************************************/
 
-NetFilteringResultCache.prototype.add = function(context, result) {
-    if(!result || !result.str || !result.str.length || !result.filterPath || !result.filterPath.length )
-        return;
-    var str = result.str ?result.str: 'test';
-    var filterPath = result.filterPath ? result.filterPath:'test';
+NetFilteringResultCache.prototype.add = function(context, result, logData) {
     var url = context.requestURL,
         type = context.requestType,
         key = type + ' ' + url,
         entry = this.urls[key];
     if ( entry !== undefined ) {
-        entry.result = str;
+        var filterPath = "";
+        if (typeof result == "object") {
+            filterPath = result.filter ? result.filter.filterPath : "";
+            result = result.code || 0;
+        }
+
+        entry.result = result;
+        //entry.result = str;
         entry.type = type;
         entry.filterPath = filterPath;
         entry.quantity = entry.quantity ? ++entry.quantity : 1;
         entry.time = Date.now();
+        entry.logData = logData;
         return;
     }
-    this.urls[key] = NetFilteringResultCacheEntry.factory(result, type);
+    this.urls[key] = NetFilteringResultCacheEntry.factory(result, type, logData);
     if ( this.count === 0 ) {
         this.pruneAsync();
     }
@@ -322,6 +333,7 @@ PageStore.prototype.init = function(tabId) {
     this.hostnameToCountMap = new Map();
     this.contentLastModified = 0;
     this.frames = Object.create(null);
+    this.logData = undefined;
     this.perLoadBlockedRequestCount = 0;
     this.perLoadAllowedRequestCount = 0;
     this.hiddenElementCount = ''; // Empty string means "unknown"
@@ -340,7 +352,7 @@ PageStore.prototype.init = function(tabId) {
         µb.logger.writeOne(
             tabId,
             'cosmetic',
-            µb.hnSwitches.toResultString(),
+            µb.hnSwitches.toLogData(),
             'dom',
             tabContext.rawURL,
             this.tabHostname,
@@ -356,12 +368,12 @@ PageStore.prototype.init = function(tabId) {
             tabContext.normalURL,
             'generichide'
         );
-        this.noGenericCosmeticFiltering = result === false;
-        if ( result !== undefined && µb.logger.isEnabled() ) {
+        this.noGenericCosmeticFiltering = result === 2;
+        if ( result !== 0 && µb.logger.isEnabled() ) {
             µb.logger.writeOne(
                 tabId,
                 'net',
-                µb.staticNetFilteringEngine.toResultString(true),
+                µb.staticNetFilteringEngine.toLogData(),
                 'generichide',
                 tabContext.rawURL,
                 this.tabHostname,
@@ -548,15 +560,14 @@ PageStore.prototype.temporarilyAllowLargeMediaElements = function() {
 PageStore.prototype.journalAddRequest = function(hostname, result) {
     try {
         if ( hostname === '' ) { return; }
-        var str = result;
         var filterPath = "";
-        if (typeof result == "object" && !!result.str) {
-            str = result.str;
-            filterPath = result.filterPath;
+        if (typeof result == "object") {
+            filterPath = result.filter ? result.filter.filterPath : "";
+            result = result.code;
         }
         this.journal.push(
             hostname,
-            str.charCodeAt(1) === 0x62 /* 'b' */ ? 0x00000001 : 0x00010000,
+            result === 1 ? 0x00000001 : 0x00010000,
             filterPath
         );
         if ( this.journalTimer === null ) {
@@ -646,6 +657,8 @@ PageStore.prototype.journalProcess = function(fromTimer) {
 /******************************************************************************/
 
 PageStore.prototype.filterRequest = function(context, isNotRequest) {
+    this.logData = undefined;
+
     var requestType = context.requestType;
 
     // We want to short-term cache filtering results of collapsible types,
@@ -658,12 +671,13 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
     //}
 
     if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
-        this.netFilteringCache.add(context, '');
-        return '';
+        this.netFilteringCache.add(context, 0);
+        return 0;
     }
 
     var entry = this.netFilteringCache.lookup(context);
-    if ( entry) {
+    if ( entry !== undefined ) {
+        this.logData = entry.logData;
         if (!isNotRequest)
             this.netFilteringCache.increaseQuantity(context.requestURL);
         return {
@@ -673,25 +687,28 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
     }
 
     // Dynamic URL filtering.
-    µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, requestType);
-    var result = µb.sessionURLFiltering.toFilterString();
+    var result = µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, requestType);
+    if ( result !== 0 && µb.logger.isEnabled() ) {
+        this.logData = µb.sessionURLFiltering.toLogData();
+    }
 
     // Dynamic hostname/type filtering.
-    if ( result === '' && µb.userSettings.advancedUserEnabled ) {
-        µb.sessionFirewall.evaluateCellZY( context.rootHostname, context.requestHostname, requestType);
-        if ( µb.sessionFirewall.mustBlockOrAllow() ) {
-            result = µb.sessionFirewall.toFilterString();
+    if ( result === 0 && µb.userSettings.advancedUserEnabled ) {
+        result = µb.sessionFirewall.evaluateCellZY( context.rootHostname, context.requestHostname, requestType);
+        if ( result !== 0 && µb.logger.isEnabled() ) {
+            this.logData = µb.sessionFirewall.toLogData();
         }
     }
 
     // Static filtering: lowest filtering precedence.
-    if ( result === '' || result.charCodeAt(1) === 110 /* 'n' */ ) {
-        if ( µb.staticNetFilteringEngine.matchString(context) !== undefined ) {
-            result = µb.staticNetFilteringEngine.toResultString(µb.logger.isEnabled());
+    if ( result === 0 || result === 3 ) {
+        result = µb.staticNetFilteringEngine.matchString(context);
+        if (((typeof result == "object" && result.code !== 0) || (result !== 0)) && µb.logger.isEnabled() ) {
+            this.logData = µb.staticNetFilteringEngine.toLogData();
         }
     }
 
-    this.netFilteringCache.add(context, result);
+    this.netFilteringCache.add(context, result, this.logData);
 
     return result;
 };
@@ -701,14 +718,16 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
 // The caller is responsible to check whether filtering is enabled or not.
 
 PageStore.prototype.filterLargeMediaElement = function(size) {
+    this.logData = undefined;
+
     if ( Date.now() < this.allowLargeMediaElementsUntil ) {
-        return;
+        return 0;
     }
     if ( µb.hnSwitches.evaluateZ('no-large-media', this.tabHostname) !== true ) {
-        return;
+        return 0;
     }
     if ( (size >>> 10) < µb.userSettings.largeMediaSize ) {
-        return;
+        return 0;
     }
 
     this.largeMediaCount += 1;
@@ -719,48 +738,66 @@ PageStore.prototype.filterLargeMediaElement = function(size) {
         );
     }
 
-    return µb.hnSwitches.toResultString();
+    if ( µb.logger.isEnabled() ) {
+        this.logData = µb.hnSwitches.toLogData();
+    }
+
+    return 1;
 };
 
 /******************************************************************************/
 
 PageStore.prototype.filterRequestNoCache = function(context) {
+    this.logData = undefined;
+
     if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
-        return '';
+        return 0;
     }
 
-    var requestType = context.requestType,
-        result = '';
+    var requestType = context.requestType;
 
     if ( requestType === 'csp_report' ) {
         if ( this.internalRedirectionCount !== 0 ) {
-            result = 'gb:no-spurious-csp-report';
+            if ( µb.logger.isEnabled() ) {
+                this.logData = { result: 1, source: 'global', raw: 'no-spurious-csp-report' };
+            }
+            return 1;
         }
-    } else if ( requestType === 'font' ) {
-        if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
-            result = µb.hnSwitches.toResultString();
-        }
-        this.remoteFontCount += 1;
     }
 
+    if ( requestType === 'font' ) {
+        this.remoteFontCount += 1;
+        if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
+            if ( µb.logger.isEnabled() ) {
+                this.logData = µb.hnSwitches.toLogData();
+            }
+            return 1;
+        }
+    }
+
+    var result = 0;
+
     // Dynamic URL filtering.
-    if ( result === '' ) {
-        µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, requestType);
-        result = µb.sessionURLFiltering.toFilterString();
+    if ( result === 0 ) {
+        result = µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, requestType);
+        if ( result !== 0 && µb.logger.isEnabled() ) {
+            this.logData = µb.sessionURLFiltering.toLogData();
+        }
     }
 
     // Dynamic hostname/type filtering.
-    if ( result === '' && µb.userSettings.advancedUserEnabled ) {
-        µb.sessionFirewall.evaluateCellZY(context.rootHostname, context.requestHostname, requestType);
-        if ( µb.sessionFirewall.mustBlockOrAllow() ) {
-            result = µb.sessionFirewall.toFilterString();
+    if ( result === 0 && µb.userSettings.advancedUserEnabled ) {
+        result = µb.sessionFirewall.evaluateCellZY(context.rootHostname, context.requestHostname, requestType);
+        if ( result !== 0 && µb.logger.isEnabled() ) {
+            this.logData = µb.sessionFirewall.toLogData();
         }
     }
 
     // Static filtering has lowest precedence.
-    if ( result === '' || result.charCodeAt(1) === 110 /* 'n' */ ) {
-        if ( µb.staticNetFilteringEngine.matchString(context) !== undefined ) {
-            result = µb.staticNetFilteringEngine.toResultString(µb.logger.isEnabled());
+    if ( result === 0 || result === 3 ) {
+        result = µb.staticNetFilteringEngine.matchString(context);
+        if ( result !== 0 && µb.logger.isEnabled() ) {
+            this.logData = µb.staticNetFilteringEngine.toLogData();
         }
     }
     return result;
