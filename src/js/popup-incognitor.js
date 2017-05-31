@@ -993,8 +993,6 @@
         // it will default to current tab.
         var tabId = null;
 
-        console.log(JSON.parse(JSON.stringify(window.location)));
-
         // Extract the tab id of the page this popup is for
         var matches = window.location.search.match(/[\?&]tabId=([^&]+)/);
         if ( matches && matches.length === 2 ) {

@@ -505,13 +505,14 @@ var renderFilterLists = function(soft) {
 /******************************************************************************/
 
 var renderWidgets = function() {
-    // 25.01.17 Igor. This code was here before merging.
     uDom('#buttonUpdate').toggleClass('disabled', !listsContentChanged());
     uDom('#buttonPurgeAll').toggleClass('disabled', !hasCachedContent);
-    ////////////////////////////////////
 
     //uDom('#buttonApply').toggleClass('disabled', filteringSettingsHash === hashFromCurrentFromSettings());
-    //uDom('#buttonPurgeAll').toggleClass('disabled', document.querySelector('#lists .listEntry.cached') === null);
+    //uDom('#buttonPurgeAll').toggleClass(
+    //    'disabled',
+    //    document.querySelector('#lists .listEntry.cached:not(.obsolete)') === null
+    //);
     //uDom('#buttonUpdate').toggleClass('disabled', document.querySelector('body:not(.updating) #lists .listEntry.obsolete > input[type="checkbox"]:checked') === null);
 };
 

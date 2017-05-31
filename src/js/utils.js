@@ -75,13 +75,14 @@
         return th;
     },
 
+    // https://github.com/chrisaljoudi/uBlock/issues/1118
+    // We limit to a maximum number of tokens.
+
     _tokenize: function() {
         var tokens = this._tokens,
             url = this._urlOut,
             l = url.length;
         if ( l === 0 ) { tokens[0] = 0; return; }
-        // https://github.com/chrisaljoudi/uBlock/issues/1118
-        // We limit to a maximum number of tokens.
         if ( l > 2048 ) {
             url = url.slice(0, 2048);
             l = 2048;
@@ -223,51 +224,98 @@
 
 /******************************************************************************/
 
-µBlock.CompiledOutput = function() {
-    this.bufferLen = 8192;
-    this.buffer = new Uint8Array(this.bufferLen);
-    this.offset = 0;
+µBlock.CompiledLineWriter = function() {
+    this.output = [];
+    this.stringifier = JSON.stringify;
 };
 
-µBlock.CompiledOutput.prototype.push = function(lineBits, line) {
-    var lineLen = line.length,
-        offset = this.offset,
-        need = offset + 2 + lineLen; // lineBits, line, \n
-    if ( need > this.bufferLen ) {
-        this.grow(need);
+µBlock.CompiledLineWriter.fingerprint = function(args) {
+    return JSON.stringify(args);
+};
+
+µBlock.CompiledLineWriter.prototype = {
+    push: function(args) {
+        this.output[this.output.length] = this.stringifier(args);
+    },
+    toString: function() {
+        return this.output.join('\n');
     }
-    var buffer = this.buffer;
-    if ( offset !== 0 ) {
-        buffer[offset++] = 0x0A /* '\n' */;
-    }
-    buffer[offset++] = 0x61 /* 'a' */ + lineBits;
-    for ( var i = 0, c; i < lineLen; i++ ) {
-        c = line.charCodeAt(i);
-        if ( c > 0x7F ) {
-            return this.push(lineBits | 0x02, encodeURIComponent(line));
+};
+
+µBlock.CompiledLineReader = function(raw) {
+    this.reset(raw);
+    this.parser = JSON.parse;
+};
+
+µBlock.CompiledLineReader.prototype = {
+    reset: function(raw) {
+        this.input = raw;
+        this.len = raw.length;
+        this.offset = 0;
+        this.s = '';
+        return this;
+    },
+    next: function() {
+        if ( this.offset === this.len ) {
+            this.s = '';
+            return false;
         }
-        buffer[offset++] = c;
+        var pos = this.input.indexOf('\n', this.offset);
+        if ( pos !== -1 ) {
+            this.s = this.input.slice(this.offset, pos);
+            this.offset = pos + 1;
+        } else {
+            this.s = this.input.slice(this.offset);
+            this.offset = this.len;
+        }
+        return true;
+    },
+    fingerprint: function() {
+        return this.s;
+    },
+    args: function() {
+        return this.parser(this.s);
     }
-    this.offset = offset;
 };
 
-µBlock.CompiledOutput.prototype.grow = function(need) {
-    var newBufferLen = Math.min(
-        2097152,
-        1 << Math.ceil(Math.log(need) / Math.log(2))
-    );
-    while ( newBufferLen < need ) {
-        newBufferLen += 1048576;
-    }
-    var newBuffer = new Uint8Array(newBufferLen);
-    newBuffer.set(this.buffer);
-    this.buffer = newBuffer;
-    this.bufferLen = newBufferLen;
-};
+/******************************************************************************/
 
-µBlock.CompiledOutput.prototype.toString = function() {
-    var decoder = new TextDecoder();
-    return decoder.decode(new Uint8Array(this.buffer.buffer, 0, this.offset));
+// I want this helper to be self-maintained, callers must not worry about
+// this helper cleaning after itself by asking them to reset it when it is no
+// longer needed. A timer will be used for self-garbage-collect.
+// Cleaning up 10s after last hit sounds reasonable.
+
+// https://github.com/gorhill/uBlock/issues/2656
+// Can't use chained calls if we want to support legacy Map().
+
+µBlock.stringDeduplicater = {
+    strings: new Map(),
+    timer: undefined,
+    last: 0,
+
+    lookup: function(s) {
+        var t = this.strings.get(s);
+        if ( t === undefined ) {
+            this.strings.set(s, s);
+            t = this.strings.get(s);
+            if ( this.timer === undefined ) { this.cleanupAsync(); }
+        }
+        this.last = Date.now();
+        return t;
+    },
+
+    cleanupAsync: function() {
+        this.timer = vAPI.setTimeout(this.cleanup.bind(this), 10000);
+    },
+
+    cleanup: function() {
+        if ( (Date.now() - this.last) < 10000 ) {
+            this.timer = vAPI.setTimeout(this.cleanup.bind(this), 10000);
+        } else {
+            this.timer = undefined;
+            this.strings.clear();
+        }
+    }
 };
 
 /******************************************************************************/

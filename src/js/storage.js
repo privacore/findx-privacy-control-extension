@@ -735,7 +735,11 @@
     if ( listEntry.title === '' || listEntry.group === 'custom' ) {
         matches = head.match(/(?:^|\n)!\s*Title:([^\n]+)/i);
         if ( matches !== null ) {
-            listEntry.title = matches[1].trim();
+            // https://bugs.chromium.org/p/v8/issues/detail?id=2869
+            // JSON.stringify/JSON.parse is to work around String.slice()
+            // potentially causing the whole raw filter list to be held in
+            // memory just because we cut out the title as a substring.
+            listEntry.title = JSON.parse(JSON.stringify(matches[1].trim()));
         }
     }
     // Extract update frequency information
@@ -761,10 +765,9 @@
 
 /******************************************************************************/
 
-
 µBlock.compileFilters = function(rawText, filterPath) {
-    //var compiledFilters = [];
-    var compiledFilters = new this.CompiledOutput();
+    var networkFilters = new this.CompiledLineWriter(),
+        cosmeticFilters = new this.CompiledLineWriter();
 
     // Useful references:
     //    https://adblockplus.org/en/filter-cheatsheet
@@ -795,7 +798,7 @@
 
         // Parse or skip cosmetic filters
         // All cosmetic filters are caught here
-        if ( cosmeticFilteringEngine.compile(line, compiledFilters, filterPath) ) {
+        if ( cosmeticFilteringEngine.compile(line, cosmeticFilters, filterPath) ) {
             continue;
         }
 
@@ -829,10 +832,12 @@
 
         if ( line.length === 0 ) { continue; }
 
-        staticNetFilteringEngine.compile(line, compiledFilters, filterPath);
+        staticNetFilteringEngine.compile(line, networkFilters, filterPath);
     }
 
-    return compiledFilters.toString();
+    return networkFilters.toString() +
+           '\n/* end of network - start of cosmetic */\n' +
+           cosmeticFilters.toString();
 };
 
 /******************************************************************************/
@@ -842,15 +847,17 @@
 //   applying 1st-party filters.
 
 µBlock.applyCompiledFilters = function(rawText, firstparty, filterPath) {
-    var skipCosmetic = !firstparty && !this.userSettings.parseAllABPHideFilters,
-        skipGenericCosmetic = this.userSettings.ignoreGenericCosmeticFilters,
-        staticNetFilteringEngine = this.staticNetFilteringEngine,
-        cosmeticFilteringEngine = this.cosmeticFilteringEngine,
-        lineIter = new this.LineIterator(rawText);
-    while ( lineIter.eot() === false ) {
-        cosmeticFilteringEngine.fromCompiledContent(lineIter, skipGenericCosmetic, skipCosmetic, filterPath);
-        staticNetFilteringEngine.fromCompiledContent(lineIter, filterPath);
-    }
+    if ( rawText === '' ) { return; }
+    var separator = '\n/* end of network - start of cosmetic */\n',
+        pos = rawText.indexOf(separator),
+        reader = new this.CompiledLineReader(rawText.slice(0, pos));
+    this.staticNetFilteringEngine.fromCompiledContent(reader, filterPath);
+    this.cosmeticFilteringEngine.fromCompiledContent(
+        reader.reset(rawText.slice(pos + separator.length)),
+        this.userSettings.ignoreGenericCosmeticFilters,
+        !firstparty && !this.userSettings.parseAllABPHideFilters,
+        filterPath
+    );
 };
 
 /******************************************************************************/

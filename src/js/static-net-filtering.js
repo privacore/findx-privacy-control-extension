@@ -32,15 +32,16 @@
 var µb = µBlock;
 
 // fedcba9876543210
-//       |    | |||
-//       |    | |||
-//       |    | |||
-//       |    | |||
-//       |    | ||+---- bit 0: [BlockAction | AllowAction]
-//       |    | |+---- bit 1: `important`
-//       |    | +---- bit 2-3: party [0 - 3]
-//       |    +---- bit 4-8: type [0 - 31]
-//       +---- bit 9-15: unused
+// |     |    | |||
+// |     |    | |||
+// |     |    | |||
+// |     |    | |||
+// |     |    | ||+---- bit    0: [BlockAction | AllowAction]
+// |     |    | |+----- bit    1: `important`
+// |     |    | +------ bit 2- 3: party [0 - 3]
+// |     |    +-------- bit 4- 8: type [0 - 31]
+// |     +------------- bit 9-14: unused
+// +------------------- bit   15: bad filter
 
 var BlockAction = 0 << 0;
 var AllowAction = 1 << 0;
@@ -48,6 +49,7 @@ var Important   = 1 << 1;
 var AnyParty    = 0 << 2;
 var FirstParty  = 1 << 2;
 var ThirdParty  = 2 << 2;
+var BadFilter   = 1 << 15;
 
 var AnyType = 0 << 4;
 var typeNameToTypeValue = {
@@ -67,7 +69,8 @@ var typeNameToTypeValue = {
         'main_frame': 13 << 4,  // start of 1st-party-only behavorial filtering
        'generichide': 14 << 4,
      'inline-script': 15 << 4,
-              'data': 16 << 4   // special: a generic data holder
+              'data': 16 << 4,  // special: a generic data holder
+          'redirect': 17 << 4
 };
 var otherTypeBitValue = typeNameToTypeValue.other;
 
@@ -87,7 +90,8 @@ var typeValueToTypeName = {
     13: 'document',
     14: 'generichide',
     15: 'inline-script',
-    16: 'data'
+    16: 'data',
+    17: 'redirect'
 };
 
 // All network request types to bitmap
@@ -207,22 +211,12 @@ rawToRegexStr.escape2 = /\^/g;
 rawToRegexStr.escape3 = /^\*|\*$/g;
 rawToRegexStr.escape4 = /\*/g;
 
-// If using native Map, we use numerical keys, otherwise for
-// Object-based map we use string-based keys.
-var exportInt = function(k) {
-    return k.toString(32);
-};
-
-var importInt = function(k) {
-    return parseInt(k,32);
-};
+var filterFingerprinter = µb.CompiledLineWriter.fingerprint;
 
 var toLogDataInternal = function(categoryBits, tokenHash, filter) {
     if ( filter === null ) { return undefined; }
     var logData = filter.logData();
-    logData.compiled = exportInt(categoryBits) + '\v' +
-                       exportInt(tokenHash) + '\v' +
-                       logData.compiled;
+    logData.compiled = filterFingerprinter([ categoryBits, tokenHash, logData.compiled ]);
     if ( categoryBits & 0x001 ) {
         logData.raw = '@@' + logData.raw;
     }
@@ -264,6 +258,23 @@ var isHnAnchored = function(url, matchStart) {
 
 var reURLPostHostnameAnchors = /[\/?#]/;
 
+var arrayStrictEquals = function(a, b) {
+    var n = a.length;
+    if ( n !== b.length ) { return false; }
+    var isArray, x, y;
+    for ( var i = 0; i < n; i++ ) {
+        x = a[i]; y = b[i];
+        isArray = Array.isArray(x);
+        if ( isArray !== Array.isArray(y) ) { return false; }
+        if ( isArray === true ) {
+            if ( arrayStrictEquals(x, y) === false ) { return false; }
+        } else {
+            if ( x !== y ) { return false; }
+        }
+    }
+    return true;
+};
+
 /*******************************************************************************
 
     Each filter class will register itself in the map. A filter class
@@ -274,15 +285,21 @@ var reURLPostHostnameAnchors = /[\/?#]/;
 
 **/
 
-var filterClasses = new Map(),
+var filterClasses = [],
     filterClassIdGenerator = 0;
 
 var registerFilterClass = function(ctor) {
     var fid = filterClassIdGenerator++;
-    ctor.fidPrefix = ctor.prototype.fidPrefix = fid.toString(32) + '\t';
-    filterClasses.set(fid, ctor);
+    ctor.fid = ctor.prototype.fid = fid;
+    filterClasses[fid] = ctor;
     //console.log(ctor.name, fid);
 };
+
+var filterFromCompiledData = function(args) {
+    return filterClasses[args[0]].load(args);
+};
+
+//var filterClassHistogram = new Map();
 
 /******************************************************************************/
 
@@ -302,11 +319,11 @@ FilterTrue.prototype.logData = function() {
 };
 
 FilterTrue.prototype.compile = function() {
-    return this.fidPrefix;
+    return [ this.fid ];
 };
 
 FilterTrue.compile = function() {
-    return FilterTrue.fidPrefix;
+    return [ FilterTrue.fid ];
 };
 
 FilterTrue.load = function() {
@@ -336,21 +353,15 @@ FilterPlain.prototype.logData = function() {
 };
 
 FilterPlain.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.tokenBeg + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.tokenBeg, this.filterPath ];
 };
 
 FilterPlain.compile = function(details) {
-    return FilterPlain.fidPrefix + details.f + '\t' + details.tokenBeg + '\t' + details.path;
+    return [ FilterPlain.fid, details.f, details.tokenBeg, details.path ];
 };
 
-FilterPlain.load = function(s) {
-    var args = s.split('\t');
-    return new FilterPlain(
-        args[1],
-        //parseInt(s.slice(pos + 1), 10)
-        parseInt(args[2], 10),
-        args[3]
-    );
+FilterPlain.load = function(args) {
+    return new FilterPlain(args[1], args[2], args[3]);
 };
 
 registerFilterClass(FilterPlain);
@@ -375,15 +386,14 @@ FilterPlainPrefix0.prototype.logData = function() {
 };
 
 FilterPlainPrefix0.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.filterPath ];
 };
 
 FilterPlainPrefix0.compile = function(details) {
-    return FilterPlainPrefix0.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterPlainPrefix0.fid, details.f, details.path ];
 };
 
-FilterPlainPrefix0.load = function(s) {
-    var args = s.split('\t');
+FilterPlainPrefix0.load = function(args) {
     return new FilterPlainPrefix0(args[1], args[2]);
 };
 
@@ -409,15 +419,14 @@ FilterPlainPrefix1.prototype.logData = function() {
 };
 
 FilterPlainPrefix1.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.filterPath ];
 };
 
 FilterPlainPrefix1.compile = function(details) {
-    return FilterPlainPrefix1.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterPlainPrefix1.fid, details.f, details.path ];
 };
 
-FilterPlainPrefix1.load = function(s) {
-    var args = s.split('\t');
+FilterPlainPrefix1.load = function(args) {
     return new FilterPlainPrefix1(args[1], args[2]);
 };
 
@@ -446,15 +455,14 @@ FilterPlainHostname.prototype.logData = function() {
 };
 
 FilterPlainHostname.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.filterPath ];
 };
 
 FilterPlainHostname.compile = function(details) {
-    return FilterPlainHostname.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterPlainHostname.fid, details.f, details.path ];
 };
 
-FilterPlainHostname.load = function(s) {
-    var args = s.split('\t');
+FilterPlainHostname.load = function(args) {
     return new FilterPlainHostname(args[1], args[2]);
 };
 
@@ -480,15 +488,14 @@ FilterPlainLeftAnchored.prototype.logData = function() {
 };
 
 FilterPlainLeftAnchored.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.filterPath ];
 };
 
 FilterPlainLeftAnchored.compile = function(details) {
-    return FilterPlainLeftAnchored.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterPlainLeftAnchored.fid, details.f, details.path ];
 };
 
-FilterPlainLeftAnchored.load = function(s) {
-    var args = s.split('\t');
+FilterPlainLeftAnchored.load = function(args) {
     return new FilterPlainLeftAnchored(args[1], args[2]);
 };
 
@@ -514,15 +521,14 @@ FilterPlainRightAnchored.prototype.logData = function() {
 };
 
 FilterPlainRightAnchored.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.filterPath ];
 };
 
 FilterPlainRightAnchored.compile = function(details) {
-    return FilterPlainRightAnchored.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterPlainRightAnchored.fid, details.f, details.path ];
 };
 
-FilterPlainRightAnchored.load = function(s) {
-    var args = s.split('\t');
+FilterPlainRightAnchored.load = function(args) {
     return new FilterPlainRightAnchored(args[1], args[2]);
 };
 
@@ -549,15 +555,14 @@ FilterPlainHnAnchored.prototype.logData = function() {
 };
 
 FilterPlainHnAnchored.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.filterPath ];
 };
 
 FilterPlainHnAnchored.compile = function(details) {
-    return FilterPlainHnAnchored.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterPlainHnAnchored.fid, details.f, details.path ];
 };
 
-FilterPlainHnAnchored.load = function(s) {
-    var args = s.split('\t');
+FilterPlainHnAnchored.load = function(args) {
     return new FilterPlainHnAnchored(args[1], args[2]);
 };
 
@@ -596,21 +601,15 @@ FilterGeneric.prototype.logData = function() {
 };
 
 FilterGeneric.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.anchor + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.anchor, this.filterPath ];
 };
 
 FilterGeneric.compile = function(details) {
-    return FilterGeneric.fidPrefix + details.f + '\t' + details.anchor + '\t' + details.path;
+    return [ FilterGeneric.fid, details.f, details.anchor, details.path ];
 };
 
-FilterGeneric.load = function(s) {
-    var args = s.split('\t');
-    return new FilterGeneric(
-        args[1],
-        //parseInt(args[1], 10)
-        parseInt(args[2], 10),
-        args[3]
-    );
+FilterGeneric.load = function(args) {
+    return new FilterGeneric(args[1], args[2], args[3]);
 };
 
 registerFilterClass(FilterGeneric);
@@ -643,15 +642,14 @@ FilterGenericHnAnchored.prototype.logData = function() {
 };
 
 FilterGenericHnAnchored.prototype.compile = function() {
-    return this.fidPrefix + this.s + '\t' + this.filterPath;
+    return [ this.fid, this.s, this.filterPath ];
 };
 
 FilterGenericHnAnchored.compile = function(details) {
-    return FilterGenericHnAnchored.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterGenericHnAnchored.fid, details.f, details.path ];
 };
 
-FilterGenericHnAnchored.load = function(s) {
-    var args = s.split('\t');
+FilterGenericHnAnchored.load = function(args) {
     return new FilterGenericHnAnchored(args[1], args[2]);
 };
 
@@ -663,33 +661,35 @@ var FilterGenericHnAndRightAnchored = function(s, filterPath) {
     FilterGenericHnAnchored.call(this, s, filterPath);
 };
 
-FilterGenericHnAndRightAnchored.prototype = Object.create(FilterGenericHnAnchored.prototype, {
-    constructor: {
-        value: FilterGenericHnAndRightAnchored
-    },
-    anchor: {
-        value: 0x5
-    },
-    logData: {
-        value: function() {
-            var out = FilterGenericHnAnchored.prototype.logData.call(this);
-            out.raw += '|';
-            return out;
+FilterGenericHnAndRightAnchored.prototype = Object.create(
+    FilterGenericHnAnchored.prototype,
+    {
+        constructor: {
+            value: FilterGenericHnAndRightAnchored
+        },
+        anchor: {
+            value: 0x5
+        },
+        logData: {
+            value: function() {
+                var out = FilterGenericHnAnchored.prototype.logData.call(this);
+                out.raw += '|';
+                return out;
+            }
+        },
+        compile: {
+            value: function() {
+                return [ this.fid, this.s, this.filterPath ];
+            }
         }
-    },
-    compile: {
-        value: function() {
-            return this.fidPrefix + this.s + '\t' + this.filterPath;
-        }
-    },
-});
+    }
+);
 
 FilterGenericHnAndRightAnchored.compile = function(details) {
-    return FilterGenericHnAndRightAnchored.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterGenericHnAndRightAnchored.fid, details.f, details.path ];
 };
 
-FilterGenericHnAndRightAnchored.load = function(s) {
-    var args = s.split('\t');
+FilterGenericHnAndRightAnchored.load = function(args) {
     return new FilterGenericHnAndRightAnchored(args[1], args[2]);
 };
 
@@ -708,22 +708,21 @@ FilterRegex.prototype.match = function(url) {
 
 FilterRegex.prototype.logData = function() {
     return {
-        raw: '/' + this.s + '/',
-        regex: this.s,
+        raw: '/' + this.re.source + '/',
+        regex: this.re.source,
         compiled: this.compile()
     };
 };
 
 FilterRegex.prototype.compile = function() {
-    return this.fidPrefix + this.re.source + '\t' + this.filterPath;
+    return [ this.fid, this.re.source, this.filterPath ];
 };
 
 FilterRegex.compile = function(details) {
-    return FilterRegex.fidPrefix + details.f + '\t' + details.path;
+    return [ FilterRegex.fid, details.f, details.path ];
 };
 
-FilterRegex.load = function(s) {
-    var args = s.split('\t');
+FilterRegex.load = function(args) {
     return new FilterRegex(args[1], args[2]);
 };
 
@@ -761,7 +760,7 @@ FilterOrigin.prototype.match = function(url, tokenBeg) {
 FilterOrigin.prototype.logData = function() {
     var out = this.wrapped.logData(),
         domainOpt = this.toDomainOpt();
-    out.compiled = this.fidPrefix + domainOpt + '\v' + out.compiled;
+    out.compiled = [ this.fid, domainOpt, out.compiled ];
     if ( out.opts === undefined ) {
         out.opts = 'domain=' + domainOpt;
     } else {
@@ -771,17 +770,15 @@ FilterOrigin.prototype.logData = function() {
 };
 
 FilterOrigin.prototype.compile = function() {
-    return this.fidPrefix + this.toDomainOpt() + '\v' + this.wrapped.compile();
+    return [ this.fid, this.toDomainOpt(), this.filterPath, this.wrapped.compile() ];
 };
 
 // *** start of specialized origin matchers
 
-var FilterOriginHit = function(domainOpt) {
+var FilterOriginHit = function(domainOpt, filterPath) {
     FilterOrigin.call(this);
-    var args = domainOpt.split('\t');
-    this.filterPath = args[1];
-    this.hostname = args[0];
-    //this.hostname = domainOpt;
+    this.hostname = domainOpt;
+    this.filterPath = filterPath;
 };
 
 FilterOriginHit.prototype = Object.create(FilterOrigin.prototype, {
@@ -790,7 +787,7 @@ FilterOriginHit.prototype = Object.create(FilterOrigin.prototype, {
     },
     toDomainOpt: {
         value: function() {
-            return this.hostname + "\t" + this.filterPath;
+            return this.hostname;
         }
     },
     matchOrigin: {
@@ -805,12 +802,10 @@ FilterOriginHit.prototype = Object.create(FilterOrigin.prototype, {
 
 //
 
-var FilterOriginMiss = function(domainOpt) {
+var FilterOriginMiss = function(domainOpt, filterPath) {
     FilterOrigin.call(this);
-    var args = domainOpt.split('\t');
-    this.filterPath = args[1];
-    this.hostname = args[0].slice(1);
-    //this.hostname = domainOpt.slice(1);
+    this.hostname = domainOpt.slice(1);
+    this.filterPath = filterPath;
 };
 
 FilterOriginMiss.prototype = Object.create(FilterOrigin.prototype, {
@@ -819,7 +814,7 @@ FilterOriginMiss.prototype = Object.create(FilterOrigin.prototype, {
     },
     toDomainOpt: {
         value: function() {
-            return '~' + this.hostname + "\t" + this.filterPath;
+            return '~' + this.hostname;
         }
     },
     matchOrigin: {
@@ -834,12 +829,12 @@ FilterOriginMiss.prototype = Object.create(FilterOrigin.prototype, {
 
 //
 
-var FilterOriginHitSet = function(domainOpt) {
+var FilterOriginHitSet = function(domainOpt, filterPath) {
     FilterOrigin.call(this);
-    var args = domainOpt.split('\t');
-    this.filterPath = args[1];
-    this.domainOpt = args[0];
-    //this.domainOpt = domainOpt;
+    this.domainOpt = domainOpt.length < 128
+        ? domainOpt
+        : µb.stringDeduplicater.lookup(domainOpt);
+    this.filterPath = filterPath;
 };
 
 FilterOriginHitSet.prototype = Object.create(FilterOrigin.prototype, {
@@ -852,7 +847,7 @@ FilterOriginHitSet.prototype = Object.create(FilterOrigin.prototype, {
     },
     toDomainOpt: {
         value: function() {
-            return this.domainOpt + "\t" + this.filterPath;
+            return this.domainOpt;
         }
     },
     matchOrigin: {
@@ -867,12 +862,12 @@ FilterOriginHitSet.prototype = Object.create(FilterOrigin.prototype, {
 
 //
 
-var FilterOriginMissSet = function(domainOpt) {
+var FilterOriginMissSet = function(domainOpt, filterPath) {
     FilterOrigin.call(this);
-    var args = domainOpt.split('\t');
-    this.filterPath = args[1];
-    this.domainOpt = args[0];
-    //this.domainOpt = domainOpt;
+    this.domainOpt = domainOpt.length < 128
+        ? domainOpt
+        : µb.stringDeduplicater.lookup(domainOpt);
+    this.filterPath = filterPath;
 };
 
 FilterOriginMissSet.prototype = Object.create(FilterOrigin.prototype, {
@@ -885,7 +880,7 @@ FilterOriginMissSet.prototype = Object.create(FilterOrigin.prototype, {
     },
     toDomainOpt: {
         value: function() {
-            return this.domainOpt + "\t" + this.filterPath;
+            return this.domainOpt;
         }
     },
     matchOrigin: {
@@ -900,12 +895,12 @@ FilterOriginMissSet.prototype = Object.create(FilterOrigin.prototype, {
 
 //
 
-var FilterOriginMixedSet = function(domainOpt) {
+var FilterOriginMixedSet = function(domainOpt, filterPath) {
     FilterOrigin.call(this);
-    var args = domainOpt.split('\t');
-    this.filterPath = args[1];
-    this.domainOpt = args[0];
-    //this.domainOpt = domainOpt;
+    this.domainOpt = domainOpt.length < 128
+        ? domainOpt
+        : µb.stringDeduplicater.lookup(domainOpt);
+    this.filterPath = filterPath;
 };
 
 FilterOriginMixedSet.prototype = Object.create(FilterOrigin.prototype, {
@@ -940,7 +935,7 @@ FilterOriginMixedSet.prototype = Object.create(FilterOrigin.prototype, {
     },
     toDomainOpt: {
         value: function() {
-            return this.domainOpt + "\t" + this.filterPath;
+            return this.domainOpt;
         }
     },
     matchOrigin: {
@@ -962,37 +957,36 @@ FilterOriginMixedSet.prototype = Object.create(FilterOrigin.prototype, {
 // writing, I observed that just with EasyList, there were ~1,200 reused
 // instances out of ~2,800.
 
-FilterOrigin.matcherFactory = function(domainOpt) {
+FilterOrigin.matcherFactory = function(domainOpt, filterPath) {
     // One hostname
     if ( domainOpt.indexOf('|') === -1 ) {
         if ( domainOpt.charCodeAt(0) === 0x7E /* '~' */ ) {
-            return new FilterOriginMiss(domainOpt);
+            return new FilterOriginMiss(domainOpt, filterPath);
         }
-        return new FilterOriginHit(domainOpt);
+        return new FilterOriginHit(domainOpt, filterPath);
     }
     // Many hostnames.
     // Must be in set (none negated).
     if ( domainOpt.indexOf('~') === -1 ) {
-        return new FilterOriginHitSet(domainOpt);
+        return new FilterOriginHitSet(domainOpt, filterPath);
     }
     // Must not be in set (all negated).
     if ( FilterOrigin.reAllNegated.test(domainOpt) ) {
-        return new FilterOriginMissSet(domainOpt);
+        return new FilterOriginMissSet(domainOpt, filterPath);
     }
     // Must be in one set, but not in the other.
-    return new FilterOriginMixedSet(domainOpt);
+    return new FilterOriginMixedSet(domainOpt, filterPath);
 };
 
 FilterOrigin.reAllNegated = /^~(?:[^|~]+\|~)+[^|~]+$/;
 
 FilterOrigin.compile = function(details) {
-    return FilterOrigin.fidPrefix + details.domainOpt + '\t' + details.path;
+    return [ FilterOrigin.fid, details.domainOpt, details.path ];
 };
 
-FilterOrigin.load = function(s) {
-    var pos = s.indexOf('\v', 2),
-        f = FilterOrigin.matcherFactory(s.slice(2, pos));
-    f.wrapped = filterFromCompiledData(s.slice(pos + 1));
+FilterOrigin.load = function(args) {
+    var f = FilterOrigin.matcherFactory(args[1], args[2]);
+    f.wrapped = filterFromCompiledData(args[3]);
     return f;
 };
 
@@ -1000,13 +994,11 @@ registerFilterClass(FilterOrigin);
 
 /******************************************************************************/
 
-var FilterDataHolder = function(dataType, dataStr) {
+var FilterDataHolder = function(dataType, dataStr, filterPath) {
     this.dataType = dataType;
-    var args = dataStr.split('\t');
-    this.filterPath = args[1];
-    this.dataStr = args[0];
-    //this.dataStr = dataStr;
+    this.dataStr = dataStr;
     this.wrapped = undefined;
+    this.filterPath = filterPath;
 };
 
 FilterDataHolder.prototype.match = function(url, tokenBeg) {
@@ -1015,7 +1007,7 @@ FilterDataHolder.prototype.match = function(url, tokenBeg) {
 
 FilterDataHolder.prototype.logData = function() {
     var out = this.wrapped.logData();
-    out.compiled = this.fidPrefix + this.dataType + '\t' + this.dataStr + '\v' + out.compiled;
+    out.compiled = [ this.fid, this.dataType, this.dataStr, out.compiled ];
     var opt = this.dataType;
     if ( this.dataStr !== '' ) {
         opt += '=' + this.dataStr;
@@ -1029,18 +1021,16 @@ FilterDataHolder.prototype.logData = function() {
 };
 
 FilterDataHolder.prototype.compile = function() {
-    return this.fidPrefix + this.dataType + '\t' + this.dataStr + '\t' + this.filterPath + '\v' + this.wrapped.compile();
+    return [ this.fid, this.dataType, this.dataStr, this.filterPath, this.wrapped.compile() ];
 };
 
 FilterDataHolder.compile = function(details) {
-    return FilterDataHolder.fidPrefix + details.dataType + '\t' + details.dataStr + '\t' + details.path;
+    return [ FilterDataHolder.fid, details.dataType, details.dataStr, details.path ];
 };
 
-FilterDataHolder.load = function(s) {
-    var pos = s.indexOf('\t', 2),
-        end = s.indexOf('\v', pos),
-        f = new FilterDataHolder(s.slice(2, pos), s.slice(pos + 1, end));
-    f.wrapped = filterFromCompiledData(s.slice(end + 1));
+FilterDataHolder.load = function(args) {
+    var f = new FilterDataHolder(args[1], args[2], args[3]);
+    f.wrapped = filterFromCompiledData(args[4]);
     return f;
 };
 
@@ -1060,19 +1050,11 @@ FilterDataHolderEntry.prototype.logData = function() {
 };
 
 FilterDataHolderEntry.prototype.compile = function() {
-    return exportInt(this.categoryBits) + '\t' +
-           exportInt(this.tokenHash) + '\t' +
-           this.filter.compile();
+    return [ this.categoryBits, this.tokenHash, this.filter.compile() ];
 };
 
-FilterDataHolderEntry.load = function(s) {
-    var pos1 = s.indexOf('\t'),
-        pos2 = s.indexOf('\t', pos1 + 1);
-    return new FilterDataHolderEntry(
-        importInt(s),
-        importInt(s.slice(pos1 + 1, pos2)),
-        s.slice(pos2 + 1)
-    );
+FilterDataHolderEntry.load = function(data) {
+    return new FilterDataHolderEntry(data[0], data[1], data[2]);
 };
 
 
@@ -1104,9 +1086,7 @@ Object.defineProperty(FilterHostnameDict.prototype, 'size', {
 });
 
 FilterHostnameDict.prototype.add = function(hn) {
-    if ( this.dict.has(hn) ) {
-        return false;
-    }
+    if ( this.dict.has(hn) === true ) { return false; }
     this.dict.add(hn);
     return true;
 };
@@ -1142,14 +1122,12 @@ FilterHostnameDict.prototype.logData = function() {
 };
 
 FilterHostnameDict.prototype.compile = function() {
-    return this.fidPrefix + JSON.stringify(µb.setToArray(this.dict)) + '\t' + this.filterPath;
+    return [ this.fid, µb.setToArray(this.dict), this.filterPath ];
 };
 
-FilterHostnameDict.load = function(s) {
-    var args = s.split('\t');
-
+FilterHostnameDict.load = function(args) {
     var f = new FilterHostnameDict(args[2]);
-    f.dict = µb.setFromArray(JSON.parse(args[1]));
+    f.dict = µb.setFromArray(args[1]);
     return f;
 };
 
@@ -1189,22 +1167,97 @@ registerFilterClass(FilterHostnameDict);
 
 /******************************************************************************/
 
-var FilterBucket = function(a, b, filterPath) {
+var FilterPair = function(a, b, filterPath) {
+    this.f1 = a;
+    this.f2 = b;
+    this.f = null;
     this.filterPath = filterPath;
-    this.promoted = 0;
-    this.vip = 16;
-    this.f = null;  // short-lived register
-    this.filters = [];
-    if ( a && a !== undefined) {
-        this.filters[0] = a;
-        if ( b && b !== undefined ) {
-            this.filters[1] = b;
-        }
+};
+
+Object.defineProperty(FilterPair.prototype, 'size', {
+    get: function() {
+        if ( this.f1 === undefined && this.f2 === undefined ) { return 0; }
+        if ( this.f1 === undefined || this.f2 === undefined ) { return 1; }
+        return 2;
+    }
+});
+
+FilterPair.prototype.remove = function(fdata) {
+    if ( arrayStrictEquals(this.f2.compile(), fdata) === true ) {
+        this.f2 = undefined;
+    }
+    if ( arrayStrictEquals(this.f1.compile(), fdata) === true ) {
+        this.f1 = this.f2;
     }
 };
 
-FilterBucket.prototype.add = function(a) {
-    this.filters.push(a);
+FilterPair.prototype.match = function(url, tokenBeg) {
+    if ( this.f1.match(url, tokenBeg) === true ) {
+        this.f = this.f1;
+        return true;
+    }
+    if ( this.f2.match(url, tokenBeg) === true ) {
+        this.f = this.f2;
+        return true;
+    }
+    return false;
+};
+
+FilterPair.prototype.logData = function() {
+    return this.f.logData();
+};
+
+FilterPair.prototype.compile = function() {
+    return [ this.fid, this.f1.compile(), this.f2.compile(), this.filterPath ];
+};
+
+FilterPair.prototype.upgrade = function(a) {
+    var bucket = new FilterBucket(this.f1, this.f2, a, this.filterPath);
+    this.f1 = this.f2 = this.f = null;
+    FilterPair.available = this;
+    return bucket;
+};
+
+FilterPair.load = function(args) {
+    var f1 = filterFromCompiledData(args[1]),
+        f2 = filterFromCompiledData(args[2]),
+        pair = FilterPair.available;
+    if ( pair === null ) {
+        return new FilterPair(f1, f2, args[3]);
+    }
+    FilterPair.available = null;
+    pair.f1 = f1;
+    pair.f2 = f2;
+    return pair;
+};
+
+FilterPair.available = null;
+
+registerFilterClass(FilterPair);
+
+/******************************************************************************/
+
+var FilterBucket = function(a, b, c, filterPath) {
+    this.filters = [];
+    this.f = null;
+    if ( a !== undefined ) {
+        this.filters[0] = a;
+        this.filters[1] = b;
+        this.filters[2] = c;
+    }
+    this.filterPath = filterPath;
+};
+
+Object.defineProperty(FilterBucket.prototype, 'size', {
+    get: function() {
+        return this.filters.length;
+    }
+});
+
+FilterBucket.prototype.promoted = 0;
+
+FilterBucket.prototype.add = function(fdata) {
+    this.filters[this.filters.length] = filterFromCompiledData(fdata);
 };
 
 FilterBucket.prototype.remove = function(fdata) {
@@ -1212,7 +1265,7 @@ FilterBucket.prototype.remove = function(fdata) {
         filter;
     while ( i-- ) {
         filter = this.filters[i];
-        if ( filter.compile() === fdata ) {
+        if ( arrayStrictEquals(filter.compile(), fdata) === true ) {
             this.filters.splice(i, 1);
         }
     }
@@ -1220,13 +1273,11 @@ FilterBucket.prototype.remove = function(fdata) {
 
 // Promote hit filters so they can be found faster next time.
 FilterBucket.prototype.promote = function(i) {
-    var filters = this.filters;
-    var pivot = filters.length >>> 1;
+    var filters = this.filters,
+        pivot = filters.length >>> 1;
     while ( i < pivot ) {
         pivot >>>= 1;
-        if ( pivot < this.vip ) {
-            break;
-        }
+        if ( pivot < 16 ) { break; }
     }
     if ( i <= pivot ) { return; }
     var j = this.promoted % pivot;
@@ -1238,14 +1289,11 @@ FilterBucket.prototype.promote = function(i) {
 };
 
 FilterBucket.prototype.match = function(url, tokenBeg) {
-    var filters = this.filters,
-        n = filters.length;
-    for ( var i = 0; i < n; i++ ) {
-        if ( filters[i].match(url, tokenBeg) ) {
+    var filters = this.filters;
+    for ( var i = 0, n = filters.length; i < n; i++ ) {
+        if ( filters[i].match(url, tokenBeg) === true ) {
             this.f = filters[i];
-            if ( i >= this.vip ) {
-                this.promote(i);
-            }
+            if ( i >= 16 ) { this.promote(i); }
             return true;
         }
     }
@@ -1262,45 +1310,20 @@ FilterBucket.prototype.compile = function() {
     for ( var i = 0, n = filters.length; i < n; i++ ) {
         compiled[i] = filters[i].compile();
     }
-    return this.fidPrefix + JSON.stringify(compiled) + '\t' + this.filterPath;
+    return [ this.fid, compiled, this.filterPath ];
 };
 
-FilterBucket.load = function(s) {
-    try {
-        var args = s.split('\t');
-        var f = new FilterBucket(null, null, args[2]),
-            compiled = JSON.parse(args[1]),
-            filters = f.filters;
-        for ( var i = 0, n = compiled.length; i < n; i++ ) {
-            filters[i] = filterFromCompiledData(compiled[i]);
-        }
-        return f;
+FilterBucket.load = function(args) {
+    var bucket = new FilterBucket(null, null, null, args[2]),
+        compiledFilters = args[1],
+        filters = bucket.filters;
+    for ( var i = 0, n = compiledFilters.length; i < n; i++ ) {
+        filters[i] = filterFromCompiledData(compiledFilters[i]);
     }
-    catch (exception) {
-        console.error("Exception in 'load' (static-net-filtering.js) :\n\t", exception);
-    }
+    return bucket;
 };
 
 registerFilterClass(FilterBucket);
-
-/******************************************************************************/
-/******************************************************************************/
-
-var filterFromCompiledData = function(compiled) {
-    if ( compiled === lastLoadedFilterString ) {
-        return lastLoadedFilter;
-    }
-    var fid = parseInt(compiled, 36),
-        f = filterClasses.get(fid).load(compiled);
-    //filterClassHistogram.set(fid, (filterClassHistogram.get(fid) || 0) + 1);
-    lastLoadedFilterString = compiled;
-    lastLoadedFilter = f;
-    return f;
-};
-
-var lastLoadedFilterString,
-    lastLoadedFilter;
-//var filterClassHistogram = new Map();
 
 /******************************************************************************/
 /******************************************************************************/
@@ -1357,7 +1380,7 @@ FilterParser.prototype.toNormalizedType = {
 FilterParser.prototype.reset = function() {
     this.action = BlockAction;
     this.anchor = 0;
-    this.badFilter = false;
+    this.badFilter = 0;
     this.dataType = undefined;
     this.dataStr = undefined;
     this.elemHiding = false;
@@ -1483,13 +1506,17 @@ FilterParser.prototype.parseOptions = function(s) {
             this.unsupported = true;
             break;
         }
+        // Test before handling all other types.
+        if ( opt.startsWith('redirect=') ) {
+            if ( this.action === BlockAction ) {
+                this.redirect = true;
+                continue;
+            }
+            this.unsupported = true;
+            break;
+        }
         if ( this.toNormalizedType.hasOwnProperty(opt) ) {
             this.parseTypeOption(opt, not);
-            // Due to ABP categorizing `websocket` requests as `other`, we need
-            // to add `websocket` for when `other` is used.
-            if ( opt === 'other' ) {
-                this.parseTypeOption('websocket', not);
-            }
             continue;
         }
         // https://github.com/gorhill/uBlock/issues/2294
@@ -1511,14 +1538,6 @@ FilterParser.prototype.parseOptions = function(s) {
             this.parsePartyOption(true, not);
             continue;
         }
-        if ( opt.startsWith('redirect=') ) {
-            if ( this.action === BlockAction ) {
-                this.redirect = true;
-                continue;
-            }
-            this.unsupported = true;
-            break;
-        }
         if ( opt.startsWith('csp=') ) {
             if ( opt.length > 4 && this.reBadCSP.test(opt) === false ) {
                 this.parseTypeOption('data', not);
@@ -1539,7 +1558,7 @@ FilterParser.prototype.parseOptions = function(s) {
         }
         // https://github.com/uBlockOrigin/uAssets/issues/192
         if ( opt === 'badfilter' ) {
-            this.badFilter = true;
+            this.badFilter = BadFilter;
             continue;
         }
         // Unrecognized filter option: ignore whole filter.
@@ -1885,7 +1904,6 @@ var FilterContainer = function() {
     this.urlTokenizer = µb.urlTokenizer;
     this.noTokenHash = this.urlTokenizer.tokenHashFromString('*');
     this.dotTokenHash = this.urlTokenizer.tokenHashFromString('.');
-    this.exportedDotTokenHash = exportInt(this.dotTokenHash);
     this.reset();
 };
 
@@ -1938,22 +1956,16 @@ FilterContainer.prototype.freeze = function() {
 /******************************************************************************/
 
 FilterContainer.prototype.toSelfie = function() {
-    var categoryToSelfie = function(map) {
-        var selfie = [];
-        for ( var entry of map ) {
-            selfie.push('k2\t' + exportInt(entry[0])); // token hash
-            selfie.push(entry[1].compile());
+    var categoriesToSelfie = function(categoryMap) {
+        var categoryEntries = [];
+        for ( var categoryEntry of categoryMap ) {
+            var tokenEntries = [];
+            for ( var tokenEntry of categoryEntry[1] ) {
+                tokenEntries.push([ tokenEntry[0], tokenEntry[1].compile() ]);
+            }
+            categoryEntries.push([ categoryEntry[0], tokenEntries ]);
         }
-        return selfie.join('\n');
-    };
-
-    var categoriesToSelfie = function(map) {
-        var selfie = [];
-        for ( var entry of map ) {
-            selfie.push('k1\t' + exportInt(entry[0])); // category bits
-            selfie.push(categoryToSelfie(entry[1]));
-        }
-        return selfie.join('\n');
+        return JSON.stringify(categoryEntries);
     };
 
     var dataFiltersToSelfie = function(dataFilters) {
@@ -1964,7 +1976,7 @@ FilterContainer.prototype.toSelfie = function() {
                 entry = entry.next;
             } while ( entry !== undefined );
         }
-        return selfie;
+        return JSON.stringify(selfie);
     };
 
     return {
@@ -1990,29 +2002,27 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
     this.blockFilterCount = selfie.blockFilterCount;
     this.discardedCount = selfie.discardedCount;
 
-    var categoryBits, tokenHash,
-        map = this.categories, submap,
-        lineIter = new µb.LineIterator(selfie.categories),
-        line;
-    while ( lineIter.eot() === false ) {
-        line = lineIter.next();
-        if ( line.startsWith('k1\t') ) {   // category bits
-            categoryBits = importInt(line.slice(3));
-            submap = new Map();
-            map.set(categoryBits, submap);
-            continue;
-        }
-        if ( line.startsWith('k2\t') ) {   // token hash
-            tokenHash = importInt(line.slice(3));
-            continue;
-        }
-        submap.set(tokenHash, filterFromCompiledData(line));
-    }
+    var entries;
 
-    var i = selfie.dataFilters.length,
-        entry, bucket;
+    var categoryMap = new Map();
+    entries = JSON.parse(selfie.categories);
+    for ( var i = 0, ni = entries.length; i < ni; i++ ) {
+        var categoryEntry = entries[i],
+            tokenMap = new Map();
+        var tokenEntries = categoryEntry[1];
+        for ( var j = 0, nj = tokenEntries.length; j < nj; j++ ) {
+            var tokenEntry = tokenEntries[j];
+            tokenMap.set(tokenEntry[0], filterFromCompiledData(tokenEntry[1]));
+        }
+        categoryMap.set(categoryEntry[0], tokenMap);
+    }
+    this.categories = categoryMap;
+
+    entries = JSON.parse(selfie.dataFilters);
+    var entry, bucket;
+    i = entries.length;
     while ( i-- ) {
-        entry = FilterDataHolderEntry.load(selfie.dataFilters[i]);
+        entry = FilterDataHolderEntry.load(entries[i]);
         bucket = this.dataFilters.get(entry.tokenHash);
         if ( bucket !== undefined ) {
             entry.next = bucket;
@@ -2023,7 +2033,7 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
 
 /******************************************************************************/
 
-FilterContainer.prototype.compile = function(raw, out, filterPath) {
+FilterContainer.prototype.compile = function(raw, writer, filterPath) {
     // ORDER OF TESTS IS IMPORTANT!
     // Ignore empty lines
     var s = raw.trim();
@@ -2052,65 +2062,69 @@ FilterContainer.prototype.compile = function(raw, out, filterPath) {
         parsed.hostnamePure &&
         parsed.domainOpt === '' &&
         parsed.dataType === undefined &&
-        this.compileHostnameOnlyFilter(parsed, out)
+        this.compileHostnameOnlyFilter(parsed, writer)
     ) {
         return true;
     }
 
     parsed.makeToken();
 
-    var fdata = '';
-    if ( parsed.dataType !== undefined ) {
-        if ( fdata !== '' ) { fdata += '\v'; }
-        fdata += FilterDataHolder.compile(parsed);
-    }
-    if ( parsed.domainOpt !== '' ) {
-        if ( fdata !== '' ) { fdata += '\v'; }
-        fdata += FilterOrigin.compile(parsed);
-    }
-    if ( fdata !== '' ) { fdata += '\v'; }
+    var fdata;
     if ( parsed.isRegex ) {
-        fdata += FilterRegex.compile(parsed);
+        fdata = FilterRegex.compile(parsed);
     } else if ( parsed.hostnamePure ) {
-        fdata += FilterPlainHostname.compile(parsed);
+        fdata = FilterPlainHostname.compile(parsed);
     } else if ( parsed.f === '*' ) {
-        fdata += FilterTrue.compile();
+        fdata = FilterTrue.compile();
     } else if ( parsed.anchor === 0x5 ) {
         // https://github.com/gorhill/uBlock/issues/1669
-        fdata += FilterGenericHnAndRightAnchored.compile(parsed);
+        fdata = FilterGenericHnAndRightAnchored.compile(parsed);
     } else if (
         this.reIsGeneric.test(parsed.f) ||
         parsed.tokenHash === parsed.noTokenHash
     ) {
         if ( parsed.anchor === 0x4 ) {
-            fdata += FilterGenericHnAnchored.compile(parsed);
+            fdata = FilterGenericHnAnchored.compile(parsed);
         } else {
-            fdata += FilterGeneric.compile(parsed);
+            fdata = FilterGeneric.compile(parsed);
         }
     } else if ( parsed.anchor === 0x4 ) {
-        fdata += FilterPlainHnAnchored.compile(parsed);
+        fdata = FilterPlainHnAnchored.compile(parsed);
     } else if ( parsed.anchor === 0x2 ) {
-        fdata += FilterPlainLeftAnchored.compile(parsed);
+        fdata = FilterPlainLeftAnchored.compile(parsed);
     } else if ( parsed.anchor === 0x1 ) {
-        fdata += FilterPlainRightAnchored.compile(parsed);
+        fdata = FilterPlainRightAnchored.compile(parsed);
     } else if ( parsed.tokenBeg === 0 ) {
-        fdata += FilterPlainPrefix0.compile(parsed);
+        fdata = FilterPlainPrefix0.compile(parsed);
     } else if ( parsed.tokenBeg === 1 ) {
-        fdata += FilterPlainPrefix1.compile(parsed);
+        fdata = FilterPlainPrefix1.compile(parsed);
     } else {
-        fdata += FilterPlain.compile(parsed);
+        fdata = FilterPlain.compile(parsed);
     }
 
-    this.compileToAtomicFilter(fdata, parsed, out);
+    var fwrapped;
+    if ( parsed.domainOpt !== '' ) {
+        fwrapped = fdata;
+        fdata = FilterOrigin.compile(parsed);
+        fdata.push(fwrapped);
+    }
+
+    if ( parsed.dataType !== undefined ) {
+        fwrapped = fdata;
+        fdata = FilterDataHolder.compile(parsed);
+        fdata.push(fwrapped);
+    }
+
+    this.compileToAtomicFilter(fdata, parsed, writer);
 
     return true;
 };
 
 /******************************************************************************/
 
-// Using fast/compact dictionary when filter is a (or portion of) pure hostname.
+// Using fast/compact dictionary when filter is a pure hostname.
 
-FilterContainer.prototype.compileHostnameOnlyFilter = function(parsed, out) {
+FilterContainer.prototype.compileHostnameOnlyFilter = function(parsed, writer) {
     // Can't fit the filter in a pure hostname dictionary.
     // https://github.com/gorhill/uBlock/issues/1757
     // This should no longer happen with fix to above issue.
@@ -2118,29 +2132,18 @@ FilterContainer.prototype.compileHostnameOnlyFilter = function(parsed, out) {
     //    return;
     //}
 
-    var route = parsed.badFilter ? 0x01 : 0x00,
-        categoryBits = parsed.action | parsed.important | parsed.party;
+    var descBits = parsed.action | parsed.important | parsed.party | parsed.badFilter;
 
     var type = parsed.types;
     if ( type === 0 ) {
-        out.push(
-            route,
-            exportInt(categoryBits) + '\v' +
-            this.exportedDotTokenHash + '\v' +
-            parsed.f
-        );
+        writer.push([ descBits, this.dotTokenHash, parsed.f ]);
         return true;
     }
 
     var bitOffset = 1;
     do {
         if ( type & 1 ) {
-            out.push(
-                route,
-                exportInt(categoryBits | (bitOffset << 4)) + '\v' +
-                this.exportedDotTokenHash + '\v' +
-                parsed.f
-            );
+            writer.push([ descBits | (bitOffset << 4), this.dotTokenHash, parsed.f ]);
         }
         bitOffset += 1;
         type >>>= 1;
@@ -2150,28 +2153,17 @@ FilterContainer.prototype.compileHostnameOnlyFilter = function(parsed, out) {
 
 /******************************************************************************/
 
-FilterContainer.prototype.compileToAtomicFilter = function(fdata, parsed, out) {
-    var route = parsed.badFilter ? 0x01 : 0x00,
-        categoryBits = parsed.action | parsed.important | parsed.party,
+FilterContainer.prototype.compileToAtomicFilter = function(fdata, parsed, writer) {
+    var descBits = parsed.action | parsed.important | parsed.party | parsed.badFilter,
         type = parsed.types;
     if ( type === 0 ) {
-        out.push(
-            route,
-            exportInt(categoryBits) + '\v' +
-            exportInt(parsed.tokenHash) + '\v' +
-            fdata
-        );
+        writer.push([ descBits, parsed.tokenHash, fdata ]);
         return;
     }
     var bitOffset = 1;
     do {
         if ( type & 1 ) {
-            out.push(
-                route,
-                exportInt(categoryBits | (bitOffset << 4)) + '\v' +
-                exportInt(parsed.tokenHash) + '\v' +
-                fdata
-            );
+            writer.push([ descBits | (bitOffset << 4), parsed.tokenHash, fdata ]);
         }
         bitOffset += 1;
         type >>>= 1;
@@ -2189,62 +2181,65 @@ FilterContainer.prototype.compileToAtomicFilter = function(fdata, parsed, out) {
 
     var redirects = µb.redirectEngine.compileRuleFromStaticFilter(parsed.raw);
     if ( Array.isArray(redirects) === false ) {
-        return;
     }
+    descBits = typeNameToTypeValue.redirect;
     var i = redirects.length;
     while ( i-- ) {
-        out.push(0, '\v\v=>\t' + redirects[i]);
+        writer.push([ descBits, redirects[i] ]);
     }
 };
 
 /******************************************************************************/
 
-FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
-    var line, lineBits, categoryBits, tokenHash, fdata,
-        bucket, entry, filter,
-        fieldIter = new µb.FieldIterator('\v'),
-        dataFilterFid = FilterDataHolder.fidPrefix,
-        buckerFilterFid = FilterBucket.fidPrefix,
-        aCharCode = 'a'.charCodeAt(0);
+FilterContainer.prototype.fromCompiledContent = function(reader, path) {
+    var badFilterBit = BadFilter,
+        filterPairId = FilterPair.fid,
+        filterBucketId = FilterBucket.fid,
+        filterDataHolderId = FilterDataHolder.fid,
+        args, bits, bucket, entry,
+        tokenHash, fdata, fingerprint;
 
-    while ( lineIter.eot() === false ) {
-        lineBits = lineIter.charCodeAt(0) - aCharCode;
-        if ( (lineBits & 0x04) !== 0 ) {
-            return;
-        }
-        line = lineIter.next(1);
-        if ( (lineBits & 0x02) !== 0 ) {
-            line = decodeURIComponent(line);
-        }
-        if ( (lineBits & 0x01) !== 0 ) {
-            this.badFilters.add(line);
+    if (path == "easylist") {
+        console.log();
+    }
+
+    while ( reader.next() === true ) {
+        args = reader.args();
+        bits = args[0];
+
+        if ( (bits & badFilterBit) !== 0 ) {
+            this.badFilters.add(args);
             continue;
         }
-
-        categoryBits = importInt(fieldIter.first(line));
-        tokenHash = importInt(fieldIter.next());
-        fdata = fieldIter.remainder();
 
         // Special cases: delegate to more specialized engines.
         // Redirect engine.
-        if ( fdata.startsWith('=>\t') ) {
-            µb.redirectEngine.fromCompiledRule(fdata.slice(3));
+        if ( (bits >>> 4) === 17 ) {
+            µb.redirectEngine.fromCompiledRule(args[1]);
             continue;
         }
 
-        // Plain static filters.
         this.acceptedCount += 1;
+
+        // Plain static filters.
+        fingerprint = reader.fingerprint();
+        tokenHash = args[1];
+        fdata = args[2];
+
+        if (typeof fdata == "string") {
+            console.log();
+        }
 
         // Special treatment: data-holding filters are stored separately
         // because they require special matching algorithm (unlike other
         // filters, ALL hits must be reported).
-        if ( fdata.startsWith(dataFilterFid) ) {
-            if ( this.duplicateBuster.has(line) ) {
+        if ( fdata[0] === filterDataHolderId ) {
+            if ( this.duplicateBuster.has(fingerprint) ) {
                 this.discardedCount += 1;
                 continue;
             }
-            this.duplicateBuster.add(line);
-            entry = new FilterDataHolderEntry(categoryBits, tokenHash, fdata);
+            this.duplicateBuster.add(fingerprint);
+            entry = new FilterDataHolderEntry(bits, tokenHash, fdata);
             bucket = this.dataFilters.get(tokenHash);
             if ( bucket !== undefined ) {
                 entry.next = bucket;
@@ -2253,10 +2248,10 @@ FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
             continue;
         }
 
-        bucket = this.categories.get(categoryBits);
+        bucket = this.categories.get(bits);
         if ( bucket === undefined ) {
             bucket = new Map();
-            this.categories.set(categoryBits, bucket);
+            this.categories.set(bits, bucket);
         }
         entry = bucket.get(tokenHash);
 
@@ -2271,69 +2266,81 @@ FilterContainer.prototype.fromCompiledContent = function(lineIter, path) {
             continue;
         }
 
-        if ( this.duplicateBuster.has(line) ) {
+        if ( this.duplicateBuster.has(fingerprint) ) {
             this.discardedCount += 1;
             continue;
         }
-        this.duplicateBuster.add(line);
+        this.duplicateBuster.add(fingerprint);
 
-        //this.tokenHistogram.set(tokenHash, (this.tokenHistogram.get(tokenHash) || 0) + 1);
-
-        filter = filterFromCompiledData(fdata);
         if ( entry === undefined ) {
-            bucket.set(tokenHash, filter);
+            bucket.set(tokenHash, filterFromCompiledData(fdata));
             continue;
         }
-        if ( entry.fidPrefix === buckerFilterFid ) {
-            entry.add(filter);
+        if ( entry.fid === filterBucketId ) {
+            entry.add(fdata);
             continue;
         }
-        bucket.set(tokenHash, new FilterBucket(entry, filter, path));
+        if ( entry.fid === filterPairId ) {
+            bucket.set(
+                tokenHash,
+                entry.upgrade(filterFromCompiledData(fdata))
+            );
+            continue;
+        }
+
+        bucket.set(
+            tokenHash,
+            new FilterPair(entry, filterFromCompiledData(fdata), path)
+        );
     }
 };
-
-//FilterContainer.prototype.tokenHistogram = new Map();
 
 /******************************************************************************/
 
 FilterContainer.prototype.removeBadFilters = function() {
-    var lines = µb.setToArray(this.badFilters),
-        fieldIter = new µb.FieldIterator('\v'),
-        categoryBits, tokenHash, fdata, bucket, entry,
-        i = lines.length;
-    while ( i-- ) {
-        categoryBits = importInt(fieldIter.first(lines[i]));
-        bucket = this.categories.get(categoryBits);
-        if ( bucket === undefined ) {
-            continue;
-        }
-        tokenHash = importInt(fieldIter.next());
+    var filterPairId = FilterPair.fid,
+        filterBucketId = FilterBucket.fid,
+        filterHostnameDictId = FilterHostnameDict.fid,
+        bits, tokenHash, fdata, bucket, entry;
+    for ( var args of this.badFilters ) {
+        bits = args[0] & ~BadFilter;
+        bucket = this.categories.get(bits);
+        if ( bucket === undefined ) { continue; }
+        tokenHash = args[1];
         entry = bucket.get(tokenHash);
-        if ( entry === undefined ) {
-            continue;
-        }
-        fdata = fieldIter.remainder();
-        if ( entry instanceof FilterBucket ) {
+        if ( entry === undefined ) { continue; }
+        fdata = args[2];
+        if ( entry.fid === filterPairId ) {
             entry.remove(fdata);
-            if ( entry.filters.length === 1 ) {
-                bucket.set(tokenHash, entry.filters[0]);
+            if ( entry.size === 1 ) {
+                bucket.set(tokenHash, entry.f1);
             }
             continue;
         }
-        if ( entry instanceof FilterHostnameDict ) {
+        if ( entry.fid === filterBucketId ) {
+            entry.remove(fdata);
+            if ( entry.size === 2 ) {
+                bucket.set(
+                    tokenHash,
+                    new FilterPair(entry.filters[0], entry.filters[1])
+                );
+            }
+            continue;
+        }
+        if ( entry.fid === filterHostnameDictId ) {
             entry.remove(fdata);
             if ( entry.size === 0 ) {
                 bucket.delete(tokenHash);
                 if ( bucket.size === 0 ) {
-                    this.categories.delete(categoryBits);
+                    this.categories.delete(bits);
                 }
             }
             continue;
         }
-        if ( entry.compile() === fdata ) {
+        if ( arrayStrictEquals(entry.compile(), fdata) === true ) {
             bucket.delete(tokenHash);
             if ( bucket.size === 0 ) {
-                this.categories.delete(categoryBits);
+                this.categories.delete(bits);
             }
             continue;
         }

@@ -126,8 +126,8 @@ var µBlock = (function() { // jshint ignore:line
 
         // read-only
         systemSettings: {
-            compiledMagic: 'alufjifllsxz',
-            selfieMagic: 'alufjifllsxz'
+            compiledMagic: 'pwvcdyqfkuek',
+            selfieMagic: 'pwvcdyqfkuek'
         },
 
         restoreBackupSettings: {
@@ -168,6 +168,7 @@ var µBlock = (function() { // jshint ignore:line
         mouseY: -1,
         mouseURL: '',
         epickerTarget: '',
+        epickerZap: false,
         epickerEprom: null,
 
         scriptlets: {

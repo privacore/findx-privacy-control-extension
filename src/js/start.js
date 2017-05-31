@@ -210,30 +210,20 @@ var onSystemSettingsReady = function(fetched) {
 /******************************************************************************/
 
     /**
-     * In a version 1.7.5.4 we start loading filters from a privacontrol server.
-     * So we need to clear all earlier filters from the storage, because if we don't clear it -
-     *      previous filters from ublock server will  be displayed too.
- *      We must clear it only once, so we set "isFiltersErased" item to a storage.
+     * Igor. Current method used for updating data if some large changes made from previous version.
      */
     var checkFiltersListsSources = function (callback) {
         try {
-            // In a 1.11.3.0 we change links to filters so we need to purge all cached data for loading filters from new links
-            if (compareVersions(vAPI.app.version, "1.11.3.0") >= 0) {
-                vAPI.storage.get('isCacheErased_1.11.3.0', function (data) {
-                    if (!data || !Object.keys(data).length || !data["isCacheErased_1.11.3.0"]) {
-                        µb.assets.remove(/./);
-                        //vAPI.storage.set({ 'availableFilterLists': {} }, null);
-                        vAPI.cacheStorage.clear();
-                        vAPI.storage.clear();
-                        vAPI.localStorage.removeItem('hiddenSettings');
+            // Igor. In 1.12.5 was changed a logic of compiling and loading compiled filters. So we need update all used filters and compile its correctly.
+            if (compareVersions(vAPI.app.version, "1.12.0.0") >= 0) {
+                vAPI.storage.get('isCacheErased_1.12.5.15', function (data) {
+                    if (!data || !Object.keys(data).length || !data["isCacheErased_1.12.5.15"]) {
 
-                        // Keep global counts, people can become quite attached to numbers
-                        µb.saveLocalSettings();
-                        vAPI.storage.set({ 'isCacheErased_1.11.3.0': true });
-
-                        vAPI.app.restart();
+                        µb.scheduleAssetUpdater(0);
+                        µb.assets.updateStart({ delay: µb.hiddenSettings.manualUpdateAssetFetchPeriod || 2000 });
+                        vAPI.storage.set({ 'isCacheErased_1.12.5.15': true });
                     }
-                    if (callback) callback();
+                    //if (callback) callback();
                 });
             }
 
