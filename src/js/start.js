@@ -218,7 +218,7 @@ var onSystemSettingsReady = function(fetched) {
             if (compareVersions(vAPI.app.version, "1.12.0.0") >= 0) {
                 vAPI.storage.get('isCacheErased_1.12.5.15', function (data) {
                     if (!data || !Object.keys(data).length || !data["isCacheErased_1.12.5.15"]) {
-
+                        µb.assets.remove(/./);
                         µb.scheduleAssetUpdater(0);
                         µb.assets.updateStart({ delay: µb.hiddenSettings.manualUpdateAssetFetchPeriod || 2000 });
                         vAPI.storage.set({ 'isCacheErased_1.12.5.15': true });
