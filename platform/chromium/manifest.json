@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Privacontrol",
-    "version": "1.12.5.15",
+    "version": "1.12.5.104",
 
     "commands": {
         "launch-element-zapper": {
@@ -59,7 +59,7 @@
         }
     ],
     "incognito": "split",
-    "minimum_chrome_version": "26.0",
+    "minimum_chrome_version": "38.0",
     "optional_permissions": [ "file:///*" ],
     "options_page": "dashboard.html",
     "options_ui": {

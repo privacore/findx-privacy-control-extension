@@ -695,9 +695,9 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
     // Dynamic hostname/type filtering.
     if ( result === 0 && µb.userSettings.advancedUserEnabled ) {
         result = µb.sessionFirewall.evaluateCellZY( context.rootHostname, context.requestHostname, requestType);
-        if ( result !== 0 && µb.logger.isEnabled() ) {
+        if ( result !== 0 && result !== 3 && µb.logger.isEnabled() ) {
             this.logData = µb.sessionFirewall.toLogData();
-        }
+         }
     }
 
     // Static filtering: lowest filtering precedence.
@@ -788,7 +788,7 @@ PageStore.prototype.filterRequestNoCache = function(context) {
     // Dynamic hostname/type filtering.
     if ( result === 0 && µb.userSettings.advancedUserEnabled ) {
         result = µb.sessionFirewall.evaluateCellZY(context.rootHostname, context.requestHostname, requestType);
-        if ( result !== 0 && µb.logger.isEnabled() ) {
+        if ( result !== 0 && result !== 3 && µb.logger.isEnabled() ) {
             this.logData = µb.sessionFirewall.toLogData();
         }
     }
