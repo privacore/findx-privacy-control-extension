@@ -2659,9 +2659,6 @@ vAPI.toolbarButton = {
     tbb.populatePanel = function(doc, panel) {
         panel.setAttribute('id', this.viewId);
 
-        // https://github.com/gorhill/uBlock/issues/2696
-        panel.style.setProperty('padding', '0');
-
         var iframe = doc.createElement('iframe');
         iframe.setAttribute('type', 'content');
 
@@ -3110,6 +3107,9 @@ vAPI.toolbarButton = {
 
         CustomizableUI.addListener(CUIEvents);
 
+        // https://github.com/gorhill/uBlock/issues/2696
+        // https://github.com/gorhill/uBlock/issues/2709
+
         var style = [
             '#' + this.id + '.off {',
                 'list-style-image: url(',
@@ -3123,9 +3123,11 @@ vAPI.toolbarButton = {
             '}',
             '#' + this.viewId + ',',
             '#' + this.viewId + ' > iframe {',
-                'width: 160px;',
                 'height: 290px;',
+                'min-width: 0 !important;',
                 'overflow: hidden !important;',
+                'padding: 0 !important;',
+                'width: 160px;',
             '}'
         ];
 
