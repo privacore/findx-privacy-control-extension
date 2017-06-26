@@ -2,25 +2,16 @@
     "manifest_version": 2,
 
     "name": "Privacontrol",
-    "version": "1.12.5.105",
+    "version": "1.13.3.3",
 
     "commands": {
         "launch-element-zapper": {
-            "suggested_key": {
-              "default": "Alt+Z"
-            },
             "description": "__MSG_popupTipZapper__"
         },
         "launch-element-picker": {
-            "suggested_key": {
-              "default": "Alt+X"
-            },
             "description": "__MSG_popupTipPicker__"
         },
         "launch-logger": {
-            "suggested_key": {
-              "default": "Alt+L"
-            },
             "description": "__MSG_popupTipLog__"
         }
     },
