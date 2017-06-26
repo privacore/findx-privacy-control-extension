@@ -554,11 +554,31 @@ var filterRequests = function(pageStore, details) {
         if (typeof result == "object" && result.code !== 1) { continue; }
         else if (typeof result == "number" && result !== 1) { continue; }
         // Redirected? (We do not hide redirected resources.)
-        request.collapse = redirectEngine.matches(context) !== true;
+
+        let filterObj = typeof result == "object" ? result.filterObj : {};
+        if (isFilterAllowed(filterObj, context))
+            request.collapse = redirectEngine.matches(context) !== true;
     }
 
     context.dispose();
     return requests;
+};
+
+var isFilterAllowed = function (filterObj, request) {
+    var µb = µBlock;
+    var url = µb.getUrlWithoutParams(request.requestURL);
+    if(!µb.isInUse(filterObj.filterPath)){
+        return true;
+    }
+    if (µb.isUrlInExceptions(filterObj.filterPath, url, request.rootDomain)){
+        return !µb.isUrlBlockedForDomain(filterObj.filterPath, url, request.rootDomain);
+    }
+
+    if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain)){
+        return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
+    }
+    return µb.isDefaultOff(filterObj.filterPath );
+    //return µb.isDefaultOff(filterObj.filterPath ) || µb.isAllowResult(filterObj.s || filterObj)  ;
 };
 
 /******************************************************************************/

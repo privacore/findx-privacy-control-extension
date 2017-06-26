@@ -2221,10 +2221,6 @@ FilterContainer.prototype.fromCompiledContent = function(reader, path) {
         tokenHash = args[1];
         fdata = args[2];
 
-        if (typeof fdata == "string") {
-            console.log();
-        }
-
         // Special treatment: data-holding filters are stored separately
         // because they require special matching algorithm (unlike other
         // filters, ALL hits must be reported).
