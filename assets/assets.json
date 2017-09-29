@@ -14,15 +14,16 @@
 			"assets/thirdparties/publicsuffix.org/list/effective_tld_names.dat"
 		]
 	},
-    "abprotector-0": {
-        "content": "filters",
-        "group": "ads",
-        "off": true,
-        "title": "Adblock Protector List",
-        "contentURL": "https://raw.githubusercontent.com/jspenguin2017/AdBlockProtector/master/AdBlockProtectorList.txt",
-        "supportURL": "https://github.com/jspenguin2017/AdBlockProtector",
-        "instructionURL": "https://jspenguin2017.github.io/AdBlockProtector/"
-    },
+	"aak-continued": {
+		"content": "filters",
+		"group": "ads",
+		"off": true,
+		"title": "AAK-Cont Filters For uBlock Origin",
+		"contentURL": "https://xuhaiyang1234.gitlab.io/AAK-Cont/dist/aak-cont-list-ubo.txt",
+		"supportURL": "https://gitlab.com/xuhaiyang1234/AAK-Cont/issues",
+		"defaultOff": true,
+		"inUse": true
+	},
 	"awrl-0": {
 		"content": "filters",
 		"group": "ads",
@@ -33,16 +34,16 @@
         "defaultOff": true,
         "inUse": true
 	},
-	"reek-0": {
+	"adguard-generic": {
 		"content": "filters",
 		"group": "ads",
 		"off": true,
-		"title": "Anti-Adblock Killer | Reek",
-		"contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.reek.anti.adblock.killer.master.anti.adblock.killer.filters.txt",
-		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Freek%2Fanti-adblock-killer",
-		"instructionURL": "https://github.com/reek/anti-adblock-killer#instruction",
-        "defaultOff": true,
-        "inUse": true
+		"title": "Adguard Base Filters",
+		"contentURL": "https://filters.adtidy.org/extension/ublock/filters/2_without_easylist.txt",
+		"supportURL": "https://github.com/AdguardTeam/AdguardFilters/issues",
+		"instructionURL": "https://kb.adguard.com/en/general/adguard-ad-filters",
+		"defaultOff": true,
+		"inUse": true
 	},
 	"easylist": {
 		"content": "filters",
@@ -53,15 +54,15 @@
         "defaultOff": true,
         "inUse": true
 	},
-	"easylist-nocosmetic": {
+	"adguard-spyware": {
 		"content": "filters",
-		"group": "ads",
+		"group": "privacy",
 		"off": true,
-		"title": "EasyList without element hiding rules",
-		"contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylist.noelemhide.txt",
-		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
-        "defaultOff": true,
-        "inUse": true
+		"title": "Adguard Spyware Filters",
+		"contentURL": "https://filters.adtidy.org/extension/ublock/filters/3.txt",
+		"supportURL": "https://github.com/AdguardTeam/AdguardFilters/issues",
+		"defaultOff": true,
+		"inUse": true
 	},
 	"disconnect-tracking": {
 		"content": "filters",
@@ -117,16 +118,6 @@
         "defaultOff": false,
         "inUse": true
 	},
-	"malware-2": {
-		"content": "filters",
-		"group": "malware",
-		"off": true,
-		"title": "Malware domains (long-lived)",
-		"contentURL":"http://download.privacontrol.com/filters/http.malwaredomains.lehigh.edu.files.immortal.domains.txt",
-		"supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fwww.malwaredomains.com%2F",
-        "defaultOff": true,
-        "inUse": true
-	},
 	"disconnect-malware": {
 		"content": "filters",
 		"group": "malware",
@@ -146,11 +137,21 @@
         "defaultOff": true,
         "inUse": true
 	},
+	"adguard-annoyance": {
+		"content": "filters",
+		"group": "social",
+		"off": true,
+		"title": "Adguard’s Annoyance List",
+		"contentURL": "https://filters.adtidy.org/extension/ublock/filters/14.txt",
+		"supportURL": "https://github.com/AdguardTeam/AdguardFilters#adguard-filters",
+		"defaultOff": true,
+		"inUse": true
+	},
 	"fanboy-thirdparty_social": {
 		"content": "filters",
 		"group": "social",
 		"off": true,
-		"title": "Anti-ThirdpartySocial (see warning inside list)",
+		"title": "Fanboy’s Anti-Thirdparty Social (see warning inside list)",
 		"contentURL": "http://download.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.antifacebook.txt",
 		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
         "defaultOff": true,
@@ -165,6 +166,16 @@
 		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
         "defaultOff": true,
         "inUse": true
+	},
+	"fanboy-cookiemonster": {
+		"content": "filters",
+		"group": "social",
+		"off": true,
+		"title": "Fanboy’s Cookiemonster List",
+		"contentURL": "https://secure.fanboy.co.nz/fanboy-cookiemonster.txt",
+		"supportURL": "https://github.com/ryanbr/fanboy-adblock/issues",
+		"defaultOff": true,
+		"inUse": true
 	},
 	"fanboy-social": {
 		"content": "filters",
@@ -327,16 +338,6 @@
         "defaultOff": true,
         "inUse": true
 	},
-	"EU-prebake": {
-		"content": "filters",
-		"group": "regions",
-		"off": true,
-		"title": "EU: Prebake - Filter Obtrusive Cookie Notices",
-		"contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.liamja.prebake.master.obtrusive.txt",
-		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fliamja%2FPrebake",
-        "defaultOff": true,
-        "inUse": true
-	},
 	"FIN-0": {
 		"content": "filters",
 		"group": "regions",
@@ -399,7 +400,9 @@
 		"title": "IRN: Adblock-Iran",
 		"lang": "fa",
 		"contentURL": "https://raw.githubusercontent.com/farrokhi/adblock-iran/master/filter.txt",
-		"supportURL": "https://github.com/farrokhi/adblock-iran"
+		"supportURL": "https://github.com/farrokhi/adblock-iran",
+		"defaultOff": true,
+		"inUse": true
 	},
 	"ISL-0": {
 		"content": "filters",
@@ -477,16 +480,6 @@
         "defaultOff": true,
         "inUse": true
 	},
-	"KOR-2": {
-		"content": "filters",
-		"group": "regions",
-		"off": true,
-		"title": "KOR: Fanboy's Korean",
-		"contentURL": "http://download.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.korean.txt",
-		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
-        "defaultOff": true,
-        "inUse": true
-	},
 	"LTU-0": {
 		"content": "filters",
 		"group": "regions",
@@ -546,19 +539,9 @@
 		"content": "filters",
 		"group": "regions",
 		"off": true,
-		"title": "RUS: RU AdList (Дополнительная региональная подписка)",
+		"title": "RUS: RU AdList",
         "lang": "be ru uk",
 		"contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.advblock.txt",
-		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D102",
-        "defaultOff": true,
-        "inUse": true
-	},
-	"RUS-1": {
-		"content": "filters",
-		"group": "regions",
-		"off": true,
-		"title": "RUS: BitBlock List (Дополнительная подписка фильтров)",
-		"contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.bitblock.txt",
 		"supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D102",
         "defaultOff": true,
         "inUse": true

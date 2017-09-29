@@ -678,6 +678,12 @@ var winWatcher = (function() {
         if ( !win || windowToIdMap.delete(win) !== true ) {
             return;
         }
+        // https://github.com/uBlockOrigin/uAssets/issues/567
+        //   We need to cleanup if and only if the window being closed is
+        //   the actual top window.
+        if ( win.gBrowser && win.gBrowser.ownerGlobal !== win ) {
+            return;
+        }
         if ( typeof api.onCloseWindow === 'function' ) {
             api.onCloseWindow(win);
         }
@@ -3124,6 +3130,7 @@ vAPI.toolbarButton = {
             '#' + this.viewId + ',',
             '#' + this.viewId + ' > iframe {',
                 'height: 290px;',
+                'max-width: none !important;',
                 'min-width: 0 !important;',
                 'overflow: hidden !important;',
                 'padding: 0 !important;',
@@ -3434,19 +3441,14 @@ vAPI.commands = (function() {
 
         var myKey, shortcut, parts, modifiers, key;
         for ( var command of commands ) {
+            modifiers = key = '';
             shortcut = vAPI.localStorage.getItem('shortcuts.' + command.id);
             if ( shortcut === null ) {
                 vAPI.localStorage.setItem('shortcuts.' + command.id, '');
+            } else if ( (parts = /^((?:[a-z]+-){1,})?(\w)$/.exec(shortcut)) !== null ) {
+                modifiers = (parts[1] || '').slice(0, -1).replace(/-/g, ',');
+                key = parts[2] || '';
             }
-            if ( typeof shortcut !== 'string' ) { continue; }
-            parts = /^((?:[a-z]+-){1,})?(\w)$/.exec(shortcut);
-            if ( parts === null ) { continue; }
-            modifiers = parts[1];
-            if ( typeof modifiers === 'string' ) {
-                modifiers = parts[1].slice(0, -1).split('-').join(' ');
-            }
-            key = parts[2];
-            if ( typeof key !== 'string' ) { continue; }
             myKey = doc.createElement('key');
             myKey.setAttribute('id', 'uBlock0Key-' + command.id);
             if ( modifiers !== '' ) {

@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2016 Raymond Hill
+    Copyright (C) 2014-2017 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,63 +43,19 @@ var µb = µBlock;
 /******************************************************************************/
 
 // To mitigate memory churning
-var netFilteringResultCacheEntryJunkyard = [];
-var netFilteringResultCacheEntryJunkyardMax = 200;
-
-/******************************************************************************/
-
-var NetFilteringResultCacheEntry = function(result, type, logData) {
-    this.init(result, type, logData);
-};
-
-/******************************************************************************/
-
-NetFilteringResultCacheEntry.prototype.init = function(result, type, logData) {
-    this.result = (typeof result == "object" ? result.code : result);
-    this.type = type;
-    this.time = Date.now();
-    this.logData = logData;
-    try {
-        this.filterPath = (typeof result == "object" ? result.filter.filterPath : "");
-    }
-    catch (exception) {
-        console.error("Exception in 'init' (pagestore.js) :\n\t", exception);
-    }
-    this.quantity = 1;
-    return this;
-};
-
-/******************************************************************************/
-
-NetFilteringResultCacheEntry.prototype.dispose = function() {
-    this.result = this.type = '';
-    this.logData = undefined;
-    if ( netFilteringResultCacheEntryJunkyard.length < netFilteringResultCacheEntryJunkyardMax ) {
-        netFilteringResultCacheEntryJunkyard.push(this);
-    }
-};
-
-/******************************************************************************/
-
-NetFilteringResultCacheEntry.factory = function(result, type, logData) {
-    if ( netFilteringResultCacheEntryJunkyard.length ) {
-        return netFilteringResultCacheEntryJunkyard.pop().init(result, type, logData);
-    }
-    return new NetFilteringResultCacheEntry(result, type, logData);
-};
-
-/******************************************************************************/
-/******************************************************************************/
-
-// To mitigate memory churning
-var netFilteringCacheJunkyard = [];
-var netFilteringCacheJunkyardMax = 10;
+var netFilteringCacheJunkyard = [],
+    netFilteringCacheJunkyardMax = 10;
 
 /******************************************************************************/
 
 var NetFilteringResultCache = function() {
+    this.boundPruneAsyncCallback = this.pruneAsyncCallback.bind(this);
     this.init();
 };
+
+/******************************************************************************/
+
+NetFilteringResultCache.prototype.shelfLife = 15 * 1000;
 
 /******************************************************************************/
 
@@ -116,18 +72,16 @@ NetFilteringResultCache.factory = function() {
 /******************************************************************************/
 
 NetFilteringResultCache.prototype.init = function() {
-    this.urls = Object.create(null);
-    this.count = 0;
-    this.shelfLife = 15 * 1000;
+    this.blocked = new Map();
+    this.results = new Map();
+    this.hash = 0;
     this.timer = null;
-    this.boundPruneAsyncCallback = this.pruneAsyncCallback.bind(this);
 };
 
 /******************************************************************************/
 
 NetFilteringResultCache.prototype.dispose = function() {
     this.empty();
-    this.boundPruneAsyncCallback = null;
     if ( netFilteringCacheJunkyard.length < netFilteringCacheJunkyardMax ) {
         netFilteringCacheJunkyard.push(this);
     }
@@ -136,86 +90,85 @@ NetFilteringResultCache.prototype.dispose = function() {
 
 /******************************************************************************/
 
-NetFilteringResultCache.prototype.add = function(context, result, logData) {
-    var url = context.requestURL,
-        type = context.requestType,
-        key = type + ' ' + url,
-        entry = this.urls[key];
-    if ( entry !== undefined ) {
-        var filterPath = "";
-        if (typeof result == "object") {
-            filterPath = result.filter ? result.filter.filterPath : "";
-            result = result.code || 0;
-        }
-
-        entry.result = result;
-        //entry.result = str;
-        entry.type = type;
-        entry.filterPath = filterPath;
-        entry.quantity = entry.quantity ? ++entry.quantity : 1;
-        entry.time = Date.now();
-        entry.logData = logData;
+NetFilteringResultCache.prototype.rememberResult = function(context, result, logData, isBlocked) {
+    if ( this.results.size === 0 ) {
+        // this.pruneAsync(); // Igor. Without this comment blocked filters not displayed in a popup after 15 sec
+    }
+    
+    var key = context.pageHostname + ' ' + context.requestType + ' ' + context.requestURL;
+    this.results.set(key, {
+        result: result,
+        logData: logData,
+        tstamp: Date.now(),
+        quantity: 1,
+        filterPath : (typeof result === "object" && result.code === 1) ? result.filter.filterPath : ""
+    });
+    if ((typeof result == "number" && result !== 1)
+        || (typeof result == "object" && result.code !== 1)
+        || !isBlocked)
+    {
         return;
     }
-    this.urls[key] = NetFilteringResultCacheEntry.factory(result, type, logData);
-    if ( this.count === 0 ) {
-        this.pruneAsync();
-    }
-    this.count += 1;
+    
+    var now = Date.now();
+    this.blocked.set(key, now);
+    this.hash = now;
 };
 
 /******************************************************************************/
- NetFilteringResultCache.prototype.increaseQuantity = function (url) {
-        var entry = this.urls[url];
-        if ( entry !== undefined ) {
-            entry.quantity = entry.quantity ? ++entry.quantity : 1;
-        }
-    };
+
+NetFilteringResultCache.prototype.rememberBlock = function(details) {
+    if ( this.blocked.size === 0 ) {
+        // this.pruneAsync(); // Igor. Without this comment blocked filters not displayed in a popup after 15 sec
+    }
+    var now = Date.now();
+    this.blocked.set(
+        details.pageHostname + ' ' + details.requestType + ' ' + details.requestURL,
+        now
+    );
+    this.hash = now;
+};
+
+/******************************************************************************/
+
+// 29.09.17 Current method added by Igor Petrenko.
+// Used for receiving array of all results and using it in a popup.
+// We need convert Map object to an Array because Map object always sends empty to a popup (don't know why)
+NetFilteringResultCache.prototype.getResultsList = function () {
+    var response = {};
+    
+    this.results.forEach(function (value, key, map) {
+        var data = {};
+        data.quantity = value.quantity;
+        data.filter = value.result.filter;
+        data.filterPath = value.result.filter ? value.result.filter.filterPath : "";
+        response[key] = data;
+    });
+    return response;
+};
+
+/******************************************************************************/
+ NetFilteringResultCache.prototype.increaseQuantity = function (context) {
+    var key = context.pageHostname + ' ' + context.requestType + ' ' + context.requestURL;
+    var entry = this.results.get(key);
+    if ( entry !== undefined ) {
+        entry.quantity = entry.quantity ? ++entry.quantity : 1;
+        this.results.set(key, entry);
+    }
+};
 
 /******************************************************************************/
 
 
 NetFilteringResultCache.prototype.empty = function() {
-    for ( var key in this.urls ) {
-        this.urls[key].dispose();
-    }
-    this.urls = Object.create(null);
-    this.count = 0;
+    this.blocked.clear();
+    this.results.clear();
+    this.hash = 0;
     if ( this.timer !== null ) {
         clearTimeout(this.timer);
         this.timer = null;
     }
 };
-
-/******************************************************************************/
-
-NetFilteringResultCache.prototype.compareEntries = function(a, b) {
-    return this.urls[b].time - this.urls[a].time;
-};
-
-/******************************************************************************/
-
-NetFilteringResultCache.prototype.prune = function() {
-    var keys = Object.keys(this.urls).sort(this.compareEntries.bind(this));
-    var obsolete = Date.now() - this.shelfLife;
-    var key, entry;
-    var i = keys.length;
-    while ( i-- ) {
-        key = keys[i];
-        entry = this.urls[key];
-        if ( entry.time > obsolete ) {
-            break;
-        }
-        entry.dispose();
-        delete this.urls[key];
-    }
-    this.count -= keys.length - i - 1;
-    if ( this.count > 0 ) {
-        this.pruneAsync();
-    }
-};
-
-// https://www.youtube.com/watch?v=hcVpbsDyOhM
 
 /******************************************************************************/
 
@@ -227,13 +180,46 @@ NetFilteringResultCache.prototype.pruneAsync = function() {
 
 NetFilteringResultCache.prototype.pruneAsyncCallback = function() {
     this.timer = null;
-    //this.prune(); // 17.08.2016 Igor Petrenko. Without this comment blocked filters not displayed in a popup after 30 sec
+    var obsolete = Date.now() - this.shelfLife,
+        entry;
+    for ( entry of this.blocked ) {
+        if ( entry[1] <= obsolete ) {
+            this.results.delete(entry[0]);
+            this.blocked.delete(entry[0]);
+        }
+    }
+    for ( entry of this.results ) {
+        if ( entry[1].tstamp <= obsolete ) {
+            this.results.delete(entry[0]);
+        }
+    }
+    if ( this.blocked.size !== 0 || this.results.size !== 0 ) {
+        this.pruneAsync();
+    }
 };
 
 /******************************************************************************/
 
-NetFilteringResultCache.prototype.lookup = function(context) {
-    return this.urls[context.requestURL];
+NetFilteringResultCache.prototype.lookupResult = function(context) {
+    return this.results.get(
+        context.pageHostname + ' ' +
+        context.requestType + ' ' +
+        context.requestURL
+    );
+};
+
+/******************************************************************************/
+
+NetFilteringResultCache.prototype.lookupAllBlocked = function(hostname) {
+    var result = [],
+        pos;
+    for ( var entry of this.blocked ) {
+        pos = entry[0].indexOf(' ');
+        if ( entry[0].slice(0, pos) === hostname ) {
+            result[result.length] = entry[0].slice(pos + 1);
+        }
+    }
+    return result;
 };
 
 /******************************************************************************/
@@ -544,10 +530,10 @@ PageStore.prototype.injectLargeMediaElementScriptlet = function() {
     µb.contextMenu.update(this.tabId);
 };
 
-PageStore.prototype.temporarilyAllowLargeMediaElements = function() {
+PageStore.prototype.temporarilyAllowLargeMediaElements = function(state) {
     this.largeMediaCount = 0;
     µb.contextMenu.update(this.tabId);
-    this.allowLargeMediaElementsUntil = Date.now() + 86400000;
+    this.allowLargeMediaElementsUntil = state ? Date.now() + 86400000 : 0;
     µb.scriptlets.injectDeep(this.tabId, 'load-large-media-all');
 };
 
@@ -659,31 +645,49 @@ PageStore.prototype.journalProcess = function(fromTimer) {
 PageStore.prototype.filterRequest = function(context, isNotRequest) {
     this.logData = undefined;
 
-    var requestType = context.requestType;
-
-    // We want to short-term cache filtering results of collapsible types,
-    // because they are likely to be reused, from network request handler and
-    // from content script handler.
-    // 14.11.2016 Igor Petrenko: this block commented because of
-    //      blocked urls not displayed in a popup for EasyList filter
-    //if ( 'image media object sub_frame'.indexOf(requestType) === -1 ) {
-    //    return this.filterRequestNoCache(context);
-    //}
-
-    if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
-        this.netFilteringCache.add(context, 0);
+    if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering ) {
         return 0;
     }
 
-    var entry = this.netFilteringCache.lookup(context);
-    if ( entry !== undefined ) {
-        this.logData = entry.logData;
-        if (!isNotRequest)
-            this.netFilteringCache.increaseQuantity(context.requestURL);
-        return {
-            str: entry.result,
-            filterPath: entry.filterPath
-        };
+    var requestType = context.requestType;
+
+    if ( requestType === 'csp_report' ) {
+        if ( this.internalRedirectionCount !== 0 ) {
+            if ( µb.logger.isEnabled() ) {
+                this.logData = { result: 1, source: 'global', raw: 'no-spurious-csp-report' };
+            }
+            return 1;
+        }
+    }
+
+    if ( requestType.endsWith('font') ) {
+        if ( requestType === 'font' ) {
+            this.remoteFontCount += 1;
+        }
+        if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
+            if ( µb.logger.isEnabled() ) {
+                this.logData = µb.hnSwitches.toLogData();
+            }
+            return 1;
+        }
+    }
+
+    var cacheableResult = this.cacheableResults[requestType] === true;
+
+    if ( cacheableResult ) {
+        var entry = this.netFilteringCache.lookupResult(context);
+        if ( entry !== undefined ) {
+            this.logData = entry.logData;
+            
+            // Current block of code added by Igor Petrenko
+            if (!isNotRequest)
+                this.netFilteringCache.increaseQuantity(context);
+            // return {
+            //     str: entry.result,
+            //     filterPath: entry.filterPath || ""
+            // };
+            return entry.result;
+        }
     }
 
     // Dynamic URL filtering.
@@ -694,13 +698,13 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
 
     // Dynamic hostname/type filtering.
     if ( result === 0 && µb.userSettings.advancedUserEnabled ) {
-        result = µb.sessionFirewall.evaluateCellZY( context.rootHostname, context.requestHostname, requestType);
+        result = µb.sessionFirewall.evaluateCellZY(context.rootHostname, context.requestHostname, requestType);
         if ( result !== 0 && result !== 3 && µb.logger.isEnabled() ) {
             this.logData = µb.sessionFirewall.toLogData();
-         }
+        }
     }
 
-    // Static filtering: lowest filtering precedence.
+    // Static filtering has lowest precedence.
     if ( result === 0 || result === 3 ) {
         result = µb.staticNetFilteringEngine.matchString(context);
         if (((typeof result == "object" && result.code !== 0) || (result !== 0)) && µb.logger.isEnabled() ) {
@@ -708,9 +712,54 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
         }
     }
 
-    this.netFilteringCache.add(context, result, this.logData);
+    // TODO: Igor. this.netFilteringCache.add(context, result, this.logData);
+    // if ( cacheableResult ) {
+    //     this.netFilteringCache.rememberResult(context, result, this.logData);
+    // } else if ( ((typeof result === "number" && result === 1)
+    //                     || (typeof result === "object" && result.code === 1))
+    //                 && this.collapsibleResources[requestType] === true )
+    // {
+    //     this.netFilteringCache.rememberBlock(context, true);
+    // }
+    
+    var isBlocked = false;
+    if (result) {
+         isBlocked = !this.isFilterAllowed(result.filter, context);
+    }
+    
+    this.netFilteringCache.rememberResult(context, result, this.logData, isBlocked);
 
     return result;
+};
+
+PageStore.prototype.isFilterAllowed = function (filterObj, request) {
+    if (!filterObj) return true;
+    
+    var µb = µBlock;
+    var url = µb.getUrlWithoutParams(request.requestURL);
+    if(!µb.isInUse(filterObj.filterPath)){
+        return true;
+    }
+    if (µb.isUrlInExceptions(filterObj.filterPath, url, request.rootDomain)){
+        return !µb.isUrlBlockedForDomain(filterObj.filterPath, url, request.rootDomain);
+    }
+    
+    if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain)){
+        return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
+    }
+    return µb.isDefaultOff(filterObj.filterPath );
+};
+
+
+PageStore.prototype.cacheableResults = {
+    sub_frame: true
+};
+
+PageStore.prototype.collapsibleResources = {
+    image: true,
+    media: true,
+    object: true,
+    sub_frame: true
 };
 
 /******************************************************************************/
@@ -745,66 +794,27 @@ PageStore.prototype.filterLargeMediaElement = function(size) {
     return 1;
 };
 
+// https://www.youtube.com/watch?v=drW8p_dTLD4
+
 /******************************************************************************/
 
-PageStore.prototype.filterRequestNoCache = function(context) {
-    this.logData = undefined;
-
-    if ( this.getNetFilteringSwitch() === false || µb.userSettings.pauseFiltering) {
-        return 0;
-    }
-
-    var requestType = context.requestType;
-
-    if ( requestType === 'csp_report' ) {
-        if ( this.internalRedirectionCount !== 0 ) {
-            if ( µb.logger.isEnabled() ) {
-                this.logData = { result: 1, source: 'global', raw: 'no-spurious-csp-report' };
-            }
-            return 1;
+PageStore.prototype.getBlockedResources = function(request, response) {
+    var resources = request.resources;
+    if ( Array.isArray(resources) && resources.length !== 0 ) {
+        var context = this.createContextFromFrameHostname(request.pageHostname);
+        for ( var resource of resources ) {
+            context.requestType = resource.type;
+            context.requestHostname = µb.URI.hostnameFromURI(resource.url);
+            context.requestURL = resource.url;
+            this.filterRequest(context);
         }
     }
-
-    if ( requestType === 'font' ) {
-        this.remoteFontCount += 1;
-        if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
-            if ( µb.logger.isEnabled() ) {
-                this.logData = µb.hnSwitches.toLogData();
-            }
-            return 1;
-        }
+    if ( this.netFilteringCache.hash === response.hash ) {
+        return;
     }
-
-    var result = 0;
-
-    // Dynamic URL filtering.
-    if ( result === 0 ) {
-        result = µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, requestType);
-        if ( result !== 0 && µb.logger.isEnabled() ) {
-            this.logData = µb.sessionURLFiltering.toLogData();
-        }
-    }
-
-    // Dynamic hostname/type filtering.
-    if ( result === 0 && µb.userSettings.advancedUserEnabled ) {
-        result = µb.sessionFirewall.evaluateCellZY(context.rootHostname, context.requestHostname, requestType);
-        if ( result !== 0 && result !== 3 && µb.logger.isEnabled() ) {
-            this.logData = µb.sessionFirewall.toLogData();
-        }
-    }
-
-    // Static filtering has lowest precedence.
-    if ( result === 0 || result === 3 ) {
-        result = µb.staticNetFilteringEngine.matchString(context);
-        if ( result !== 0 && µb.logger.isEnabled() ) {
-            this.logData = µb.staticNetFilteringEngine.toLogData();
-        }
-    }
-    return result;
+    response.hash = this.netFilteringCache.hash;
+    response.blockedResources = this.netFilteringCache.lookupAllBlocked(request.pageHostname);
 };
-
-
-// https://www.youtube.com/watch?v=drW8p_dTLD4
 
 /******************************************************************************/
 PageStore.prototype.updateBadge = function() {

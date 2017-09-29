@@ -46,7 +46,15 @@ if ( /[\?&]fullsize=1/.test(window.location.search) ) {
 }
 
 // Mobile device?
-if ( /[\?&]mobile=1/.test(window.location.search) ) {
+// https://github.com/gorhill/uBlock/issues/3032
+// - If at least one of the window's viewport dimension is larger than the
+//   corresponding device's screen dimension, assume uBO's popup panel sits in
+//   its own tab.
+if (
+    /[\?&]mobile=1/.test(window.location.search) ||
+    window.innerWidth >= window.screen.availWidth ||
+    window.innerHeight >= window.screen.availHeight
+) {
     document.body.classList.add('mobile');
 }
 
@@ -515,18 +523,24 @@ var renderOnce = function() {
     // scrollbar if ever its height is more than what is available.
     // For small displays: we use the whole viewport.
 
-    var rpane = uDom.nodeFromSelector('#panes > div:first-of-type'),
+    var panes = uDom.nodeFromId('panes'),
+        rpane = uDom.nodeFromSelector('#panes > div:first-of-type'),
         lpane = uDom.nodeFromSelector('#panes > div:last-of-type');
 
     var fillViewport = function() {
-        lpane.style.setProperty(
-            'height',
-            Math.max(
-                window.innerHeight - uDom.nodeFromSelector('#appinfo').offsetHeight,
-                rpane.offsetHeight
-            ) + 'px'
+        var newHeight = Math.max(
+            window.innerHeight - uDom.nodeFromSelector('#appinfo').offsetHeight,
+            rpane.offsetHeight
         );
-        lpane.style.setProperty('width', (window.innerWidth - rpane.offsetWidth) + 'px');
+        if ( newHeight !== lpane.offsetHeight ) {
+            lpane.style.setProperty('height', newHeight + 'px');
+        }
+        // https://github.com/gorhill/uBlock/issues/3038
+        // - Resize the firewall pane while minding the space between the panes.
+        var newWidth = window.innerWidth - panes.offsetWidth + lpane.offsetWidth;
+        if ( newWidth !== lpane.offsetWidth ) {
+            lpane.style.setProperty('width', newWidth + 'px');
+        }
     };
 
     // https://github.com/gorhill/uBlock/issues/2274
@@ -999,7 +1013,6 @@ var onHideTooltip = function() {
     uDom('#switch').on('click', toggleNetFilteringSwitch);
     uDom('#gotoZap').on('click', gotoZap);
     uDom('#gotoPick').on('click', gotoPick);
-    uDom('a[href]').on('click', gotoURL);
     uDom('h2').on('click', toggleFirewallPane);
     uDom('#refresh').on('click', reloadTab);
     uDom('.hnSwitch').on('click', toggleHostnameSwitch);
@@ -1009,6 +1022,8 @@ var onHideTooltip = function() {
 
     uDom('body').on('mouseenter', '[data-tip]', onShowTooltip)
                 .on('mouseleave', '[data-tip]', onHideTooltip);
+
+    uDom('a[href]').on('click', gotoURL);
 })();
 
 /******************************************************************************/

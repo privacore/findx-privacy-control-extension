@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2016 Raymond Hill
+    Copyright (C) 2014-2017 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -536,22 +536,16 @@ vAPI.tabs.onPopupUpdated = (function() {
     var areDifferentURLs = function(a, b) {
         // https://github.com/gorhill/uBlock/issues/1378
         // Maybe no link element was clicked.
-        if ( b === '' ) {
-            return true;
-        }
+        if ( b === '' ) { return true; }
         var pos = a.indexOf('://');
-        if ( pos === -1 ) {
-            return false;
-        }
+        if ( pos === -1 ) { return false; }
         a = a.slice(pos);
         pos = b.indexOf('://');
-        if ( pos === -1 ) {
-            return false;
-        }
+        if ( pos === -1 ) { return false; }
         return b.slice(pos) !== a;
     };
 
-    var popupMatch = function(openerURL, targetURL, clickedURL, popupType) {
+    var popupMatch = function(openerURL, targetURL, popupType) {
         var openerHostname = µb.URI.hostnameFromURI(openerURL),
             openerDomain = µb.URI.domainFromHostname(openerHostname),
             result;
@@ -584,16 +578,11 @@ vAPI.tabs.onPopupUpdated = (function() {
         if ( openerHostname !== '' && targetURL !== 'about:blank' ) {
             // Check per-site switch first
             if ( µb.hnSwitches.evaluateZ('no-popups', openerHostname) === true ) {
-                if (
-                    typeof clickedURL === 'string' &&
-                    areDifferentURLs(targetURL, clickedURL)
-                ) {
-                    logData = {
-                        source: 'switch',
-                        raw: 'no-popups: ' + µb.hnSwitches.z + ' true'
-                    };
-                    return 1;
-                }
+                logData = {
+                    source: 'switch',
+                    raw: 'no-popups: ' + µb.hnSwitches.z + ' true'
+                };
+                return 1;
             }
 
             // https://github.com/gorhill/uBlock/issues/581
@@ -650,11 +639,11 @@ vAPI.tabs.onPopupUpdated = (function() {
         }
         var re = new RegExp(logData.regex),
             matches = re.exec(popunderURL);
-        if ( matches === null ) { return ''; }
+        if ( matches === null ) { return 0; }
         var beg = matches.index,
             end = beg + matches[0].length,
             pos = popunderURL.indexOf(popunderHostname);
-        if ( pos === -1 ) { return ''; }
+        if ( pos === -1 ) { return 0; }
         // https://github.com/gorhill/uBlock/issues/1471
         //   We test whether the opener hostname as at least one character
         //   within matched portion of URL.
@@ -667,7 +656,7 @@ vAPI.tabs.onPopupUpdated = (function() {
     };
 
     var popunderMatch = function(openerURL, targetURL) {
-        var result = popupMatch(targetURL, openerURL, null, 'popunder');
+        var result = popupMatch(targetURL, openerURL, 'popunder');
         if ( result === 1 ) {
             return result;
         }
@@ -685,7 +674,7 @@ vAPI.tabs.onPopupUpdated = (function() {
         result = mapPopunderResult(
             popunderURL,
             popunderHostname,
-            popupMatch(targetURL, popunderURL, null, 'popup')
+            popupMatch(targetURL, popunderURL, 'popup')
         );
         if ( result !== 0 ) {
             return result;
@@ -699,7 +688,7 @@ vAPI.tabs.onPopupUpdated = (function() {
         return mapPopunderResult(
             popunderURL,
             popunderHostname,
-            popupMatch(targetURL, popunderURL, null, 'popup')
+            popupMatch(targetURL, popunderURL, 'popup')
         );
     };
 
@@ -738,7 +727,15 @@ vAPI.tabs.onPopupUpdated = (function() {
 
         // Popup test.
         var popupType = 'popup',
-            result = popupMatch(openerURL, targetURL, µb.mouseURL, 'popup');
+            result = 0;
+        // https://github.com/gorhill/uBlock/issues/2919
+        // - If the target tab matches a clicked link, assume it's legit.
+        if (
+            openerTabId !== µb.mouseEventRegister.tabId ||
+            areDifferentURLs(targetURL, µb.mouseEventRegister.url)
+        ) {
+            result = popupMatch(openerURL, targetURL, 'popup');
+        }
 
         // Popunder test.
         if ( result === 0 ) {
@@ -749,17 +746,19 @@ vAPI.tabs.onPopupUpdated = (function() {
         }
 
         // Log only for when there was a hit against an actual filter (allow or block).
+        // https://github.com/gorhill/uBlock/issues/2776
         if ( µb.logger.isEnabled() ) {
             µb.logger.writeOne(
                 popupType === 'popup' ? openerTabId : targetTabId,
                 'net',
-                logData,
+                result !== 0 ? logData : undefined,
                 popupType,
                 popupType === 'popup' ? targetURL : openerURL,
                 µb.URI.hostnameFromURI(context.rootURL),
                 µb.URI.hostnameFromURI(context.rootURL)
             );
         }
+        logData = undefined;
 
         // Not blocked
         if ( result !== 1 ) {
@@ -901,7 +900,7 @@ vAPI.tabs.registerListeners();
         if ( vAPI.isBehindTheSceneTabId(tabId) ) {
             return;
         }
-        tabIdToTimer[tabId] = vAPI.setTimeout(updateBadge.bind(this, tabId), 666);
+        tabIdToTimer[tabId] = vAPI.setTimeout(updateBadge.bind(this, tabId), 701);
     };
 })();
 

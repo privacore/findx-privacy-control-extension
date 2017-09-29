@@ -560,7 +560,7 @@ DOMList.prototype.html = function(html) {
 
 /******************************************************************************/
 
-    DOMList.prototype.text = function(text) {
+DOMList.prototype.text = function(text) {
     var i = this.nodes.length;
     if ( text === undefined ) {
         return i ? this.nodes[0].textContent : '';

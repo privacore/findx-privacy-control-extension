@@ -68,7 +68,7 @@
     "description":"English: or"
   },
   "popupTipDashboard":{
-    "message":"Klik om het dashboard te openen",
+    "message":"Dashboard openen",
     "description":"English: Click to open the dashboard"
   },
   "popupTipZapper":{
@@ -319,9 +319,9 @@
     "message":"Malwaredomeinen",
     "description":"English: Malware domains"
   },
-  "3pGroupSocial":{
-    "message":"Sociaal",
-    "description":"English: Social"
+  "3pGroupAnnoyances":{
+    "message":"Storende elementen",
+    "description":"The header identifying the filter lists in the category 'annoyances'"
   },
   "3pGroupMultipurpose":{
     "message":"Multifunctioneel",

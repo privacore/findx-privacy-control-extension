@@ -90,7 +90,10 @@ var onMessage = function(request, sender, callback) {
         break;
     }
 
-    var tabId = sender && sender.tab ? sender.tab.id : 0;
+    // The concatenation with the empty string ensure that the resulting value
+    // is a string. This is important since tab id values are assumed to be
+    // of string type.
+    var tabId = sender && sender.tab ? '' + sender.tab.id : 0;
 
     // Sync
     var response;
@@ -145,7 +148,7 @@ var onMessage = function(request, sender, callback) {
 
     case 'launchElementPicker':
         // Launched from some auxiliary pages, clear context menu coords.
-        µb.mouseX = µb.mouseY = -1;
+        µb.mouseEventRegister.x = µb.mouseEventRegister.y = -1;
         µb.elementPickerExec(request.tabId, request.targetURL, request.zap);
         break;
 
@@ -154,9 +157,10 @@ var onMessage = function(request, sender, callback) {
         break;
 
     case 'mouseClick':
-        µb.mouseX = request.x;
-        µb.mouseY = request.y;
-        µb.mouseURL = request.url;
+        µb.mouseEventRegister.tabId = tabId;
+        µb.mouseEventRegister.x = request.x;
+        µb.mouseEventRegister.y = request.y;
+        µb.mouseEventRegister.url = request.url;
         break;
 
     case 'reloadTab':
@@ -383,9 +387,11 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.noRemoteFonts = µb.hnSwitches.evaluateZ('no-remote-fonts', rootHostname);
         r.remoteFontCount = pageStore.remoteFontCount;
 
-        //r.usedFilters = getUsedFilters(pageStore);
         r.usedFilters = getAllFiltersInUse();
-        r.urls = pageStore.netFilteringCache.urls;
+        // r.urls = pageStore.netFilteringCache.results;
+        // r.urls = Array.from(pageStore.netFilteringCache.results);
+        r.urls = pageStore.netFilteringCache.getResultsList();
+        // r.urls = pageStore.netFilteringCache.urls;
     } else {
         r.hostnameDict = {};
         r.firewallRules = getFirewallRules();
@@ -395,6 +401,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         rootHostname,
         r.hostnameDict
     );
+    console.log(r);
     return r;
 };
 
@@ -510,23 +517,15 @@ vAPI.messaging.listen('popupPanel', onMessage);
 
 /******************************************************************************/
 
-var µb = µBlock;
-
-/******************************************************************************/
-
-var tagNameToRequestTypeMap = {
-     'embed': 'object',
-    'iframe': 'sub_frame',
-       'img': 'image',
-    'object': 'object'
-};
-
-/******************************************************************************/
-
-// Evaluate many requests.
-
-// https://github.com/gorhill/uBlock/issues/1782
-//   Treat `data:` URIs as 1st-party resources.
+// TODO: Igor 27.09.17 code from this to the end of filterRequests func was removed.
+//      Check a new function in pagestore.js   getBlockedResources
+// var µb = µBlock;
+// var tagNameToRequestTypeMap = {
+//      'embed': 'object',
+//     'iframe': 'sub_frame',
+//        'img': 'image',
+//     'object': 'object'
+// };
 
 var filterRequests = function(pageStore, details) {
     var requests = details.requests;
@@ -591,14 +590,40 @@ var onMessage = function(request, sender, callback) {
     }
 
     // Sync
-    var response;
-
-    var pageStore;
+    var µb = µBlock,
+        response,
+        pageStore;
     if ( sender && sender.tab ) {
         pageStore = µb.pageStoreFromTabId(sender.tab.id);
     }
 
     switch ( request.what ) {
+    case 'getCollapsibleBlockedRequests':
+        response = {
+            id: request.id,
+            hash: request.hash,
+            netSelectorCacheCountMax: µb.cosmeticFilteringEngine.netSelectorCacheCountMax
+        };
+        if (
+            µb.userSettings.collapseBlocked &&
+            pageStore &&
+            pageStore.getNetFilteringSwitch() &&
+            !pageStore.getIsPauseFiltering()
+        ) {
+            pageStore.getBlockedResources(request, response);
+        }
+        break;
+
+    // TODO: Igor. 27.09.17 This code was changed to getCollapsibleBlockedRequests. Check is it works
+    // case 'filterRequests':
+    //     if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
+    //         response = {
+    //             result: filterRequests(pageStore, request),
+    //             netSelectorCacheCountMax: µb.cosmeticFilteringEngine.netSelectorCacheCountMax
+    //         };
+    //     }
+    //     break;
+
     case 'retrieveContentScriptParameters':
         if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
             response = {
@@ -626,15 +651,6 @@ var onMessage = function(request, sender, callback) {
         if ( pageStore && pageStore.getGenericCosmeticFilteringSwitch() ) {
             response = {
                 result: µb.cosmeticFilteringEngine.retrieveGenericSelectors(request, pageStore.tabHostname)
-            };
-        }
-        break;
-
-    case 'filterRequests':
-        if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
-            response = {
-                result: filterRequests(pageStore, request),
-                netSelectorCacheCountMax: µb.cosmeticFilteringEngine.netSelectorCacheCountMax
             };
         }
         break;
@@ -693,15 +709,14 @@ var onMessage = function(request, sender, callback) {
             callback({
                 frameContent: this.responseText.replace(reStrings, replacer),
                 target: µb.epickerTarget,
-                clientX: µb.mouseX,
-                clientY: µb.mouseY,
+                clientX: µb.mouseEventRegister.x,
+                clientY: µb.mouseEventRegister.y,
                 zap: µb.epickerZap,
                 eprom: µb.epickerEprom
             });
 
             µb.epickerTarget = '';
-            µb.mouseX = -1;
-            µb.mouseY = -1;
+            µb.mouseEventRegister.x = µb.mouseEventRegister.y = -1;
         };
         xhr.send();
         return;

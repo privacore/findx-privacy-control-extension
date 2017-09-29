@@ -325,13 +325,16 @@
             return;
         }
         var filterPath;
-        for (var url in popupData.urls) {
-            if (popupData.urls[url].quantity)
+        for (var key in popupData.urls) {
+            // if (popupData.urls[key].quantity)
           
-            filterPath = popupData.urls[url].filterPath;
+            filterPath = popupData.urls[key].filterPath;
+            if (!filterPath) continue;
+            
             if (!popupData.trackedUrls[filterPath])
                 popupData.trackedUrls[filterPath] = [];
-            popupData.trackedUrls[filterPath].push(url);
+            
+            popupData.trackedUrls[filterPath].push(key);
         }
     };
 
@@ -348,8 +351,14 @@
             counter = popupData.urls[urls[i]].quantity;
             isBlocked = isRuleBlocked(filter, urls[i]);
 
+            var url = urls[i].split(" ");
+            url.shift();
+            url = url.join(" ");
+            
+            
             var data = {
-                url: urls[i],
+                // url: getUrlFromStr(urls[i]),
+                url: url,
                 counter: counter,
                 counterVisibility: ((counter > 1) ? "" : "disabled"),
                 blockedBtnClass: (isBlocked ? "blocked" : ""),
@@ -484,7 +493,10 @@
     var getUrlFromStr = function (str) {
         if (!str) return str;
         var arr = str.split(" ");
-        if (arr.length > 1) {
+        if (arr.length > 2) {
+            return arr[2];
+        }
+        else if (arr.length > 1) {
             return arr[1];
         }
         else
@@ -665,25 +677,6 @@
 
         renderTrackedUrls();
         displayUsedFilters();
-//        return;
-//        var isHTTP = /^https?:\/\/[0-9a-z]/.test(popupData.pageURL);
-//
-//        uDom('#switch').toggleClass('off', popupData.pageURL === '' || !popupData.netFilteringSwitch);
-//
-//        // Conditions for element picker:
-//        // - `http` or `https` scheme
-//        uDom('#gotoPick').toggleClass('enabled', isHTTP);
-//
-//        // https://github.com/gorhill/uBlock/issues/470
-//        // This must be done here, to be sure the popup is resized properly
-//        var dfPaneVisible = popupData.dfEnabled && popupData.advancedUserEnabled;
-//
-//        uDom('#panes').toggleClass('dfEnabled', dfPaneVisible);
-//
-//        // Build dynamic filtering pane only if in use
-//        if (dfPaneVisible) {
-//            buildAllDynamicFilters();
-//        }
     };
 
     /**************************************************************/
@@ -960,6 +953,7 @@
 
     var getPopupData = function (tabId) {
         var onDataReceived = function (response) {
+            console.log(response);
             cachePopupData(response);
             renderPopup();
             hashFromPopupData(true);
