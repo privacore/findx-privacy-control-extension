@@ -30,51 +30,7 @@ var listEntries = Object.create(null),
 
 /******************************************************************************/
 
-var fromNetFilter = function(details) { //TODO: Igor. Check this method.
-//<<<<<<< HEAD
-//    var lists = [];
-//    var compiledFilter = details.compiledFilter;
-//    var entry, content, pos, notFound;
-//
-//    if (details.filterPath && listEntries[details.filterPath]) {
-//        var entry = listEntries[details.filterPath];
-//        lists.push({
-//            title: entry.title,
-//            supportURL: entry.supportURL
-//        });
-//    }
-//    else {
-//        for (var assetKey in listEntries) {
-//            entry = listEntries[assetKey];
-//            if (entry === undefined) {
-//                continue;
-//            }
-//            content = entry.content;
-//            pos = 0;
-//            for (; ;) {
-//                pos = content.indexOf(compiledFilter, pos);
-//                if (pos === -1) {
-//                    break;
-//                }
-//                // We need an exact match.
-//                // https://github.com/gorhill/uBlock/issues/1392
-//                // https://github.com/gorhill/uBlock/issues/835
-//                pos -= 1;
-//                notFound =
-//                    reSpecialNetworkChars.test(content.charAt(pos)) === false ||
-//                    pos !== 0 && content.charCodeAt(pos - 1) !== 0x0A /* '\n' */;
-//                pos += 1 + compiledFilter.length;
-//                if (notFound) {
-//                    continue;
-//                }
-//                if (pos === content.length || content.charCodeAt(pos) === 0x0A) {
-//                    lists.push({
-//                        title:      entry.title,
-//                        supportURL: entry.supportURL
-//                    });
-//                    break;
-//                }
-//=======
+var fromNetFilter = function(details) {
     var lists = [];
     if (details.filterPath && listEntries[details.filterPath]) {
         var entry = listEntries[details.filterPath];

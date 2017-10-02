@@ -517,71 +517,6 @@ vAPI.messaging.listen('popupPanel', onMessage);
 
 /******************************************************************************/
 
-// TODO: Igor 27.09.17 code from this to the end of filterRequests func was removed.
-//      Check a new function in pagestore.js   getBlockedResources
-// var µb = µBlock;
-// var tagNameToRequestTypeMap = {
-//      'embed': 'object',
-//     'iframe': 'sub_frame',
-//        'img': 'image',
-//     'object': 'object'
-// };
-
-var filterRequests = function(pageStore, details) {
-    var requests = details.requests;
-    if ( µb.userSettings.collapseBlocked === false ) {
-        return requests;
-    }
-
-    //console.debug('messaging.js/contentscript-end.js: processing %d requests', requests.length);
-
-    var hostnameFromURI = µb.URI.hostnameFromURI,
-        redirectEngine = µb.redirectEngine,
-        punycodeURL = vAPI.punycodeURL;
-
-    // Create evaluation context
-    var context = pageStore.createContextFromFrameHostname(details.pageHostname),
-        request,
-        i = requests.length;
-    while ( i-- ) {
-        request = requests[i];
-        context.requestURL = punycodeURL(request.url);
-        context.requestHostname = hostnameFromURI(context.requestURL);
-        context.requestType = tagNameToRequestTypeMap[request.tag];
-        var result = pageStore.filterRequest(context);
-        //if ( pageStore.filterRequest(context) !== 1 ) { continue; }
-        if (typeof result == "object" && result.code !== 1) { continue; }
-        else if (typeof result == "number" && result !== 1) { continue; }
-        // Redirected? (We do not hide redirected resources.)
-
-        let filterObj = typeof result == "object" ? result.filterObj : {};
-        if (isFilterAllowed(filterObj, context))
-            request.collapse = redirectEngine.matches(context) !== true;
-    }
-
-    context.dispose();
-    return requests;
-};
-
-var isFilterAllowed = function (filterObj, request) {
-    var µb = µBlock;
-    var url = µb.getUrlWithoutParams(request.requestURL);
-    if(!µb.isInUse(filterObj.filterPath)){
-        return true;
-    }
-    if (µb.isUrlInExceptions(filterObj.filterPath, url, request.rootDomain)){
-        return !µb.isUrlBlockedForDomain(filterObj.filterPath, url, request.rootDomain);
-    }
-
-    if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain)){
-        return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
-    }
-    return µb.isDefaultOff(filterObj.filterPath );
-    //return µb.isDefaultOff(filterObj.filterPath ) || µb.isAllowResult(filterObj.s || filterObj)  ;
-};
-
-/******************************************************************************/
-
 var onMessage = function(request, sender, callback) {
     // Async
     switch ( request.what ) {
@@ -614,16 +549,6 @@ var onMessage = function(request, sender, callback) {
         }
         break;
 
-    // TODO: Igor. 27.09.17 This code was changed to getCollapsibleBlockedRequests. Check is it works
-    // case 'filterRequests':
-    //     if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
-    //         response = {
-    //             result: filterRequests(pageStore, request),
-    //             netSelectorCacheCountMax: µb.cosmeticFilteringEngine.netSelectorCacheCountMax
-    //         };
-    //     }
-    //     break;
-
     case 'retrieveContentScriptParameters':
         if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
             response = {
@@ -644,7 +569,6 @@ var onMessage = function(request, sender, callback) {
         // And if it set as true if you enable EasyList on a domain it will blocks ads.
         if (response)
             response.noCosmeticFiltering = true;
-            //response.skipCosmeticFiltering = true;
         break;
 
     case 'retrieveGenericCosmeticSelectors':

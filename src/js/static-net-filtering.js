@@ -1327,7 +1327,7 @@ FilterBucket.prototype.compile = function() {
 };
 
 FilterBucket.prototype.downgrade = function() {
-    return new FilterPair(this.filters[0], this.filters[1], this.filterPath); // TODO: Igor. check this place
+    return new FilterPair(this.filters[0], this.filters[1], this.filterPath);
 };
 
 FilterBucket.load = function(args) {

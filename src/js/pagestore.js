@@ -132,7 +132,7 @@ NetFilteringResultCache.prototype.rememberBlock = function(details) {
 /******************************************************************************/
 
 // 29.09.17 Current method added by Igor Petrenko.
-// Used for receiving array of all results and using it in a popup.
+// Used for receiving an array of all results and using it in a popup.
 // We need convert Map object to an Array because Map object always sends empty to a popup (don't know why)
 NetFilteringResultCache.prototype.getResultsList = function () {
     var response = {};
@@ -674,7 +674,9 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
 
     var cacheableResult = this.cacheableResults[requestType] === true;
 
-    if ( cacheableResult ) {
+    // Igor. 02.10.17 Current "if" statement commented because
+    //      sometimes quantity of all blocked not the same as quantity of links(blocked) in a popup.
+    // if ( cacheableResult ) {
         var entry = this.netFilteringCache.lookupResult(context);
         if ( entry !== undefined ) {
             this.logData = entry.logData;
@@ -688,7 +690,7 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
             // };
             return entry.result;
         }
-    }
+    // }
 
     // Dynamic URL filtering.
     var result = µb.sessionURLFiltering.evaluateZ(context.rootHostname, context.requestURL, requestType);
@@ -712,7 +714,9 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
         }
     }
 
-    // TODO: Igor. this.netFilteringCache.add(context, result, this.logData);
+    // Igor. 29.09.17 Current block of code commented because all blocked links must be presented in a "results" array.
+    //  If we will use rememberBlock - we can't display this links in a popup.
+    
     // if ( cacheableResult ) {
     //     this.netFilteringCache.rememberResult(context, result, this.logData);
     // } else if ( ((typeof result === "number" && result === 1)
@@ -726,7 +730,6 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
     if (result) {
          isBlocked = !this.isFilterAllowed(result.filter, context);
     }
-    
     this.netFilteringCache.rememberResult(context, result, this.logData, isBlocked);
 
     return result;

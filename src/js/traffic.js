@@ -164,10 +164,9 @@ var onBeforeRequest = function(details) {
         );
     }
 
-    //TODO: Igor. Maybe this code is not need. Check it.
     // Not blocked
     if ( (typeof result == "object" && result.code !== 1)
-            || ( typeof result == "number" && result !== 1 ) ) { //26.01.16 - in this case all urls will not be blocked. Igor. Check is this comment still correct or is this code works fine.
+            || ( typeof result == "number" && result !== 1 ) ) {
         // https://github.com/chrisaljoudi/uBlock/issues/114
         if ( details.parentFrameId !== -1 && isFrame ) {
             pageStore.setFrame(details.frameId, requestURL);
