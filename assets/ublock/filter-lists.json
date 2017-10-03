@@ -38,7 +38,7 @@
     },
     "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.advblock.txt": {
         "off": true,
-        "title": "RUS: RU AdList (\u0414\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u0430\u044f \u0440\u0435\u0433\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u0430\u044f \u043f\u043e\u0434\u043f\u0438\u0441\u043a\u0430)",
+        "title": "RUS: RU AdList (Дополнительная региональная подписка)",
         "group": "regions",
         "lang": "ru",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D102",
@@ -46,7 +46,7 @@
     },
     "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.bitblock.txt": {
         "off": true,
-        "title": "RUS: BitBlock List (\u0414\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u0430\u044f \u043f\u043e\u0434\u043f\u0438\u0441\u043a\u0430 \u0444\u0438\u043b\u044c\u0442\u0440\u043e\u0432)",
+        "title": "RUS: BitBlock List (Дополнительная подписка фильтров)",
         "group": "regions",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D102",
         "defaultOff": true
@@ -68,7 +68,7 @@
     },
     "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistchina.txt": {
         "off": true,
-        "title": "CHN: EasyList China (\u4e2d\u6587)",
+        "title": "CHN: EasyList China (中文)",
         "group": "regions",
         "lang": "zh",
         "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fabpchina.org%2Fforum%2Fforum.php",
@@ -122,14 +122,14 @@
     },
     "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.fanboy.annoyance.txt": {
         "off": true,
-        "title": "Fanboy\u2019s Annoyance List",
+        "title": "Fanboy’s Annoyance List",
         "group": "social",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
         "defaultOff": true
     },
     "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.fanboy.social.txt": {
         "off": true,
-        "title": "Fanboy\u2019s Social Blocking List",
+        "title": "Fanboy’s Social Blocking List",
         "group": "social",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
         "defaultOff": true
@@ -152,7 +152,7 @@
     },
     "http://download.privacontrol.com/filters/http.hosts.file.net.5cad.servers.txt": {
         "off": true,
-        "title": "hpHosts\u2019 Ad and tracking servers",
+        "title": "hpHosts’ Ad and tracking servers",
         "group": "multipurpose",
         "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fhosts-file.net%2F",
         "defaultOff": true
@@ -224,7 +224,7 @@
     },
     "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.k2jp.abp.japanese.filters.master.abpjf.txt": {
         "off": true,
-        "title": "JPN: ABP Japanese filters (\u65e5\u672c\u7528\u30d5\u30a3\u30eb\u30bf)",
+        "title": "JPN: ABP Japanese filters (日本用フィルタ)",
         "group": "regions",
         "lang": "ja",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fk2jp%2Fabp-japanese-filters%2Fwiki%2FSupport_Policy",
@@ -277,7 +277,7 @@
         "off": false
     },
     "http://download.privacontrol.com/filters/pgl.yoyo.org.as.serverlist.txt": {
-        "title": "Peter Lowe\u2019s Ad and tracking server list",
+        "title": "Peter Lowe’s Ad and tracking server list",
         "group": "multipurpose",
         "homeURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fpgl.yoyo.org%2Fadservers%2Fserverlist.php%3Fhostformat%3Dhosts%26showintro%3D1%26mimetype%3Dplaintext",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fpgl.yoyo.org%2Fadservers%2F",
@@ -318,7 +318,7 @@
     },
     "http://download.privacontrol.com/filters/http.someonewhocares.org.hosts.hosts.txt": {
         "off": true,
-        "title": "Dan Pollock\u2019s hosts file",
+        "title": "Dan Pollock’s hosts file",
         "group": "multipurpose",
         "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fsomeonewhocares.org%2Fhosts%2F",
         "defaultOff": true
@@ -347,7 +347,7 @@
     },
     "http://download.privacontrol.com/filters/https.www.fanboy.co.nz.enhancedstats.txt": {
         "off": true,
-        "title": "Fanboy\u2019s Enhanced Tracking List",
+        "title": "Fanboy’s Enhanced Tracking List",
         "group": "privacy",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
         "defaultOff": true
