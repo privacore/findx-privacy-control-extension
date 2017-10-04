@@ -401,7 +401,6 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         rootHostname,
         r.hostnameDict
     );
-    console.log(r);
     return r;
 };
 
