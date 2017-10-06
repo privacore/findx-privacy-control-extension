@@ -209,7 +209,7 @@
         "title": "Adguard’s Annoyance List",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.14.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23turkish"
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23annoyances-filter"
     },
     "fanboy-thirdparty_social": {
         "content": "filters",
