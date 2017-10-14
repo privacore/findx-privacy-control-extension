@@ -470,6 +470,16 @@
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.k2jp.abp.japanese.filters.master.abpjf.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fk2jp%2Fabp-japanese-filters%2Fwiki%2FSupport_Policy"
     },
+    "JPN-1": {
+        "content": "filters",
+        "group": "regions",
+        "off": true,
+        "title": "JPN: Adguard Japan Filter",
+        "lang": "ja",
+        "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.7.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23japanese-filter"
+    },
     "KOR-0": {
         "content": "filters",
         "group": "regions",
