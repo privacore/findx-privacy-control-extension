@@ -157,7 +157,7 @@
         "off": true,
         "title": "Fanboy’s Enhanced Tracking List",
         "contentURL": "http://download.privacontrol.com/filters/https.www.fanboy.co.nz.enhancedstats.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F"
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues"
     },
     "disconnect-malvertising": {
         "content": "filters",
@@ -217,7 +217,7 @@
         "off": true,
         "title": "Fanboy’s Anti-Thirdparty Social (see warning inside list)",
         "contentURL": "http://download.privacontrol.com/filters/https.fanboy.co.nz.fanboy.antifacebook.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F"
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues"
     },
     "fanboy-annoyance": {
         "content": "filters",
@@ -598,7 +598,7 @@
         "title": "SWE: Fanboy's Swedish",
         "lang": "sv",
         "contentURL": "http://download.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.swedish.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F"
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues"
     },
     "TUR-0": {
         "content": "filters",
