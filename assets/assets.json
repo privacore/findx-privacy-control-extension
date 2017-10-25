@@ -131,13 +131,6 @@
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
         "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23privacy"
     },
-    "disconnect-tracking": {
-        "content": "filters",
-        "group": "privacy",
-        "off": true,
-        "title": "Basic tracking list by Disconnect",
-        "contentURL": "http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.tracking.txt"
-    },
     "easyprivacy": {
         "content": "filters",
         "group": "privacy",
@@ -549,7 +542,7 @@
         "off": true,
         "title": "RUS: RU AdList",
         "lang": "be ru uk",
-        "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.advblock.txt",
+        "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.advblock.cssfixes.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D102",
         "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewtopic.php%3Ff%3D102%26t%3D22512"
     },
