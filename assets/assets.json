@@ -525,7 +525,7 @@
         "title": "POL: polskie filtry do Adblocka i uBlocka",
         "lang": "pl",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.majkiit.polish.ads.filter.master.polish.adblock.filters.adblock.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fwww.certyficate.it%2Fadblock-ublock-polish-filters%2F"
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FMajkiIT%2Fpolish-ads-filter%2Fissues"
     },
     "POL-1": {
         "content": "filters",
@@ -534,7 +534,7 @@
         "title": "POL: polskie filtry do uBlocka uzupelnienie",
         "lang": "pl",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.majkiit.polish.ads.filter.master.polish.adblock.filters.adblock.ublock.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fwww.certyficate.it%2Fadblock-ublock-polish-filters%2F"
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FMajkiIT%2Fpolish-ads-filter%2Fissues"
     },
     "RUS-0": {
         "content": "filters",
