@@ -107,7 +107,17 @@
         "title": "Adguard Base Filters",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.2.without.easylist.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23english-filter"
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
+    },
+    "adguard-mobile": {
+        "content": "filters",
+        "group": "ads",
+        "off": true,
+        "title": "Adguard Mobile Filters",
+        "ua": "mobile",
+        "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.11.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "easylist": {
         "content": "filters",
@@ -129,7 +139,7 @@
         "title": "Adguard Spyware Filters",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.3.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23privacy"
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "easyprivacy": {
         "content": "filters",
@@ -202,7 +212,7 @@
         "title": "Adguard’s Annoyance List",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.14.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23annoyances-filter"
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "fanboy-thirdparty_social": {
         "content": "filters",
@@ -471,7 +481,7 @@
         "lang": "ja",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.7.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23japanese-filter"
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "KOR-0": {
         "content": "filters",
@@ -573,7 +583,7 @@
         "lang": "es pt",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.9.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23spanish"
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "SVN-0": {
         "content": "filters",
@@ -601,7 +611,7 @@
         "lang": "tr",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.13.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters%23turkish"
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "VIE-1": {
         "content": "filters",
