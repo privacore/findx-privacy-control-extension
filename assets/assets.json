@@ -585,14 +585,14 @@
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.betterwebleon.slovenian.list.master.filters.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fbetterwebleon%2Fslovenian-list"
     },
-    "SWE-0": {
+    "SWE-1": {
         "content": "filters",
         "group": "regions",
         "off": true,
-        "title": "SWE: Fanboy's Swedish",
+        "title": "SWE: Frellwit's Swedish Filter",
         "lang": "sv",
-        "contentURL": "http://download.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.swedish.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues"
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.lassekongo83.frellwits.filter.lists.master.frellwits.swedish.filter.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Flassekongo83%2FFrellwits-filter-lists"
     },
     "TUR-0": {
         "content": "filters",
