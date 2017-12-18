@@ -115,8 +115,6 @@ var onMessage = function(request, sender, callback) {
 
     case 'cosmeticFiltersInjected':
         µb.cosmeticFilteringEngine.addToSelectorCache(request);
-        /* falls through */
-    case 'cosmeticFiltersActivated':
         // Net-based cosmetic filters are of no interest for logging purpose.
         if ( µb.logger.isEnabled() && request.type !== 'net' ) {
             µb.logCosmeticFilters(tabId);
@@ -526,9 +524,12 @@ var onMessage = function(request, sender, callback) {
     // Sync
     var µb = µBlock,
         response,
+        tabId,
         pageStore;
+
     if ( sender && sender.tab ) {
-        pageStore = µb.pageStoreFromTabId(sender.tab.id);
+        tabId = sender.tab.id;
+        pageStore = µb.pageStoreFromTabId(tabId);
     }
 
     switch ( request.what ) {
@@ -536,7 +537,8 @@ var onMessage = function(request, sender, callback) {
         response = {
             id: request.id,
             hash: request.hash,
-            netSelectorCacheCountMax: µb.cosmeticFilteringEngine.netSelectorCacheCountMax
+            netSelectorCacheCountMax:
+                µb.cosmeticFilteringEngine.netSelectorCacheCountMax
         };
         if (
             µb.userSettings.collapseBlocked &&
@@ -551,16 +553,17 @@ var onMessage = function(request, sender, callback) {
     case 'retrieveContentScriptParameters':
         if ( pageStore && pageStore.getNetFilteringSwitch() && !pageStore.getIsPauseFiltering() ) {
             response = {
-                loggerEnabled: µb.logger.isEnabled(),
                 collapseBlocked: µb.userSettings.collapseBlocked,
-                noCosmeticFiltering: µb.cosmeticFilteringEngine.acceptedCount === 0 || pageStore.noCosmeticFiltering === true,
-                noGenericCosmeticFiltering: pageStore.noGenericCosmeticFiltering === true
+                noCosmeticFiltering: pageStore.noCosmeticFiltering === true,
+                noGenericCosmeticFiltering:
+                    pageStore.noGenericCosmeticFiltering === true
             };
-            response.specificCosmeticFilters = µb.cosmeticFilteringEngine.retrieveDomainSelectors(
-                request,
-                response.noCosmeticFiltering,
-                pageStore.tabHostname
-            );
+            response.specificCosmeticFilters =
+                µb.cosmeticFilteringEngine
+                  .retrieveDomainSelectors(request, sender, response);
+            if ( request.isRootFrame && µb.logger.isEnabled() ) {
+                µb.logCosmeticFilters(tabId);
+            }
         }
         // Changed from 11.01.2016 by Igor Petrenko. Don't know what is it.
         // If leave it as default - skipCosmeticFiltering always be false and in case when EasyList filter
@@ -573,7 +576,8 @@ var onMessage = function(request, sender, callback) {
     case 'retrieveGenericCosmeticSelectors':
         if ( pageStore && pageStore.getGenericCosmeticFilteringSwitch() ) {
             response = {
-                result: µb.cosmeticFilteringEngine.retrieveGenericSelectors(request, pageStore.tabHostname)
+                result: µb.cosmeticFilteringEngine
+                          .retrieveGenericSelectors(request, sender, pageStore.tabHostname)
             };
         }
         break;

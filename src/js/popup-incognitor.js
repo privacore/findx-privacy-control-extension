@@ -19,17 +19,13 @@
  Home: https://github.com/gorhill/uBlock
  */
 
-/* global vAPI, uDom */
+/* global punycode, uDom */
+
+'use strict';
 
 /******************************************************************************/
 
 (function () {
-
-    'use strict';
-
-    /***************************************************************************/
-
-    var vAPI = self.vAPI;
 
     var popupData;
     var dfPaneBuilt = false;
@@ -420,7 +416,9 @@
         });
 
         listContainer.append(fragment);
-        $(".subscription .filters-list > div").niceScroll({cursorcolor:"#bec0c1", autohidemode: false, cursorwidth: "3px"});
+    
+        if (!isFirefox())
+            $(".subscription .filters-list > div").niceScroll({cursorcolor:"#bec0c1", autohidemode: false, cursorwidth: "3px"});
     };
 
     /**
@@ -980,6 +978,12 @@
 
 
     /***************************************************************************/
+    
+    var isFirefox = function () {
+        return navigator.userAgent.match(/Firefox/);
+    };
+    
+    /***************************************************************************/
 
     // Make menu only when popup html is fully loaded
     uDom.onLoad(function () {
@@ -1001,8 +1005,10 @@
         uDom(selectors.closeReloadPanelBtn).on('click', hideReloadNotification);
         uDom(selectors.whiteListBtn).on('click', toggleNetFilteringSwitch);
         uDom(selectors.pauseBtn).on('click', togglePauseFiltering);
+    
 
-        $("#subscription-list-wrapper").niceScroll({cursorcolor:"#bec0c1", autohidemode: false, cursorwidth: "3px"});
+        if (!isFirefox())
+            $("#subscription-list-wrapper").niceScroll({cursorcolor:"#bec0c1", autohidemode: false, cursorwidth: "3px"});
     });
 
     /***************************************************************************/

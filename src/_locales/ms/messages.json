@@ -4,47 +4,47 @@
     "description": "extension name."
   },
   "extShortDesc": {
-    "message": "Тинех Интернет тишкерӳҫӗ валли хӑвӑрт та витӗмлӗ чаркӑч пур.",
+    "message": "Akhirnya, penghalang iklan yang cekap.",
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Йӗркелӳ ҫӳлӗкӗ",
+    "message": "uBlock₀ — Papanmuka",
     "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
-    "message": "Ӗнерлев",
+    "message": "Tetapan",
     "description": "appears as tab name in dashboard"
   },
   "3pPageName": {
-    "message": "Ют фильтрсем",
+    "message": "Penapis pihak luar",
     "description": "appears as tab name in dashboard"
   },
   "1pPageName": {
-    "message": "Манӑн фильтрсем",
+    "message": "Penapis saya",
     "description": "appears as tab name in dashboard"
   },
   "rulesPageName": {
-    "message": "Манӑн йӗрке",
+    "message": "Peraturan saya",
     "description": "appears as tab name in dashboard"
   },
   "whitelistPageName": {
-    "message": "Whitelist",
+    "message": "Senarai putih",
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — Logger",
+    "message": "uBlock₀ — Catatan",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
-    "message": "Сарӑм пирки",
+    "message": "Mengenai",
     "description": "appears as tab name in dashboard"
   },
   "advancedSettingsPageName": {
-    "message": "Advanced settings",
+    "message": "Tetapan lanjut",
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page.",
+    "message": "Klik: tutup\/aktifkan uBlock₀ untuk laman web ini.\n\nCtrl+klik: tutupkan uBlock₀ pada halaman ini sahaja.",
     "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
@@ -56,43 +56,43 @@
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
-    "message": "requests blocked",
+    "message": "permintaan dihalang",
     "description": "English: requests blocked"
   },
   "popupBlockedOnThisPagePrompt": {
-    "message": "on this page",
+    "message": "pada halaman ini",
     "description": "English: on this page"
   },
   "popupBlockedStats": {
-    "message": "{{count}} е {{percent}}%",
+    "message": "{{count}} atau {{percent}}%",
     "description": "Example: 15 or 13%"
   },
   "popupBlockedSinceInstallPrompt": {
-    "message": "since install",
+    "message": "sejak dipasang",
     "description": "English: since install"
   },
   "popupOr": {
-    "message": "е",
+    "message": "atau",
     "description": "English: or"
   },
   "popupTipDashboard": {
-    "message": "Йӗркелӳ ҫӳлӗкне уҫма пус",
+    "message": "Klik untuk membuka dashboard",
     "description": "English: Click to open the dashboard"
   },
   "popupTipZapper": {
-    "message": "Enter element zapper mode",
+    "message": "Masuk mod pilihan elemen",
     "description": "Tooltip for the element-zapper icon in the popup panel"
   },
   "popupTipPicker": {
-    "message": "Enter element picker mode",
+    "message": "Memasuki mod pemetik elemen",
     "description": "English: Enter element picker mode"
   },
   "popupTipLog": {
-    "message": "Open the logger",
+    "message": "Membuka catatan",
     "description": "Tooltip used for the logger icon in the panel"
   },
   "popupTipNoPopups": {
-    "message": "Toggle the blocking of all popups for this site",
+    "message": "Togol penghalang untuk segala popup laman ini",
     "description": "Tooltip for the no-popups per-site switch"
   },
   "popupTipNoPopups1": {
@@ -104,7 +104,7 @@
     "description": "Tooltip for the no-popups per-site switch"
   },
   "popupTipNoLargeMedia": {
-    "message": "Toggle the blocking of large media elements for this site",
+    "message": "Togol penghalang semua elemen media besar untuk laman ini",
     "description": "Tooltip for the no-large-media per-site switch"
   },
   "popupTipNoLargeMedia1": {
@@ -116,7 +116,7 @@
     "description": "Tooltip for the no-large-media per-site switch"
   },
   "popupTipNoCosmeticFiltering": {
-    "message": "Toggle cosmetic filtering for this site",
+    "message": "Togol penapis kosmetik untuk laman ini",
     "description": "Tooltip for the no-cosmetic-filtering per-site switch"
   },
   "popupTipNoCosmeticFiltering1": {
@@ -140,51 +140,51 @@
     "description": "Tooltip for the no-remote-fonts per-site switch"
   },
   "popupTipGlobalRules": {
-    "message": "Global rules: this column is for rules which apply to all sites.",
+    "message": "Peraturan global: kolumn ini adalah untuk peraturan yang dikuatkuasakan untuk semua laman.",
     "description": "Tooltip when hovering the top-most cell of the global-rules column."
   },
   "popupTipLocalRules": {
-    "message": "Local rules: this column is for rules which apply to the current site only.\nLocal rules override global rules.",
+    "message": "Peraturan tempatan: kolumn ini adalah untuk peraturan yang dikuatkuasakan untuk laman semasa sahaja.\nPeraturan tempatan mengatasikan peraturan global.",
     "description": "Tooltip when hovering the top-most cell of the local-rules column."
   },
   "popupTipSaveRules": {
-    "message": "Click to make your changes permanent.",
+    "message": "Klik untuk membuat perubahan anda kekal.",
     "description": "Tooltip when hovering over the padlock in the dynamic filtering pane."
   },
   "popupTipRevertRules": {
-    "message": "Click to revert your changes.",
+    "message": "Klik untuk memungkiri perubahan anda.",
     "description": "Tooltip when hovering over the eraser in the dynamic filtering pane."
   },
   "popupAnyRulePrompt": {
-    "message": "пурте",
+    "message": "semua",
     "description": ""
   },
   "popupImageRulePrompt": {
-    "message": "ӳкерчӗксем",
+    "message": "gambar",
     "description": ""
   },
   "popup3pAnyRulePrompt": {
-    "message": "ют ресурссем",
+    "message": "pihak ketiga",
     "description": ""
   },
   "popup3pPassiveRulePrompt": {
-    "message": "ют css\/ӳкерчӗксем",
+    "message": "css\/imej pihak ketiga",
     "description": ""
   },
   "popupInlineScriptRulePrompt": {
-    "message": "inline-скриптсем",
+    "message": "inline scripts",
     "description": ""
   },
   "popup1pScriptRulePrompt": {
-    "message": "Харпӑр скриптсем",
+    "message": "1st-party scripts",
     "description": ""
   },
   "popup3pScriptRulePrompt": {
-    "message": "ют скриптсем",
+    "message": "3rd-party scripts",
     "description": ""
   },
   "popup3pFrameRulePrompt": {
-    "message": "Ют фреймсем",
+    "message": "3rd-party frames",
     "description": ""
   },
   "popupHitDomainCountPrompt": {
@@ -192,19 +192,19 @@
     "description": "appears in popup"
   },
   "popupHitDomainCount": {
-    "message": "{{count}} out of {{total}}",
+    "message": "{{count}} daripada {{total}}",
     "description": "appears in popup"
   },
   "pickerCreate": {
-    "message": "Create",
+    "message": "Cipta",
     "description": "English: Create"
   },
   "pickerPick": {
-    "message": "Суйласа ил",
+    "message": "Pilih",
     "description": "English: Pick"
   },
   "pickerQuit": {
-    "message": "Тух",
+    "message": "Keluar",
     "description": "English: Quit"
   },
   "pickerPreview": {
@@ -212,19 +212,19 @@
     "description": "Element picker preview mode: will cause the elements matching the current filter to be removed from the page"
   },
   "pickerNetFilters": {
-    "message": "Network filters",
+    "message": "Penapis network",
     "description": "English: header for a type of filter in the element picker dialog"
   },
   "pickerCosmeticFilters": {
-    "message": "Cosmetic filters",
+    "message": "Penapis Kosmetik",
     "description": "English: Cosmetic filters"
   },
   "pickerCosmeticFiltersHint": {
-    "message": "Click, Ctrl-click",
+    "message": "Klik, Ctrl-klik",
     "description": "English: Click, Ctrl-click"
   },
   "pickerContextMenuEntry": {
-    "message": "Block element",
+    "message": "Halang elemen",
     "description": "English: Block element"
   },
   "settingsCollapseBlockedPrompt": {
@@ -236,7 +236,7 @@
     "description": "English: Show the number of blocked requests on the icon"
   },
   "settingsTooltipsPrompt": {
-    "message": "Disable tooltips",
+    "message": "Menutupkan mesej bantuan",
     "description": "A checkbox in the Settings pane"
   },
   "settingsContextMenuPrompt": {
@@ -252,7 +252,7 @@
     "description": ""
   },
   "settingsAdvancedUserPrompt": {
-    "message": "Эпӗ ӑста усӑҫ (<a href='https:\/\/github.com\/gorhill\/uBlock\/wiki\/Advanced-user-features'>Вуламасӑр иртме ҫук<\/a>)",
+    "message": "I am an advanced user (<a href='https:\/\/github.com\/gorhill\/uBlock\/wiki\/Advanced-user-features'>required reading<\/a>)",
     "description": ""
   },
   "settingsAdvancedUserSettings": {
@@ -276,7 +276,7 @@
     "description": ""
   },
   "settingPerSiteSwitchGroupSynopsis": {
-    "message": "Ку ӗнерлеве кашни сайт валли уйрӑм палӑртма май пур",
+    "message": "These default behaviors can be overridden on a per-site basis",
     "description": ""
   },
   "settingsNoCosmeticFilteringPrompt": {
@@ -284,11 +284,11 @@
     "description": ""
   },
   "settingsNoLargeMediaPrompt": {
-    "message": "{{input:number}} КБ йывӑртарах медиа-элементсене чар",
+    "message": "Block media elements larger than {{input:number}} kB",
     "description": ""
   },
   "settingsNoRemoteFontsPrompt": {
-    "message": "Ют шрифтсене чар",
+    "message": "Block remote fonts",
     "description": ""
   },
   "settingsNoCSPReportsPrompt": {
@@ -300,7 +300,7 @@
     "description": "English: Storage used: {{}} bytes"
   },
   "settingsLastRestorePrompt": {
-    "message": "Юлашки тавӑру:",
+    "message": "Last restore:",
     "description": "English: Last restore:"
   },
   "settingsLastBackupPrompt": {
@@ -320,7 +320,7 @@
     "description": "A checkbox in the _3rd-party filters_ pane"
   },
   "3pUpdateNow": {
-    "message": "Халех ҫӗнет",
+    "message": "Update sekarang",
     "description": "A button in the in the _3rd-party filters_ pane"
   },
   "3pPurgeAll": {
@@ -344,19 +344,19 @@
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
-    "message": "Чарнӑ хостсен йышӗ",
+    "message": "Lists of blocked hosts",
     "description": "English: Lists of blocked hosts"
   },
   "3pApplyChanges": {
-    "message": "Улшӑнӑва ҫирӗплет",
+    "message": "Apply changes",
     "description": "English: Apply changes"
   },
   "3pGroupAds": {
-    "message": "Реклама",
+    "message": "Iklan",
     "description": "English: Ads"
   },
   "3pGroupPrivacy": {
-    "message": "Вӑрттӑнлӑх",
+    "message": "Privasi",
     "description": "English: Privacy"
   },
   "3pGroupMalware": {
@@ -368,11 +368,11 @@
     "description": "The header identifying the filter lists in the category 'annoyances'"
   },
   "3pGroupMultipurpose": {
-    "message": "Нумай тӗллевлисем",
+    "message": "Pelbagai guna",
     "description": "English: Multipurpose"
   },
   "3pGroupRegions": {
-    "message": "Регионсем, чӗлхесем",
+    "message": "Regions, languages",
     "description": "English: Regions, languages"
   },
   "3pGroupCustom": {
@@ -384,15 +384,15 @@
     "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
   },
   "3pExternalListObsolete": {
-    "message": "Кивелнӗ",
+    "message": "Out of date.",
     "description": "used as a tooltip for the out-of-date icon beside a list"
   },
   "3pLastUpdate": {
-    "message": "Юлашки ҫӗнетӳ: {{ago}}",
+    "message": "Last update: {{ago}}.\nClick to force an update.",
     "description": "used as a tooltip for the clock icon beside a list"
   },
   "3pUpdating": {
-    "message": "Updating...",
+    "message": "Sedang mengemaskini...",
     "description": "used as a tooltip for the spinner icon beside a list"
   },
   "3pNetworkError": {
@@ -412,39 +412,39 @@
     "description": "English: Export"
   },
   "1pExportFilename": {
-    "message": "ublock-custom-filters_{{datetime}}.txt",
+    "message": "my-ublock-static-filters_{{datetime}}.txt",
     "description": "English: my-ublock-static-filters_{{datetime}}.txt"
   },
   "1pApplyChanges": {
-    "message": "Улшӑнӑва ҫирӗплет",
+    "message": "Apply changes",
     "description": "English: Apply changes"
   },
   "rulesPermanentHeader": {
-    "message": "Яланлӑх йӗрке",
+    "message": "Peraturan kekal",
     "description": "header"
   },
   "rulesTemporaryHeader": {
-    "message": "Вӑхӑтлӑх йӗрке",
+    "message": "Peraturan sementara",
     "description": "header"
   },
   "rulesRevert": {
-    "message": "Тавӑр",
+    "message": "Revert",
     "description": "This will remove all temporary rules"
   },
   "rulesCommit": {
-    "message": "Ҫирӗплет",
+    "message": "Commit",
     "description": "This will persist temporary rules"
   },
   "rulesEdit": {
-    "message": "Улӑштар",
+    "message": "Edit",
     "description": "Will enable manual-edit mode (textarea)"
   },
   "rulesEditSave": {
-    "message": "Упра",
+    "message": "Simpan",
     "description": "Will save manually-edited content and exit manual-edit mode"
   },
   "rulesEditDiscard": {
-    "message": "Discard",
+    "message": "Batal",
     "description": "Will discard manually-edited content and exit manual-edit mode"
   },
   "rulesImport": {
@@ -456,7 +456,7 @@
     "description": ""
   },
   "rulesDefaultFileName": {
-    "message": "my-ublock-dynamic-rules.txt",
+    "message": "my-ublock-dynamic-rules_{{datetime}}.txt",
     "description": "default file name to use"
   },
   "rulesHint": {
@@ -484,15 +484,15 @@
     "description": "English: my-ublock-whitelist_{{datetime}}.txt"
   },
   "whitelistApply": {
-    "message": "Улшӑнӑва ҫирӗплет",
+    "message": "Apply changes",
     "description": "English: Apply changes"
   },
   "logRequestsHeaderType": {
-    "message": "Тĕсĕ",
+    "message": "Jenis",
     "description": "English: Type"
   },
   "logRequestsHeaderDomain": {
-    "message": "Домен",
+    "message": "Domain",
     "description": "English: Domain"
   },
   "logRequestsHeaderURL": {
@@ -500,11 +500,11 @@
     "description": "English: URL"
   },
   "logRequestsHeaderFilter": {
-    "message": "Фильтр",
+    "message": "Filter",
     "description": "English: Filter"
   },
   "logAll": {
-    "message": "Пурте",
+    "message": "Semua",
     "description": "Appears in the logger's tab selector"
   },
   "logBehindTheScene": {
@@ -520,19 +520,19 @@
     "description": "Tooltip informaing that the input field is to set the maximum number of entries in the log"
   },
   "loggerURLFilteringContextLabel": {
-    "message": "Контекст:",
+    "message": "Context:",
     "description": "Label for the context selector"
   },
   "loggerURLFilteringTypeLabel": {
-    "message": "Тĕсĕ:",
+    "message": "Jenis:",
     "description": "Label for the type selector"
   },
   "loggerURLFilteringHeader": {
-    "message": " URL динамика фильтрацийӗ",
+    "message": "Dynamic URL filtering",
     "description": "Small header to identify the dynamic URL filtering section"
   },
   "loggerStaticFilteringHeader": {
-    "message": "Статика фильстрацийӗ",
+    "message": "Static filtering",
     "description": "Small header to identify the static filtering section"
   },
   "loggerStaticFilteringSentence": {
@@ -540,15 +540,15 @@
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartBlock": {
-    "message": "Чар",
+    "message": "Block",
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartAllow": {
-    "message": "Ирӗк пар",
+    "message": "Allow",
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartType": {
-    "message": "тĕсĕ “{{type}}”",
+    "message": "type “{{type}}”",
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartAnyType": {
@@ -556,11 +556,11 @@
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartOrigin": {
-    "message": " “{{origin}}” ран",
+    "message": "from “{{origin}}”",
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartAnyOrigin": {
-    "message": "Кирек ӑҫтан та",
+    "message": "from anywhere",
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringSentencePartNotImportant": {
@@ -576,11 +576,11 @@
     "description": "Below this sentence, the filter lists in which the filter was found"
   },
   "aboutChangelog": {
-    "message": "Улшӑнусен йышӗ",
+    "message": "Catatan perubahan",
     "description": "English: Change log"
   },
   "aboutWiki": {
-    "message": "Вики",
+    "message": "Wiki",
     "description": "English: project' wiki on Github"
   },
   "aboutSupport": {
@@ -588,11 +588,11 @@
     "description": "A link for where to get support"
   },
   "aboutCode": {
-    "message": "Source code (GPLv3)",
+    "message": "Kod sumber (GPLv3)",
     "description": "English: Source code (GPLv3)"
   },
   "aboutContributors": {
-    "message": "Пайташсем",
+    "message": "Contributors",
     "description": "English: Contributors"
   },
   "aboutBackupDataButton": {
@@ -600,7 +600,7 @@
     "description": "Text for button to create a backup of all settings"
   },
   "aboutBackupFilename": {
-    "message": "ublock-backup_{{datetime}}.txt",
+    "message": "my-ublock-backup_{{datetime}}.txt",
     "description": "English: my-ublock-backup_{{datetime}}.txt"
   },
   "aboutRestoreDataButton": {
@@ -632,31 +632,31 @@
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
-    "message": "пӗр минут каялла",
+    "message": "a minute ago",
     "description": "English: a minute ago"
   },
   "elapsedManyMinutesAgo": {
-    "message": "{{value}} минут каялла",
+    "message": "{{value}} minit yang lalu",
     "description": "English: {{value}} minutes ago"
   },
   "elapsedOneHourAgo": {
-    "message": "пӗр сехет каялла",
+    "message": "an hour ago",
     "description": "English: an hour ago"
   },
   "elapsedManyHoursAgo": {
-    "message": "{{value}} сехет каялла",
+    "message": "{{value}} jam yang lalu",
     "description": "English: {{value}} hours ago"
   },
   "elapsedOneDayAgo": {
-    "message": "пӗр кун каялла",
+    "message": "a day ago",
     "description": "English: a day ago"
   },
   "elapsedManyDaysAgo": {
-    "message": "{{value}} кун каялла",
+    "message": "{{value}} hari yang lalu",
     "description": "English: {{value}} days ago"
   },
   "showDashboardButton": {
-    "message": "Йӗркелӳ ҫӳлӗкне кӑтарт",
+    "message": "Show Dashboard",
     "description": "Firefox\/Fennec-specific: Show Dashboard"
   },
   "showNetworkLogButton": {
@@ -672,19 +672,19 @@
     "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
-    "message": "Тепӗр фильтра пула",
+    "message": "Because of the following filter",
     "description": "English: Because of the following filter"
   },
   "docblockedNoParamsPrompt": {
-    "message": "ӗнерлевсӗр",
+    "message": "without parameters",
     "description": "label to be used for the parameter-less URL: https:\/\/cloud.githubusercontent.com\/assets\/585534\/9832014\/bfb1b8f0-593b-11e5-8a27-fba472a5529a.png"
   },
   "docblockedFoundIn": {
-    "message": "Тупӑннӑ:",
+    "message": "Found in:",
     "description": "English: List of filter list names follows"
   },
   "docblockedBack": {
-    "message": "Таврӑн",
+    "message": "Kembali",
     "description": "English: Go back"
   },
   "docblockedClose": {
@@ -696,11 +696,11 @@
     "description": "English: Disable strict blocking for {{hostname}} ..."
   },
   "docblockedDisableTemporary": {
-    "message": "Вӑхӑтлӑха",
+    "message": "Temporarily",
     "description": "English: Temporarily"
   },
   "docblockedDisablePermanent": {
-    "message": "Яланлăха",
+    "message": "Permanently",
     "description": "English: Permanently"
   },
   "cloudPush": {
@@ -720,7 +720,7 @@
     "description": ""
   },
   "cloudDeviceNamePrompt": {
-    "message": "Ку хатӗрӗн ячӗ:",
+    "message": "This device name:",
     "description": "used as a prompt for the user to provide a custom device name"
   },
   "advancedSettingsWarning": {
@@ -728,7 +728,7 @@
     "description": "A warning to users at the top of 'Advanced settings' page"
   },
   "genericSubmit": {
-    "message": "Йышӑн",
+    "message": "Submit",
     "description": "for generic 'Submit' buttons"
   },
   "genericApplyChanges": {
@@ -736,19 +736,19 @@
     "description": "for generic 'Apply changes' buttons"
   },
   "genericRevert": {
-    "message": "Тавӑр",
+    "message": "Revert",
     "description": "for generic 'Revert' buttons"
   },
   "genericBytes": {
-    "message": "байт",
+    "message": "byte",
     "description": ""
   },
   "contextMenuTemporarilyAllowLargeMediaElements": {
-    "message": "Пысӑк медиа-элементсене вӑхӑтлӑха уҫ",
+    "message": "Temporarily allow large media elements",
     "description": "A context menu entry, present when large media elements have been blocked on the current site"
   },
   "dummy": {
-    "message": "Ку ҫыру юлашки пулмалла",
+    "message": "This entry must be the last one",
     "description": "so we dont need to deal with comma for last entry"
   }
 }

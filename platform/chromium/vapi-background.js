@@ -28,8 +28,7 @@
 (function() {
 
 /******************************************************************************/
-
-var vAPI = self.vAPI = self.vAPI || {};
+/******************************************************************************/
 
 var chrome = self.chrome;
 var manifest = chrome.runtime.getManifest();
@@ -39,16 +38,35 @@ vAPI.chromiumVersion = (function(){
     var matches = /\bChrom(?:e|ium)\/(\d+)\b/.exec(navigator.userAgent);
     return matches !== null ? parseInt(matches[1], 10) : NaN;
     })();
+
 vAPI.cantWebsocket =
     chrome.webRequest.ResourceType instanceof Object === false  ||
     chrome.webRequest.ResourceType.WEBSOCKET !== 'websocket';
+
+vAPI.webextFlavor = '';
+if (
+    self.browser instanceof Object &&
+    typeof self.browser.runtime.getBrowserInfo === 'function'
+) {
+    self.browser.runtime.getBrowserInfo().then(function(info) {
+        vAPI.webextFlavor = info.vendor + '-' + info.name + '-' + info.version;
+    });
+}
+
+// https://issues.adblockplus.org/ticket/5695
+// - Good idea, adopted: cleaner way to detect user-stylesheet support.
+vAPI.supportsUserStylesheets = 
+    chrome.extensionTypes instanceof Object &&
+    chrome.extensionTypes.CSSOrigin instanceof Object &&
+    'USER' in chrome.extensionTypes.CSSOrigin;
+vAPI.insertCSS = chrome.tabs.insertCSS;
 
 var noopFunc = function(){};
 
 /******************************************************************************/
 
 vAPI.app = {
-    name: manifest.name,
+    name: manifest.name.replace(' dev build', ''),
     version: manifest.version
 };
 
@@ -299,14 +317,19 @@ vAPI.tabs.registerListeners = function() {
     };
 
     var onCreatedNavigationTarget = function(details) {
-        //console.debug('onCreatedNavigationTarget: popup candidate tab id %d = "%s"', details.tabId, details.url);
+        if ( typeof details.url !== 'string' ) {
+            details.url = '';
+        }
         if ( reGoodForWebRequestAPI.test(details.url) === false ) {
             details.frameId = 0;
             details.url = sanitizeURL(details.url);
             onNavigationClient(details);
         }
         if ( typeof vAPI.tabs.onPopupCreated === 'function' ) {
-            vAPI.tabs.onPopupCreated(details.tabId.toString(), details.sourceTabId.toString());
+            vAPI.tabs.onPopupCreated(
+                details.tabId.toString(),
+                details.sourceTabId.toString()
+            );
         }
     };
 
@@ -330,7 +353,12 @@ vAPI.tabs.registerListeners = function() {
         }
     };
 
+    // https://github.com/gorhill/uBlock/issues/3073
+    // - Fall back to `tab.url` when `changeInfo.url` is not set.
     var onUpdated = function(tabId, changeInfo, tab) {
+        if ( typeof changeInfo.url !== 'string' ) {
+            changeInfo.url = tab && tab.url;
+        }
         if ( changeInfo.url ) {
             changeInfo.url = sanitizeURL(changeInfo.url);
         }
@@ -470,12 +498,19 @@ vAPI.tabs.open = function(details) {
         return;
     }
 
+    // https://github.com/gorhill/uBlock/issues/3053#issuecomment-332276818
+    // - Do not try to lookup uBO's own pages with FF 55 or less.
+    if ( /^Mozilla-Firefox-5[2-5]\./.test(vAPI.webextFlavor) ) {
+        wrapper();
+        return;
+    }
+
     // https://developer.chrome.com/extensions/tabs#method-query
     // "Note that fragment identifiers are not matched."
     // It's a lie, fragment identifiers ARE matched. So we need to remove the
     // fragment.
-    var pos = targetURL.indexOf('#');
-    var targetURLWithoutHash = pos === -1 ? targetURL : targetURL.slice(0, pos);
+    var pos = targetURL.indexOf('#'),
+        targetURLWithoutHash = pos === -1 ? targetURL : targetURL.slice(0, pos);
 
     chrome.tabs.query({ url: targetURLWithoutHash }, function(tabs) {
         if ( chrome.runtime.lastError ) { /* noop */ }
@@ -601,6 +636,20 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 /******************************************************************************/
 /******************************************************************************/
 
+vAPI.openOptionsPage = function () {
+    var optionsUrl = vAPI.getURL(µBlock.optionsUrl);
+    vAPI.tabs.open({url: optionsUrl, select: true});
+};
+
+vAPI.openHelpPage = function () {
+    var helpPageUrl = µBlock.helpPageUrl;
+    vAPI.tabs.open({url: helpPageUrl, select: true});
+};
+
+
+/******************************************************************************/
+/******************************************************************************/
+
 // Must read: https://code.google.com/p/chromium/issues/detail?id=410868#c8
 
 // https://github.com/chrisaljoudi/uBlock/issues/19
@@ -681,7 +730,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 /******************************************************************************/
 
 vAPI.messaging = {
-    ports: {},
+    ports: new Map(),
     listeners: {},
     defaultHandler: null,
     NOOPFUNC: noopFunc,
@@ -698,122 +747,84 @@ vAPI.messaging.listen = function(listenerName, callback) {
 
 vAPI.messaging.onPortMessage = (function() {
     var messaging = vAPI.messaging,
-        toAuxPending = {};
-
-    // https://issues.adblockplus.org/ticket/5695
-    // - Good idea, adopted: cleaner way to detect user-stylesheet support.
-    var supportsUserStylesheets = 
-        chrome.extensionTypes instanceof Object &&
-        chrome.extensionTypes.CSSOrigin instanceof Object &&
-        'USER' in chrome.extensionTypes.CSSOrigin;
+        supportsUserStylesheets = vAPI.supportsUserStylesheets;
 
     // Use a wrapper to avoid closure and to allow reuse.
-    var CallbackWrapper = function(port, request, timeout) {
+    var CallbackWrapper = function(port, request) {
         this.callback = this.proxy.bind(this); // bind once
-        this.init(port, request, timeout);
+        this.init(port, request);
     };
 
-    CallbackWrapper.prototype.init = function(port, request, timeout) {
-        this.port = port;
-        this.request = request;
-        this.timerId = timeout !== undefined ?
-                            vAPI.setTimeout(this.callback, timeout) :
-                            null;
-        return this;
-    };
-
-    CallbackWrapper.prototype.proxy = function(response) {
-        if ( this.timerId !== null ) {
-            clearTimeout(this.timerId);
-            delete toAuxPending[this.timerId];
-            this.timerId = null;
+    CallbackWrapper.prototype = {
+        init: function(port, request) {
+            this.port = port;
+            this.request = request;
+            return this;
+        },
+        proxy: function(response) {
+            // https://github.com/chrisaljoudi/uBlock/issues/383
+            if ( messaging.ports.has(this.port.name) ) {
+                this.port.postMessage({
+                    auxProcessId: this.request.auxProcessId,
+                    channelName: this.request.channelName,
+                    msg: response !== undefined ? response : null
+                });
+            }
+            // Mark for reuse
+            this.port = this.request = null;
+            callbackWrapperJunkyard.push(this);
         }
-        // https://github.com/chrisaljoudi/uBlock/issues/383
-        if ( messaging.ports.hasOwnProperty(this.port.name) ) {
-            this.port.postMessage({
-                auxProcessId: this.request.auxProcessId,
-                channelName: this.request.channelName,
-                msg: response !== undefined ? response : null
-            });
-        }
-        // Mark for reuse
-        this.port = this.request = null;
-        callbackWrapperJunkyard.push(this);
     };
 
     var callbackWrapperJunkyard = [];
 
-    var callbackWrapperFactory = function(port, request, timeout) {
+    var callbackWrapperFactory = function(port, request) {
         var wrapper = callbackWrapperJunkyard.pop();
         if ( wrapper ) {
-            return wrapper.init(port, request, timeout);
+            return wrapper.init(port, request);
         }
-        return new CallbackWrapper(port, request, timeout);
+        return new CallbackWrapper(port, request);
     };
 
-    var toAux = function(details, portFrom) {
-        var port, portTo,
-            chromiumTabId = toChromiumTabId(details.toTabId);
-
-        // TODO: This could be an issue with a lot of tabs: easy to address
-        //       with a port name to tab id map.
-        for ( var portName in messaging.ports ) {
-            if ( messaging.ports.hasOwnProperty(portName) === false ) {
-                continue;
-            }
-            // When sending to an auxiliary process, the target is always the
-            // port associated with the root frame.
-            port = messaging.ports[portName];
-            if ( port.sender.frameId === 0 && port.sender.tab.id === chromiumTabId ) {
-                portTo = port;
-                break;
-            }
-        }
-
-        var wrapper;
-        if ( details.auxProcessId !== undefined ) {
-            wrapper = callbackWrapperFactory(portFrom, details, 1023);
-        }
-
-        // Destination not found: 
-        if ( portTo === undefined ) {
-            if ( wrapper !== undefined ) {
-                wrapper.callback();
-            }
-            return;
-        }
-
-        // As per HTML5, timer id is always an integer, thus suitable to be
-        // used as a key, and which value is safe to use across process
-        // boundaries.
-        if ( wrapper !== undefined ) {
-            toAuxPending[wrapper.timerId] = wrapper;
-        }
-
-        portTo.postMessage({
-            mainProcessId: wrapper && wrapper.timerId,
-            channelName: details.toChannel,
-            msg: details.msg
-        });
-    };
-
-    var toAuxResponse = function(details) {
-        var mainProcessId = details.mainProcessId;
-        if ( mainProcessId === undefined ) {
-            return;
-        }
-        if ( toAuxPending.hasOwnProperty(mainProcessId) === false ) {
-            return;
-        }
-        var wrapper = toAuxPending[mainProcessId];
-        delete toAuxPending[mainProcessId];
-        wrapper.callback(details.msg);
-    };
-
-    var toFramework = function(msg, sender) {
-        var tabId = sender && sender.tab && sender.tab.id;
+    var toFramework = function(request, port, callback) {
+        var sender = port && port.sender;
+        if ( !sender ) { return; }
+        var tabId = sender.tab && sender.tab.id;
         if ( !tabId ) { return; }
+        var msg = request.msg,
+            toPort;
         switch ( msg.what ) {
+        case 'connectionAccepted':
+        case 'connectionRefused':
+            toPort = messaging.ports.get(msg.fromToken);
+            if ( toPort !== undefined ) {
+                msg.tabId = tabId.toString();
+                toPort.postMessage(request);
+            } else {
+                msg.what = 'connectionBroken';
+                port.postMessage(request);
+            }
+            break;
+        case 'connectionRequested':
+            msg.tabId = '' + tabId.toString();
+            for ( toPort of messaging.ports.values() ) {
+                toPort.postMessage(request);
+            }
+            break;
+        case 'connectionBroken':
+        case 'connectionCheck':
+        case 'connectionMessage':
+            toPort = messaging.ports.get(
+                port.name === msg.fromToken ? msg.toToken : msg.fromToken
+            );
+            if ( toPort !== undefined ) {
+                msg.tabId = tabId.toString();
+                toPort.postMessage(request);
+            } else {
+                msg.what = 'connectionBroken';
+                port.postMessage(request);
+            }
+            break;
         case 'userCSS':
             var details = {
                 code: undefined,
@@ -823,93 +834,92 @@ vAPI.messaging.onPortMessage = (function() {
             if ( supportsUserStylesheets ) {
                 details.cssOrigin = 'user';
             }
-            var fn;
             if ( msg.add ) {
                 details.runAt = 'document_start';
-                fn = chrome.tabs.insertCSS;
-            } else {
-                fn = chrome.tabs.removeCSS;
             }
-            var css = msg.css;
-            if ( typeof css === 'string' ) {
-                details.code = css;
-                fn(tabId, details);
-                return;
+            var cssText;
+            const cssPromises = [];
+            for ( cssText of msg.add ) {
+                details.code = cssText;
+                cssPromises.push(chrome.tabs.insertCSS(tabId, details));
             }
-            for ( var i = 0, n = css.length; i < n; i++ ) {
-                details.code = css[i];
-                fn(tabId, details);
+            for ( cssText of msg.remove ) {
+                details.code = cssText;
+                cssPromises.push(chrome.tabs.removeCSS(tabId, details));
+            }
+            if ( typeof callback === 'function' ) {
+                Promise.all(cssPromises).then(() => {
+                    callback();
+                }, null);
             }
             break;
         }
     };
 
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1392067
+    //   Workaround: manually remove ports matching removed tab.
+    chrome.tabs.onRemoved.addListener(function(tabId) {
+        for ( var port of messaging.ports.values() ) {
+            var tab = port.sender && port.sender.tab;
+            if ( !tab ) { continue; }
+            if ( tab.id === tabId ) {
+                vAPI.messaging.onPortDisconnect(port);
+            }
+        }
+    });
+
     return function(request, port) {
-        // Auxiliary process to auxiliary process
-        if ( request.toTabId !== undefined ) {
-            toAux(request, port);
-            return;
-        }
-
-        // Auxiliary process to auxiliary process: response
-        if ( request.mainProcessId !== undefined ) {
-            toAuxResponse(request);
-            return;
-        }
-
-        // Content process to main process: framework handler.
-        // No callback supported/needed for now.
-        if ( request.channelName === 'vapi-background' ) {
-            toFramework(request.msg, port.sender);
-            return;
-        }
-
-        // Auxiliary process to main process: prepare response
-        var callback = messaging.NOOPFUNC;
+        // prepare response
+        var callback = this.NOOPFUNC;
         if ( request.auxProcessId !== undefined ) {
             callback = callbackWrapperFactory(port, request).callback;
         }
 
+        // Content process to main process: framework handler.
+        if ( request.channelName === 'vapi' ) {
+            toFramework(request, port, callback);
+            return;
+        }
+
         // Auxiliary process to main process: specific handler
-        var r = messaging.UNHANDLED,
-            listener = messaging.listeners[request.channelName];
+        var r = this.UNHANDLED,
+            listener = this.listeners[request.channelName];
         if ( typeof listener === 'function' ) {
             r = listener(request.msg, port.sender, callback);
         }
-        if ( r !== messaging.UNHANDLED ) {
-            return;
-        }
+        if ( r !== this.UNHANDLED ) { return; }
 
         // Auxiliary process to main process: default handler
-        r = messaging.defaultHandler(request.msg, port.sender, callback);
-        if ( r !== messaging.UNHANDLED ) {
-            return;
-        }
+        r = this.defaultHandler(request.msg, port.sender, callback);
+        if ( r !== this.UNHANDLED ) { return; }
 
         // Auxiliary process to main process: no handler
-        console.error('uBlock> messaging > unknown request: %o', request);
+        console.error(
+            'vAPI.messaging.onPortMessage > unhandled request: %o',
+            request
+        );
 
         // Need to callback anyways in case caller expected an answer, or
         // else there is a memory leak on caller's side
         callback();
-    };
+    }.bind(vAPI.messaging);
 })();
 
 /******************************************************************************/
 
 vAPI.messaging.onPortDisconnect = function(port) {
-    port.onDisconnect.removeListener(vAPI.messaging.onPortDisconnect);
-    port.onMessage.removeListener(vAPI.messaging.onPortMessage);
-    delete vAPI.messaging.ports[port.name];
-};
+    port.onDisconnect.removeListener(this.onPortDisconnect);
+    port.onMessage.removeListener(this.onPortMessage);
+    this.ports.delete(port.name);
+}.bind(vAPI.messaging);
 
 /******************************************************************************/
 
 vAPI.messaging.onPortConnect = function(port) {
-    port.onDisconnect.addListener(vAPI.messaging.onPortDisconnect);
-    port.onMessage.addListener(vAPI.messaging.onPortMessage);
-    vAPI.messaging.ports[port.name] = port;
-};
+    port.onDisconnect.addListener(this.onPortDisconnect);
+    port.onMessage.addListener(this.onPortMessage);
+    this.ports.set(port.name, port);
+}.bind(vAPI.messaging);
 
 /******************************************************************************/
 
@@ -934,12 +944,8 @@ vAPI.messaging.broadcast = function(message) {
         broadcast: true,
         msg: message
     };
-
-    for ( var portName in this.ports ) {
-        if ( this.ports.hasOwnProperty(portName) === false ) {
-            continue;
-        }
-        this.ports[portName].postMessage(messageWrapper);
+    for ( var port of this.ports.values() ) {
+        port.postMessage(messageWrapper);
     }
 };
 
@@ -1017,20 +1023,21 @@ vAPI.onLoadAllCompleted = function() {
     // http://code.google.com/p/chromium/issues/detail?id=410868#c11
     // Need to be sure to access `vAPI.lastError()` to prevent
     // spurious warnings in the console.
-    var scriptDone = function() {
+    var onScriptInjected = function() {
         vAPI.lastError();
     };
     var scriptStart = function(tabId) {
-        vAPI.tabs.injectScript(tabId, {
-            file: 'js/vapi-client.js',
-            allFrames: true,
-            runAt: 'document_idle'
-        }, function(){ });
-        vAPI.tabs.injectScript(tabId, {
-            file: 'js/contentscript.js',
-            allFrames: true,
-            runAt: 'document_idle'
-        }, scriptDone);
+        var manifest = chrome.runtime.getManifest();
+        if ( manifest instanceof Object === false ) { return; }
+        for ( var contentScript of manifest.content_scripts ) {
+            for ( var file of contentScript.js ) {
+                vAPI.tabs.injectScript(tabId, {
+                    file: file,
+                    allFrames: contentScript.all_frames,
+                    runAt: contentScript.run_at
+                }, onScriptInjected);
+            }
+        }
     };
     var bindToTabs = function(tabs) {
         var µb = µBlock;
@@ -1111,18 +1118,26 @@ vAPI.cloud = (function() {
     var maxChunkCountPerItem = Math.floor(512 * 0.75) & ~(chunkCountPerFetch - 1);
 
     // Mind chrome.storage.sync.QUOTA_BYTES_PER_ITEM (8192 at time of writing)
-    // https://github.com/gorhill/uBlock/issues/3006
-    //  For Firefox, we will use a higher ratio to allow for more overhead for
-    //  the infrastructure. Unfortunately this leads to less usable space for
-    //  actual data, but all of this is provided for free by browser vendors,
-    //  so we need to accept and deal with these limitations.
-    var maxChunkSize = Math.floor(chrome.storage.sync.QUOTA_BYTES_PER_ITEM * 0.75 || 5120);
+    var maxChunkSize = chrome.storage.sync.QUOTA_BYTES_PER_ITEM || 8192;
 
     // Mind chrome.storage.sync.QUOTA_BYTES (128 kB at time of writing)
     // Firefox:
     // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync
     // > You can store up to 100KB of data using this API/
     var maxStorageSize = chrome.storage.sync.QUOTA_BYTES || 102400;
+
+    // Flavor-specific handling needs to be done here. Reason: to allow time
+    // for vAPI.webextFlavor to be properly set.
+    // https://github.com/gorhill/uBlock/issues/3006
+    //  For Firefox, we will use a lower ratio to allow for more overhead for
+    //  the infrastructure. Unfortunately this leads to less usable space for
+    //  actual data, but all of this is provided for free by browser vendors,
+    //  so we need to accept and deal with these limitations.
+    var initialize = function() {
+        var ratio = vAPI.webextFlavor.startsWith('Mozilla-Firefox-') ? 0.6 : 0.75;
+        maxChunkSize = Math.floor(maxChunkSize * ratio);
+        initialize = function(){};
+    };
 
     var options = {
         defaultDeviceName: window.navigator.platform,
@@ -1173,13 +1188,17 @@ vAPI.cloud = (function() {
         for ( var i = start; i < n; i++ ) {
             keys.push(dataKey + i.toString());
         }
-        chrome.storage.sync.remove(keys);
+        if ( keys.length !== 0 ) {
+            chrome.storage.sync.remove(keys);
+        }
     };
 
     var start = function(/* dataKeys */) {
     };
 
     var push = function(dataKey, data, callback) {
+        initialize();
+
         var bin = {
             'source': options.deviceName || options.defaultDeviceName,
             'tstamp': Date.now(),
@@ -1205,6 +1224,15 @@ vAPI.cloud = (function() {
             var errorStr;
             if ( chrome.runtime.lastError ) {
                 errorStr = chrome.runtime.lastError.message;
+                // https://github.com/gorhill/uBlock/issues/3006#issuecomment-332597677
+                // - Delete all that was pushed in case of failure.
+                // - It's unknown whether such issue applies only to Firefox:
+                //   until such cases are reported for other browsers, we will
+                //   reset the (now corrupted) content of the cloud storage
+                //   only on Firefox.
+                if ( vAPI.webextFlavor.startsWith('Mozilla-Firefox-') ) {
+                    chunkCount = 0;
+                }
             }
             callback(errorStr);
 
@@ -1214,6 +1242,8 @@ vAPI.cloud = (function() {
     };
 
     var pull = function(dataKey, callback) {
+        initialize();
+
         var assembleChunks = function(bin) {
             if ( chrome.runtime.lastError ) {
                 callback(null, chrome.runtime.lastError.message);

@@ -278,8 +278,8 @@ var pageStoreJunkyardMax = 10;
 
 /******************************************************************************/
 
-var PageStore = function(tabId) {
-    this.init(tabId);
+var PageStore = function(tabId, context) {
+    this.init(tabId, context);
     this.journal = [];
     this.journalTimer = null;
     this.journalLastCommitted = this.journalLastUncommitted = undefined;
@@ -288,19 +288,23 @@ var PageStore = function(tabId) {
 
 /******************************************************************************/
 
-PageStore.factory = function(tabId) {
+PageStore.factory = function(tabId, context) {
     var entry = pageStoreJunkyard.pop();
     if ( entry === undefined ) {
-        entry = new PageStore(tabId);
+        entry = new PageStore(tabId, context);
     } else {
-        entry.init(tabId);
+        entry.init(tabId, context);
     }
     return entry;
 };
 
 /******************************************************************************/
 
-PageStore.prototype.init = function(tabId) {
+// https://github.com/gorhill/uBlock/issues/3201
+//   The context is used to determine whether we report behavior change to the
+//   logger.
+
+PageStore.prototype.init = function(tabId, context) {
     var tabContext = µb.tabContextManager.mustLookup(tabId);
     this.tabId = tabId;
 
@@ -329,12 +333,17 @@ PageStore.prototype.init = function(tabId) {
     this.largeMediaTimer = null;
     this.netFilteringCache = NetFilteringResultCache.factory();
     this.internalRedirectionCount = 0;
-
-
-    this.noCosmeticFiltering =
-        (µb.hnSwitches.evaluateZ('no-cosmetic-filtering', tabContext.rootHostname) === true
+    
+    this.noCosmeticFiltering = (µb.hnSwitches.evaluateZ(
+                'no-cosmetic-filtering',
+                tabContext.rootHostname
+            ) === true
         || µb.userSettings.pauseFiltering);
-    if ( this.noCosmeticFiltering && µb.logger.isEnabled() ) {
+    if (
+        this.noCosmeticFiltering &&
+        µb.logger.isEnabled() &&
+        context === 'tabCommitted'
+    ) {
         µb.logger.writeOne(
             tabId,
             'cosmetic',
@@ -355,7 +364,11 @@ PageStore.prototype.init = function(tabId) {
             'generichide'
         );
         this.noGenericCosmeticFiltering = result === 2;
-        if ( result !== 0 && µb.logger.isEnabled() ) {
+        if (
+            result !== 0 &&
+            µb.logger.isEnabled() &&
+            context === 'tabCommitted'
+        ) {
             µb.logger.writeOne(
                 tabId,
                 'net',
@@ -400,7 +413,7 @@ PageStore.prototype.reuse = function(context) {
     }
     this.disposeFrameStores();
     this.netFilteringCache = this.netFilteringCache.dispose();
-    this.init(this.tabId);
+    this.init(this.tabId, context);
     return this;
 };
 
@@ -651,25 +664,12 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
 
     var requestType = context.requestType;
 
-    if ( requestType === 'csp_report' ) {
-        if ( this.internalRedirectionCount !== 0 ) {
-            if ( µb.logger.isEnabled() ) {
-                this.logData = { result: 1, source: 'global', raw: 'no-spurious-csp-report' };
-            }
-            return 1;
-        }
+    if ( requestType === 'csp_report' && this.filterCSPReport(context) === 1 ) {
+        return 1;
     }
 
-    if ( requestType.endsWith('font') ) {
-        if ( requestType === 'font' ) {
-            this.remoteFontCount += 1;
-        }
-        if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
-            if ( µb.logger.isEnabled() ) {
-                this.logData = µb.hnSwitches.toLogData();
-            }
-            return 1;
-        }
+    if ( requestType.endsWith('font') && this.filterFont(context) === 1 ) {
+        return 1;
     }
 
     var cacheableResult = this.cacheableResults[requestType] === true;
@@ -767,6 +767,49 @@ PageStore.prototype.collapsibleResources = {
 
 /******************************************************************************/
 
+PageStore.prototype.filterCSPReport = function(context) {
+    if ( µb.hnSwitches.evaluateZ('no-csp-reports', context.requestHostname) ) {
+        if ( µb.logger.isEnabled() ) {
+            this.logData = µb.hnSwitches.toLogData();
+        }
+        return 1;
+    }
+    // https://github.com/gorhill/uBlock/issues/3140
+    //   Special handling of CSP reports if and only if these can't be filtered
+    //   natively.
+    if (
+        vAPI.net.nativeCSPReportFiltering !== true &&
+        this.internalRedirectionCount !== 0
+    ) {
+        if ( µb.logger.isEnabled() ) {
+            this.logData = {
+                result: 1,
+                source: 'global',
+                raw: 'no-spurious-csp-report'
+            };
+        }
+        return 1;
+    }
+    return 0;
+};
+
+/******************************************************************************/
+
+PageStore.prototype.filterFont = function(context) {
+    if ( context.requestType === 'font' ) {
+        this.remoteFontCount += 1;
+    }
+    if ( µb.hnSwitches.evaluateZ('no-remote-fonts', context.rootHostname) !== false ) {
+        if ( µb.logger.isEnabled() ) {
+            this.logData = µb.hnSwitches.toLogData();
+        }
+        return 1;
+    }
+    return 0;
+};
+
+/******************************************************************************/
+
 // The caller is responsible to check whether filtering is enabled or not.
 
 PageStore.prototype.filterLargeMediaElement = function(size) {
@@ -802,21 +845,26 @@ PageStore.prototype.filterLargeMediaElement = function(size) {
 /******************************************************************************/
 
 PageStore.prototype.getBlockedResources = function(request, response) {
-    var resources = request.resources;
+    var µburi = µb.URI,
+        normalURL = µb.normalizePageURL(this.tabId, request.frameURL),
+        frameHostname = µburi.hostnameFromURI(normalURL),
+        resources = request.resources;
+    // Force some resources to go through the filtering engine in order to
+    // populate the blocked-resources cache. This is required because for
+    // some resources it's not possible to detect whether they were blocked
+    // content script-side (i.e. `iframes` -- unlike `img`).
     if ( Array.isArray(resources) && resources.length !== 0 ) {
-        var context = this.createContextFromFrameHostname(request.pageHostname);
+        var context = this.createContextFromFrameHostname(frameHostname);
         for ( var resource of resources ) {
             context.requestType = resource.type;
-            context.requestHostname = µb.URI.hostnameFromURI(resource.url);
+            context.requestHostname = µburi.hostnameFromURI(resource.url);
             context.requestURL = resource.url;
             this.filterRequest(context);
         }
     }
-    if ( this.netFilteringCache.hash === response.hash ) {
-        return;
-    }
+    if ( this.netFilteringCache.hash === response.hash ) { return; }
     response.hash = this.netFilteringCache.hash;
-    response.blockedResources = this.netFilteringCache.lookupAllBlocked(request.pageHostname);
+    response.blockedResources = this.netFilteringCache.lookupAllBlocked(frameHostname);
 };
 
 /******************************************************************************/

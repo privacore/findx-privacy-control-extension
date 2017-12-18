@@ -106,30 +106,28 @@ var menuEntries = [
 /******************************************************************************/
 
 var update = function(tabId) {
-    return;
-    
-    var newBits = 0;
-    if ( µb.userSettings.contextMenuEnabled && tabId !== null ) {
-        var pageStore = µb.pageStoreFromTabId(tabId);
-        if ( pageStore ) {
-            newBits |= 0x01;
-            if ( pageStore.largeMediaCount !== 0 ) {
-                newBits |= 0x02;
-            }
-        }
-    }
-    if ( newBits === currentBits ) {
-        return;
-    }
-    currentBits = newBits;
-    var usedEntries = [];
-    if ( newBits & 0x01 ) {
-        usedEntries.push(menuEntries[0]);
-    }
-    if ( newBits & 0x02 ) {
-        usedEntries.push(menuEntries[1]);
-    }
-    vAPI.contextMenu.setEntries(usedEntries, onEntryClicked);
+    // var newBits = 0;
+    // if ( µb.userSettings.contextMenuEnabled && tabId !== null ) {
+    //     var pageStore = µb.pageStoreFromTabId(tabId);
+    //     if ( pageStore ) {
+    //         newBits |= 0x01;
+    //         if ( pageStore.largeMediaCount !== 0 ) {
+    //             newBits |= 0x02;
+    //         }
+    //     }
+    // }
+    // if ( newBits === currentBits ) {
+    //     return;
+    // }
+    // currentBits = newBits;
+    // var usedEntries = [];
+    // if ( newBits & 0x01 ) {
+    //     usedEntries.push(menuEntries[0]);
+    // }
+    // if ( newBits & 0x02 ) {
+    //     usedEntries.push(menuEntries[1]);
+    // }
+    // vAPI.contextMenu.setEntries(usedEntries, onEntryClicked);
 };
 
 var currentBits = 0;

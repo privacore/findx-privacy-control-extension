@@ -20,7 +20,7 @@
 */
 
 /* jshint bitwise: false */
-/* global punycode */
+/* global punycode, HNTrieBuilder */
 
 'use strict';
 
@@ -57,6 +57,7 @@ var typeNameToTypeValue = {
         'stylesheet':  1 << 4,
              'image':  2 << 4,
             'object':  3 << 4,
+ 'object_subrequest':  3 << 4,
             'script':  4 << 4,
     'xmlhttprequest':  5 << 4,
          'sub_frame':  6 << 4,
@@ -542,6 +543,39 @@ registerFilterClass(FilterPlainRightAnchored);
 
 /******************************************************************************/
 
+var FilterExactMatch = function(s, filterPath) {
+    this.s = s;
+    this.filterPath = filterPath || "";
+};
+
+FilterExactMatch.prototype.match = function(url) {
+    return url === this.s;
+};
+
+FilterExactMatch.prototype.logData = function() {
+    return {
+        raw: '|' + this.s + '|',
+        regex: rawToRegexStr(this.s, 0x3),
+        compiled: this.compile()
+    };
+};
+
+FilterExactMatch.prototype.compile = function() {
+    return [ this.fid, this.s, this.filterPath ];
+};
+
+FilterExactMatch.compile = function(details) {
+    return [ FilterExactMatch.fid, details.f, details.path ];
+};
+
+FilterExactMatch.load = function(args) {
+    return new FilterExactMatch(args[1], args[2]);
+};
+
+registerFilterClass(FilterExactMatch);
+
+/******************************************************************************/
+
 var FilterPlainHnAnchored = function(s, filterPath) {
     this.s = s;
     this.filterPath = filterPath || "";
@@ -866,9 +900,9 @@ FilterOriginHitSet.prototype = Object.create(FilterOrigin.prototype, {
     matchOrigin: {
         value: function() {
             if ( this.oneOf === null ) {
-                this.oneOf = new RegExp('(?:^|\\.)(?:' + this.domainOpt.replace(/\./g, '\\.') + ')$');
+                this.oneOf = HNTrieBuilder.fromDomainOpt(this.domainOpt);
             }
-            return this.oneOf.test(pageHostnameRegister);
+            return this.oneOf.matches(pageHostnameRegister);
         }
     },
 });
@@ -899,9 +933,9 @@ FilterOriginMissSet.prototype = Object.create(FilterOrigin.prototype, {
     matchOrigin: {
         value: function() {
             if ( this.noneOf === null ) {
-                this.noneOf = new RegExp('(?:^|\\.)(?:' + this.domainOpt.replace(/~/g, '').replace(/\./g, '\\.') + ')$');
+                this.noneOf = HNTrieBuilder.fromDomainOpt(this.domainOpt.replace(/~/g, ''));
             }
-            return this.noneOf.test(pageHostnameRegister) === false;
+            return this.noneOf.matches(pageHostnameRegister) === false;
         }
     },
 });
@@ -942,8 +976,8 @@ FilterOriginMixedSet.prototype = Object.create(FilterOrigin.prototype, {
                     oneOf.push(hostname);
                 }
             }
-            this.oneOf = new RegExp('(?:^|\\.)(?:' + oneOf.join('|') + ')$');
-            this.noneOf = new RegExp('(?:^|\\.)(?:' + noneOf.join('|') + ')$');
+            this.oneOf = HNTrieBuilder.fromIterable(oneOf);
+            this.noneOf = HNTrieBuilder.fromIterable(noneOf);
         }
     },
     toDomainOpt: {
@@ -955,7 +989,8 @@ FilterOriginMixedSet.prototype = Object.create(FilterOrigin.prototype, {
         value: function() {
             if ( this.oneOf === null ) { this.init(); }
             var needle = pageHostnameRegister;
-            return this.oneOf.test(needle) && this.noneOf.test(needle) === false;
+            return this.oneOf.matches(needle) &&
+                   this.noneOf.matches(needle) === false;
         }
     },
 });
@@ -1135,12 +1170,12 @@ FilterHostnameDict.prototype.logData = function() {
 };
 
 FilterHostnameDict.prototype.compile = function() {
-    return [ this.fid, µb.setToArray(this.dict), this.filterPath ];
+    return [ this.fid, µb.arrayFrom(this.dict), this.filterPath ];
 };
 
 FilterHostnameDict.load = function(args) {
     var f = new FilterHostnameDict(args[2]);
-    f.dict = µb.setFromArray(args[1]);
+    f.dict = new Set(args[1]);
     return f;
 };
 
@@ -1387,8 +1422,8 @@ FilterParser.prototype.toNormalizedType = {
      'inline-script': 'inline-script',
              'media': 'media',
             'object': 'object',
-             'other': 'other',
  'object-subrequest': 'object',
+             'other': 'other',
               'ping': 'other',
           'popunder': 'popunder',
              'popup': 'popup',
@@ -2006,8 +2041,8 @@ FilterContainer.prototype.freeze = function() {
     this.fdataLast = null;
     this.filterLast = null;
     this.frozen = true;
-    //console.log(JSON.stringify(Array.from(filterClassHistogram)));
-    //this.tokenHistogram = new Map(Array.from(this.tokenHistogram).sort(function(a, b) {
+    //console.log(JSON.stringify(µb.arrayFrom(filterClassHistogram)));
+    //this.tokenHistogram = new Map(µb.arrayFrom(this.tokenHistogram).sort(function(a, b) {
     //    return a[0].localeCompare(b[0]) || (b[1] - a[1]);
     //}));
 };
@@ -2157,6 +2192,8 @@ FilterContainer.prototype.compile = function(raw, writer, filterPath) {
         fdata = FilterPlainLeftAnchored.compile(parsed);
     } else if ( parsed.anchor === 0x1 ) {
         fdata = FilterPlainRightAnchored.compile(parsed);
+    } else if ( parsed.anchor === 0x3 ) {
+        fdata = FilterExactMatch.compile(parsed);
     } else if ( parsed.tokenBeg === 0 ) {
         fdata = FilterPlainPrefix0.compile(parsed);
     } else if ( parsed.tokenBeg === 1 ) {
@@ -2263,10 +2300,6 @@ FilterContainer.prototype.fromCompiledContent = function(reader, path) {
         redirectTypeValue = typeNameToTypeValue.redirect,
         args, bits, bucket, entry,
         tokenHash, fdata, fingerprint;
-
-    if (path == "easylist") {
-        console.log();
-    }
 
     while ( reader.next() === true ) {
         args = reader.args();

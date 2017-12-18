@@ -2,16 +2,6 @@
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/ublock/localized.svg)](https://crowdin.com/project/ublock)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/gorhill/uBlock/blob/master/LICENSE.txt)
 
-***
-
-##### BEWARE! uBlock Origin is (and has always been) COMPLETELY UNRELATED to the web site ublock.org
-
-The donations sought by the [individual](https://github.com/chrisaljoudi/) behind `ublock.org` (_"to keeps uBlock development possible"_, [a misrepresentation](https://en.wikipedia.org/wiki/UBlock_Origin#uBlock_.28ublock.org.29)) are _not_ benefiting any of those who contributed most to create uBlock Origin ([developers](https://github.com/gorhill/uBlock/graphs/contributors), [translators](https://crowdin.com/project/ublock), and all those who put efforts in opening detailed issues). For the differences between uBlock Origin and uBlock, see the unbiased [Wikipedia article](https://en.wikipedia.org/wiki/UBlock_Origin).
-
-***
-
-uBlock Origin is **NOT** an "ad blocker": [it is a wide-spectrum blocker](https://github.com/gorhill/uBlock/wiki/Blocking-mode) -- which happens to be able to function as a mere "ad blocker". The default behavior of uBlock Origin when newly installed is to block ads, trackers and malware sites -- through [_EasyList_](https://easylist.github.io/#easylist), [_EasyPrivacy_](https://easylist.github.io/#easyprivacy), [_Peter Lowe’s ad/tracking/malware servers_](https://pgl.yoyo.org/adservers/policy.php), various lists of [malware](http://www.malwaredomainlist.com/) [sites](http://www.malwaredomains.com/), and uBlock Origin's [own filter lists](https://github.com/uBlockOrigin/uAssets/tree/master/filters).
-
 *** 
 
 <h1 align="center">
@@ -36,10 +26,16 @@ uBlock Origin
             <a href="https://github.com/ialexsilva/uBlock/blob/master/README.md#ublock-origin">Português (Brasil)</a>
       </sup>
 </sup>
+<br>
+<br>
+<sup><a href="https://github.com/gorhill/uBlock/wiki/uBlock-Origin-is-completely-unrelated-to-the-web-site-ublock.org"><b>BEWARE!</b> uBlock Origin is (and has always been) COMPLETELY UNRELATED to the web site <code>ublock.org</code></a>.</sup>
 </p>
 
+***
 
 **An efficient blocker add-on for various browsers. Fast, potent, and lean.**
+
+uBlock Origin is **NOT** an "ad blocker": [it is a wide-spectrum blocker](https://github.com/gorhill/uBlock/wiki/Blocking-mode) -- which happens to be able to function as a mere "ad blocker". The default behavior of uBlock Origin when newly installed is to block ads, trackers and malware sites -- through [_EasyList_](https://easylist.github.io/#easylist), [_EasyPrivacy_](https://easylist.github.io/#easyprivacy), [_Peter Lowe’s ad/tracking/malware servers_](https://pgl.yoyo.org/adservers/policy.php), various lists of [malware](http://www.malwaredomainlist.com/) [sites](http://www.malwaredomains.com/), and uBlock Origin's [own filter lists](https://github.com/uBlockOrigin/uAssets/tree/master/filters).
 
 * [Documentation](#documentation)
 * [Purpose & General Info](#philosophy)
@@ -122,15 +118,17 @@ Feel free to read [about the extension's required permissions](https://github.co
 
 You can install the latest version [manually](https://github.com/gorhill/uBlock/tree/master/dist#install), from the [Chrome Store](https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm), or from the [Opera store](https://addons.opera.com/extensions/details/ublock/).
 
+There is also a development version in the Chrome store if you want to test uBlock Origin with the latest changes: see [_uBlock Origin dev build_](https://chrome.google.com/webstore/detail/ublock-origin-dev-build/cgbcahbpdhpcegmbfconppldiemgcoii).
+
 It is expected that uBlock Origin is compatible with any Chromium-based browsers.
 
 #### Firefox / Firefox for Android
 
-[Firefox Add-ons web site](https://addons.mozilla.org/addon/ublock-origin/). There is also a development version if you want to test uBlock Origin with the latest changes: see [_uBlock Origin Version History_](https://addons.mozilla.org/addon/ublock-origin/versions/beta)
+[Firefox Add-ons web site](https://addons.mozilla.org/addon/ublock-origin/).
+
+There is also a development version if you want to test uBlock Origin with the latest changes: see [_beta channel for uBlock Origin_](https://addons.mozilla.org/addon/ublock-origin/versions/beta)
 
 uBlock Origin is compatible with [SeaMonkey](http://www.seamonkey-project.org/), [Pale Moon](https://www.palemoon.org/), and possibly other browsers based on Firefox.
-
-Also of interest: [Deploying uBlock Origin for Firefox with CCK2 and Group Policy](http://decentsecurity.com/ublock-for-firefox-deployment/).
 
 Thanks to Debian contributor [Sean Whitton](https://wiki.debian.org/SeanWhitton), users of Debian 9 or later or Ubuntu 16.04 or later may simply
 `apt-get install xul-ext-ublock-origin`.
@@ -152,6 +150,14 @@ Development version available at <https://github.com/el1t/uBlock-Safari#ublock-o
 #### Note for all browsers
 
 To benefit from uBlock Origin's higher efficiency, it's advised that you don't use other inefficient blockers at the same time (such as AdBlock or Adblock Plus). uBlock₀ will do [as well or better](#blocking) than most popular ad blockers. Other blockers can also prevent uBlock₀'s privacy or anti-blocker features from working properly.
+
+#### Deploying
+
+Below is documentation to assist administrators in deploying uBlock Origin:
+
+- [Deploying uBlock Origin](https://github.com/gorhill/uBlock/wiki/Deploying-uBlock-Origin)
+    - Firefox: [Deploying uBlock Origin for Firefox with CCK2 and Group Policy](http://decentsecurity.com/ublock-for-firefox-deployment/) (external)
+    - Google Chrome: [Managing Google Chrome with adblocking and security](https://decentsecurity.com/ublock-for-google-chrome-deployment/) (external)
 
 ## Release History
 

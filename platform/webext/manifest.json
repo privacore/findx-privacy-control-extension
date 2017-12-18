@@ -1,11 +1,11 @@
 {
    "applications":{
       "gecko":{
-         "id":"uBlock0@raymondhill.net",
+         "id":"privacontrol@privacore.com",
          "strict_min_version":"52.0"
       }
    },
-   "author":"All uBlock Origin contributors",
+   "author":"All Privacontrol and uBlock contributors",
    "background":{
       "page":"background.html"
    },
@@ -15,7 +15,7 @@
          "19":"img/browsericons/icon19.png",
          "38":"img/browsericons/icon38.png"
       },
-      "default_title":"uBlock Origin",
+      "default_title":"Privacontrol",
       "default_popup":"popup.html"
    },
    "commands":{
@@ -33,12 +33,13 @@
       {
          "matches":[
             "http://*/*",
-            "https://*/*"
+            "https://*/*",
+            "file://*/*"
          ],
          "js":[
-            "js/vapi-client.js",
-            "js/vapi-usercss.js",
-            "js/contentscript.js"
+            "/js/vapi.js",
+            "/js/vapi-client.js",
+            "/js/contentscript.js"
          ],
          "run_at":"document_start",
          "all_frames":true
@@ -49,7 +50,7 @@
             "https://*/*"
          ],
          "js":[
-            "js/scriptlets/subscriber.js"
+            "/js/scriptlets/subscriber.js"
          ],
          "run_at":"document_idle",
          "all_frames":false
@@ -58,13 +59,15 @@
    "default_locale":"en",
    "description":"__MSG_extShortDesc__",
    "icons":{
-      "16":"img/icon_16.png",
-      "128":"img/icon_128.png"
+      "16":"img/privacontrol.svg",
+      "48":"img/privacontrol.svg",
+      "96":"img/privacontrol.svg"
    },
    "manifest_version":2,
-   "name":"uBlock Origin",
+   "name":"Privacontrol",
    "options_ui":{
-      "page":"options_ui.html"
+      "page":"dashboard.html",
+      "open_in_tab": true
    },
    "permissions":[
       "contextMenus",
@@ -76,6 +79,6 @@
       "webRequestBlocking",
       "<all_urls>"
    ],
-   "short_name":"uBlock₀",
+   "short_name":"Privacontrol",
    "version":"1.9.15.101"
 }
