@@ -74,6 +74,13 @@
             "assets/ublock/resource-abuse.txt"
         ]
     },
+    "ublock-annoyances": {
+        "content": "filters",
+        "group": "default",
+        "title": "uBlock filters – Annoyances",
+        "off": true,
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.filters.annoyances.txt"
+    },
     "ublock-unbreak": {
         "content": "filters",
         "group": "default",
