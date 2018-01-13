@@ -8,24 +8,25 @@ if which xar-mackyle > /dev/null 2>&1; then
     xar='xar-mackyle'
 else
     if [ ! -f ./tools/xar ]; then
-        printf '\nDownloading and building xar-mackyle into ./tools/xar...'
+        printf '\nDownloading and building xar-mackyle into ./tools/xar...\n'
         # Compile patched xar
-        curl -fsSLO https://cloud.github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz > /dev/null
-        tar xf xar-1.6.1.tar.gz > /dev/null
-        cd xar-1.6.1
+        curl -fsSLo xar.tar.gz https://github.com/mackyle/xar/archive/xar-1.6.1.tar.gz > /dev/null
+        tar -xzf xar.tar.gz > /dev/null
+        cd xar-xar-1.6.1/xar
         export CFLAGS='-w'
         export CPPFLAGS='-w'
+        ./autogen.sh --noconfigure > /dev/null
         if ! ./configure --disable-shared > /dev/null; then
-            echo ' error: could not compile xar-mackyle'
-            cd ..
+            echo 'error: could not compile xar-mackyle'
+            cd ../..
             exit 1
         fi
         make > /dev/null
-        mv src/xar ../tools/xar-mackyle
-        cd ..
-        rm -rf xar-1.6.1 xar-1.6.1.tar.gz
+        mv src/xar ../../tools/xar-mackyle
+        cd ../..
+        rm -rf xar-xar-1.6.1 xar.tar.gz
         unset CFLAGS CPPFLAGS
-        printf '\nSigning extension...'
+        printf 'Signing extension...'
     fi
     xar="$(pwd)/tools/xar-mackyle"
 fi
