@@ -27,6 +27,9 @@ cp platform/safari/Info.plist     $DES/
 cp platform/safari/Settings.plist $DES/
 cp LICENSE.txt                    $DES/
 
+# Use chrome's usercss polyfill
+cp platform/chromium/vapi-usercss.js $DES/js/
+
 # https://github.com/el1t/uBlock-Safari/issues/4
 echo -n '*** uBlock0.safariextension: Adding extensions to extensionless assets...'
 find $DES/assets/thirdparties -type f -regex '.*\/[^.]*' -exec mv {} {}.txt \;

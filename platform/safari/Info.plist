@@ -65,6 +65,7 @@
             <key>Start</key>
             <array>
                 <string>js/vapi-client.js</string>
+                <string>js/vapi-usercss.js</string>
                 <string>js/contentscript.js</string>
             </array>
             <key>End</key>
