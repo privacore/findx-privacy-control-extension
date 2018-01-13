@@ -5,34 +5,34 @@
 echo '*** uBlock0.safariextension: Copying files...'
 
 DES=dist/build/uBlock0.safariextension
-rm -rf $DES
-mkdir -p $DES
+rm -rf "$DES"
+mkdir -p "$DES"
 
 # Delete .DS_Store before making
 find . ../uAssets -name '.DS_Store' -type f -delete
 
-bash ./tools/make-assets.sh       $DES
+bash ./tools/make-assets.sh       "$DES"
 
-cp -R src/css                     $DES/
-cp -R src/img                     $DES/
-cp -R src/js                      $DES/
-cp -R src/lib                     $DES/
-cp -R src/_locales                $DES/
-cp src/*.html                     $DES/
-mv $DES/img/icon_128.png          $DES/Icon.png
-cp platform/safari/*.js           $DES/js/
-cp platform/safari/*.html         $DES/
-cp -R platform/safari/img         $DES/
-cp platform/safari/Info.plist     $DES/
-cp platform/safari/Settings.plist $DES/
-cp LICENSE.txt                    $DES/
+cp -R src/css                     "$DES"/
+cp -R src/img                     "$DES"/
+cp -R src/js                      "$DES"/
+cp -R src/lib                     "$DES"/
+cp -R src/_locales                "$DES"/
+cp src/*.html                     "$DES"/
+mv $DES/img/icon_128.png          "$DES"/Icon.png
+cp platform/safari/*.js           "$DES"/js/
+cp platform/safari/*.html         "$DES"/
+cp -R platform/safari/img         "$DES"/
+cp platform/safari/Info.plist     "$DES"/
+cp platform/safari/Settings.plist "$DES"/
+cp LICENSE.txt                    "$DES"/
 
 # Use chrome's usercss polyfill
-cp platform/chromium/vapi-usercss.js $DES/js/
+cp platform/chromium/vapi-usercss.js "$DES"/js/
 
 # https://github.com/el1t/uBlock-Safari/issues/4
 echo -n '*** uBlock0.safariextension: Adding extensions to extensionless assets...'
-find $DES/assets/thirdparties -type f -regex '.*\/[^.]*' -exec mv {} {}.txt \;
+find "$DES"/assets/thirdparties -type f -regex '.*\/[^.]*' -exec mv {} {}.txt \;
 echo ' ✔'
 
 # Declare __MSG__ scripts inside client-injected.js
@@ -52,18 +52,25 @@ awkscript='BEGIN { p = 0 }
   printf "%s", $0
 }'
 declare -a sedargs=('-i' '')
-for message in $(perl -nle '/^\/\/ (__MSG_[A-Za-z]+__)/ && print $1' < $DES/js/client-injected.js); do
-    script=$(awk "${awkscript/__MSG__/${message}}" $DES/js/client-injected.js | sed 's/[\"#&]/\\&/g')
+for message in $(perl -nle '/^\/\/ (__MSG_[A-Za-z]+__)/ && print $1' < "$DES"/js/client-injected.js); do
+    script=$(awk "${awkscript/__MSG__/${message}}" "$DES"/js/client-injected.js | sed 's/[\"#&]/\\&/g')
     sedargs+=('-e' "s#${message}#${script}#")
 done
-if ! sed "${sedargs[@]}" $DES/js/vapi-client.js 2>/dev/null; then
-    sed ${sedargs[@]} $DES/js/vapi-client.js
+if ! sed "${sedargs[@]}" "$DES"/js/vapi-client.js 2>/dev/null; then
+    sed ${sedargs[@]} "$DES"/js/vapi-client.js
 fi
 rm -f $DES/js/client-injected.js
 echo ' ✔'
 
 echo -n '*** uBlock0.safariextension: Generating Info.plist...'
-python tools/make-safari-meta.py $DES/
+python tools/make-safari-meta.py "$DES"/
+echo ' ✔'
+
+# https://github.com/el1t/uBlock-Safari/issues/15
+echo -n '*** uBlock0.safariextension: Correcting ctrl to ⌘ in messages...'
+for filename in "$DES"/_locales/*.json; do
+    sed -i '' 's/Ctrl/⌘/g' "$filename"
+done
 echo ' ✔'
 
 if [ "$1" = all ]; then
