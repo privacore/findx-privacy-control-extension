@@ -35,6 +35,24 @@ echo -n '*** uBlock0.safariextension: Adding extensions to extensionless assets.
 find "$DES"/assets/thirdparties -type f -regex '.*\/[^.]*' -exec mv {} {}.txt \;
 echo ' ✔'
 
+echo -n '*** uBlock0.safariextension: Generating Info.plist...'
+python tools/make-safari-meta.py "$DES"/
+echo ' ✔'
+
+# Detect OS for sed arguments
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    declare -a sedargs=('-i' '')
+else
+    declare -a sedargs=('-i')
+fi
+
+# https://github.com/el1t/uBlock-Safari/issues/15
+echo -n '*** uBlock0.safariextension: Correcting ctrl to ⌘ in messages...'
+for filename in "$DES"/_locales/*.json; do
+    sed "${sedargs[@]}" 's/Ctrl/⌘/g' "$filename"
+done
+echo ' ✔'
+
 # Declare __MSG__ scripts inside client-injected.js
 # Beware: this removes all newlines within each script
 echo -n '*** uBlock0.safariextension: Injecting scripts into vapi-client...'
@@ -51,28 +69,17 @@ awkscript='BEGIN { p = 0 }
   gsub(/'"'"'/, "\\'"'"'")
   printf "%s", $0
 }'
-declare -a sedargs=('-i' '')
 for message in $(perl -nle '/^\/\/ (__MSG_[A-Za-z]+__)/ && print $1' < "$DES"/js/client-injected.js); do
     script=$(awk "${awkscript/__MSG__/${message}}" "$DES"/js/client-injected.js | sed 's/[\"#&]/\\&/g')
     sedargs+=('-e' "s#${message}#${script}#")
 done
 if ! sed "${sedargs[@]}" "$DES"/js/vapi-client.js 2>/dev/null; then
-    sed ${sedargs[@]} "$DES"/js/vapi-client.js
+    sed "${sedargs[@]}" "$DES"/js/vapi-client.js
 fi
-rm -f $DES/js/client-injected.js
+rm -f "$DES"/js/client-injected.js
 echo ' ✔'
 
-echo -n '*** uBlock0.safariextension: Generating Info.plist...'
-python tools/make-safari-meta.py "$DES"/
-echo ' ✔'
-
-# https://github.com/el1t/uBlock-Safari/issues/15
-echo -n '*** uBlock0.safariextension: Correcting ctrl to ⌘ in messages...'
-for filename in "$DES"/_locales/*.json; do
-    sed -i '' 's/Ctrl/⌘/g' "$filename"
-done
-echo ' ✔'
-
+# Prepare extension for release
 if [ "$1" = all ]; then
     if [ ! -f dist/certs/key.pem ] || [ ! -f dist/certs/SafariDeveloper.cer ]; then
         echo '*** uBlock0.safariextension: Cannot sign extension; missing credentials'
