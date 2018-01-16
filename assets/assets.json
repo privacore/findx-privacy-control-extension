@@ -424,7 +424,7 @@
         "off": true,
         "title": "IRN: Adblock-Iran",
         "lang": "fa",
-        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.farrokhi.adblock.iran.master.filter.txt",
+        "contentURL": "http://download.privacontrol.com/filters/https.cdn.rawgit.com.farrokhi.adblock.iran.master.filter.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ffarrokhi%2Fadblock-iran"
     },
     "ISL-0": {
