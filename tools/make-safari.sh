@@ -27,8 +27,15 @@ cp platform/safari/Info.plist     "$DES"/
 cp platform/safari/Settings.plist "$DES"/
 cp LICENSE.txt                    "$DES"/
 
+cp platform/chromium/vapi.js      "$DES"/js/
+
 # Use chrome's usercss polyfill
-cp platform/chromium/vapi-usercss.js "$DES"/js/
+echo "*** uBlock0.safariextension: Concatenating content scripts..."
+cat platform/chromium/vapi-usercss.js > /tmp/contentscript.js
+echo >> /tmp/contentscript.js
+grep -v "^'use strict';$" $DES/js/contentscript.js >> /tmp/contentscript.js
+mv /tmp/contentscript.js $DES/js/contentscript.js
+echo ' ✔'
 
 # https://github.com/el1t/uBlock-Safari/issues/4
 echo -n '*** uBlock0.safariextension: Adding extensions to extensionless assets...'

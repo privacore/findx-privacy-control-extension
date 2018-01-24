@@ -85,6 +85,9 @@ vAPI.getURL = function(path) {
     if ( path.match(/^assets\/thirdparties\/.*\/[^\/.]*$/) ) {
         path += '.txt';
     }
+    if ( path[0] === '/' ) {
+        path = path.slice(1);
+    }
     return safari.extension.baseURI + path;
 };
 

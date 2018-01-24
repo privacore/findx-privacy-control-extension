@@ -643,3 +643,8 @@ self.addEventListener('contextmenu', onContextMenu, true);
 })(this);
 
 /******************************************************************************/
+
+vAPI.shutdown.add(function() {
+    vAPI.messaging.shutdown();
+    window.vAPI = undefined;
+});
