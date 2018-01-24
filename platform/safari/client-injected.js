@@ -75,9 +75,9 @@ if ( window.Worker instanceof Function ) {
             return new RealWorker(window.URL.createObjectURL(new Blob([';'], {type:'text/javascript'})));
         };
         return new RealWorker(url);
-    };
+    }.bind(window);
     WrappedWorker.prototype = RealWorker.prototype;
-    window.Worker = WrappedWorker.bind(window);
+    window.Worker = WrappedWorker;
 };
 
 // __MSG_historyScript__
