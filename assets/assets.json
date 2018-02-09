@@ -533,7 +533,8 @@
         "title": "POL: polskie filtry do Adblocka i uBlocka",
         "lang": "pl",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.majkiit.polish.ads.filter.master.polish.adblock.filters.adblock.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FMajkiIT%2Fpolish-ads-filter%2Fissues"
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FMajkiIT%2Fpolish-ads-filter%2Fissues",
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FMajkiIT%2Fpolish-ads-filter%23polish-filters-for-adblock-ublock-origin--adguard"
     },
     "POL-1": {
         "content": "filters",
