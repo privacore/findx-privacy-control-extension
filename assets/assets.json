@@ -353,6 +353,7 @@
             "assets/thirdparties/pgl.yoyo.org/as/serverlist"
         ],
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fpgl.yoyo.org%2Fadservers%2F",
+        "off": true,
         "defaultOff": true,
         "inUse": true
     },
