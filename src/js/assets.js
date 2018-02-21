@@ -53,11 +53,10 @@ api.removeObserver = function(observer) {
 };
 
 var fireNotification = function(topic, details) {
-    var result;
+    var result, r;
     for ( var i = 0; i < observers.length; i++ ) {
-        if ( observers[i](topic, details) === false ) {
-            result = false;
-        }
+        r = observers[i](topic, details);
+        if ( r !== undefined ) { result = r; }
     }
     return result;
 };
@@ -167,151 +166,76 @@ api.fetchText = function(url, onLoad, onError) {
     }
 };
 
-/*******************************************************************************
+/******************************************************************************/
 
-    TODO(seamless migration):
-    This block of code will be removed when I am confident all users have
-    moved to a version of uBO which does not require the old way of caching
-    assets.
+// https://github.com/gorhill/uBlock/issues/3331
+//   Support the seamless loading of sublists.
 
-    api.listKeyAliases: a map of old asset keys to new asset keys.
+api.fetchFilterList = function(mainlistURL, onLoad, onError) {
+    var content = [],
+        errored = false,
+        pendingSublistURLs = new Set([ mainlistURL ]),
+        loadedSublistURLs = new Set(),
+        toParsedURL = api.fetchFilterList.toParsedURL,
+        parsedMainURL = toParsedURL(mainlistURL);
 
-    migrate(): to seamlessly migrate the old cache manager to the new one:
-    - attempt to preserve and move content of cached assets to new locations;
-    - removes all traces of now obsolete cache manager entries in cacheStorage.
+    var onLocalLoadSuccess = function(details) {
+        if ( errored ) { return; }
 
-    This code will typically execute only once, when the newer version of uBO
-    is first installed and executed.
+        var isSublist = details.url !== mainlistURL,
+            sublistURL;
 
-**/
+        pendingSublistURLs.delete(details.url);
+        loadedSublistURLs.add(details.url);
+        if ( isSublist ) { content.push('\n! ' + '>>>>>>>> ' + details.url); }
+        content.push(details.content.trim());
+        if ( isSublist ) { content.push('! <<<<<<<< ' + details.url); }
+        if (
+            parsedMainURL !== undefined &&
+            parsedMainURL.pathname.length > 0
+        ) {
+            var reInclude = /^!#include +(\S+)/gm,
+                match, subURL;
+            for (;;) {
+                match = reInclude.exec(details.content);
+                if ( match === null ) { break; }
+                if ( toParsedURL(match[1]) !== undefined ) { continue; }
+                if ( match[1].indexOf('..') !== -1 ) { continue; }
+                subURL =
+                    parsedMainURL.origin +
+                    parsedMainURL.pathname.replace(/[^/]+$/, match[1]);
+                if ( loadedSublistURLs.has(subURL) ) { continue; }
+                pendingSublistURLs.add(subURL);
+            }
+        }
 
-api.listKeyAliases = {
-	"assets/thirdparties/publicsuffix.org/list/effective_tld_names.dat": "public_suffix_list.dat",
-	"assets/user/filters.txt": "user-filters",
-	//"assets/ublock/resources.txt": "ublock-resources",
-	//"assets/ublock/filters.txt": "ublock-filters",
-	//"assets/ublock/privacy.txt": "ublock-privacy",
-	//"assets/ublock/unbreak.txt": "ublock-unbreak",
-	//"assets/ublock/badware.txt": "ublock-badware",
-	//"assets/ublock/experimental.txt": "ublock-experimental",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistchina.txt": "CHN-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.cjx82630.cjxlist.master.cjxlist.txt": "CHN-1",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.cjx82630.cjxlist.master.cjx.annoyance.txt": "CHN-2",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistgermany.txt": "DEU-0",
-	"http://download.privacontrol.com/filters/https.adblock.dk.block.csv.txt": "DNK-0",
-	"http://download.privacontrol.com/filters/easylist.downloads.adblockplus.org.easylist.txt": "easylist",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylist.noelemhide.txt": "easylist-nocosmetic",
-	"http://download.privacontrol.com/filters/easylist.downloads.adblockplus.org.easyprivacy.txt": "easyprivacy",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.fanboy.annoyance.txt": "fanboy-annoyance",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.fanboy.social.txt": "fanboy-social",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.liste.fr.txt": "FRA-0",
-	"http://download.privacontrol.com/filters/http.adblock.gardar.net.is.abp.txt": "ISL-0",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistitaly.txt": "ITA-0",
-	"http://download.privacontrol.com/filters/https.dl.dropboxusercontent.com.u.1289327.abpxfiles.filtri.txt": "ITA-1",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.advblock.txt": "RUS-0",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.bitblock.txt": "RUS-1",
-	"http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.chromium.filters.1.txt": "RUS-2",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistdutch.txt": "NLD-0",
-	"http://download.privacontrol.com/filters/https.notabug.org.latvian.list.adblock.latvian.raw.master.lists.latvian.list.txt": "LVA-0",
-	"http://download.privacontrol.com/filters/http.hosts.file.net.5cad.servers.txt": "hphosts",
-	"http://download.privacontrol.com/filters/http.adblock.ee.list.php.txt": "EST-0",
-	"http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.malvertising.txt": "disconnect-malvertising",
-	"http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.malware.txt": "disconnect-malware",
-	"http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.tracking.txt": "disconnect-tracking",
-	"http://download.privacontrol.com/filters/https.www.certyficate.it.adblock.adblock.txt": "POL-0",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.antiadblockfilters.txt": "awrl-0",
-	"http://download.privacontrol.com/filters/http.adb.juvander.net.finland.adb.txt": "FIN-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.gfmaster.adblock.korea.contrib.master.filter.txt": "KOR-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.yous.youslist.master.youslist.txt": "KOR-1",
-	"http://download.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.korean.txt": "KOR-2",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.heradhis.indonesianadblockrules.master.subscriptions.abpindo.txt": "IDN-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.k2jp.abp.japanese.filters.master.abpjf.txt": "JPN-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.liamja.prebake.master.obtrusive.txt": "EU-prebake",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.liste.ar.txt": "ara-0",
-	"http://download.privacontrol.com/filters/http.margevicius.lt.easylistlithuania.txt": "LTU-0",
-	"http://download.privacontrol.com/filters/www.malwaredomainlist.com.hostslist.hosts.txt": "malware-0",
-	"http://download.privacontrol.com/filters/mirror1.malwaredomains.com.files.justdomains.txt": "malware-1",
-	"http://download.privacontrol.com/filters/http.malwaredomains.lehigh.edu.files.immortal.domains.txt": "malware-2",
-	"http://download.privacontrol.com/filters/pgl.yoyo.org.as.serverlist.txt": "plowe-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.easylist.easylisthebrew.master.easylisthebrew.txt": "ISR-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.reek.anti.adblock.killer.master.anti.adblock.killer.filters.txt": "reek-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.szpeter80.hufilter.master.hufilter.txt": "HUN-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.tomasko126.easylistczechandslovak.master.filters.txt": "CZE-0",
-	"http://download.privacontrol.com/filters/http.someonewhocares.org.hosts.hosts.txt": "dpollock-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dawsey21.lists.master.adblock.list.txt": "spam404-0",
-	"http://download.privacontrol.com/filters/http.stanev.org.abp.adblock.bg.txt": "BGR-0",
-	"http://download.privacontrol.com/filters/http.winhelp2002.mvps.org.hosts.txt": "mvps-0",
-	"http://download.privacontrol.com/filters/https.www.fanboy.co.nz.enhancedstats.txt": "fanboy-enhanced",
-	"http://download.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.antifacebook.txt": "fanboy-thirdparty_social",
-	"http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistspanish.txt": "spa-0",
-	"http://download.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.swedish.txt": "SWE-0",
-	"http://download.privacontrol.com/filters/https.www.fanboy.co.nz.r.fanboy.ultimate.txt": "fanboy-ultimate",
-	"http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.chromium.filters.13.txt": "TUR-0",
-	"http://download.privacontrol.com/filters/https.www.fanboy.co.nz.fanboy.vietnam.txt": "VIE-0",
-	"http://download.privacontrol.com/filters/https.www.void.gr.kargig.void.gr.filters.txt": "GRC-0",
-	"http://download.privacontrol.com/filters/https.raw.githubusercontent.com.betterwebleon.slovenian.list.master.filters.txt": "SVN-0"
+        if ( pendingSublistURLs.size !== 0 ) {
+            for ( sublistURL of pendingSublistURLs ) {
+                api.fetchText(sublistURL, onLocalLoadSuccess, onLocalLoadError);
+            }
+            return;
+        }
+
+        details.url = mainlistURL;
+        details.content = content.join('\n').trim();
+        onLoad(details);
+    };
+
+    var onLocalLoadError = function(details) {
+        errored = true;
+        details.url = mainlistURL;
+        details.content = '';
+        onError(details);
+    };
+
+    this.fetchText(mainlistURL, onLocalLoadSuccess, onLocalLoadError);
 };
 
-var migrate = function(callback) {
-    var entries,
-        moveCount = 0,
-        toRemove = [];
-
-    var countdown = function(change) {
-        moveCount -= (change || 0);
-        if ( moveCount !== 0 ) { return; }
-        vAPI.cacheStorage.remove(toRemove);
-        saveAssetCacheRegistry();
-        callback();
-    };
-
-    var onContentRead = function(oldKey, newKey, bin) {
-        var content = bin && bin['cached_asset_content://' + oldKey] || undefined;
-        if ( content ) {
-            assetCacheRegistry[newKey] = {
-                readTime: Date.now(),
-                writeTime: entries[oldKey]
-            };
-            if ( reIsExternalPath.test(oldKey) ) {
-                assetCacheRegistry[newKey].remoteURL = oldKey;
-            }
-            bin = {};
-            bin['cache/' + newKey] = content;
-            vAPI.cacheStorage.set(bin);
-        }
-        countdown(1);
-    };
-
-    var onEntries = function(bin) {
-        entries = bin && bin['cached_asset_entries'];
-        if ( !entries ) { return callback(); }
-        if ( bin && bin['assetCacheRegistry'] ) {
-            assetCacheRegistry = bin['assetCacheRegistry'];
-        }
-        var aliases = api.listKeyAliases;
-        for ( var oldKey in entries ) {
-            if ( oldKey.endsWith('assets/user/filters.txt') ) { continue; }
-            var newKey = aliases[oldKey];
-            if ( !newKey && /^https?:\/\//.test(oldKey) ) {
-                newKey = oldKey;
-            }
-            if ( newKey ) {
-                vAPI.cacheStorage.get(
-                    'cached_asset_content://' + oldKey,
-                    onContentRead.bind(null, oldKey, newKey)
-                );
-                moveCount += 1;
-            }
-            toRemove.push('cached_asset_content://' + oldKey);
-        }
-        toRemove.push('cached_asset_entries', 'extensionLastVersion');
-        countdown();
-    };
-
-    vAPI.cacheStorage.get(
-        [ 'cached_asset_entries', 'assetCacheRegistry' ],
-        onEntries
-    );
+api.fetchFilterList.toParsedURL = function(url) {
+    try {
+        return new URL(url);
+    } catch (ex) {
+    }
 };
 
 /*******************************************************************************
@@ -519,16 +443,12 @@ var getAssetCacheRegistry = function(callback) {
         }
     };
 
-    var migrationDone = function() {
-        vAPI.cacheStorage.get('assetCacheRegistry', function(bin) {
-            if ( bin && bin.assetCacheRegistry ) {
-                assetCacheRegistry = bin.assetCacheRegistry;
-            }
-            registryReady();
-        });
-    };
-
-    migrate(migrationDone);
+    vAPI.cacheStorage.get('assetCacheRegistry', function(bin) {
+        if ( bin && bin.assetCacheRegistry ) {
+            assetCacheRegistry = bin.assetCacheRegistry;
+        }
+        registryReady();
+    });
 };
 
 var saveAssetCacheRegistry = (function() {
@@ -802,7 +722,11 @@ api.get = function(assetKey, options, callback) {
         if ( !contentURL ) {
             return reportBack('', 'E_NOTFOUND');
         }
-        api.fetchText(contentURL, onContentLoaded, onContentNotLoaded);
+        if ( assetDetails.content === 'filters' ) {
+            api.fetchFilterList(contentURL, onContentLoaded, onContentNotLoaded);
+        } else {
+            api.fetchText(contentURL, onContentLoaded, onContentNotLoaded);
+        }
     };
 
     var onContentLoaded = function(details) {
@@ -886,7 +810,11 @@ var getRemote = function(assetKey, callback) {
         if ( !contentURL ) {
             return reportBack('', 'E_NOTFOUND');
         }
-        api.fetchText(contentURL, onRemoteContentLoaded, onRemoteContentError);
+        if ( assetDetails.content === 'filters' ) {
+            api.fetchFilterList(contentURL, onRemoteContentLoaded, onRemoteContentError);
+        } else {
+            api.fetchText(contentURL, onRemoteContentLoaded, onRemoteContentError);
+        }
     };
 
     getAssetSourceRegistry(function(registry) {
@@ -1027,7 +955,7 @@ var updateNext = function() {
                 fireNotification(
                     'before-asset-updated',
                     { assetKey: assetKey,  type: assetEntry.content }
-                ) !== false
+                ) === true
             ) {
                 return assetKey;
             }
@@ -1084,7 +1012,9 @@ var updateDone = function() {
 
 api.updateStart = function(details) {
     var oldUpdateDelay = updaterAssetDelay,
-        newUpdateDelay = details.delay || updaterAssetDelayDefault;
+        newUpdateDelay = typeof details.delay === 'number' ?
+            details.delay :
+            updaterAssetDelayDefault;
     updaterAssetDelay = Math.min(oldUpdateDelay, newUpdateDelay);
     if ( updaterStatus !== undefined ) {
         if ( newUpdateDelay < oldUpdateDelay ) {

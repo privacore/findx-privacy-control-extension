@@ -98,8 +98,9 @@ var µBlock = (function() { // jshint ignore:line
 
         // Features detection.
         privacySettingsSupported: vAPI.browserSettings instanceof Object,
-        //cloudStorageSupported: vAPI.cloud instanceof Object,
+        // cloudStorageSupported: vAPI.cloud instanceof Object,
         cloudStorageSupported: false, // 25.01.17 Igor
+        canFilterResponseBody: vAPI.net.canFilterResponseBody === true,
 
         // https://github.com/chrisaljoudi/uBlock/issues/180
         // Whitelist directives need to be loaded once the PSL is available
@@ -125,8 +126,8 @@ var µBlock = (function() { // jshint ignore:line
 
         // read-only
         systemSettings: {
-            compiledMagic: 'vrgorlgelgws',
-            selfieMagic: 'vrgorlgelgws'
+            compiledMagic: 'puuijtkfpspv',
+            selfieMagic: 'puuijtkfpspv'
         },
 
         restoreBackupSettings: {

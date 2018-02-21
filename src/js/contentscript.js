@@ -374,21 +374,12 @@ vAPI.DOMFilterer = (function() {
 
     // 'P' stands for 'Procedural'
 
-    var PSelectorHasTask = function(task) {
-        this.selector = task[1];
-    };
-    PSelectorHasTask.prototype.exec = function(input) {
-        var output = [];
-        for ( var node of input ) {
-            if ( node.querySelector(this.selector) !== null ) {
-                output.push(node);
-            }
-        }
-        return output;
-    };
-
     var PSelectorHasTextTask = function(task) {
-        this.needle = new RegExp(task[1]);
+        var arg0 = task[1], arg1;
+        if ( Array.isArray(task[1]) ) {
+            arg1 = arg0[1]; arg0 = arg0[0];
+        }
+        this.needle = new RegExp(arg0, arg1);
     };
     PSelectorHasTextTask.prototype.exec = function(input) {
         var output = [];
@@ -423,7 +414,11 @@ vAPI.DOMFilterer = (function() {
 
     var PSelectorMatchesCSSTask = function(task) {
         this.name = task[1].name;
-        this.value = new RegExp(task[1].value);
+        var arg0 = task[1].value, arg1;
+        if ( Array.isArray(arg0) ) {
+            arg1 = arg0[1]; arg0 = arg0[0];
+        }
+        this.value = new RegExp(arg0, arg1);
     };
     PSelectorMatchesCSSTask.prototype.pseudo = null;
     PSelectorMatchesCSSTask.prototype.exec = function(input) {
@@ -478,7 +473,7 @@ vAPI.DOMFilterer = (function() {
     var PSelector = function(o) {
         if ( PSelector.prototype.operatorToTaskMap === undefined ) {
             PSelector.prototype.operatorToTaskMap = new Map([
-                [ ':has', PSelectorHasTask ],
+                [ ':has', PSelectorIfTask ],
                 [ ':has-text', PSelectorHasTextTask ],
                 [ ':if', PSelectorIfTask ],
                 [ ':if-not', PSelectorIfNotTask ],
@@ -624,7 +619,7 @@ vAPI.DOMFilterer = (function() {
                 t1 = Date.now();
                 pselector.budget += t0 - t1;
                 if ( pselector.budget < -500 ) {
-                    console.log('uBO: disabling %s', pselector.raw);
+                    console.info('uBO: disabling %s', pselector.raw);
                     pselector.budget = -0x7FFFFFFF;
                 }
                 t0 = t1;
@@ -1066,7 +1061,7 @@ vAPI.domSurveyor = (function() {
             return;
         }
 
-        console.log('dom surveyor shutting down: too many misses');
+        //console.info('dom surveyor shutting down: too many misses');
 
         surveyTimer.clear();
         vAPI.domWatcher.removeListener(domWatcherInterface);
@@ -1379,20 +1374,9 @@ vAPI.domSurveyor = (function() {
 
         // Library of resources is located at:
         // https://github.com/gorhill/uBlock/blob/master/assets/ublock/resources.txt
-        if ( cfeDetails.scripts ) {
-            // Have the injected script tag remove itself when execution completes:
-            // to keep DOM as clean as possible.
-            var text = cfeDetails.scripts +
-                "\n" +
-                "(function() {\n" +
-                "    var c = document.currentScript,\n" +
-                "        p = c && c.parentNode;\n" +
-                "    if ( p ) {\n" +
-                "        p.removeChild(c);\n" +
-                "    }\n" +
-                "})();";
-            vAPI.injectScriptlet(document, text);
-            vAPI.injectedScripts = text;
+        if ( response.scriptlets ) {
+            vAPI.injectScriptlet(document, response.scriptlets);
+            vAPI.injectedScripts = response.scriptlets;
         }
 
         if ( vAPI.domSurveyor instanceof Object ) {
@@ -1414,14 +1398,13 @@ vAPI.domSurveyor = (function() {
     };
 
     // This starts bootstrap process.
-    var url = window.location.href;
     vAPI.messaging.send(
         'contentscript',
         {
             what: 'retrieveContentScriptParameters',
-            pageURL: url,
-            locationURL: url,
-            isRootFrame: window === window.top
+            url: window.location.href,
+            isRootFrame: window === window.top,
+            charset: document.characterSet
         },
         bootstrapPhase1
     );
