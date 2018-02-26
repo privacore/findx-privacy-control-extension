@@ -526,6 +526,15 @@
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistdutch.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D100"
     },
+    "NOR-0": {
+        "content": "filters",
+        "group": "regions",
+        "off": true,
+        "title": "NOR: Dandelion Sprouts norske filtre",
+        "lang": "nb",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dandelionsprout.adfilt.master.experimentalnorwegianlist.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FDandelionSprout%2Fadfilt"
+    },
     "POL-0": {
         "content": "filters",
         "group": "regions",
