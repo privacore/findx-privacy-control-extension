@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html id="uBO-popup-panel">
+
+<head>
+<!--<meta name="viewport" content="width=470">&lt;!&ndash; When showing as a tab in fennec, scale to full size (150px + 320px) &ndash;&gt;-->
+<meta charset="utf-8">
+<!--<link rel="stylesheet" href="css/common.css" type="text/css">-->
+<!--<link rel="stylesheet" href="css/popup.css" type="text/css">-->
+<!--<link rel="stylesheet" href="css/vapi-popup.css" type="text/css">&lt;!&ndash; Optional platform-specific CSS rules &ndash;&gt;-->
+<!--<title>uBlock Origin</title>-->
+<link rel="stylesheet" href="css/popup-incognitor.css" type="text/css">
+<title>Privacontrol</title>
+</head>
+
+<!--/***********************/-->
+<!-- Set tabindex to work around Chromium issue 304532 -->
+<!-- Set overflow to hidden in order to prevent Safari showing scrollbars while loading -->
+<body tabindex="1" style="overflow: hidden;">
+
+<header>
+    <div class="hdr-privacy-status">
+        <div class="hader-logo">
+            <img src="img/header_logo.png" alt=""/>
+        </div>
+        <a target='_blank' href="http://www.privacore.com">> Get more privacy tools</a></div>
+    <div class="hdr-buttons">
+        <div class="hdr-btn close-button"></div>
+        <div class="hdr-btn options-button"></div>
+    </div>
+</header>
+
+
+<div id="wrapper">
+    <div class="stat-wrapper">
+        <div id="stats-page">
+            <div class="blocked-quantity"></div>
+            <div class="blocked-info">
+                <span>Trackers/ADS blocked on</span>
+                <br/>
+                <div class="tabDomain"></div>
+            </div>
+        </div>
+    </div>
+
+<!--/***********************/-->
+    <div id="subscription-list-wrapper"></div>
+
+    <div id="whitelist_block" class="hidden">
+        <div class="whitelist-block-label">Site is in a whitelist</div>
+    </div>
+<!--/***********************/-->
+<!--<div id="templates" style="display: none">-->
+    <!--<div><span></span><span data-src="/" data-des="" data-type="*"></span><span data-src="." data-des="" data-type="*"></span><span data-src="." data-des="" data-type="*"></span></div>-->
+    <!--<div id="actionSelector"><span id="dynaAllow"></span><span id="dynaNoop"></span><span id="dynaBlock"></span></div>-->
+    <!--<div id="hotspotTip"></div>-->
+    <!--<div id="tooltip"></div>-->
+<!--/***********************/-->
+</div>
+
+<footer>
+    <div class="reloader disabled">
+        <div>
+            <div class="reload-refresh"></div>
+            <div>Please reload the page to see your changes</div>
+            <div class="reload-close"></div>
+        </div>
+    </div>
+    <div id="footer-btn-panel">
+        <div class="footer-button" id="pause-blocking-button" title="Pause Blocking">
+            <div class="button-icon pause-icon"></div>
+            <div class="button-label">Pause Blocking</div>
+        </div>
+        <div class="footer-button" id="whitelist-button" title="Whitelist Site">
+            <div class="button-icon whitelist-icon"></div>
+            <div class="button-label">Whitelist Site</div>
+        </div>
+        <div class="footer-button help-button tooltip" id="help-button" title="Help">
+            <div class="button-icon help-icon"></div>
+            <div class="button-label">Help</div>
+        </div>
+    </div>
+    <div id="stats-total"><span></span> TRACKERS/ADS BLOCKED IN TOTAL</div>
+</footer>
+
+
+
+<!--Template of filter item used by Mustache.js-->
+<script id="subscription-template" type="text/html">
+    <div>
+        <div class="subscription-header">
+            <div class="info-container">
+                <div class="arrow"></div>
+                <div class="subscription-text">
+                    <div>
+                        <div class="subscription-title ellipsis " title="{{title}}">{{title}}</div>
+                        <div class="subscription-group ellipsis" title="{{group}}">
+                            {{group}}
+                            <span class="subscription-usage-amount visible-amount">{{blockedUrlsQty}} (<span>{{trackedUrlsQty}}</span>)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="blocking-control-container">
+                <div class="blocking-control {{isEnabled}}" title="{{filterBlockBtnTitle}}">
+                    <div class="blocking-control-icon"></div>
+                </div>
+            </div>
+        </div>
+        <div class="filters-list disabled">
+            <div>
+                {{#trackedUrls}}
+                <div class="filter">
+                    <div class="filter-url ellipsis" title="{{url}}">{{url}}</div>
+                    <div class="filter-blocking-button {{blockedBtnClass}}" data-clickable="true" data-url="{{url}}"
+                         title="Click to {{blockedBtnTitle}} this rule for domain">{{blockedBtnText}}</div>
+                    <div class="filter-counter {{counterVisibility}}">{{counter}}</div>
+                </div>
+                {{/trackedUrls}}
+            </div>
+        </div>
+    </div>
+</script>
+
+
+
+<script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+<script src="lib/jquery.nicescroll.min.js"></script>
+<script src="lib/punycode.js"></script>
+<script src="lib/mustache.js"></script>
+<script src="js/vapi.js"></script>
+<script src="js/vapi-common.js"></script>
+<script src="js/vapi-client.js"></script>
+<script src="js/udom.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/popup-incognitor.js"></script>
+
+</body>
+
+</html>

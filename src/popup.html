@@ -1,138 +1,156 @@
 ﻿<!DOCTYPE html>
-<html id="uBO-popup-panel">
+<html id="uBO-popup-panel" xmlns="http://www.w3.org/1999/html">
 
 <head>
-<!--<meta name="viewport" content="width=470">&lt;!&ndash; When showing as a tab in fennec, scale to full size (150px + 320px) &ndash;&gt;-->
+<meta name="viewport" content="width=360">
 <meta charset="utf-8">
-<!--<link rel="stylesheet" href="css/common.css" type="text/css">-->
-<!--<link rel="stylesheet" href="css/popup.css" type="text/css">-->
-<!--<link rel="stylesheet" href="css/vapi-popup.css" type="text/css">&lt;!&ndash; Optional platform-specific CSS rules &ndash;&gt;-->
-<!--<title>uBlock Origin</title>-->
-<link rel="stylesheet" href="css/popup-incognitor.css" type="text/css">
+<link rel="stylesheet" href="css/material-icons.css" type="text/css">
+<link rel="stylesheet" href="css/materialize.min.css" type="text/css">
+<link rel="stylesheet" href="css/popup-privacontrol.css" type="text/css">
 <title>Privacontrol</title>
 </head>
 
-<!--/***********************/-->
-<!-- Set tabindex to work around Chromium issue 304532 -->
-<!-- Set overflow to hidden in order to prevent Safari showing scrollbars while loading -->
+
 <body tabindex="1" style="overflow: hidden;">
 
-<header>
-    <div class="hdr-privacy-status">
-        <div class="hader-logo">
-            <img src="img/header_logo.png" alt=""/>
-        </div>
-        <a target='_blank' href="http://www.privacore.com">> Get more privacy tools</a></div>
-    <div class="hdr-buttons">
-        <div class="hdr-btn close-button"></div>
-        <div class="hdr-btn options-button"></div>
+<div id="statusbar">
+    <div class="today-blocked">
+        <span>Blocked today:</span>
+        <span id="today_blocked_count">1234</span>
     </div>
-</header>
-
-
-<div id="wrapper">
-    <div class="stat-wrapper">
-        <div id="stats-page">
-            <div class="blocked-quantity"></div>
-            <div class="blocked-info">
-                <span>Trackers/ADS blocked on</span>
-                <br/>
-                <div class="tabDomain"></div>
-            </div>
-        </div>
+    <div class="protection-status">
+        <span>Protection:</span>
+        <span id="protection_status">on</span>
     </div>
-
-<!--/***********************/-->
-    <div id="subscription-list-wrapper"></div>
-
-    <div id="whitelist_block" class="hidden">
-        <div class="whitelist-block-label">Site is in a whitelist</div>
+    <div class="protection-status-icon">
+        <i class="material-icons">security</i>
     </div>
-<!--/***********************/-->
-<!--<div id="templates" style="display: none">-->
-    <!--<div><span></span><span data-src="/" data-des="" data-type="*"></span><span data-src="." data-des="" data-type="*"></span><span data-src="." data-des="" data-type="*"></span></div>-->
-    <!--<div id="actionSelector"><span id="dynaAllow"></span><span id="dynaNoop"></span><span id="dynaBlock"></span></div>-->
-    <!--<div id="hotspotTip"></div>-->
-    <!--<div id="tooltip"></div>-->
-<!--/***********************/-->
 </div>
 
-<footer>
-    <div class="reloader disabled">
-        <div>
-            <div class="reload-refresh"></div>
-            <div>Please reload the page to see your changes</div>
-            <div class="reload-close"></div>
+<div id="pages_wrapper">
+    <div class="page active" id="main_page">
+        <div class="header">
+            <a href="#" data-target="slide-out" class="sidenav-trigger header-btn"><i class="material-icons">menu</i></a>
+            <span class="header-title">Findx privacy control</span>
+            <a href="#" class="header-btn settings-btn"><i class="material-icons">settings</i></a>
         </div>
-    </div>
-    <div id="footer-btn-panel">
-        <div class="footer-button" id="pause-blocking-button" title="Pause Blocking">
-            <div class="button-icon pause-icon"></div>
-            <div class="button-label">Pause Blocking</div>
-        </div>
-        <div class="footer-button" id="whitelist-button" title="Whitelist Site">
-            <div class="button-icon whitelist-icon"></div>
-            <div class="button-label">Whitelist Site</div>
-        </div>
-        <div class="footer-button help-button tooltip" id="help-button" title="Help">
-            <div class="button-icon help-icon"></div>
-            <div class="button-label">Help</div>
-        </div>
-    </div>
-    <div id="stats-total"><span></span> TRACKERS/ADS BLOCKED IN TOTAL</div>
-</footer>
 
+        <ul id="slide-out" class="sidenav">
+            <li><a href="#main_page">Main page</a></li>
+            <li><a href="#protection_lists_page">Protection lists</a></li>
+        </ul>
 
+        <div id="search_bar">
+            <input type="text" id="search_input" placeholder="Search here... in private..." class="browser-default" value="">
+            <i class="material-icons" id="search_bar_btn">search</i>
+        </div>
 
-<!--Template of filter item used by Mustache.js-->
-<script id="subscription-template" type="text/html">
-    <div>
-        <div class="subscription-header">
-            <div class="info-container">
-                <div class="arrow"></div>
-                <div class="subscription-text">
-                    <div>
-                        <div class="subscription-title ellipsis " title="{{title}}">{{title}}</div>
-                        <div class="subscription-group ellipsis" title="{{group}}">
-                            {{group}}
-                            <span class="subscription-usage-amount visible-amount">{{blockedUrlsQty}} (<span>{{trackedUrlsQty}}</span>)</span>
+        <div class="main-content">
+            <ul class="tabs tabs-fixed-width">
+                <li class="tab">
+                    <a class="" data-id="search_tab" href="">
+                        <i class="material-icons">search</i>
+                        <span>Search</span>
+                    </a>
+                </li>
+                <li class="tab">
+                    <a class="active" data-id="protection_tab" href="">
+                        <i class="material-icons">security</i>
+                        <span>Protection</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div id="search_tab" class="col s12 tab-frame"><p>Test 1</p></div>
+
+            <div id="protection_tab" class="col s12 tab-frame active">
+                <div class="plates-row">
+                    <div class="plate full-plate protection-status-plate">
+                        <div class="plate-content">
+                            <div class="plate-content-title">www.jyllandsposten.dk</div>
+                            <div class="plate-content-text">
+                                <i class="medium material-icons">security</i>
+                                <span>ON</span>
+                            </div>
+                        </div>
+                        <div class="plate-footer">
+                            <div class="waves-effect waves-brand plate-footer-btn"><i class="material-icons ">flash_on</i></div>
+                        </div>
+                        <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">power_settings_new</i></a>
+                    </div>
+                </div>
+                <div class="plates-row">
+                    <div class="plate mid-plate blocked-on-site-plate">
+                        <div class="plate-content">
+                            <div class="plate-content-title">Blocked on this site</div>
+                            <div class="plate-content-text">
+                                <span>24</span>
+                            </div>
+                        </div>
+                        <!--<div class="waves-effect plate-footer"><i class="material-icons">format_list_bulleted</i></div>-->
+                        <div class="plate-footer">
+                            <div class="waves-effect waves-brand plate-footer-btn"><i class="material-icons ">format_list_bulleted</i></div>
+                        </div>
+                    </div>
+                    <div class="plate mid-plate invisible-plate">
+                        <div class="plate sm-wide-plate grey-plate">
+                            <div class="plate-content">
+                                <div class="plate-content-title">Blocked today</div>
+                                <div class="plate-content-text">
+                                    <span>123</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="plate sm-wide-plate grey-plate">
+                            <div class="plate-content">
+                                <div class="plate-content-title">Blocked in total</div>
+                                <div class="plate-content-text">
+                                    <span>123456</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="blocking-control-container">
-                <div class="blocking-control {{isEnabled}}" title="{{filterBlockBtnTitle}}">
-                    <div class="blocking-control-icon"></div>
-                </div>
-            </div>
+
         </div>
-        <div class="filters-list disabled">
-            <div>
-                {{#trackedUrls}}
-                <div class="filter">
-                    <div class="filter-url ellipsis" title="{{url}}">{{url}}</div>
-                    <div class="filter-blocking-button {{blockedBtnClass}}" data-clickable="true" data-url="{{url}}"
-                         title="Click to {{blockedBtnTitle}} this rule for domain">{{blockedBtnText}}</div>
-                    <div class="filter-counter {{counterVisibility}}">{{counter}}</div>
-                </div>
-                {{/trackedUrls}}
-            </div>
+
+    </div>
+
+    <div class="page" id="protection_lists_page">
+        <div class="header">
+            <a href="#" class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
+            <span class="header-title">Protection lists</span>
+            <a href="#" id="search_filter_btn" class="header-btn"><i class="material-icons">search</i></a>
+            <a href="#" class="header-btn settings-btn"><i class="material-icons">settings</i></a>
         </div>
     </div>
-</script>
+</div>
+
+<div id="footer">
+
+</div>
+
+
+
+
+
 
 
 
 <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
-<script src="lib/jquery.nicescroll.min.js"></script>
-<script src="lib/punycode.js"></script>
-<script src="lib/mustache.js"></script>
+<script src="lib/materialize.min.js"></script>
+<!--<script src="lib/materialize.js"></script>-->
+<!--<script src="lib/jquery.nicescroll.min.js"></script>-->
+<!--<script src="lib/punycode.js"></script>-->
+<!--<script src="lib/mustache.js"></script>-->
 <script src="js/vapi.js"></script>
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-client.js"></script>
 <script src="js/udom.js"></script>
-<script src="js/i18n.js"></script>
-<script src="js/popup-incognitor.js"></script>
+<!--<script src="js/i18n.js"></script>-->
+<!--<script src="js/popup-incognitor.js"></script>-->
+<script src="js/popup-privacontrol.js"></script>
 
 </body>
 
