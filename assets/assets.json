@@ -549,11 +549,11 @@
         "content": "filters",
         "group": "regions",
         "off": true,
-        "title": "ROU: Romanian Ad (ROad) Block List",
+        "title": "ROU: Romanian Ad (ROad) Block List Light",
         "lang": "ro",
         "contentURL": [
             "http://download.privacontrol.com/filters/https.road.adblock.ro.lista.txt",
-            "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.tcptomato.road.block.master.road.block.filters.txt"
+            "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.tcptomato.road.block.master.road.block.filters.light.txt"
         ],
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ftcptomato%2FROad-Block"
     },
