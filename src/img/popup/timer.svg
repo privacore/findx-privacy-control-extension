@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="7017.913 -5296 36 36">
+    <defs>
+        <style>
+            .cls-1{fill:none}.cls-2{fill:#fff}
+        </style>
+    </defs>
+    <g id="timer" transform="translate(6988 -5633)">
+        <g id="_x36_4px_boxes" transform="translate(29.913 337)">
+            <path id="Rectangle_397" d="M0 0h36v36H0z" class="cls-1" data-name="Rectangle 397"/>
+        </g>
+        <g id="Production" transform="translate(33.85 338.688)">
+            <g id="Group_396" data-name="Group 396">
+                <path id="Path_395" d="M22.188 19.739v-6.051h-2.813v6.052a2.531 2.531 0 1 0 2.812 0zm8.512-7.451l2.514-3.05-2.174-1.789-2.489 3.02a13.692 13.692 0 0 0-6.363-2.336v-2.32H25V3h-8.437v2.813h2.813v2.32A13.8 13.8 0 1 0 30.7 12.288zm-2.082 17.39a11.078 11.078 0 1 1 3.245-7.834 11.008 11.008 0 0 1-3.248 7.834z" class="cls-2" data-name="Path 395" transform="translate(-7 -3)"/>
+            </g>
+        </g>
+    </g>
+</svg>

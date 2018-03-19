@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="7008 -4275 24 24">
+    <defs>
+        <style>
+            .cls-1{clip-path:url(#clip-path)}.cls-2{fill:#2191d0}.cls-3{clip-path:url(#clip-path-4)}.cls-4{fill:#fff}
+        </style>
+        <clipPath id="clip-path">
+            <path id="Rectangle_757" d="M0 0h24v24H0z" data-name="Rectangle 757"/>
+        </clipPath>
+        <clipPath id="clip-path-4">
+            <path id="Rectangle_758" d="M0 0h15.117v15.173H0z" data-name="Rectangle 758"/>
+        </clipPath>
+    </defs>
+    <g id="Findx_app_icon" transform="translate(6988 -4424)">
+        <g id="Group_828" class="cls-1" data-name="Group 828" transform="translate(20 149)">
+            <g id="Group_827" class="cls-1" data-name="Group 827">
+                <path id="Path_608" d="M22.5 24h-21A1.5 1.5 0 0 1 0 22.5v-21A1.5 1.5 0 0 1 1.5 0h21A1.5 1.5 0 0 1 24 1.5v21a1.5 1.5 0 0 1-1.5 1.5" class="cls-2" data-name="Path 608"/>
+            </g>
+        </g>
+        <g id="Group_830" class="cls-1" data-name="Group 830" transform="translate(20 149)">
+            <g id="Group_829" class="cls-3" data-name="Group 829" transform="translate(4.842 4.012)">
+                <path id="Path_609" d="M116.871 86.4a12.834 12.834 0 0 0-8.034 3.436 4.916 4.916 0 0 1 .963-3.436 1.5 1.5 0 0 0-1.261-.8c-1.884 0-2.231 2.822-1.4 5.873-3.422 3.708-5.053 8.264-2.644 9.3 0-2.142 1.214-4.983 3.3-7.416 1.266 2.967 3.577 5.658 6.6 5.658.609 0 .6-.216.6-.216-2.311-.722-4.828-3.788-5.78-6.909a13.029 13.029 0 0 1 8.728-3.609c1.05-.886.4-1.88-1.078-1.88" class="cls-4" data-name="Path 609" transform="translate(-103.347 -85.6)"/>
+            </g>
+        </g>
+    </g>
+</svg>

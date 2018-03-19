@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="7254 -4743 24 24">
+    <defs>
+        <style>
+            .cls-1{fill:none}.cls-2{fill:#fff;fill-rule:evenodd;opacity:.87}
+        </style>
+    </defs>
+    <g id="close_drawer" transform="translate(6988 -4759)">
+        <path id="rectangle" d="M0 0h24v24H0z" class="cls-1" transform="translate(266 16)"/>
+        <path id="path" d="M19 6.4L17.6 5 12 10.6 6.4 5 5 6.4l5.6 5.6L5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z" class="cls-2" transform="translate(266 16)"/>
+    </g>
+</svg>
