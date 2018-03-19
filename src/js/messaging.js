@@ -195,6 +195,21 @@ var onMessage = function(request, sender, callback) {
     case 'openHelpPage':
         vAPI.openHelpPage();
         break;
+    case 'openRatePage':
+        vAPI.openRatePage();
+        break;
+    case 'openFindxMobile':
+        vAPI.openFindxMobile();
+        break;
+    case 'openTrackingMonitor':
+        vAPI.openTrackingMonitor(request.tabId);
+        break;
+    case 'openFeedback':
+        vAPI.openFeedback();
+        break;
+    case 'openSearch':
+        vAPI.openSearch(request.query, request.searchType);
+        break;
         /**********************************/
 
     default:
@@ -587,12 +602,6 @@ var onMessage = function(request, sender, callback) {
         if ( request.isRootFrame && µb.logger.isEnabled() ) {
             µb.logCosmeticFilters(tabId);
         }
-        // Changed from 11.01.2016 by Igor Petrenko. Don't know what is it.
-        // If leave it as default - skipCosmeticFiltering always be false and in case when EasyList filter
-        //      disabled for some domain - ads will be blocked anyway.
-        // And if it set as true if you enable EasyList on a domain it will blocks ads.
-        if (response)
-            response.noCosmeticFiltering = true;
         break;
 
     case 'retrieveGenericCosmeticSelectors':

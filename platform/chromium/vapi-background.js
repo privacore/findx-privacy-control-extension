@@ -646,8 +646,47 @@ vAPI.openOptionsPage = function () {
 };
 
 vAPI.openHelpPage = function () {
-    var helpPageUrl = µBlock.helpPageUrl;
+    var helpPageUrl = µBlock.aboutPageUrl;
     vAPI.tabs.open({url: helpPageUrl, select: true});
+};
+
+vAPI.openRatePage = function () {
+    var browserType = 'chrome';
+    if (navigator.userAgent.match(/Firefox/)) {
+        browserType = "firefox";
+    }
+
+    var ratePageUrl = µBlock.ratePageUrl[browserType];
+    vAPI.tabs.open({url: ratePageUrl, select: true});
+};
+
+vAPI.openFindxMobile = function () {
+    var findxMobileUrl = µBlock.findxMobileUrl;
+    vAPI.tabs.open({url: findxMobileUrl, select: true});
+};
+
+vAPI.openTrackingMonitor = function (tabId) {
+    var trackingMonitorUrl = µBlock.trackingMonitorUrl + tabId;
+    vAPI.tabs.open({url: trackingMonitorUrl, select: true});
+};
+
+vAPI.openFeedback = function (tabId) {
+    var feedbackEmail = 'mailto:' + µBlock.feedbackEmail;
+    vAPI.tabs.open({url: feedbackEmail, select: true});
+};
+
+vAPI.openSearch = function (query, type) {
+    var locale = "default";
+    var searchUrl = µBlock.searchDomain[locale] + µBlock.searchQueries[type];
+    if (!searchUrl) return;
+
+    if (type === "calculator") {
+        query = encodeURIComponent(query);
+    }
+
+    searchUrl = searchUrl.replace(/\{\{query\}\}/, query || '');
+
+    vAPI.tabs.open({url: searchUrl, select: true});
 };
 
 

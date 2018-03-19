@@ -182,7 +182,30 @@ var µBlock = (function() { // jshint ignore:line
         // so that I don't have to care for last comma
         dummy: 0,
         optionsUrl: "dashboard.html",
-        helpPageUrl: "https://help.privacontrol.com"
+        aboutPageUrl: "https://get.findx.com",
+        findxMobileUrl: "https://get.findx.com/mobile",
+        trackingMonitorUrl: "logger-ui.html#tab_",
+        helpPageUrl: "https://help.privacontrol.com",
+        feedbackEmail: "privacycontrol@privacore.com",
+
+        ratePageUrl: {
+            'chrome': '',
+            "firefox": ''
+        },
+
+        searchDomain: {
+            default: "https://www.findx.com",
+            dk: "https://www.findx.dk"
+        } ,
+        searchQueries: {
+            text: "/web?q={{query}}",
+            images: "/images?q={{query}}",
+            videos: "/videos?q={{query}}",
+            maps: "/maps?q={{query}}&search_header_collapsed=false",
+            timer: "/web?q=Timer {{query}}",
+            calculator: "/web?q=Calculator {{query}}",
+            weather: "/web?q=Weather {{query}}"
+        }
     };
 
 })();
