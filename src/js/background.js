@@ -119,7 +119,9 @@ var µBlock = (function() { // jshint ignore:line
 
         localSettings: {
             blockedRequestCount: 0,
-            allowedRequestCount: 0
+            allowedRequestCount: 0,
+            blockedToday: 0,
+            blockedTodayDate: ""
         },
         localSettingsLastModified: 0,
         localSettingsLastSaved: 0,

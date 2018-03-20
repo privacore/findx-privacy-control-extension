@@ -634,6 +634,8 @@ PageStore.prototype.journalProcess = function(fromTimer) {
     this.perLoadAllowedRequestCount += aggregateCounts >>> 16 & 0xFFFF;
     this.journalLastCommitted = undefined;
 
+    this.updateBlockedTodayCount(aggregateCounts & 0xFFFF);
+
     // https://github.com/chrisaljoudi/uBlock/issues/905#issuecomment-76543649
     //   No point updating the badge if it's not being displayed.
     if ( (aggregateCounts & 0xFFFF) && µb.userSettings.showIconBadge ) {
@@ -642,7 +644,7 @@ PageStore.prototype.journalProcess = function(fromTimer) {
 
     // Everything before pivot does not originate from current page -- we still
     // need to bump global blocked/allowed counts.
-    for ( i = 0; i < pivot; i += 2 ) {
+    for ( i = 0; i < pivot; i += 3 ) {
         aggregateCounts += journal[i+1];
     }
     if ( aggregateCounts !== 0 ) {
@@ -652,6 +654,23 @@ PageStore.prototype.journalProcess = function(fromTimer) {
     }
     journal.length = 0;
 };
+
+/******************************************************************************/
+
+// Igor. 19.03.18
+// Calculate total blocked in a day (00:00 - 23:59)
+PageStore.prototype.updateBlockedTodayCount = function (addCount) {
+    var todayDate = new Date().toJSON().slice(0,10);
+
+    if (todayDate === µb.localSettings.blockedTodayDate) {
+        µb.localSettings.blockedToday += addCount;
+    }
+    else {
+        µb.localSettings.blockedTodayDate = todayDate;
+        µb.localSettings.blockedToday = addCount;
+    }
+};
+
 
 /******************************************************************************/
 

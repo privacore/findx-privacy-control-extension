@@ -342,6 +342,15 @@ var getAllFiltersInUse = function () {
     return filters;
 };
 
+var getBlockedTodayCount = function () {
+    var todayDate = new Date().toJSON().slice(0,10);
+    if (todayDate !== µb.localSettings.blockedTodayDate) {
+        µb.localSettings.blockedTodayDate = todayDate;
+        µb.localSettings.blockedToday = 0;
+    }
+    return µb.localSettings.blockedToday;
+};
+
 /******************************************************************************/
 
 var popupDataFromTabId = function(tabId, tabTitle) {
@@ -389,6 +398,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         }
         r.pageBlockedRequestCount = pageStore.perLoadBlockedRequestCount;
         r.pageAllowedRequestCount = pageStore.perLoadAllowedRequestCount;
+        r.blockedTodayCount = getBlockedTodayCount();
         r.netFilteringSwitch = pageStore.getNetFilteringSwitch();
         r.hostnameDict = getHostnameDict(pageStore.hostnameToCountMap);
         r.contentLastModified = pageStore.contentLastModified;

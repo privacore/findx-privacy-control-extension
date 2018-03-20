@@ -350,10 +350,9 @@
 
     /***************************************************************************/
 
-    // TODO: show blocked today
     var showTodayBlockedCount = function () {
-        $("#statusbar #today_blocked_count").text('0');
-        $(".blocked-today-plate .plate-content-text span").text('0');
+        $(".blocked-today-plate .plate-content-text span").text(popupData.blockedTodayCount);
+        $("#statusbar #today_blocked_count").text(popupData.blockedTodayCount);
     };
 
     /***************************************************************************/
@@ -889,6 +888,7 @@
 
     var getPopupData = function (tabId, isInitial) {
         var onDataReceived = function (response) {
+            console.log("response: ", response);
             cachePopupData(response);
             renderPopup(isInitial);
             pollForContentChange();
