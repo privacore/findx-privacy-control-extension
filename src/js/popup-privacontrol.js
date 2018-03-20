@@ -161,6 +161,8 @@
 
         handleCloseProtectionListsBtn();
         handleOpenSearchTabBtn();
+
+        handleShareDialog();
     };
 
     var handleMainPageTabs = function () {
@@ -246,7 +248,7 @@
                 openFeedback();
                 break;
             case "share":
-
+                openShareDialog();
                 break;
             case "findx_mobile":
                 openFindxMobile();
@@ -282,7 +284,7 @@
             let action = $(ev.currentTarget).data("action");
             switch (action) {
                 case 'share':
-
+                    openShareDialog();
                     break;
                 case 'logo':
                     openHelpPage();
@@ -302,6 +304,40 @@
     var openRatePage = function () {
         messager.send('popupPanel', {what: 'openRatePage'});
         vAPI.closePopup();
+    };
+
+    /***************************************************************************/
+
+    var handleShareDialog = function () {
+        $('.share-dialog .share-dialog-header .share-dialog-close-btn').off("click");
+        $('.share-dialog .share-dialog-header .share-dialog-close-btn').on("click", function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+
+            closeShareDialog();
+        });
+
+        $('.share-dialog .share-dialog-controls .share-btn').off("click");
+        $('.share-dialog .share-dialog-controls .share-btn').on("click", function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+
+            onShareBtnClick($(ev.currentTarget).data("social"));
+            closeShareDialog();
+        });
+    };
+
+    var openShareDialog = function () {
+        $('body').addClass('share-active');
+        switchToMainPageTab($('.main-content .tabs .tab a[data-id="protection_tab"]'));
+        closeProtectionListsPage();
+    };
+    var closeShareDialog = function () {
+        $('body').removeClass('share-active');
+    };
+
+    var onShareBtnClick = function (social) {
+        //TODO: social sharing
     };
 
     /***************************************************************************/

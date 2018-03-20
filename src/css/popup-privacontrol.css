@@ -413,9 +413,9 @@ body:not(.protection-off) .protection-status-off {
 }
 
 
-/******* Protection stopped *******/
+/******* Protection stopped, Share dialog *******/
 
-.protection-stopped-block {
+.protection-stopped-dialog, .share-dialog {
     position: absolute;
     left: 0;
     top: 0;
@@ -426,11 +426,17 @@ body:not(.protection-off) .protection-status-off {
     box-sizing: border-box;
     padding: 17px 37px;
     display: none;
+    align-items: center;
 }
-body.protection-stopped .protection-stopped-block {
-    display: block;
+body.protection-stopped .protection-stopped-dialog,
+body.share-active .share-dialog {
+    display: flex;
 }
-.protection-stopped-inner {
+body.share-active .protection-stopped-dialog {
+    display: none;
+}
+.protection-stopped-inner,
+.share-dialog-inner {
     width: 100%;
     /* height: 100%; */
     border-radius: 2px;
@@ -438,6 +444,10 @@ body.protection-stopped .protection-stopped-block {
     box-shadow: 0 19px 38px 0 rgba(0, 0, 0, 0.26);
     padding: 22px 20px;
 }
+.share-dialog-inner {
+    padding: 16px;
+}
+
 .protection-stopped-title {
     font-family: Roboto-medium;
     font-size: 20px;
@@ -466,6 +476,61 @@ body.protection-stopped .protection-stopped-block {
 #protection_stopped_btn img {
     width: 24px;
     height: 24px;
+}
+
+
+.share-dialog-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.share-dialog-header .share-dialog-title {
+    font-family: Roboto-medium;
+    font-size: 20px;
+    line-height: 24px;
+    color: #2191D0;
+    cursor: default;
+    margin-left: 5px;
+}
+.share-dialog-header .share-dialog-close-btn {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+.share-dialog-controls {
+    margin-top: 5px;
+}
+.share-dialog-control {
+    height: 56px;
+    display: flex;
+    align-items: center;
+}
+.share-dialog-control .share-btn {
+    height: 40px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    cursor: pointer;
+}
+.share-dialog-control .share-btn svg {
+    width: 40px;
+    margin-right: 16px;
+}
+.share-dialog-control .share-btn.share-facebook:hover svg .fb-svg-icon {
+    fill: #3a589b;
+    opacity: 1;
+}
+.share-dialog-control .share-btn.share-twitter:hover svg .twitter-svg-icon {
+    fill: #598dca;
+    opacity: 1;
+}
+.share-dialog-control .share-btn.share-linkedin:hover svg .linkedin-svg-icon {
+    fill: #007ab9;
+    opacity: 1;
+}
+.share-dialog-control .share-btn > span {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.87);
 }
 
 

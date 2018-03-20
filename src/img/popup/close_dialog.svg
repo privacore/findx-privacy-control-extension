@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="7732 -4447 24 24">
+    <defs>
+        <style>
+            .cls-1{opacity:.37}.cls-2{fill:none}.cls-3{fill-rule:evenodd}
+        </style>
+    </defs>
+    <g id="close_dialog" transform="translate(6987 -4786)">
+        <g id="close_dialog-2" class="cls-1" data-name="close_dialog" transform="translate(260 261)">
+            <path id="rectangle" d="M0 0h24v24H0z" class="cls-2" transform="translate(485 78)"/>
+            <path id="path" d="M19 6.4L17.6 5 12 10.6 6.4 5 5 6.4l5.6 5.6L5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z" class="cls-3" transform="translate(485 78)"/>
+        </g>
+    </g>
+</svg>
