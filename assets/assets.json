@@ -31,10 +31,7 @@
             "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.filters.filters.txt",
             "assets/ublock/filters.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FuBlockOrigin%2FuAssets%2Fissues",
-        "off": true,
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FuBlockOrigin%2FuAssets%2Fissues"
     },
     "ublock-badware": {
         "content": "filters",
@@ -45,10 +42,7 @@
             "assets/ublock/badware.txt"
         ],
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fgorhill%2FuBlock%2Fwiki%2FBadware-risks",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fgorhill%2FuBlock%2Fwiki%2FBadware-risks",
-        "off": true,
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fgorhill%2FuBlock%2Fwiki%2FBadware-risks"
     },
     "ublock-experimental": {
         "content": "filters",
@@ -60,9 +54,7 @@
             "assets/ublock/experimental.txt"
         ],
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fgorhill%2FuBlock%2Fwiki%2FExperimental-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fgorhill%2FuBlock%2Fwiki%2FExperimental-filters",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fgorhill%2FuBlock%2Fwiki%2FExperimental-filters"
     },
     "ublock-privacy": {
         "content": "filters",
@@ -71,10 +63,7 @@
         "contentURL": [
             "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.filters.privacy.txt",
             "assets/ublock/privacy.txt"
-        ],
-        "off": true,
-        "defaultOff": true,
-        "inUse": true
+        ]
     },
     "ublock-abuse": {
         "content": "filters",
@@ -83,20 +72,14 @@
         "contentURL": [
             "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.filters.resource.abuse.txt",
             "assets/ublock/resource-abuse.txt"
-        ],
-        "off": true,
-        "defaultOff": true,
-        "inUse": true
+        ]
     },
     "ublock-annoyances": {
         "content": "filters",
         "group": "default",
         "title": "uBlock filters – Annoyances",
         "off": true,
-        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.filters.annoyances.txt",
-        "off": true,
-        "defaultOff": true,
-        "inUse": true
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.filters.annoyances.txt"
     },
     "ublock-unbreak": {
         "content": "filters",
@@ -105,10 +88,7 @@
         "contentURL": [
             "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.filters.unbreak.txt",
             "assets/ublock/unbreak.txt"
-        ],
-        "off": true,
-        "defaultOff": true,
-        "inUse": true
+        ]
     },
     "awrl-0": {
         "content": "filters",
@@ -116,9 +96,7 @@
         "off": true,
         "title": "Adblock Warning Removal List",
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.antiadblockfilters.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F"
     },
     "adguard-generic": {
         "content": "filters",
@@ -127,9 +105,7 @@
         "title": "Adguard Base Filters",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.2.without.easylist.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "adguard-mobile": {
         "content": "filters",
@@ -139,9 +115,7 @@
         "ua": "mobile",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.11.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "easylist": {
         "content": "filters",
@@ -154,9 +128,7 @@
             "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.thirdparties.easylist.downloads.adblockplus.org.easylist.txt",
             "assets/thirdparties/easylist-downloads.adblockplus.org/easylist.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F"
     },
     "adguard-spyware": {
         "content": "filters",
@@ -165,9 +137,7 @@
         "title": "Adguard Spyware Filters",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.3.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "easyprivacy": {
         "content": "filters",
@@ -180,9 +150,7 @@
             "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.ublockorigin.uassets.master.thirdparties.easylist.downloads.adblockplus.org.easyprivacy.txt",
             "assets/thirdparties/easylist-downloads.adblockplus.org/easyprivacy.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
-        "defaultOff": false,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F"
     },
     "fanboy-enhanced": {
         "content": "filters",
@@ -190,18 +158,14 @@
         "off": true,
         "title": "Fanboy’s Enhanced Tracking List",
         "contentURL": "http://download.privacontrol.com/filters/https.www.fanboy.co.nz.enhancedstats.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues"
     },
     "disconnect-malvertising": {
         "content": "filters",
         "group": "malware",
         "off": true,
         "title": "Malvertising filter list by Disconnect",
-        "contentURL": "http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.malvertising.txt",
-        "defaultOff": true,
-        "inUse": true
+        "contentURL": "http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.malvertising.txt"
     },
     "malware-0": {
         "content": "filters",
@@ -210,9 +174,7 @@
         "contentURL": [
             "http://download.privacontrol.com/filters/https.www.malwaredomainlist.com.hostslist.hosts.txt",
             "assets/thirdparties/www.malwaredomainlist.com/hostslist/hosts.txt"
-        ],
-        "defaultOff": false,
-        "inUse": true
+        ]
     },
     "malware-1": {
         "content": "filters",
@@ -224,18 +186,14 @@
             "assets/thirdparties/mirror1.malwaredomains.com/files/justdomains.txt",
             "assets/thirdparties/mirror1.malwaredomains.com/files/justdomains"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fwww.malwaredomains.com%2F",
-        "defaultOff": false,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fwww.malwaredomains.com%2F"
     },
     "disconnect-malware": {
         "content": "filters",
         "group": "malware",
         "off": true,
         "title": "Malware filter list by Disconnect",
-        "contentURL": "http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.malware.txt",
-        "defaultOff": true,
-        "inUse": true
+        "contentURL": "http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.malware.txt"
     },
     "spam404-0": {
         "content": "filters",
@@ -243,9 +201,7 @@
         "off": true,
         "title": "Spam404",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dawsey21.lists.master.adblock.list.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fwww.spam404.com%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fwww.spam404.com%2F"
     },
     "adguard-annoyance": {
         "content": "filters",
@@ -254,9 +210,7 @@
         "title": "Adguard’s Annoyance List",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.14.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "fanboy-thirdparty_social": {
         "content": "filters",
@@ -264,9 +218,7 @@
         "off": true,
         "title": "Fanboy’s Anti-Thirdparty Social (see warning inside list)",
         "contentURL": "http://download.privacontrol.com/filters/https.fanboy.co.nz.fanboy.antifacebook.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues"
     },
     "fanboy-annoyance": {
         "content": "filters",
@@ -278,9 +230,7 @@
             "http://download.privacontrol.com/filters/https.fanboy.co.nz.fanboy.annoyance.txt",
             "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.fanboy.annoyance.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F"
     },
     "fanboy-cookiemonster": {
         "content": "filters",
@@ -288,9 +238,7 @@
         "off": true,
         "title": "Fanboy’s Cookiemonster List",
         "contentURL": "http://download.privacontrol.com/filters/https.secure.fanboy.co.nz.fanboy.cookiemonster.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fryanbr%2Ffanboy-adblock%2Fissues"
     },
     "fanboy-social": {
         "content": "filters",
@@ -302,9 +250,7 @@
             "http://download.privacontrol.com/filters/https.fanboy.co.nz.fanboy.social.txt",
             "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.fanboy.social.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2F"
     },
     "dpollock-0": {
         "content": "filters",
@@ -313,9 +259,7 @@
         "off": true,
         "title": "Dan Pollock’s hosts file",
         "contentURL": "http://download.privacontrol.com/filters/http.someonewhocares.org.hosts.hosts.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fsomeonewhocares.org%2Fhosts%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fsomeonewhocares.org%2Fhosts%2F"
     },
     "hphosts": {
         "content": "filters",
@@ -327,9 +271,7 @@
             "http://download.privacontrol.com/filters/https.hosts.file.net.5cad.servers.txt",
             "http://download.privacontrol.com/filters/http.hosts.file.net.5cad.servers.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fhosts-file.net%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fhosts-file.net%2F"
     },
     "mvps-0": {
         "content": "filters",
@@ -338,9 +280,7 @@
         "off": true,
         "title": "MVPS HOSTS",
         "contentURL": "http://download.privacontrol.com/filters/http.winhelp2002.mvps.org.hosts.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fwinhelp2002.mvps.org%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fwinhelp2002.mvps.org%2F"
     },
     "plowe-0": {
         "content": "filters",
@@ -352,10 +292,7 @@
             "assets/thirdparties/pgl.yoyo.org/as/serverlist.txt",
             "assets/thirdparties/pgl.yoyo.org/as/serverlist"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fpgl.yoyo.org%2Fadservers%2F",
-        "off": true,
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fpgl.yoyo.org%2Fadservers%2F"
     },
     "ara-0": {
         "content": "filters",
@@ -364,9 +301,7 @@
         "title": "ara: Liste AR",
         "lang": "ar",
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.liste.ar.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D98",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D98"
     },
     "BGR-0": {
         "content": "filters",
@@ -375,9 +310,7 @@
         "title": "BGR: Bulgarian Adblock list",
         "lang": "bg",
         "contentURL": "http://download.privacontrol.com/filters/https.stanev.org.abp.adblock.bg.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fstanev.org%2Fabp%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fstanev.org%2Fabp%2F"
     },
     "CHN-0": {
         "content": "filters",
@@ -386,9 +319,7 @@
         "title": "CHN: EasyList China (中文)",
         "lang": "zh",
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistchina.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fabpchina.org%2Fforum%2Fforum.php",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fabpchina.org%2Fforum%2Fforum.php"
     },
     "CHN-1": {
         "content": "filters",
@@ -398,9 +329,7 @@
         "lang": "zh",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.cjx82630.cjxlist.master.cjxlist.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fcjx82630%2Fcjxlist",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fabpchina.org%2Fforum%2Fforum.php%3Fmod%3Dviewthread%26tid%3D29667",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fabpchina.org%2Fforum%2Fforum.php%3Fmod%3Dviewthread%26tid%3D29667"
     },
     "CZE-0": {
         "content": "filters",
@@ -409,9 +338,7 @@
         "title": "CZE, SVK: EasyList Czech and Slovak",
         "lang": "cs sk",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.tomasko126.easylistczechandslovak.master.filters.ublock.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ftomasko126%2Feasylistczechandslovak",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ftomasko126%2Feasylistczechandslovak"
     },
     "DEU-0": {
         "content": "filters",
@@ -423,9 +350,7 @@
             "http://download.privacontrol.com/filters/https.easylist.to.easylistgermany.easylistgermany.txt",
             "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistgermany.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D90",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D90"
     },
     "DNK-0": {
         "content": "filters",
@@ -434,9 +359,7 @@
         "title": "DNK: Schacks Adblock Plus liste",
         "lang": "da",
         "contentURL": "http://download.privacontrol.com/filters/https.adblock.dk.block.csv.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fhenrik.schack.dk%2Fadblock%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fhenrik.schack.dk%2Fadblock%2F"
     },
     "EST-0": {
         "content": "filters",
@@ -445,9 +368,7 @@
         "title": "EST: Eesti saitidele kohandatud filter",
         "lang": "et",
         "contentURL": "http://download.privacontrol.com/filters/https.adblock.ee.list.php.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fadblock.ee%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fadblock.ee%2F"
     },
     "FIN-0": {
         "content": "filters",
@@ -456,9 +377,7 @@
         "title": "FIN: Finnish Addition to Easylist",
         "lang": "fi",
         "contentURL": "http://download.privacontrol.com/filters/https.adb.juvander.net.finland.adb.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fwww.juvander.fi%2FAdblockFinland",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fwww.juvander.fi%2FAdblockFinland"
     },
     "FRA-0": {
         "content": "filters",
@@ -467,9 +386,7 @@
         "title": "FRA: EasyList Liste FR",
         "lang": "ar fr",
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.liste.fr.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D91",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D91"
     },
     "GRC-0": {
         "content": "filters",
@@ -478,9 +395,7 @@
         "title": "GRC: Greek AdBlock Filter",
         "lang": "el",
         "contentURL": "http://download.privacontrol.com/filters/https.www.void.gr.kargig.void.gr.filters.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fkargig%2Fgreek-adblockplus-filter",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fkargig%2Fgreek-adblockplus-filter"
     },
     "HUN-0": {
         "content": "filters",
@@ -489,9 +404,7 @@
         "title": "HUN: hufilter",
         "lang": "hu",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.szpeter80.hufilter.master.hufilter.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fszpeter80%2Fhufilter",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fszpeter80%2Fhufilter"
     },
     "IDN-0": {
         "content": "filters",
@@ -503,9 +416,7 @@
             "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.abpindo.indonesianadblockrules.master.subscriptions.abpindo.txt",
             "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.heradhis.indonesianadblockrules.master.subscriptions.abpindo.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FABPindo%2Findonesianadblockrules",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FABPindo%2Findonesianadblockrules"
     },
     "IRN-0": {
         "content": "filters",
@@ -514,9 +425,7 @@
         "title": "IRN: Adblock-Iran",
         "lang": "fa",
         "contentURL": "http://download.privacontrol.com/filters/https.cdn.rawgit.com.farrokhi.adblock.iran.master.filter.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ffarrokhi%2Fadblock-iran",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ffarrokhi%2Fadblock-iran"
     },
     "ISL-0": {
         "content": "filters",
@@ -525,9 +434,7 @@
         "title": "ISL: Icelandic ABP List",
         "lang": "is",
         "contentURL": "http://download.privacontrol.com/filters/https.adblock.gardar.net.is.abp.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fadblock.gardar.net%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fadblock.gardar.net%2F"
     },
     "ISR-0": {
         "content": "filters",
@@ -536,9 +443,7 @@
         "title": "ISR: EasyList Hebrew",
         "lang": "he",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.easylist.easylisthebrew.master.easylisthebrew.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Feasylist%2FEasyListHebrew",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Feasylist%2FEasyListHebrew"
     },
     "ITA-0": {
         "content": "filters",
@@ -547,9 +452,7 @@
         "title": "ITA: EasyList Italy",
         "lang": "it",
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistitaly.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D96",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D96"
     },
     "ITA-1": {
         "content": "filters",
@@ -557,9 +460,7 @@
         "off": true,
         "title": "ITA: ABP X Files",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.gioxx.xfiles.master.filtri.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fxfiles.noads.it%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fxfiles.noads.it%2F"
     },
     "JPN-0": {
         "content": "filters",
@@ -568,9 +469,7 @@
         "title": "JPN: ABP Japanese filters (日本用フィルタ)",
         "lang": "ja",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.k2jp.abp.japanese.filters.master.abpjf.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fk2jp%2Fabp-japanese-filters%2Fwiki%2FSupport_Policy",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fk2jp%2Fabp-japanese-filters%2Fwiki%2FSupport_Policy"
     },
     "JPN-1": {
         "content": "filters",
@@ -580,9 +479,7 @@
         "lang": "ja",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.7.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "KOR-0": {
         "content": "filters",
@@ -591,9 +488,7 @@
         "title": "KOR: Korean Adblock List",
         "lang": "ko",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.gfmaster.adblock.korea.contrib.master.filter.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fgfmaster%2Fadblock-korea-contrib",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fgfmaster%2Fadblock-korea-contrib"
     },
     "KOR-1": {
         "content": "filters",
@@ -602,9 +497,7 @@
         "title": "KOR: YousList",
         "lang": "ko",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.yous.youslist.master.youslist.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fyous%2FYousList",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fyous%2FYousList"
     },
     "LTU-0": {
         "content": "filters",
@@ -613,9 +506,7 @@
         "title": "LTU: Adblock Plus Lithuania",
         "lang": "lt",
         "contentURL": "http://download.privacontrol.com/filters/http.margevicius.lt.easylistlithuania.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fmargevicius.lt%2Feasylist_lithuania%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fmargevicius.lt%2Feasylist_lithuania%2F"
     },
     "LVA-0": {
         "content": "filters",
@@ -624,9 +515,7 @@
         "title": "LVA: Latvian List",
         "lang": "lv",
         "contentURL": "http://download.privacontrol.com/filters/https.notabug.org.latvian.list.adblock.latvian.raw.master.lists.latvian.list.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fnotabug.org%2Flatvian-list%2Fadblock-latvian",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fnotabug.org%2Flatvian-list%2Fadblock-latvian"
     },
     "NLD-0": {
         "content": "filters",
@@ -635,9 +524,16 @@
         "title": "NLD: EasyList Dutch",
         "lang": "nl",
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistdutch.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D100",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D100"
+    },
+    "NOR-0": {
+        "content": "filters",
+        "group": "regions",
+        "off": true,
+        "title": "NOR: Dandelion Sprouts norske filtre",
+        "lang": "nb",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dandelionsprout.adfilt.master.experimentalnorwegianlist.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FDandelionSprout%2Fadfilt"
     },
     "POL-0": {
         "content": "filters",
@@ -647,23 +543,19 @@
         "lang": "pl",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.majkiit.polish.ads.filter.master.polish.adblock.filters.adblock.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FMajkiIT%2Fpolish-ads-filter%2Fissues",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FMajkiIT%2Fpolish-ads-filter%23polish-filters-for-adblock-ublock-origin--adguard",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FMajkiIT%2Fpolish-ads-filter%23polish-filters-for-adblock-ublock-origin--adguard"
     },
     "ROU-1": {
         "content": "filters",
         "group": "regions",
         "off": true,
-        "title": "ROU: Romanian Ad (ROad) Block List",
+        "title": "ROU: Romanian Ad (ROad) Block List Light",
         "lang": "ro",
         "contentURL": [
             "http://download.privacontrol.com/filters/https.road.adblock.ro.lista.txt",
-            "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.tcptomato.road.block.master.road.block.filters.txt"
+            "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.tcptomato.road.block.master.road.block.filters.light.txt"
         ],
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ftcptomato%2FROad-Block",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ftcptomato%2FROad-Block"
     },
     "RUS-0": {
         "content": "filters",
@@ -673,9 +565,7 @@
         "lang": "be ru uk",
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.advblock.cssfixes.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D102",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewtopic.php%3Ff%3D102%26t%3D22512",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewtopic.php%3Ff%3D102%26t%3D22512"
     },
     "RUS-2": {
         "content": "filters",
@@ -685,9 +575,7 @@
         "lang": "be ru uk",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.1.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforum.adguard.com%2Fforumdisplay.php%3F69-%25D0%25A4%25D0%25B8%25D0%25BB%25D1%258C%25D1%2582%25D1%2580%25D1%258B-Adguard",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fru%2Fgeneral%2Fadguard-ad-filters%23russian",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fru%2Fgeneral%2Fadguard-ad-filters%23russian"
     },
     "spa-0": {
         "content": "filters",
@@ -696,9 +584,7 @@
         "title": "spa: EasyList Spanish",
         "lang": "es",
         "contentURL": "http://download.privacontrol.com/filters/https.easylist.downloads.adblockplus.org.easylistspanish.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D103",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fforums.lanik.us%2Fviewforum.php%3Ff%3D103"
     },
     "spa-1": {
         "content": "filters",
@@ -708,9 +594,7 @@
         "lang": "es pt",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.9.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "SVN-0": {
         "content": "filters",
@@ -719,9 +603,7 @@
         "title": "SVN: Slovenian List",
         "lang": "sl",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.betterwebleon.slovenian.list.master.filters.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fbetterwebleon%2Fslovenian-list",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fbetterwebleon%2Fslovenian-list"
     },
     "SWE-1": {
         "content": "filters",
@@ -730,9 +612,7 @@
         "title": "SWE: Frellwit's Swedish Filter",
         "lang": "sv",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.lassekongo83.frellwits.filter.lists.master.frellwits.swedish.filter.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Flassekongo83%2FFrellwits-filter-lists",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Flassekongo83%2FFrellwits-filter-lists"
     },
     "TUR-0": {
         "content": "filters",
@@ -742,9 +622,7 @@
         "lang": "tr",
         "contentURL": "http://download.privacontrol.com/filters/https.filters.adtidy.org.extension.ublock.filters.13.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FAdguardTeam%2FAdguardFilters%23adguard-filters",
-        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters",
-        "defaultOff": true,
-        "inUse": true
+        "instructionURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fkb.adguard.com%2Fen%2Fgeneral%2Fadguard-ad-filters"
     },
     "VIE-1": {
         "content": "filters",
@@ -753,8 +631,6 @@
         "title": "VIE: ABPVN List",
         "lang": "vi",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.abpvn.abpvn.master.filter.abpvn.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fabpvn.com%2F",
-        "defaultOff": true,
-        "inUse": true
+        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fabpvn.com%2F"
     }
 }
