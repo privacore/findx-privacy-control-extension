@@ -197,7 +197,7 @@ var µBlock = (function() { // jshint ignore:line
 
         searchDomain: {
             default: "https://www.findx.com",
-            dk: "https://www.findx.dk"
+            da: "https://www.findx.dk"
         } ,
         searchQueries: {
             text: "/web?q={{query}}",

@@ -188,7 +188,9 @@ uDom('[title]').forEach(function(elem) {
 });
 
 uDom('[placeholder]').forEach(function(elem) {
-    elem.attr('placeholder', vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('placeholder'))));
+    var placeholder = vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('placeholder')));
+    if (placeholder)
+        elem.attr('placeholder', placeholder);
 });
 
 uDom('[data-i18n-tip]').forEach(function(elem) {

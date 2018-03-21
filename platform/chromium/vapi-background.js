@@ -677,6 +677,10 @@ vAPI.openFeedback = function (tabId) {
 
 vAPI.openSearch = function (query, type) {
     var locale = "default";
+    if (chrome.i18n.getUILanguage() === "da") {
+        locale = "da";
+    }
+
     var searchUrl = µBlock.searchDomain[locale] + µBlock.searchQueries[type];
     if (!searchUrl) return;
 
