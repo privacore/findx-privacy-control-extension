@@ -87,62 +87,26 @@ button {
     /*height: 40%;*/
     height: 325px;
     z-index: 1;
-    background-color: #6BAC6F;
+    background-color: rgb(0, 142, 212);
 }
 
 
 #wrapper {
-    width: 85%;
-    min-width: 1065px;
+    width: 100%;
+    min-width: 925px;
     height: 100%;
     position: relative;
     z-index: 5;
     white-space: nowrap;
+    display: flex;
+    justify-content: center;
 }
-
-#sidebar {
-    width: 15%;
-    height: 100%;
-    min-width: 150px;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.sidebar-top-block {
-    height: 325px;
-}
-.sidebar-bot-block {
-    height: calc(100% - 325px);
-}
-
-#teaser_area {
-    width: 100%;
-    padding: 50pt 15pt;
-    box-sizing: border-box;
-    text-align: center;
-}
-.teaser-text {
-    white-space: normal;
-    text-align: left;
-    font-size: 13pt;
-    width: 107px;
-    margin: 0 auto 15pt;
-    cursor: default;
-}
-#teaser_btn {
-    margin: 0 auto;
-}
-
 
 
 #content-wrapper {
-    width: 85%;
+    width: 75%;
     min-width: 900px;
     height: 100%;
-    position: absolute;
-    top: 0;
-    right: 0;
 }
 
 #title {
@@ -150,6 +114,24 @@ button {
     width: 100%;
     z-index: 5;
     position: relative;
+    box-sizing: border-box;
+    padding: 0 0 10px 25px;
+}
+.dashboard-header {
+    height: 84px;
+    display: flex;
+    justify-content: start;
+    align-items: flex-end;
+}
+.dashboard-title-logo {
+    height: 50px;
+}
+.dashboard-header-title {
+    color: #ffffff;
+    font-size: 22px;
+    padding-bottom: 5px;
+    margin-left: 20px;
+    cursor: default;
 }
 
 #content {

@@ -115,15 +115,8 @@ uDom.onLoad(function() {
 
 /******************************************************************************/
 
-
-    uDom('#teaser_btn').on('click', function() {
-        var win = window.open("https://www.privacore.com/takecontrol", '_blank');
-        win.focus();
-    });
-
-
-    var niceScroll = function () {
-        $("html").niceScroll({cursorcolor:"#49854F", zindex: 5, autohidemode: false});
-    };
+var niceScroll = function () {
+    $("html").niceScroll({cursorcolor:"#49854F", zindex: 5, autohidemode: false});
+};
 
 })();
