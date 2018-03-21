@@ -115,6 +115,11 @@ body:not(.protection-off) .protection-status-off {
     width: 12px;
     height: 15px;
     margin-left: 11px;
+    display: flex;
+    align-items: center;
+}
+#statusbar .protection-status-icon img {
+    height: 12px;
 }
 
 
@@ -876,11 +881,11 @@ body.protection-off #protection_lists_page .fixed-action-btn .btn-floating {
 
 
 ::-webkit-scrollbar {
-    width: 7px;
+    width: 5px;
 }
 /*::-webkit-scrollbar-track-piece  {*/
     /*background-color: #C2D2E4;*/
 /*}*/
 ::-webkit-scrollbar-thumb:vertical {
-    background-color: rgba(0, 0, 0, 0.12);
+    background-color: rgba(0, 0, 0, 0.37);
 }

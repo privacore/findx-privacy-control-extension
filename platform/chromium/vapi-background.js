@@ -693,6 +693,14 @@ vAPI.openSearch = function (query, type) {
     vAPI.tabs.open({url: searchUrl, select: true});
 };
 
+vAPI.openSharePage = function (social) {
+    if (!social) return;
+
+    var url = µBlock.shareTo[social].replace(/\{\{url\}\}/, µBlock.shareUrl);
+
+    vAPI.tabs.open({url: url, select: true});
+};
+
 
 /******************************************************************************/
 /******************************************************************************/

@@ -340,7 +340,8 @@
     };
 
     var onShareBtnClick = function (social) {
-        //TODO: social sharing
+        messager.send('popupPanel', {what: 'shareTo', social: social});
+        vAPI.closePopup();
     };
 
     /***************************************************************************/

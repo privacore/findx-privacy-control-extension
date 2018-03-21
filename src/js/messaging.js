@@ -210,6 +210,9 @@ var onMessage = function(request, sender, callback) {
     case 'openSearch':
         vAPI.openSearch(request.query, request.searchType);
         break;
+    case 'shareTo':
+        vAPI.openSharePage(request.social);
+        break;
         /**********************************/
 
     default:

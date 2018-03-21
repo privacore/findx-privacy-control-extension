@@ -207,7 +207,13 @@ var µBlock = (function() { // jshint ignore:line
             timer: "/web?q=Timer {{query}}",
             calculator: "/web?q=Calculator {{query}}",
             weather: "/web?q=Weather {{query}}"
-        }
+        },
+        shareTo: {
+            facebook: "https://www.facebook.com/sharer.php?u={{url}}",
+            twitter: "https://twitter.com/intent/tweet?url={{url}}",
+            linkedin: "https://www.linkedin.com/shareArticle?mini=true&url={{url}}"
+        },
+        shareUrl: "https://get.findx.com/privacycontrol"
     };
 
 })();
