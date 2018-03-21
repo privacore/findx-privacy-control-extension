@@ -1107,7 +1107,7 @@ FilterDataHolderEntry.load = function(data) {
 
 
 /******************************************************************************/
-// Added by Igor in Privacontrol.
+// Added by Igor in Findx Privacy Control.
 var ResponseObject = function(path, str) {
     this.filterPath = path;
     this.s = str;

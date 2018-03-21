@@ -1199,7 +1199,7 @@
 
 /******************************************************************************/
 
-/*Custom Privacontrol methods*/
+/*Custom Findx Privacy Control methods*/
 µBlock.updateFilterState = function (switches, update) {
     var µb = µBlock;
     var onFilterListsReady = function () {

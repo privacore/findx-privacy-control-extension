@@ -2,11 +2,11 @@
 #
 # This script assumes a linux environment
 
-echo "*** Privacontrol.ch: Creating web store package"
-echo "*** Privacontrol.ch: Copying files"
+echo "*** PrivacyControl.ch: Creating web store package"
+echo "*** PrivacyControl.ch: Copying files"
 
 
-DES=dist/build/Privacontrol.ch
+DES=dist/build/PrivacyControl.ch
 rm -rf $DES
 mkdir -p $DES
 
@@ -24,7 +24,7 @@ cp platform/chromium/*.html $DES/
 cp platform/chromium/*.json $DES/
 cp LICENSE.txt              $DES/
 
-echo "*** Privacontrol.ch: concatenating content scripts"
+echo "*** PrivacyControl.ch: concatenating content scripts"
 cat $DES/js/vapi-usercss.js > /tmp/contentscript.js
 echo >> /tmp/contentscript.js
 grep -v "^'use strict';$" $DES/js/contentscript.js >> /tmp/contentscript.js
@@ -34,14 +34,14 @@ rm $DES/js/vapi-usercss.js
 # Chrome store-specific
 cp -R $DES/_locales/nb      $DES/_locales/no
 
-echo "*** Privacontrol.ch: Generating meta..."
+echo "*** PrivacyControl.ch: Generating meta..."
 python tools/make-chromium-meta.py $DES/
 
 if [ "$1" = all ]; then
-    echo "*** Privacontrol.ch: Creating package..."
+    echo "*** PrivacyControl.ch: Creating package..."
     pushd $(dirname $DES/) > /dev/null
     zip uBlock0.chromium.zip -qr $(basename $DES/)/*
     popd > /dev/null
 fi
 
-echo "*** Privacontrol.ch: Package done."
+echo "*** PrivacyControl.ch: Package done."

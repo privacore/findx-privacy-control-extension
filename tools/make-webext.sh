@@ -2,10 +2,10 @@
 #
 # This script assumes a linux environment
 
-echo "*** Privacontrol.webext: Creating web store package"
-echo "*** Privacontrol.webext: Copying files"
+echo "*** PrivacyControl.webext: Creating web store package"
+echo "*** PrivacyControl.webext: Copying files"
 
-DES=dist/build/Privacontrol.webext
+DES=dist/build/PrivacyControl.webext
 rm -rf $DES
 mkdir -p $DES
 
@@ -30,7 +30,7 @@ cp platform/webext/vapi-webrequest.js   $DES/js/
 cp platform/webext/vapi-cachestorage.js $DES/js/
 cp platform/webext/vapi-usercss.js      $DES/js/
 
-echo "*** Privacontrol.webext: concatenating content scripts"
+echo "*** PrivacyControl.webext: concatenating content scripts"
 cat $DES/js/vapi-usercss.js > /tmp/contentscript.js
 echo >> /tmp/contentscript.js
 grep -v "^'use strict';$" $DES/js/contentscript.js >> /tmp/contentscript.js
@@ -42,14 +42,14 @@ rm $DES/img/icon_128.png
 rm $DES/options_ui.html
 rm $DES/js/options_ui.js
 
-echo "*** Privacontrol.webext: Generating meta..."
+echo "*** PrivacyControl.webext: Generating meta..."
 python tools/make-webext-meta.py $DES/
 
 if [ "$1" = all ]; then
-    echo "*** Privacontrol.webext: Creating package..."
+    echo "*** PrivacyControl.webext: Creating package..."
     pushd $DES > /dev/null
     zip ../$(basename $DES).xpi -qr *
     popd > /dev/null
 fi
 
-echo "*** Privacontrol.webext: Package done."
+echo "*** PrivacyControl.webext: Package done."

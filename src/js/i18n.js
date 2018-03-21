@@ -123,7 +123,7 @@ var safeTextToDOM = function(text, parent) {
 /******************************************************************************/
 
 vAPI.i18n.prepareTemplateText = function(str){
-    return str.replace(/uBlock₀/g, 'Privacontrol').replace(/3rd-party filters/g, 'Filter list');
+    return str.replace(/uBlock₀/g, 'Findx Privacy Control').replace(/3rd-party filters/g, 'Filter list');
 };
 
 

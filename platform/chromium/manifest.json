@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
 
-    "name": "Privacontrol",
+    "name": "Findx Privacy Control",
     "version": "1.15.5.1",
 
     "commands": {
@@ -27,11 +27,11 @@
             "19": "img/browsericons/icon19.png",
             "38": "img/browsericons/icon38.png"
         },
-        "default_title": "Privacontrol",
+        "default_title": "Findx Privacy Control",
         "default_popup": "popup.html"
     },
 
-    "author": "All Privacontrol contributors",
+    "author": "All Findx Privacy Control contributors",
     "background": {
         "page": "background.html"
     },
@@ -67,7 +67,7 @@
         "webRequestBlocking",
         "<all_urls>"
     ],
-    "short_name": "Privacontrol",
+    "short_name": "Findx Privacy Control",
     "storage": {
         "managed_schema": "managed_storage.json"
     }

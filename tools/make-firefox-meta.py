@@ -93,7 +93,7 @@ for alpha2 in descriptions:
         t3 + '<em:locale>' + alpha2 + '</em:locale>\n' +
         t3 + '<em:name>' + manifest['name'] + '</em:name>\n' +
         t3 + '<em:description> Control your privacy and block the data collectors. </em:description>\n' +
-        t3 + '<em:creator> All Privacontrol and uBlock contributors </em:creator>\n' +
+        t3 + '<em:creator> All Findx Privacy Control and uBlock contributors </em:creator>\n' +
         # t3 + '<translator>' + ??? + '</translator>\n' +
         t3 + '<em:homepageURL>https://github.com/privacore/privacontrol</em:homepageURL>\n' +
         t*2 + '</Description></em:localized>'

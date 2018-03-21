@@ -5,7 +5,7 @@
          "strict_min_version":"52.0"
       }
    },
-   "author":"All Privacontrol and uBlock contributors",
+   "author":"All Findx Privacy Control and uBlock contributors",
    "background":{
       "page":"background.html"
    },
@@ -15,7 +15,7 @@
          "19":"img/browsericons/icon19.png",
          "38":"img/browsericons/icon38.png"
       },
-      "default_title":"Privacontrol",
+      "default_title":"Findx Privacy Control",
       "default_popup":"popup.html"
    },
    "commands":{
@@ -64,7 +64,7 @@
       "96":"img/privacontrol.svg"
    },
    "manifest_version":2,
-   "name":"Privacontrol",
+   "name":"Findx Privacy Control",
    "options_ui":{
       "page":"dashboard.html",
       "open_in_tab": true
@@ -79,6 +79,6 @@
       "webRequestBlocking",
       "<all_urls>"
    ],
-   "short_name":"Privacontrol",
+   "short_name":"Findx Privacy Control",
    "version":"1.9.15.101"
 }

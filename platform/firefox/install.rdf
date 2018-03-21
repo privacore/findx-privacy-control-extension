@@ -6,7 +6,7 @@
         <em:name>{name}</em:name>
         <em:description>{description}</em:description>
         <em:homepageURL>https://github.com/privacore/privacontrol</em:homepageURL>
-        <em:creator>All Privacontrol and uBlock contributors</em:creator>
+        <em:creator>All Findx Privacy Control and uBlock contributors</em:creator>
         <em:type>2</em:type>
         <em:bootstrap>true</em:bootstrap>
         <em:multiprocessCompatible>true</em:multiprocessCompatible>

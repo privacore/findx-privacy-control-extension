@@ -76,7 +76,7 @@ var deferUntil = function(testFn, mainFn, details) {
 /******************************************************************************/
 
 vAPI.app = {
-    name: 'Privacontrol',
+    name: 'Findx Privacy Control',
     version: location.hash.slice(1)
 };
 
