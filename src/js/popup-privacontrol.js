@@ -20,6 +20,7 @@
 
     var searchQuery = "";
 
+    var isFilterChanged = false;
 
     /***************************************************************************/
 
@@ -161,6 +162,8 @@
 
         handleCloseProtectionListsBtn();
         handleOpenSearchTabBtn();
+
+        handleFloatingActionBtn();
 
         handleShareDialog();
     };
@@ -793,11 +796,6 @@
         };
 
         var handleFilterElement = function () {
-            elFilter.on('click', function (ev) {
-                console.log(ev);
-            });
-
-
             elFilter.find(".collapsible-header .switch").on('click', function (ev) {
                 ev.stopPropagation();
             });
@@ -812,6 +810,8 @@
 
                 var url = $(ev.currentTarget).attr("data-url");
                 switchUrlBlocking(url, !isChecked);
+
+                onFilterUpdated();
             });
         };
 
@@ -819,6 +819,7 @@
             ev.stopPropagation();
 
             switchDomainBlocking();
+            onFilterUpdated();
         };
 
         var switchDomainBlocking = function () {
@@ -899,6 +900,47 @@
         };
     };
 
+    var onFilterUpdated = function () {
+        isFilterChanged = true;
+        $('#protection_lists_page').toggleClass('content-changed', isFilterChanged);
+
+        var floatingBtn = $('#protection_lists_page .fixed-action-btn .btn-floating');
+        if (!floatingBtn[0].hasAttribute('data-tooltip')) {
+            $(floatingBtn).attr('data-tooltip', 'Please refresh to see your changes');
+            M.Tooltip.init(floatingBtn, {enterDelay: 500});
+        }
+    };
+
+    /***************************************************************************/
+
+    var handleFloatingActionBtn = function () {
+        $('#protection_lists_page .fixed-action-btn .btn-floating').off('click');
+        $('#protection_lists_page .fixed-action-btn .btn-floating').on('click', function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            if (popupData.pauseFiltering) {
+                togglePauseFiltering();
+                reloadTab();
+            }
+            else if (!popupData.netFilteringSwitch) {
+                changeWhitelistStatus(ev);
+                reloadTab();
+            }
+            else if (isFilterChanged) {
+                reloadTab();
+            }
+            else {
+                openOptionsPage();
+            }
+
+            vAPI.closePopup();
+        });
+    };
+
+    var reloadTab = function () {
+        messager.send('popupPanel', {what: 'reloadTab', tabId: popupData.tabId});
+    };
 
     /***************************************************************************/
 

@@ -709,7 +709,11 @@ body.share-active .protection-stopped-dialog {
     transform: rotate( 0deg );
     transition: transform 400ms ease;
 }
-.protection-filter.active:not(.empty-filter) .filter-chevron-icon > img {
+/*.protection-filter.active:not(.empty-filter) .filter-chevron-icon > img {*/
+    /*transform: rotate( -180deg );*/
+    /*transition: transform 400ms ease;*/
+/*}*/
+.protection-filter.active .filter-chevron-icon > img {
     transform: rotate( -180deg );
     transition: transform 400ms ease;
 }
@@ -725,8 +729,8 @@ body.share-active .protection-stopped-dialog {
     overflow: auto;
 }
 .protection-filter.empty-filter .collapsible-body {
-    padding: 0;
-    border: none;
+    /*padding: 0;*/
+    /*border: none;*/
 }
 
 .filter-rule {
@@ -773,6 +777,52 @@ body.share-active .protection-stopped-dialog {
     flex: 1;
     padding-right: 15px;
 }
+
+
+.adding-more-lists-block {
+    margin-top: 32px;
+    width: 100%;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 20px 15px 100px 15px;
+    cursor: default;
+}
+.adding-more-lists-title {
+    font-family: Roboto-medium;
+    color: rgba(0,0,0,0.54);
+    margin-bottom: 15px;
+}
+
+
+/******* Floating action button *******/
+
+
+.fixed-action-btn {
+    bottom: 65px;
+}
+.fixed-action-btn .btn-floating {
+    background-color: #2191d0;
+    box-shadow: 0 6px 6px 0 rgba(0, 0, 0, 0.24);
+}
+
+.fixed-action-btn .btn-floating .material-icons {
+    display: none;
+}
+#protection_lists_page.content-changed .fixed-action-btn .btn-floating .content-refresh-icon {
+    display: inline-block;
+}
+body.protection-off #protection_lists_page .fixed-action-btn .btn-floating .protection-disabled-icon,
+body.protection-stopped #protection_lists_page .fixed-action-btn .btn-floating .protection-disabled-icon {
+    display: inline-block;
+}
+body:not(.protection-off):not(.protection-stopped) #protection_lists_page:not(.content-changed) .fixed-action-btn .btn-floating .add-filter-icon {
+    display: inline-block;
+}
+
+#protection_lists_page.content-changed .fixed-action-btn .btn-floating,
+body.protection-off #protection_lists_page .fixed-action-btn .btn-floating {
+    background-color: #6bad6f;
+}
+
 
 /******* FOOTER *******/
 
