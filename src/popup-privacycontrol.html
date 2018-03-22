@@ -6,6 +6,7 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="css/material-icons.css" type="text/css">
 <link rel="stylesheet" href="css/materialize.min.css" type="text/css">
+<link rel="stylesheet" href="lib/jquery.mCustomScrollbar.css" type="text/css">
 <link rel="stylesheet" href="css/popup-privacycontrol.css" type="text/css">
 <title>Findx Privacy Control</title>
 </head>
@@ -401,7 +402,7 @@
             </a>
         </div>
 
-        <div class="protection-lists-page-content">
+        <div class="mCustomScrollbar protection-lists-page-content">
             <ul class="collapsible protection-lists"></ul>
 
             <div class="adding-more-lists-block">
@@ -459,7 +460,7 @@
                 <img src="img/popup/chevron_down.svg" alt=""/>
             </div>
         </div>
-        <div class="collapsible-body">
+        <div class="mCustomScrollbar collapsible-body">
             {{#trackedUrls}}
                 <div class="filter-rule">
                     <div class="rule-radio" data-url="{{url}}">
@@ -481,7 +482,7 @@
 
 <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
 <script src="lib/materialize.min.js"></script>
-<script src="lib/jquery.nicescroll.min.js"></script>
+<script src="lib/jquery.mCustomScrollbar.concat.min.js"></script>
 <!--<script src="lib/punycode.js"></script>-->
 <script src="lib/mustache.js"></script>
 <script src="js/vapi.js"></script>

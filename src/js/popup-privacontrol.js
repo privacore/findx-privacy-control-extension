@@ -579,8 +579,6 @@
         //     });
         // }
 
-
-        // $(".protection-filter .collapsible-body").niceScroll({cursorcolor:"rgba(0, 0, 0, 0.37)", autohidemode: false, cursorwidth: "7px"});
     };
 
     /**
@@ -792,6 +790,24 @@
         };
 
         var handleFilterElement = function () {
+            elFilter.find(".collapsible-header").on('click', function (ev) {
+                setTimeout(function () {
+                    if ($(elFilter).find(".collapsible-body").is(":visible") && filterData.trackedUrls && filterData.trackedUrls.length > 5) {
+                        $(elFilter).find(".collapsible-body").mCustomScrollbar({
+                            scrollInertia: 0,
+                            autoHideScrollbar: false,
+                            scrollButtons:{ enable: false },
+                            advanced:{ updateOnContentResize: true },
+                            mouseWheel:{
+                                scrollAmount: 50
+                            }
+                        });
+                    }
+                    else {
+                        $(elFilter).find(".collapsible-body").mCustomScrollbar("destroy");
+                    }
+                }, 400);
+            });
             elFilter.find(".collapsible-header .switch").on('click', function (ev) {
                 ev.stopPropagation();
             });
@@ -956,6 +972,16 @@
         // ProtectionLists
         renderTrackedUrls();
         displayUsedFilters(isInitial);
+
+        $(".protection-lists-page-content").mCustomScrollbar({
+            // scrollInertia: 0,
+            autoHideScrollbar: false,
+            scrollButtons:{ enable: false },
+            advanced:{ updateOnContentResize: true },
+            mouseWheel:{
+                scrollAmount: 150
+            }
+        });
     };
 
     /***************************************************************************/
@@ -991,12 +1017,6 @@
         getPopupData(tabId, true);
 
         handleControls();
-
-        // $(".tab-frame").niceScroll({cursorcolor:"rgba(0, 0, 0, 0.37)", autohidemode: false, cursorwidth: "7px"});
-
-        // $(".protection-lists-page-content").niceScroll({cursorcolor:"rgba(0, 0, 0, 0.37)", autohidemode: false, cursorwidth: "7px"});
-        // $(".protection-lists").niceScroll({cursorcolor:"rgba(0, 0, 0, 0.37)", autohidemode: false, cursorwidth: "7px"});
-
 
         $("#search_input").focus();
     });
