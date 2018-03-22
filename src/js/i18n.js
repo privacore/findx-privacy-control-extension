@@ -187,6 +187,13 @@ uDom('[title]').forEach(function(elem) {
     }
 });
 
+uDom('[data-tooltip]').forEach(function(elem) {
+    var tooltip = vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('data-tooltip')));
+    if ( tooltip ) {
+        elem.attr('data-tooltip', tooltip);
+    }
+});
+
 uDom('[placeholder]').forEach(function(elem) {
     var placeholder = vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('placeholder')));
     if (placeholder)

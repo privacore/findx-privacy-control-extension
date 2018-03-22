@@ -136,9 +136,9 @@
 
         var footerFavBtn = document.querySelector('.footer-btn.fav-btn');
         if (isFirefox())
-            $(footerFavBtn).attr('data-tooltip', 'Rate this add-on');
+            $(footerFavBtn).attr('data-tooltip', vAPI.i18n('popupTipFooterRateAddon'));
         else
-            $(footerFavBtn).attr('data-tooltip', 'Rate this Extension');
+            $(footerFavBtn).attr('data-tooltip', vAPI.i18n('popupTipFooterRateExtension'));
 
         M.Tooltip.init(footerFavBtn, {enterDelay: 500});
     };
@@ -439,7 +439,7 @@
         $('body').toggleClass('protection-off', status);
 
         $("#protection_status_btn, #pause_site_btn").attr('data-tooltip', status ?
-            'Start protection on this site' : 'Pause on this site');
+            vAPI.i18n('popupTipStartOnSite') : vAPI.i18n('popupTipPauseOnSite'));
         M.Tooltip.init($("#protection_status_btn")[0], {enterDelay: 300});
         M.Tooltip.init($("#pause_site_btn")[0], {enterDelay: 300});
     };
@@ -598,8 +598,6 @@
             filterData.group = filter.group;
             filterData.id = path;
             filterData.isEnabled = isFilterEnabled(filter);
-            filterData.filterBlockBtnTitle = "Click to " +
-                (isFilterEnabled(filter) ? "unblock" : "block") + " filter on current site";
             filterData.trackedUrls = getTrackedUrlsData(path);
             filterData.trackedUrlsQty = getTrackedUrlsQty(path);
             filterData.blockedUrlsQty = getBlockedUrlsQty(path);
@@ -711,10 +709,7 @@
                 url: url,
                 counter: counter,
                 counterVisibility: ((counter > 1) ? "" : "disabled"),
-                isBlocked: isBlocked,
-                blockedBtnClass: (isBlocked ? "blocked" : ""),
-                blockedBtnTitle: (isBlocked ? "unblock" : "block"),
-                blockedBtnText: (isBlocked ? "blocked" : "unblocked")
+                isBlocked: isBlocked
             };
             urlsData.push(data);
         }
@@ -907,7 +902,7 @@
 
         var floatingBtn = $('#protection_lists_page .fixed-action-btn .btn-floating');
         if (!floatingBtn[0].hasAttribute('data-tooltip')) {
-            $(floatingBtn).attr('data-tooltip', 'Please refresh to see your changes');
+            $(floatingBtn).attr('data-tooltip', vAPI.i18n('popupTipRefreshBtn'));
             M.Tooltip.init(floatingBtn, {enterDelay: 500});
         }
     };
@@ -967,7 +962,6 @@
 
     var getPopupData = function (tabId, isInitial) {
         var onDataReceived = function (response) {
-            console.log("response: ", response);
             cachePopupData(response);
             renderPopup(isInitial);
             pollForContentChange();

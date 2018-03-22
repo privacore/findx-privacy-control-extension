@@ -43,6 +43,170 @@
     "message":"Advanced settings",
     "description":"Title for the advanced settings page"
   },
+  "popupStatusbarBlockedToday":{
+    "message": "Blocked today:",
+    "description": "Message will be in a status bar and in a 'today blocked' plate"
+  },
+  "popupStatusbarProtection":{
+    "message": "Protection:",
+    "description": "Message will be in a status bar"
+  },
+  "popupOn":{
+    "message": "on",
+    "description": ""
+  },
+  "popupOff":{
+    "message": "off",
+    "description": ""
+  },
+  "popupSidenavTitle":{
+    "message": "Privacy control",
+    "description": ""
+  },
+  "popupSidenavSubHeader":{
+    "message": "Protection",
+    "description": ""
+  },
+  "popupSidenavProtectionLists":{
+    "message": "Active protection lists",
+    "description": ""
+  },
+  "popupSidenavTracking":{
+    "message": "Tracking monitor",
+    "description": ""
+  },
+  "popupSidenavStopProtection":{
+    "message": "Stop protection",
+    "description": ""
+  },
+  "popupSettings":{
+    "message": "Settings",
+    "description": ""
+  },
+  "popupSidenavFeedback":{
+    "message": "Send feedback",
+    "description": ""
+  },
+  "popupSidenavShare":{
+    "message": "Share",
+    "description": ""
+  },
+  "popupSidenavFindxMobile":{
+    "message": "Findx for mobile",
+    "description": ""
+  },
+  "popupHeaderTitle":{
+    "message": "Findx privacy control",
+    "description": ""
+  },
+  "searchInputPlaceholder":{
+    "message": "Search here... in private...",
+    "description": ""
+  },
+  "popupSearch":{
+    "message": "Search",
+    "description": ""
+  },
+  "popupTabProtection":{
+    "message": "Protection",
+    "description": ""
+  },
+  "popupPlateWeather":{
+    "message": "Weather forecast",
+    "description": ""
+  },
+  "popupPlateTimer":{
+    "message": "Timer",
+    "description": ""
+  },
+  "popupPlateCalculator":{
+    "message": "Calculator",
+    "description": ""
+  },
+  "popupPlateVideos":{
+    "message": "Videos",
+    "description": ""
+  },
+  "popupPlateMaps":{
+    "message": "Maps",
+    "description": ""
+  },
+  "popupPlateImages":{
+    "message": "Images",
+    "description": ""
+  },
+  "popupTipPauseOnSite":{
+    "message": "Pause on this site",
+    "description": ""
+  },
+  "popupTipStartOnSite":{
+    "message": "Start protection on this site",
+    "description": ""
+  },
+  "popupPlateBlockedOnSite":{
+    "message": "Blocked on this site",
+    "description": ""
+  },
+  "popupPlateBlockedToday":{
+    "message": "Blocked today",
+    "description": ""
+  },
+  "popupPlateBlockedTotal":{
+    "message": "Blocked in total",
+    "description": ""
+  },
+  "popupDialogAlertTitle":{
+    "message": "Alert: Protection stopped",
+    "description": "Dialog displayed when protection is stopped for all sites"
+  },
+  "popupDialogAlertContent":{
+    "message": "You are exposed to behavioural tracking - it is possible for social media providers and advertisers to collect information about your interests while you are browsing.",
+    "description": "Dialog displayed when protection is stopped for all sites"
+  },
+  "popupDialogShareTitle":{
+    "message": "Share on",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareFacebook":{
+    "message": "Facebook",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareTwitter":{
+    "message": "Twitter",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareLinkedin":{
+    "message": "LinkedIn",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupPtorectionListsTitle":{
+    "message": "Protection lists",
+    "description": "Protection lists page title"
+  },
+  "popupAddMore":{
+    "message": "Adding more lists",
+    "description": "Protection lists page footer"
+  },
+  "popupAddMoreText":{
+    "message": "You can add more blocking lists easily. Choose from a wide range of country specific lists and lists from various providers. All lists are maintained by their respective communities.",
+    "description": "Protection lists page footer"
+  },
+  "popupTipRefreshBtn":{
+    "message": "Please refresh to see your changes",
+    "description": "Tooltip of floating refresh button"
+  },
+  "popupTipFooterLogo":{
+    "message": "Learn more about Findx",
+    "description": ""
+  },
+  "popupTipFooterRateExtension":{
+    "message": "Rate this Extension",
+    "description": ""
+  },
+  "popupTipFooterRateAddon":{
+    "message": "Rate this add-on",
+    "description": ""
+  },
   "popupPowerSwitchInfo":{
     "message":"Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page.",
     "description":"English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."

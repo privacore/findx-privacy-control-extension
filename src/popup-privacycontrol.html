@@ -15,13 +15,13 @@
 
 <div id="statusbar">
     <div class="today-blocked">
-        <span>Blocked today:</span>
+        <span data-i18n="popupStatusbarBlockedToday"></span>
         <span id="today_blocked_count"></span>
     </div>
     <div class="protection-status">
-        <span>Protection:</span>
-        <span class="protection-status-on">on</span>
-        <span class="protection-status-off">off</span>
+        <span data-i18n="popupStatusbarProtection"></span>
+        <span class="protection-status-on" data-i18n="popupOn"></span>
+        <span class="protection-status-off" data-i18n="popupOff"></span>
     </div>
     <div class="protection-status-icon">
         <img src="img/popup/shield.svg" alt=""/>
@@ -32,52 +32,52 @@
     <li>
         <div class="sidenav-header bg-blue">
             <div class="sidenav-logo"><img src="img/popup/findx_logo.svg" alt=""/></div>
-            <div class="sidenav-heder-title">Privacy control</div>
+            <div class="sidenav-heder-title" data-i18n="popupSidenavTitle"></div>
             <div class="close-sidenav-btn"><img src="img/popup/close.svg" alt="Close"/></div>
         </div>
     </li>
-    <li><a class="subheader">Protection</a></li>
+    <li><a class="subheader" data-i18n="popupSidenavSubHeader"></a></li>
     <li>
         <a href="#" data-action="protection_lists">
             <img src="img/popup/filterlists.svg" alt=""/>
-            <span>Active protection lists</span>
+            <span data-i18n="popupSidenavProtectionLists"></span>
         </a>
     </li>
     <li>
         <a href="#" data-action="tracking_monitor">
             <img src="img/popup/tracking_monitor.svg" alt=""/>
-            <span>Tracking monitor</span>
+            <span data-i18n="popupSidenavTracking"></span>
         </a>
     </li>
     <li>
         <a href="#" data-action="stop_protection">
             <img src="img/popup/stop_btn.svg" alt=""/>
-            <span>Stop protection</span>
+            <span data-i18n="popupSidenavStopProtection"></span>
         </a>
     </li>
     <li>
         <a href="#" data-action="settings">
             <img src="img/popup/settings_drawer.svg" alt=""/>
-            <span>Settings</span>
+            <span data-i18n="popupSettings"></span>
         </a>
     </li>
     <li><div class="divider"></div></li>
     <li>
         <a href="#" data-action="feedback">
             <img src="img/popup/pointing_right.svg" alt=""/>
-            <span>Send feedback</span>
+            <span data-i18n="popupSidenavFeedback"></span>
         </a>
     </li>
     <li>
         <a href="#" data-action="share">
             <img src="img/popup/share_drawer.svg" alt=""/>
-            <span>Share</span>
+            <span data-i18n="popupSidenavShare"></span>
         </a>
     </li>
     <li>
         <a href="#" data-action="findx_mobile">
             <img src="img/popup/Findx_app_icon.svg" alt=""/>
-            <span>Findx for mobile</span>
+            <span data-i18n="popupSidenavFindxMobile"></span>
         </a>
     </li>
 </ul>
@@ -86,14 +86,14 @@
     <div class="page active" id="main_page">
         <div class="header">
             <a data-target="slide-out" class="sidenav-trigger header-btn"><i class="material-icons">menu</i></a>
-            <span class="header-title">Findx privacy control</span>
+            <span class="header-title" data-i18n="popupHeaderTitle"></span>
             <a class="header-btn settings-btn">
-                <img src="img/popup/settings-icon.svg" alt=""/>
+                <img src="img/popup/settings-icon.svg" alt="Settings"/>
             </a>
         </div>
 
         <div id="search_bar">
-            <input type="text" id="search_input" placeholder="Search here... in private..." class="browser-default" value="">
+            <input type="text" id="search_input" placeholder="searchInputPlaceholder" class="browser-default" value="">
             <i class="material-icons" id="search_bar_btn">search</i>
         </div>
 
@@ -107,13 +107,13 @@
                                 <path id="path" d="M46.9 61.7h-.8l-.3-.3a6.259 6.259 0 0 0 1.6-4.2 6.5 6.5 0 1 0-6.5 6.5 6.259 6.259 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5zm-6 0a4.5 4.5 0 1 1 4.5-4.5 4.481 4.481 0 0 1-4.5 4.5z" style="fill:#fff" transform="translate(248.6 -7.7)"/>
                             </g>
                         </svg>
-                        <span>Search</span>
+                        <span data-i18n="popupSearch"></span>
                     </a>
                 </li>
                 <li class="tab">
                     <a class="active" data-id="protection_tab" href="">
                         <img src="img/popup/shield.svg" alt=""/>
-                        <span>Protection</span>
+                        <span data-i18n="popupTabProtection"></span>
                     </a>
                 </li>
             </ul>
@@ -140,7 +140,7 @@
                                         </svg>
                                     </div>
                                     <div class="plate-content-text">
-                                        <span class="">Weather forecast</span>
+                                        <span data-i18n="popupPlateWeather"></span>
                                     </div>
                                 </div>
                             </div>
@@ -162,7 +162,7 @@
                                             </svg>
                                         </div>
                                         <div class="plate-content-text">
-                                            <span class="">Timer</span>
+                                            <span data-i18n="popupPlateTimer"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -184,7 +184,7 @@
                                             </svg>
                                         </div>
                                         <div class="plate-content-text">
-                                            <span class="">Calculator</span>
+                                            <span data-i18n="popupPlateCalculator"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -194,8 +194,8 @@
                             <div class="plate-content">
                                 <div class="plate-bg videos-plate-bg"></div>
                                 <div class="plate-content-bottom-block bg-blue-37">
-                                    <div class="">Search</div>
-                                    <div class="font-20-24">Videos</div>
+                                    <div data-i18n="popupSearch"></div>
+                                    <div class="font-20-24" data-i18n="popupPlateVideos"></div>
                                 </div>
                             </div>
                         </div>
@@ -206,8 +206,8 @@
                             <div class="plate-content">
                                 <div class="plate-bg maps-plate-bg"></div>
                                 <div class="plate-content-bottom-block bg-blue-37">
-                                    <div class="">Search</div>
-                                    <div class="font-20-24">Maps</div>
+                                    <div data-i18n="popupSearch"></div>
+                                    <div class="font-20-24" data-i18n="popupPlateMaps"></div>
                                 </div>
                             </div>
                         </div>
@@ -215,8 +215,8 @@
                             <div class="plate-content">
                                 <div class="plate-bg images-plate-bg"></div>
                                 <div class="plate-content-bottom-block bg-blue-56">
-                                    <div class="">Search</div>
-                                    <div class="font-20-24">Images</div>
+                                    <div data-i18n="popupSearch"></div>
+                                    <div class="font-20-24" data-i18n="popupPlateImages"></div>
                                 </div>
                             </div>
                         </div>
@@ -230,8 +230,8 @@
                                 <div class="plate-content-title truncate"></div>
                                 <div class="plate-content-text">
                                     <img id="pause_site_btn" src="img/popup/shield.svg" alt=""/>
-                                    <span class="protection-status-on">on</span>
-                                    <span class="protection-status-off">off</span>
+                                    <span class="protection-status-on" data-i18n="popupOn"></span>
+                                    <span class="protection-status-off" data-i18n="popupOff"></span>
                                 </div>
                             </div>
                             <div class="plate-footer">
@@ -250,7 +250,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <a id="protection_status_btn" class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Pause on this site">
+                            <a id="protection_status_btn" class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="popupTipPauseOnSite">
                                 <img src="img/popup/on_off_button.svg" alt=""/>
                             </a>
                         </div>
@@ -258,7 +258,7 @@
                     <div class="plates-row">
                         <div class="plate mid-plate bg-protection-status-dark blocked-on-site-plate">
                             <div class="plate-content">
-                                <div class="plate-content-title">Blocked on this site</div>
+                                <div class="plate-content-title" data-i18n="popupPlateBlockedOnSite"></div>
                                 <div class="plate-content-text">
                                     <span></span>
                                 </div>
@@ -300,7 +300,7 @@
                         <div class="plate mid-plate invisible-plate">
                             <div class="plate sm-wide-plate bg-grey blocked-today-plate">
                                 <div class="plate-content">
-                                    <div class="plate-content-title">Blocked today</div>
+                                    <div class="plate-content-title" data-i18n="popupPlateBlockedToday"></div>
                                     <div class="plate-content-text">
                                         <span></span>
                                     </div>
@@ -308,7 +308,7 @@
                             </div>
                             <div class="plate sm-wide-plate bg-grey blocked-total-plate">
                                 <div class="plate-content">
-                                    <div class="plate-content-title">Blocked in total</div>
+                                    <div class="plate-content-title" data-i18n="popupPlateBlockedTotal"></div>
                                     <div class="plate-content-text">
                                         <span></span>
                                     </div>
@@ -319,8 +319,8 @@
 
                     <div class="protection-stopped-dialog">
                         <div class="protection-stopped-inner">
-                            <div class="protection-stopped-title">Alert: Protection stopped</div>
-                            <div class="protection-stopped-content">You are exposed to behavioural tracking - it is possible for social media providers and advertisers to collect information about your interests while you are browsing.</div>
+                            <div class="protection-stopped-title" data-i18n="popupDialogAlertTitle"></div>
+                            <div class="protection-stopped-content" data-i18n="popupDialogAlertContent"></div>
                             <div class="protection-stopped-controls">
                                 <a id="protection_stopped_btn" class="btn-floating btn-large waves-effect waves-light">
                                     <img src="img/popup/on_off_button.svg" alt=""/>
@@ -332,7 +332,7 @@
                     <div class="share-dialog">
                         <div class="share-dialog-inner">
                             <div class="share-dialog-header">
-                                <div class="share-dialog-title">Share on</div>
+                                <div class="share-dialog-title" data-i18n="popupDialogShareTitle"></div>
                                 <div class="share-dialog-close-btn"><img src="img/popup/close_dialog.svg" alt="Close"/></div>
                             </div>
                             <div class="share-dialog-controls">
@@ -348,7 +348,7 @@
                                                 <path id="facebook_circle_black-2" d="M20.177 34.88h4.5V24h3l.4-3.749h-3.4v-1.877c0-.977.093-1.5 1.5-1.5h1.875V13.12h-3c-3.6 0-4.871 1.819-4.871 4.878v2.251h-2.25V24h2.246zM23 44a20 20 0 1 1 20-20 20 20 0 0 1-20 20z" class="fb-svg-icon" data-name="facebook_circle_black" transform="translate(488 314)"/>
                                             </g>
                                         </svg>
-                                        <span>Facebook</span>
+                                        <span data-i18n="popupDialogShareFacebook"></span>
                                     </a>
                                 </div>
                                 <div class="share-dialog-control">
@@ -363,7 +363,7 @@
                                                 <path id="twitter_circle_black-2" d="M26.778 16.189a4.044 4.044 0 0 0-2.724 4.067l.042.692-.7-.085a11.352 11.352 0 0 1-6.649-3.277l-.922-.918-.237.678a4.082 4.082 0 0 0 .866 4.181c.559.593.433.678-.531.325a1.659 1.659 0 0 0-.657-.155 5.075 5.075 0 0 0 .5 1.893 4.513 4.513 0 0 0 1.918 1.81l.685.325-.81.014c-.782 0-.81.014-.726.311a4.226 4.226 0 0 0 2.612 2.317l.866.3-.754.452a7.834 7.834 0 0 1-3.744 1.045 4.1 4.1 0 0 0-1.146.113 10.673 10.673 0 0 0 2.7 1.243 11.787 11.787 0 0 0 9.164-1.045 12.281 12.281 0 0 0 4.652-5.481 14.568 14.568 0 0 0 .95-4.236c0-.65.042-.735.824-1.511a9.207 9.207 0 0 0 .978-1.087c.14-.269.125-.269-.587-.029-1.187.424-1.355.367-.768-.268a4.117 4.117 0 0 0 .95-1.511c0-.042-.209.028-.447.155a7.722 7.722 0 0 1-1.229.48l-.754.241-.685-.467a5.678 5.678 0 0 0-1.187-.621 4.772 4.772 0 0 0-2.45.049zM24 44a20 20 0 1 1 20-20 20 20 0 0 1-20 20z" class="twitter-svg-icon" data-name="twitter_circle_black" transform="translate(487 314)"/>
                                             </g>
                                         </svg>
-                                        <span>Twitter</span>
+                                        <span data-i18n="popupDialogShareTwitter"></span>
                                     </a>
                                 </div>
                                 <div class="share-dialog-control">
@@ -378,7 +378,7 @@
                                                 <path id="linkedin_circle_black-2" d="M35.225 33.425v-7.808c0-4.183-2.233-6.13-5.211-6.13a4.492 4.492 0 0 0-4.079 2.249v-1.929h-4.527c.06 1.278 0 13.618 0 13.618h4.527v-7.606a3.087 3.087 0 0 1 .149-1.1 2.476 2.476 0 0 1 2.321-1.655c1.639 0 2.293 1.249 2.293 3.079v7.286h4.526zM16.639 17.948a2.36 2.36 0 1 0 .03-4.706 2.359 2.359 0 1 0-.059 4.706zM24 44a20 20 0 1 1 20-20 20 20 0 0 1-20 20zm-5.1-10.575V19.807h-4.523v13.618z" class="linkedin-svg-icon" data-name="linkedin_circle_black" transform="translate(487 314)"/>
                                             </g>
                                         </svg>
-                                        <span>LinkedIn</span>
+                                        <span data-i18n="popupDialogShareLinkedin"></span>
                                     </a>
                                 </div>
                             </div>
@@ -394,7 +394,7 @@
     <div class="page" id="protection_lists_page">
         <div class="header">
             <a id="close_protection_lists"  class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
-            <span class="header-title">Protection lists</span>
+            <span class="header-title" data-i18n="popupPtorectionListsTitle"></span>
             <a id="open_search_tab_btn" class="header-btn"><i class="material-icons">search</i></a>
             <a class="header-btn settings-btn">
                 <img src="img/popup/settings-icon.svg" alt=""/>
@@ -405,8 +405,8 @@
             <ul class="collapsible protection-lists"></ul>
 
             <div class="adding-more-lists-block">
-                <div class="adding-more-lists-title">Adding more lists</div>
-                <div class="adding-more-lists-content">You can add more blocking lists easily. Choose from a wide range of country specific lists and lists from various providers. All lists are maintained by their respective communities.</div>
+                <div class="adding-more-lists-title" data-i18n="popupAddMore"></div>
+                <div class="adding-more-lists-content" data-i18n="popupAddMoreText"></div>
             </div>
 
         </div>
@@ -426,7 +426,7 @@
     <div class="footer-btn share-btn" data-action="share">
         <img src="img/popup/share_footer.svg" alt=""/>
     </div>
-    <div class="tooltipped footer-btn logo" data-action="logo" data-position="top" data-tooltip="Learn more about Findx">
+    <div class="tooltipped footer-btn logo" data-action="logo" data-position="top" data-tooltip="popupTipFooterLogo">
         <img src="img/popup/findx_logo.svg" alt=""/>
     </div>
     <div class="tooltipped footer-btn fav-btn" data-action="favorites" data-position="top" data-tooltip="">
