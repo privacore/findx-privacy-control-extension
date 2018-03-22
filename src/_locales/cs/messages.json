@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "Findx Privacy Control",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "uBlock₀ — Ovládací panel",
-    "description": "English: uBlock₀ — Dashboard"
+    "message": "Findx Privacy Control — Ovládací panel",
+    "description": "English: Findx Privacy Control — Dashboard"
   },
   "settingsPageName": {
     "message": "Nastavení",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — Protokol požadavků",
+    "message": "Findx Privacy Control — Protokol požadavků",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Kliknutí: trvale zakázat uBlock₀ pro celý tento web.\n\nCtrl+kliknutí: zakázat uBlock₀ pouze pro tuto stránku.",
-    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+    "message": "Kliknutí: trvale zakázat Findx Privacy Control pro celý tento web.\n\nCtrl+kliknutí: zakázat Findx Privacy Control pouze pro tuto stránku.",
+    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Kliknutí: trvale zakázat uBlock₀ pro celý tento web.\n\nCtrl+kliknutí: zakázat uBlock₀ pouze pro tuto stránku.",
+    "message": "Kliknutí: trvale zakázat Findx Privacy Control pro celý tento web.\n\nCtrl+kliknutí: zakázat Findx Privacy Control pouze pro tuto stránku.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Kliknutím povolíte uBlock₀ pro tento web.",
+    "message": "Kliknutím povolíte Findx Privacy Control pro tento web.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Obecné kosmetické filtry jsou kosmetické filtry vytvořené k použití se všemi webovými stránkami.<p>Přestože je uBlock₀ používá velmi efektivně, kosmetické filtry mohou přispět ke zvýšenému využití operační paměti a procesoru na některých webech, zejména těch velkých a složitých.<p>Zapnutím této volby se lze vyhnout nadbytečnému zatížení paměti i procesoru vyvolaném použitím obecných kosmetických filtrů a rovněž snížit využití paměti samotným uBlock₀ rozšířením.<p>Na méně výkonných zařízeních je doporučeno tuto volbu povolit.",
+    "message": "<p>Obecné kosmetické filtry jsou kosmetické filtry vytvořené k použití se všemi webovými stránkami.<p>Přestože je Findx Privacy Control používá velmi efektivně, kosmetické filtry mohou přispět ke zvýšenému využití operační paměti a procesoru na některých webech, zejména těch velkých a složitých.<p>Zapnutím této volby se lze vyhnout nadbytečnému zatížení paměti i procesoru vyvolaném použitím obecných kosmetických filtrů a rovněž snížit využití paměti samotným Findx Privacy Control rozšířením.<p>Na méně výkonných zařízeních je doporučeno tuto volbu povolit.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -616,7 +616,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Všechna nastavení budou přepsána těmi zálohovanými {{time}} a uBlock₀ se restartuje.\n\nPřepsat všechna existující nastavení zálohovanými daty?",
+    "message": "Všechna nastavení budou přepsána těmi zálohovanými {{time}} a Findx Privacy Control se restartuje.\n\nPřepsat všechna existující nastavení zálohovanými daty?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +624,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Všechna nastavení budou smazána a uBlock₀ se restaruje.\n\nObnovit uBlock₀ do továrního nastavení?",
+    "message": "Všechna nastavení budou smazána a Findx Privacy Control se restaruje.\n\nObnovit Findx Privacy Control do továrního nastavení?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +632,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "uBlock₀: Přidat následující URL adresu do seznamů vlastních filtrů?\n\nNázev: \"{{title}}\"\nURL: {{url}}",
+    "message": "Findx Privacy Control: Přidat následující URL adresu do seznamů vlastních filtrů?\n\nNázev: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +669,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "vypnutý",
-    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin zabránil následující stránce v načtení:",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "description": "English: Findx Privacy Control has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Kvůli následujícímu filtru",

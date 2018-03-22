@@ -2376,7 +2376,7 @@ vAPI.net.registerListeners = function() {
         var tabId = tabWatcher.tabIdFromTarget(browser);
 
         // Ignore notifications related to our popup
-        if ( details.url.startsWith(vAPI.getURL('popup.html')) ) {
+        if ( details.url.startsWith(vAPI.getURL('popup-privacycontrol.html')) ) {
             return;
         }
 
@@ -2487,7 +2487,7 @@ vAPI.toolbarButton = {
         var win = winWatcher.getCurrentWindow();
         var curTabId = tabWatcher.tabIdFromTarget(getTabBrowser(win).selectedTab);
         vAPI.tabs.open({
-            url: 'popup.html?tabId=' + curTabId + '&mobile=1',
+            url: 'popup-privacycontrol.html?tabId=' + curTabId + '&mobile=1',
             index: -1,
             select: true
         });
@@ -2546,7 +2546,7 @@ vAPI.toolbarButton = {
     var tbb = vAPI.toolbarButton;
 
     tbb.onViewShowing = function({target}) {
-        target.firstChild.setAttribute('src', vAPI.getURL('popup.html'));
+        target.firstChild.setAttribute('src', vAPI.getURL('popup-privacycontrol.html'));
     };
 
     tbb.onViewHiding = function({target}) {

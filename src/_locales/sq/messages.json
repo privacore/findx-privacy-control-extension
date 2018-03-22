@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "Findx Privacy Control",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "uBlock₀ — Paneli i kontrollit",
-    "description": "English: uBlock₀ — Dashboard"
+    "message": "Findx Privacy Control — Paneli i kontrollit",
+    "description": "English: Findx Privacy Control — Dashboard"
   },
   "settingsPageName": {
     "message": "Parametrat",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — Regjistri i kërkesave",
+    "message": "Findx Privacy Control — Regjistri i kërkesave",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Kliko: uBlock₀ bëhet joaktiv\/aktiv te ky uebsajti.\n\nKliko+Ctrl: uBlock₀ bëhet joaktiv vetëm te kjo faqja.",
-    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+    "message": "Kliko: Findx Privacy Control bëhet joaktiv\/aktiv te ky uebsajti.\n\nKliko+Ctrl: Findx Privacy Control bëhet joaktiv vetëm te kjo faqja.",
+    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Çaktivizoj uBlock₀ te ky uebsajti.\n\nKlikimi+Ctrl do të çaktivizojë uBlock₀ vetëm te kjo faqja.",
+    "message": "Çaktivizoj Findx Privacy Control te ky uebsajti.\n\nKlikimi+Ctrl do të çaktivizojë Findx Privacy Control vetëm te kjo faqja.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Aktivizoj uBlock₀ te ky uebsajti.",
+    "message": "Aktivizoj Findx Privacy Control te ky uebsajti.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Ky opsion lejon analizimin dhe zbatimin e <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">filtrave &ldquo;eliminues&rdquo; njësoj si në Adblock Plus<\/a>. Këta filtra kozmetikë shërbejnë kryesisht për të fshehur nga ana vizive elementet e padëshirueshme të cilat nuk bllokohen me metodën standarde të filtrimit.<\/p><p>Aktivizimi i kësaj veçorie rrit impaktin e <i>uBlock₀<\/i> te memorja e kompjuterit.<\/p>",
+    "message": "<p>Ky opsion lejon analizimin dhe zbatimin e <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">filtrave &ldquo;eliminues&rdquo; njësoj si në Adblock Plus<\/a>. Këta filtra kozmetikë shërbejnë kryesisht për të fshehur nga ana vizive elementet e padëshirueshme të cilat nuk bllokohen me metodën standarde të filtrimit.<\/p><p>Aktivizimi i kësaj veçorie rrit impaktin e <i>Findx Privacy Control<\/i> te memorja e kompjuterit.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Filtrat kozmetikë jospecifikë janë filtra kozmetikë të cilët aplikohen për të gjitha faqet e internetit.<p>Megjithëse uBlock₀ i përdor ata me efikasitet, filtrat kozmetikë jospecifikë përsëri mund të rëndojnë memorjen dhe procesorin e kompjuterit në faqet e gjata.<p>Aktivizimi i këtij opsioni eliminon peshën e tepërt te memorja dhe procesori, dhe zvogëlon impaktin e uBlock₀ te memorja e kompjuterit.<p>Rekomandohet që ky opsion të aktivizohet për aparatet jo shumë të shpejta.",
+    "message": "<p>Filtrat kozmetikë jospecifikë janë filtra kozmetikë të cilët aplikohen për të gjitha faqet e internetit.<p>Megjithëse Findx Privacy Control i përdor ata me efikasitet, filtrat kozmetikë jospecifikë përsëri mund të rëndojnë memorjen dhe procesorin e kompjuterit në faqet e gjata.<p>Aktivizimi i këtij opsioni eliminon peshën e tepërt te memorja dhe procesori, dhe zvogëlon impaktin e Findx Privacy Control te memorja e kompjuterit.<p>Rekomandohet që ky opsion të aktivizohet për aparatet jo shumë të shpejta.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -616,7 +616,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Të gjithë parametrat do të mbishkruhen me të dhënat e kopjuara më {{time}}, dhe uBlock₀ do të hapet përsëri.\n\nTë mbishkruhen parametrat aktualë?",
+    "message": "Të gjithë parametrat do të mbishkruhen me të dhënat e kopjuara më {{time}}, dhe Findx Privacy Control do të hapet përsëri.\n\nTë mbishkruhen parametrat aktualë?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +624,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Të gjithë parametrat do të fshihen dhe uBlock₀ do të hapet përsëri.\n\nTë kthehen parametrat origjinalë?",
+    "message": "Të gjithë parametrat do të fshihen dhe Findx Privacy Control do të hapet përsëri.\n\nTë kthehen parametrat origjinalë?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +632,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "uBlock₀: Të shtohet adresa në listën e filtrave tuaj?\n\nTitulli: \"{{title}}\"\nURL: {{url}}",
+    "message": "Findx Privacy Control: Të shtohet adresa në listën e filtrave tuaj?\n\nTitulli: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +669,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "fikur",
-    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin po pengon hapjen e faqes:",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "description": "English: Findx Privacy Control has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Për shkak të filtrit",

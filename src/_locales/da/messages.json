@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "Findx Privacy Control",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "uBlock₀ — Dashboard",
-    "description": "English: uBlock₀ — Dashboard"
+    "message": "Findx Privacy Control — Dashboard",
+    "description": "English: Findx Privacy Control — Dashboard"
   },
   "settingsPageName": {
     "message": "Indstillinger",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — Netværkslog",
+    "message": "Findx Privacy Control — Netværkslog",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Klik: Deaktiver\/aktiver uBlock₀ på dette websted.\n\nCtrl+Klik: Deaktiver uBlock₀ kun på denne side.",
-    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+    "message": "Klik: Deaktiver\/aktiver Findx Privacy Control på dette websted.\n\nCtrl+Klik: Deaktiver Findx Privacy Control kun på denne side.",
+    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Klik for at deaktivere uBlock₀ på dette websted.\n\nCtrl+Klik for at deaktivere uBlock₀ kun på denne side.",
+    "message": "Klik for at deaktivere Findx Privacy Control på dette websted.\n\nCtrl+Klik for at deaktivere Findx Privacy Control kun på denne side.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Klik for at aktivere uBlock₀ på dette websted.",
+    "message": "Klik for at aktivere Findx Privacy Control på dette websted.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Denne indstilling gør det muligt at analysere og anvende <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Ablock Plus kompatible &ldquo;element skjuldende&rdquo; filtre<\/a>. Disse filtre er essentielt set kosmetiske og har til formål at skjule irriterende visuelle elementer på diverse websider, som det ikke er muligt at blokere på andre måder. <\/p><p>Denne indstilling øger uBlock₀'s hukommelsesforbrug.<\/p>",
+    "message": "<p>Denne indstilling gør det muligt at analysere og anvende <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Ablock Plus kompatible &ldquo;element skjuldende&rdquo; filtre<\/a>. Disse filtre er essentielt set kosmetiske og har til formål at skjule irriterende visuelle elementer på diverse websider, som det ikke er muligt at blokere på andre måder. <\/p><p>Denne indstilling øger Findx Privacy Control's hukommelsesforbrug.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Fælles kosmetiske filtre er de kosmetiske filtre der er ment til anvendelse på alle websider. \n<p>Selvom uBlock₀ behandler dem effektivt, kan de fælles kosmetiske filtre medføre forøget brug af hukommelse og CPU på nogle websider, specielt de store og længe-åbnede websider.\n<p>Aktiveres denne funktion vil uBlock₀ ikke længere benytte de fælles kosmetiske filtre, hvilket medfører lavere hukommelses- og CPU-forbrug på hver side, samt mindre overordnet hukommelsesforbrug.\n<p>Det anbefales at aktivere denne funktion på mindre kraftfulde enheder.",
+    "message": "<p>Fælles kosmetiske filtre er de kosmetiske filtre der er ment til anvendelse på alle websider. \n<p>Selvom Findx Privacy Control behandler dem effektivt, kan de fælles kosmetiske filtre medføre forøget brug af hukommelse og CPU på nogle websider, specielt de store og længe-åbnede websider.\n<p>Aktiveres denne funktion vil Findx Privacy Control ikke længere benytte de fælles kosmetiske filtre, hvilket medfører lavere hukommelses- og CPU-forbrug på hver side, samt mindre overordnet hukommelsesforbrug.\n<p>Det anbefales at aktivere denne funktion på mindre kraftfulde enheder.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -468,7 +468,7 @@
     "description": "English: dynamic rule syntax and full documentation."
   },
   "whitelistPrompt": {
-    "message": "Brugerdefineret liste over værtsnavne hvor uBlock₀ vil være deaktiveret. Kun et værtsnavn pr. linje. Ugyldige værtsnavne ignoreres.",
+    "message": "Brugerdefineret liste over værtsnavne hvor Findx Privacy Control vil være deaktiveret. Kun et værtsnavn pr. linje. Ugyldige værtsnavne ignoreres.",
     "description": "English: An overview of the content of the dashboard's Whitelist pane."
   },
   "whitelistImport": {
@@ -616,7 +616,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Alle indstillinger vil blive erstattet af sikkerhedskopien fra {{time}}, hvorefter uBlock₀ vil genstarte.\n\nErstat alle indstillinger med indstillingerne fra sikkerhedskopien?",
+    "message": "Alle indstillinger vil blive erstattet af sikkerhedskopien fra {{time}}, hvorefter Findx Privacy Control vil genstarte.\n\nErstat alle indstillinger med indstillingerne fra sikkerhedskopien?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +624,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Alle dine indstillinger vil blive nulstillet, hvorefter uBlock₀ vil genstarte.\n\nGendan alle indstillinger i uBlock₀ til standard?",
+    "message": "Alle dine indstillinger vil blive nulstillet, hvorefter Findx Privacy Control vil genstarte.\n\nGendan alle indstillinger i Findx Privacy Control til standard?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +632,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "uBlock₀: Tilføj det følgende URL til din personlige filterliste?\n\nTitel: \"{{title}}\"\nURL: {{url}}",
+    "message": "Findx Privacy Control: Tilføj det følgende URL til din personlige filterliste?\n\nTitel: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +669,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "Slået fra",
-    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
   },
   "docblockedPrompt1": {
-    "message": "uBlock₀ har blokeret den følgende hjemmeside:",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "message": "Findx Privacy Control har blokeret den følgende hjemmeside:",
+    "description": "English: Findx Privacy Control has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "På grund af det følgende filter",

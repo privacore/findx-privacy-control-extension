@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "Findx Privacy Control",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "uBlock₀ — Panou de control",
-    "description": "English: uBlock₀ — Dashboard"
+    "message": "Findx Privacy Control — Panou de control",
+    "description": "English: Findx Privacy Control — Dashboard"
   },
   "settingsPageName": {
     "message": "Opțiuni",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — Jurnal",
+    "message": "Findx Privacy Control — Jurnal",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Clic: dezactivează\/activează uBlock₀ pentru acest sait.\n\nCtrl+clic: dezactivează uBlock₀ doar pe această pagină.",
-    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+    "message": "Clic: dezactivează\/activează Findx Privacy Control pentru acest sait.\n\nCtrl+clic: dezactivează Findx Privacy Control doar pe această pagină.",
+    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
   },
   "popupPowerSwitchInfo1": {
     "message": "Clic ca să dezactivezi uBo pentru acest site.\n\nCtrl+clic ca sa dezactivezi uBo doar pe această pagină.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Dați clic pentru a activa uBlock₀ pentru acest site.",
+    "message": "Dați clic pentru a activa Findx Privacy Control pentru acest site.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Această opțiune permite citirea și aplicarea <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">filtrelor compatibile Adblock Plus pentru &ldquo;ascunderea elementelor&rdquo;<\/a>. Aceste filtre sunt în esență vizuale, ele servesc la ascunderea elementelor dintr-o pagină web care sunt considerate drept o neplăcere vizuală și care nu pot fi blocate de motorul de filtrare bazat pe cereri de rețea.<\/p><p>Activând această opțiune memoria utilizată de uBlock₀ va crește.<\/p>",
+    "message": "<p>Această opțiune permite citirea și aplicarea <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">filtrelor compatibile Adblock Plus pentru &ldquo;ascunderea elementelor&rdquo;<\/a>. Aceste filtre sunt în esență vizuale, ele servesc la ascunderea elementelor dintr-o pagină web care sunt considerate drept o neplăcere vizuală și care nu pot fi blocate de motorul de filtrare bazat pe cereri de rețea.<\/p><p>Activând această opțiune memoria utilizată de Findx Privacy Control va crește.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>FIltrele cosmetice generice sunt acelea care se aplică tuturor site-urilor.<p>Deși sunt folosite eficient de uBlock₀, filtrele cosmetice generice pot contribui semnificativ la creșterea cantității de memorie și a utilizării procesorului pe anumite pagini, în special cele de mari dimensiuni și care sunt încărcate pentru mult timp.<p>Activarea acestei opțiuni va elimina încărcarea suplimentară a memoriei și a procesorului rezultată în urma folosirii filtrelor cosmetice generice, și, de asemenea, va micșora impactul uBlock₀ asupra sistemului.<p>Se recomandă activarea acestei opțiuni pe dispozitivele mai puțin performante.",
+    "message": "<p>FIltrele cosmetice generice sunt acelea care se aplică tuturor site-urilor.<p>Deși sunt folosite eficient de Findx Privacy Control, filtrele cosmetice generice pot contribui semnificativ la creșterea cantității de memorie și a utilizării procesorului pe anumite pagini, în special cele de mari dimensiuni și care sunt încărcate pentru mult timp.<p>Activarea acestei opțiuni va elimina încărcarea suplimentară a memoriei și a procesorului rezultată în urma folosirii filtrelor cosmetice generice, și, de asemenea, va micșora impactul Findx Privacy Control asupra sistemului.<p>Se recomandă activarea acestei opțiuni pe dispozitivele mai puțin performante.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -616,7 +616,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Toate opțiunile vor fi suprascrise cu datele din {{time}} și uBlock₀ va fi repornit.\n\nDorești să suprascrii toate opțiunile folosind datele salvate?",
+    "message": "Toate opțiunile vor fi suprascrise cu datele din {{time}} și Findx Privacy Control va fi repornit.\n\nDorești să suprascrii toate opțiunile folosind datele salvate?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +624,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Toate configurările tale vor fi eliminate și uBlock₀ va reporni.\n\nRestaurează uBlock₀ la configurările din fabrică?",
+    "message": "Toate configurările tale vor fi eliminate și Findx Privacy Control va reporni.\n\nRestaurează Findx Privacy Control la configurările din fabrică?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +632,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "uBlock₀: Adaug următorul URL în lista ta de filtre personalizate?\n\nTitlu: \"{{title}}\"\nURL: {{url}}",
+    "message": "Findx Privacy Control: Adaug următorul URL în lista ta de filtre personalizate?\n\nTitlu: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +669,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "dezactivat",
-    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin a prevenit încărcarea acestei pagini:",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "description": "English: Findx Privacy Control has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Din cauza următorului filtru",

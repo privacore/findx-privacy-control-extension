@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "Findx Privacy Control",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "uBlock₀ — ダッシュボード",
-    "description": "English: uBlock₀ — Dashboard"
+    "message": "Findx Privacy Control — ダッシュボード",
+    "description": "English: Findx Privacy Control — Dashboard"
   },
   "settingsPageName": {
     "message": " 設定",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — ネットワークリクエストログ",
+    "message": "Findx Privacy Control — ネットワークリクエストログ",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "uBlock₀ の有効 \/ 無効を切り替えます。\n\nクリック: サイト全体  \nCtrl+クリック: このページのみ",
-    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+    "message": "Findx Privacy Control の有効 \/ 無効を切り替えます。\n\nクリック: サイト全体  \nCtrl+クリック: このページのみ",
+    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "クリックで、このサイト全体において uBlock₀ を無効化します。\n\nCtrl+クリックで、このページでのみ uBlock₀ を無効化します。",
+    "message": "クリックで、このサイト全体において Findx Privacy Control を無効化します。\n\nCtrl+クリックで、このページでのみ Findx Privacy Control を無効化します。",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "クリックで、このサイトにおいて uBlock₀ を有効化します。",
+    "message": "クリックで、このサイトにおいて Findx Privacy Control を有効化します。",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -468,7 +468,7 @@
     "description": "English: dynamic rule syntax and full documentation."
   },
   "whitelistPrompt": {
-    "message": "uBlock₀が無効になるホスト名の一覧です。1行につき1つのエントリで、無効なホスト名は無視されます。",
+    "message": "Findx Privacy Controlが無効になるホスト名の一覧です。1行につき1つのエントリで、無効なホスト名は無視されます。",
     "description": "English: An overview of the content of the dashboard's Whitelist pane."
   },
   "whitelistImport": {
@@ -616,7 +616,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "{{time}}のバックアップデータを使用してすべての設定を上書きした後、uBlock₀が再起動します。\n\nバックアップデータを使用して既存のすべての設定の上書きしますか？",
+    "message": "{{time}}のバックアップデータを使用してすべての設定を上書きした後、Findx Privacy Controlが再起動します。\n\nバックアップデータを使用して既存のすべての設定の上書きしますか？",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +624,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "すべての設定が消去された後、uBlock₀が再起動します。\n\n初期設定にリセットしますか？",
+    "message": "すべての設定が消去された後、Findx Privacy Controlが再起動します。\n\n初期設定にリセットしますか？",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +632,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "uBlock₀: 以下のURLをカスタムフィルターに追加しますか？\n\nタイトル: \"{{title}}\"\nURL: {{url}}",
+    "message": "Findx Privacy Control: 以下のURLをカスタムフィルターに追加しますか？\n\nタイトル: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +669,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "オフ",
-    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Originは、以下のページの読み込みを防いでいます:",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "description": "English: Findx Privacy Control has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "以下のフィルターによる",

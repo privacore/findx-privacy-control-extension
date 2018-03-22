@@ -1,495 +1,71 @@
-﻿<!DOCTYPE html>
-<html id="uBO-popup-panel" xmlns="http://www.w3.org/1999/html">
+<!DOCTYPE html>
+<html id="uBO-popup-panel">
 
 <head>
-<meta name="viewport" content="width=360">
-<meta charset="utf-8">
-<link rel="stylesheet" href="css/material-icons.css" type="text/css">
-<link rel="stylesheet" href="css/materialize.min.css" type="text/css">
-<link rel="stylesheet" href="css/popup-privacontrol.css" type="text/css">
-<title>Findx Privacy Control</title>
+    <meta name="viewport" content="width=470"><!-- When showing as a tab in fennec, scale to full size (150px + 320px) -->
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/common.css" type="text/css">
+    <link rel="stylesheet" href="css/popup.css" type="text/css">
+    <link rel="stylesheet" href="css/vapi-popup.css" type="text/css"><!-- Optional platform-specific CSS rules -->
+    <title>uBlock Origin</title>
 </head>
 
-
-<body tabindex="1" style="overflow: hidden;" class="">
-
-<div id="statusbar">
-    <div class="today-blocked">
-        <span>Blocked today:</span>
-        <span id="today_blocked_count"></span>
-    </div>
-    <div class="protection-status">
-        <span>Protection:</span>
-        <span class="protection-status-on">on</span>
-        <span class="protection-status-off">off</span>
-    </div>
-    <div class="protection-status-icon">
-        <img src="img/popup/shield.svg" alt=""/>
-    </div>
+<body>
+<span id="appinfo"><span id="appname">&nbsp;</span> <span id="version">&nbsp;</span></span>
+<div id="panes">
+    <div class="tooltipContainer">
+        <p id="switch" role="button" aria-label data-tip-position="under" tabindex="0"><span class="fa">&#xf011;</span></p>
+        <p id="basicTools">
+            <span id="gotoZap" class="fa tool" data-i18n-tip="popupTipZapper" data-tip-position="under">&#xf0e7;</span>
+            <span id="gotoPick" class="fa tool" data-i18n-tip="popupTipPicker" data-tip-position="under">&#xf1fb;</span>
+            <a href="logger-ui.html" class="fa tool enabled" aria-label="data-tip" data-i18n-tip="popupTipLog" data-tip-position="under" target="uBOLogger" tabindex="0">&#xf022;</a>
+            <a href="dashboard.html" class="fa tool enabled" aria-label="data-tip" data-i18n-tip="popupTipDashboard" data-tip-position="under" target="uBODashboard" tabindex="0">&#xf1de;</a>
+        </p>
+        <h2 id="dfToggler" data-i18n="popupBlockedRequestPrompt">&nbsp;</h2>
+        <p class="statName">
+            <span data-i18n="popupBlockedOnThisPagePrompt">&nbsp;</span>
+        </p>
+        <p class="statValue" id="page-blocked">?</p>
+        <div id="refresh" class="fa">&#xf021;</div>
+        <p class="statName">
+            <span data-i18n="popupBlockedSinceInstallPrompt">&nbsp;</span>
+        </p>
+        <p class="statValue" id="total-blocked">?</p>
+        <h2 data-i18n="popupHitDomainCountPrompt">&nbsp;</h2>
+        <p class="statValue" id="popupHitDomainCount">&nbsp;</p>
+        <div id="extraTools">
+            <span id="no-popups" class="hnSwitch fa" role="button" aria-label tabindex="0">&#xf0c5;<span class="badge"></span><span><svg viewBox="0 0 20 20"><path d="M1,1 19,19M1,19 19,1" /></svg></span></span>
+            <span id="no-large-media" class="hnSwitch fa" role="button" aria-label tabindex="0">&#xf008;<span class="badge"></span><span><svg viewBox="0 0 20 20"><path d="M1,1 19,19M1,19 19,1" /></svg></span></span>
+            <span id="no-cosmetic-filtering" class="hnSwitch fa" role="button" aria-label tabindex="0">&#xf070;<span class="badge"></span><span><svg viewBox="0 0 20 20"><path d="M1,1 19,19M1,19 19,1" /></svg></span></span>
+            <span id="no-remote-fonts" class="hnSwitch fa" role="button" aria-label tabindex="0">&#xf031;<span class="badge"></span><span><svg viewBox="0 0 20 20"><path d="M1,1 19,19M1,19 19,1" /></svg></span></span>
+        </div>
+    </div><!-- DO NOT REMOVE --><div class="tooltipContainer">
+    <div id="firewallContainer" class="minimized">
+        <div><span data-i18n="popupAnyRulePrompt"></span><span data-src="/" data-des="*" data-type="*" data-i18n-tip="popupTipGlobalRules" data-tip-position="under"> </span><span data-src="." data-des="*" data-type="*" data-i18n-tip="popupTipLocalRules" data-tip-position="under"> </span></div>
+        <div><span data-i18n="popupImageRulePrompt"></span><span data-src="/" data-des="*" data-type="image"> </span><span data-src="." data-des="*" data-type="image"> </span></div>
+        <div><span data-i18n="popup3pAnyRulePrompt"></span><span data-src="/" data-des="*" data-type="3p"> </span><span data-src="." data-des="*" data-type="3p"> </span></div>
+        <div><span data-i18n="popupInlineScriptRulePrompt"></span><span data-src="/" data-des="*" data-type="inline-script"> </span><span data-src="." data-des="*" data-type="inline-script"> </span></div>
+        <div><span data-i18n="popup1pScriptRulePrompt"></span><span data-src="/" data-des="*" data-type="1p-script"> </span><span data-src="." data-des="*" data-type="1p-script"> </span></div>
+        <div><span data-i18n="popup3pScriptRulePrompt"></span><span data-src="/" data-des="*" data-type="3p-script"> </span><span data-src="." data-des="*" data-type="3p-script"> </span></div>
+        <div><span data-i18n="popup3pFrameRulePrompt"></span><span data-src="/" data-des="*" data-type="3p-frame"> </span><span data-src="." data-des="*" data-type="3p-frame"> </span></div>
+    </div><div id="rulesetTools"><span id="saveRules" class="fa" data-i18n-tip="popupTipSaveRules" data-tip-position="under">&#xf023;</span><span id="revertRules" class="fa" data-i18n-tip="popupTipRevertRules" data-tip-position="under">&#xf12d;</span></div>
+</div>
 </div>
 
-<ul id="slide-out" class="sidenav">
-    <li>
-        <div class="sidenav-header bg-blue">
-            <div class="sidenav-logo"><img src="img/popup/findx_logo.svg" alt=""/></div>
-            <div class="sidenav-heder-title">Privacy control</div>
-            <div class="close-sidenav-btn"><img src="img/popup/close.svg" alt="Close"/></div>
-        </div>
-    </li>
-    <li><a class="subheader">Protection</a></li>
-    <li>
-        <a href="#" data-action="protection_lists">
-            <img src="img/popup/filterlists.svg" alt=""/>
-            <span>Active protection lists</span>
-        </a>
-    </li>
-    <li>
-        <a href="#" data-action="tracking_monitor">
-            <img src="img/popup/tracking_monitor.svg" alt=""/>
-            <span>Tracking monitor</span>
-        </a>
-    </li>
-    <li>
-        <a href="#" data-action="stop_protection">
-            <img src="img/popup/stop_btn.svg" alt=""/>
-            <span>Stop protection</span>
-        </a>
-    </li>
-    <li>
-        <a href="#" data-action="settings">
-            <img src="img/popup/settings_drawer.svg" alt=""/>
-            <span>Settings</span>
-        </a>
-    </li>
-    <li><div class="divider"></div></li>
-    <li>
-        <a href="#" data-action="feedback">
-            <img src="img/popup/pointing_right.svg" alt=""/>
-            <span>Send feedback</span>
-        </a>
-    </li>
-    <li>
-        <a href="#" data-action="share">
-            <img src="img/popup/share_drawer.svg" alt=""/>
-            <span>Share</span>
-        </a>
-    </li>
-    <li>
-        <a href="#" data-action="findx_mobile">
-            <img src="img/popup/Findx_app_icon.svg" alt=""/>
-            <span>Findx for mobile</span>
-        </a>
-    </li>
-</ul>
-
-<div id="pages_wrapper">
-    <div class="page active" id="main_page">
-        <div class="header">
-            <a data-target="slide-out" class="sidenav-trigger header-btn"><i class="material-icons">menu</i></a>
-            <span class="header-title">Findx privacy control</span>
-            <a class="header-btn settings-btn">
-                <img src="img/popup/settings-icon.svg" alt=""/>
-            </a>
-        </div>
-
-        <div id="search_bar">
-            <input type="text" id="search_input" placeholder="Search here... in private..." class="browser-default" value="">
-            <i class="material-icons" id="search_bar_btn">search</i>
-        </div>
-
-        <div class="main-content">
-            <ul class="tabs tabs-fixed-width">
-                <li class="tab">
-                    <a class="" data-id="search_tab" href="">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="9108 -4719 24 24">
-                            <g id="navbar_search_" data-name="navbar_search" transform="translate(8828 -4759)">
-                                <path id="square" d="M0 0h24v24H0z" style="fill:none" transform="translate(280 40)"/>
-                                <path id="path" d="M46.9 61.7h-.8l-.3-.3a6.259 6.259 0 0 0 1.6-4.2 6.5 6.5 0 1 0-6.5 6.5 6.259 6.259 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5zm-6 0a4.5 4.5 0 1 1 4.5-4.5 4.481 4.481 0 0 1-4.5 4.5z" style="fill:#fff" transform="translate(248.6 -7.7)"/>
-                            </g>
-                        </svg>
-                        <span>Search</span>
-                    </a>
-                </li>
-                <li class="tab">
-                    <a class="active" data-id="protection_tab" href="">
-                        <img src="img/popup/shield.svg" alt=""/>
-                        <span>Protection</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="main-tabs-slider">
-
-                <div id="search_tab" class="col s12 tab-frame">
-                    <div class="plates-row">
-                        <div class="plate mid-plate invisible-plate">
-                            <div class="plate sm-wide-plate bg-blue-70 waves-effect waves-brand" data-type="weather">
-                                <div class="plate-content flex-col">
-                                    <div class="plate-content-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="7062 -5384 36 36">
-                                            <g id="weather" transform="translate(6812 -5897)">
-                                                <g id="_x36_4px_boxes" transform="translate(250 513)">
-                                                    <path id="Rectangle_289" d="M0 0h36v36H0z" style="fill:none" data-name="Rectangle 289"/>
-                                                </g>
-                                                <g id="Production" transform="translate(250 515.25)">
-                                                    <g id="Group_289" data-name="Group 289">
-                                                        <path id="Path_289" d="M23.063 9.609V4H20.25v5.608a8.131 8.131 0 0 1 2.813.001zm-6.605 1.563L12.484 7.2 10.5 9.187l3.973 3.973a8.916 8.916 0 0 1 1.984-1.988zM28.8 13.16l3.973-3.973L30.781 7.2l-3.973 3.973A8.916 8.916 0 0 1 28.8 13.16zm1.563 3.777a8.131 8.131 0 0 1 0 2.813H36v-2.812zM26.807 25.5l3.973 3.973 1.989-1.989L28.8 23.51a8.914 8.914 0 0 1-1.993 1.99zm-7.7-3.529c-2.578-8.3-15.269-7.126-15.611 1.989-5.731 2.465-4.014 10.979 2.2 10.979h12.455a6.516 6.516 0 0 0 .959-12.97zm-.959 10.156H5.694a2.928 2.928 0 0 1-.427-5.82l1.149-.288c-.105-1.384-.445-3.542 1.173-5.281 2.591-2.788 8.21-1.822 8.994 2.721l.186 1.077 1.094.083c5.837.44 4.881 7.506.288 7.506zM21.63 11.88a6.468 6.468 0 0 0-5.605 3.254 10.169 10.169 0 0 1 2.249 1.517 3.763 3.763 0 1 1 5.336 4.9 8.748 8.748 0 0 1 1.879 1.982 6.468 6.468 0 0 0-3.856-11.655z" style="fill:#fff" data-name="Path 289" transform="translate(0 -4)"/>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </svg>
-                                    </div>
-                                    <div class="plate-content-text">
-                                        <span class="">Weather forecast</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="plate sm-wide-plate invisible-plate">
-                                <div class="plate sm-plate bg-blue-60 waves-effect waves-brand" data-type="timer">
-                                    <div class="plate-content flex-col">
-                                        <div class="plate-content-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="7017.913 -5296 36 36">
-                                                <g id="timer" transform="translate(6988 -5633)">
-                                                    <g id="_x36_4px_boxes" transform="translate(29.913 337)">
-                                                        <path id="Rectangle_397" d="M0 0h36v36H0z" style="fill:none" data-name="Rectangle 397"/>
-                                                    </g>
-                                                    <g id="Production" transform="translate(33.85 338.688)">
-                                                        <g id="Group_396" data-name="Group 396">
-                                                            <path id="Path_395" d="M22.188 19.739v-6.051h-2.813v6.052a2.531 2.531 0 1 0 2.812 0zm8.512-7.451l2.514-3.05-2.174-1.789-2.489 3.02a13.692 13.692 0 0 0-6.363-2.336v-2.32H25V3h-8.437v2.813h2.813v2.32A13.8 13.8 0 1 0 30.7 12.288zm-2.082 17.39a11.078 11.078 0 1 1 3.245-7.834 11.008 11.008 0 0 1-3.248 7.834z" style="fill:#fff" data-name="Path 395" transform="translate(-7 -3)"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </svg>
-                                        </div>
-                                        <div class="plate-content-text">
-                                            <span class="">Timer</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="plate sm-plate bg-blue-30 waves-effect waves-brand" data-type="calculator">
-                                    <div class="plate-content flex-col">
-                                        <div class="plate-content-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="7105.948 -5296.39 36 36">
-                                                <g id="calculator" transform="translate(6988 -5633)">
-                                                    <g id="_x36_4px_boxes" transform="translate(117.948 336.61)">
-                                                        <path id="Rectangle_378" d="M0 0h36v36H0z" style="fill:none" data-name="Rectangle 378"/>
-                                                    </g>
-                                                    <g id="Production" transform="translate(123.011 338.86)">
-                                                        <g id="Group_377" data-name="Group 377">
-                                                            <path id="Path_376" d="M21.938 25.938a1.688 1.688 0 1 0 1.688 1.688 1.687 1.687 0 0 0-1.688-1.688zm0-5.063a1.687 1.687 0 1 0 1.688 1.687 1.687 1.687 0 0 0-1.688-1.687zm0-5.062a1.688 1.688 0 1 0 1.687 1.687 1.687 1.687 0 0 0-1.687-1.687zm-5.062 5.063a1.687 1.687 0 1 0 1.688 1.687 1.687 1.687 0 0 0-1.689-1.688zm0-5.062a1.688 1.688 0 1 0 1.687 1.686 1.687 1.687 0 0 0-1.688-1.687zm0 10.125a1.688 1.688 0 1 0 1.688 1.688 1.687 1.687 0 0 0-1.689-1.689zM31.219 4H12.656A3.66 3.66 0 0 0 9 7.656v24.188a3.66 3.66 0 0 0 3.656 3.656h18.563a3.66 3.66 0 0 0 3.656-3.656V7.656A3.66 3.66 0 0 0 31.219 4zm.844 27.844a.855.855 0 0 1-.844.844H12.656a.855.855 0 0 1-.844-.844V7.656a.855.855 0 0 1 .844-.844h18.563a.855.855 0 0 1 .844.844zM15.188 13h13.5v-2.812h-13.5zM27 20.875a1.687 1.687 0 1 0 1.688 1.687A1.687 1.687 0 0 0 27 20.875zm0 5.063a1.688 1.688 0 1 0 1.688 1.688A1.687 1.687 0 0 0 27 25.938zm0-10.125a1.688 1.688 0 1 0 1.688 1.687A1.687 1.687 0 0 0 27 15.813z" style="fill:#fff" data-name="Path 376" transform="translate(-9 -4)"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </svg>
-                                        </div>
-                                        <div class="plate-content-text">
-                                            <span class="">Calculator</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="plate mid-plate waves-effect waves-brand" data-type="videos">
-                            <div class="plate-content">
-                                <div class="plate-bg videos-plate-bg"></div>
-                                <div class="plate-content-bottom-block bg-blue-37">
-                                    <div class="">Search</div>
-                                    <div class="font-20-24">Videos</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="plates-row">
-                        <div class="plate mid-plate waves-effect waves-brand" data-type="maps">
-                            <div class="plate-content">
-                                <div class="plate-bg maps-plate-bg"></div>
-                                <div class="plate-content-bottom-block bg-blue-37">
-                                    <div class="">Search</div>
-                                    <div class="font-20-24">Maps</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="plate mid-plate waves-effect waves-brand" data-type="images">
-                            <div class="plate-content">
-                                <div class="plate-bg images-plate-bg"></div>
-                                <div class="plate-content-bottom-block bg-blue-56">
-                                    <div class="">Search</div>
-                                    <div class="font-20-24">Images</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="protection_tab" class="col s12 tab-frame active">
-                    <div class="plates-row">
-                        <div class="plate full-plate bg-protection-status-light protection-status-plate">
-                            <div class="plate-content">
-                                <div class="plate-content-title truncate"></div>
-                                <div class="plate-content-text">
-                                    <img id="pause_site_btn" src="img/popup/shield.svg" alt=""/>
-                                    <span class="protection-status-on">on</span>
-                                    <span class="protection-status-off">off</span>
-                                </div>
-                            </div>
-                            <div class="plate-footer">
-                                <div class="waves-effect waves-brand plate-footer-btn element-picker-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="7472 -5295 24 24">
-                                        <g id="flash" transform="translate(-1825 -2172)">
-                                            <g id="_x36_4px_boxes" transform="translate(9297 -3123)">
-                                                <path id="Rectangle_500" d="M0 0h24v24H0z" style="fill:none" data-name="Rectangle 500"/>
-                                            </g>
-                                            <g id="Production" transform="translate(9299.113 -3123)">
-                                                <g id="Group_499" data-name="Group 499">
-                                                    <path id="Path_498" d="M10.913 24L25.03 9h-7.862l2.584-9L5.634 15h7.859l.542-1.871H9.972l5.845-6.208-1.137 3.957h6.013l-8.648 9.172z" style="opacity:.56" data-name="Path 498" transform="translate(-5.634)"/>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </svg>
-                                </div>
-                            </div>
-                            <a id="protection_status_btn" class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Pause on this site">
-                                <img src="img/popup/on_off_button.svg" alt=""/>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="plates-row">
-                        <div class="plate mid-plate bg-protection-status-dark blocked-on-site-plate">
-                            <div class="plate-content">
-                                <div class="plate-content-title">Blocked on this site</div>
-                                <div class="plate-content-text">
-                                    <span></span>
-                                </div>
-                            </div>
-                            <div class="plate-footer">
-                                <div class="waves-effect waves-brand plate-footer-btn open-protection-lists-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="7472 -5144 24 24">
-                                        <g id="Filterlists" transform="translate(7456 -5158)">
-                                            <g id="Filterlists-2" style="opacity:.56" data-name="Filterlists" transform="translate(16 13)">
-                                                <path id="Rectangle_336" d="M0 0h24v24H0z" style="fill:none" data-name="Rectangle 336" transform="translate(0 1)"/>
-                                                <g id="Group_1001" data-name="Group 1001" transform="translate(-17.57 4.381)">
-                                                    <g id="Group_994" data-name="Group 994" transform="translate(26.265 1.951)">
-                                                        <g id="Group_993" data-name="Group 993">
-                                                            <path id="Path_720" d="M17.8 18.286h12.615v-1.855H17.8zm0-5.565h12.615v-1.856H17.8zm0-7.42v1.854h12.615V5.3z" data-name="Path 720" transform="translate(-17.8 -5.3)"/>
-                                                        </g>
-                                                    </g>
-                                                    <g id="Group_996" data-name="Group 996" transform="translate(19.651 5.912)">
-                                                        <g id="Group_995" data-name="Group 995">
-                                                            <path id="Path_721" d="M4.956 17.988a2.5 2.5 0 0 0-1.966-1.967A2.525 2.525 0 0 0 .021 18.99a2.5 2.5 0 0 0 1.966 1.966 2.525 2.525 0 0 0 2.969-2.968zm-1.6.742a.9.9 0 1 1-1.113-1.113.9.9 0 0 1 1.118 1.113z" data-name="Path 721" transform="translate(.025 -15.975)"/>
-                                                        </g>
-                                                    </g>
-                                                    <g id="Group_998" data-name="Group 998" transform="translate(19.651 11.848)">
-                                                        <g id="Group_997" data-name="Group 997">
-                                                            <path id="Path_722" d="M4.956 33.988a2.5 2.5 0 0 0-1.966-1.967A2.525 2.525 0 0 0 .021 34.99a2.5 2.5 0 0 0 1.966 1.966 2.525 2.525 0 0 0 2.969-2.968zm-1.6.742a.9.9 0 1 1-1.113-1.113.9.9 0 0 1 1.118 1.113z" data-name="Path 722" transform="translate(.025 -31.975)"/>
-                                                        </g>
-                                                    </g>
-                                                    <g id="Group_1000" data-name="Group 1000" transform="translate(19.651 -.025)">
-                                                        <g id="Group_999" data-name="Group 999">
-                                                            <path id="Path_723" d="M4.956 1.988A2.5 2.5 0 0 0 2.99.021 2.525 2.525 0 0 0 .021 2.99a2.5 2.5 0 0 0 1.967 1.966 2.525 2.525 0 0 0 2.968-2.968zm-1.6.742a.791.791 0 0 1-.631.631.9.9 0 1 1 .631-.631z" data-name="Path 723" transform="translate(.025 .025)"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="plate mid-plate invisible-plate">
-                            <div class="plate sm-wide-plate bg-grey blocked-today-plate">
-                                <div class="plate-content">
-                                    <div class="plate-content-title">Blocked today</div>
-                                    <div class="plate-content-text">
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="plate sm-wide-plate bg-grey blocked-total-plate">
-                                <div class="plate-content">
-                                    <div class="plate-content-title">Blocked in total</div>
-                                    <div class="plate-content-text">
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="protection-stopped-dialog">
-                        <div class="protection-stopped-inner">
-                            <div class="protection-stopped-title">Alert: Protection stopped</div>
-                            <div class="protection-stopped-content">You are exposed to behavioural tracking - it is possible for social media providers and advertisers to collect information about your interests while you are browsing.</div>
-                            <div class="protection-stopped-controls">
-                                <a id="protection_stopped_btn" class="btn-floating btn-large waves-effect waves-light">
-                                    <img src="img/popup/on_off_button.svg" alt=""/>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="share-dialog">
-                        <div class="share-dialog-inner">
-                            <div class="share-dialog-header">
-                                <div class="share-dialog-title">Share on</div>
-                                <div class="share-dialog-close-btn"><img src="img/popup/close_dialog.svg" alt="Close"/></div>
-                            </div>
-                            <div class="share-dialog-controls">
-                                <div class="share-dialog-control">
-                                    <a class="share-btn share-facebook" data-social="facebook">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="7508 -4407 40 40">
-                                            <defs>
-                                                <style>
-                                                    .fb-svg-icon{fill:#010101;fill-rule:evenodd;opacity:.37}
-                                                </style>
-                                            </defs>
-                                            <g id="facebook_circle_black" transform="translate(7017 -4725)">
-                                                <path id="facebook_circle_black-2" d="M20.177 34.88h4.5V24h3l.4-3.749h-3.4v-1.877c0-.977.093-1.5 1.5-1.5h1.875V13.12h-3c-3.6 0-4.871 1.819-4.871 4.878v2.251h-2.25V24h2.246zM23 44a20 20 0 1 1 20-20 20 20 0 0 1-20 20z" class="fb-svg-icon" data-name="facebook_circle_black" transform="translate(488 314)"/>
-                                            </g>
-                                        </svg>
-                                        <span>Facebook</span>
-                                    </a>
-                                </div>
-                                <div class="share-dialog-control">
-                                    <a class="share-btn share-twitter" data-social="twitter">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="7508 -4351 40 40">
-                                            <defs>
-                                                <style>
-                                                    .twitter-svg-icon{fill:#010101;fill-rule:evenodd;opacity:.37}
-                                                </style>
-                                            </defs>
-                                            <g id="twitter_circle_black" transform="translate(7017 -4669)">
-                                                <path id="twitter_circle_black-2" d="M26.778 16.189a4.044 4.044 0 0 0-2.724 4.067l.042.692-.7-.085a11.352 11.352 0 0 1-6.649-3.277l-.922-.918-.237.678a4.082 4.082 0 0 0 .866 4.181c.559.593.433.678-.531.325a1.659 1.659 0 0 0-.657-.155 5.075 5.075 0 0 0 .5 1.893 4.513 4.513 0 0 0 1.918 1.81l.685.325-.81.014c-.782 0-.81.014-.726.311a4.226 4.226 0 0 0 2.612 2.317l.866.3-.754.452a7.834 7.834 0 0 1-3.744 1.045 4.1 4.1 0 0 0-1.146.113 10.673 10.673 0 0 0 2.7 1.243 11.787 11.787 0 0 0 9.164-1.045 12.281 12.281 0 0 0 4.652-5.481 14.568 14.568 0 0 0 .95-4.236c0-.65.042-.735.824-1.511a9.207 9.207 0 0 0 .978-1.087c.14-.269.125-.269-.587-.029-1.187.424-1.355.367-.768-.268a4.117 4.117 0 0 0 .95-1.511c0-.042-.209.028-.447.155a7.722 7.722 0 0 1-1.229.48l-.754.241-.685-.467a5.678 5.678 0 0 0-1.187-.621 4.772 4.772 0 0 0-2.45.049zM24 44a20 20 0 1 1 20-20 20 20 0 0 1-20 20z" class="twitter-svg-icon" data-name="twitter_circle_black" transform="translate(487 314)"/>
-                                            </g>
-                                        </svg>
-                                        <span>Twitter</span>
-                                    </a>
-                                </div>
-                                <div class="share-dialog-control">
-                                    <a class="share-btn share-linkedin" data-social="linkedin">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="7508 -4295 40 40">
-                                            <defs>
-                                                <style>
-                                                    .linkedin-svg-icon{fill:#010101;fill-rule:evenodd;opacity:.37}
-                                                </style>
-                                            </defs>
-                                            <g id="linkedin_circle_black" transform="translate(7017 -4613)">
-                                                <path id="linkedin_circle_black-2" d="M35.225 33.425v-7.808c0-4.183-2.233-6.13-5.211-6.13a4.492 4.492 0 0 0-4.079 2.249v-1.929h-4.527c.06 1.278 0 13.618 0 13.618h4.527v-7.606a3.087 3.087 0 0 1 .149-1.1 2.476 2.476 0 0 1 2.321-1.655c1.639 0 2.293 1.249 2.293 3.079v7.286h4.526zM16.639 17.948a2.36 2.36 0 1 0 .03-4.706 2.359 2.359 0 1 0-.059 4.706zM24 44a20 20 0 1 1 20-20 20 20 0 0 1-20 20zm-5.1-10.575V19.807h-4.523v13.618z" class="linkedin-svg-icon" data-name="linkedin_circle_black" transform="translate(487 314)"/>
-                                            </g>
-                                        </svg>
-                                        <span>LinkedIn</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="page" id="protection_lists_page">
-        <div class="header">
-            <a id="close_protection_lists"  class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
-            <span class="header-title">Protection lists</span>
-            <a id="open_search_tab_btn" class="header-btn"><i class="material-icons">search</i></a>
-            <a class="header-btn settings-btn">
-                <img src="img/popup/settings-icon.svg" alt=""/>
-            </a>
-        </div>
-
-        <div class="protection-lists-page-content">
-            <ul class="collapsible protection-lists"></ul>
-
-            <div class="adding-more-lists-block">
-                <div class="adding-more-lists-title">Adding more lists</div>
-                <div class="adding-more-lists-content">You can add more blocking lists easily. Choose from a wide range of country specific lists and lists from various providers. All lists are maintained by their respective communities.</div>
-            </div>
-
-        </div>
-
-        <div class="fixed-action-btn">
-            <a class="btn-floating btn-large tooltipped" data-position="top" data-delay="50">
-                <i class="large material-icons add-filter-icon">add</i>
-                <i class="large material-icons content-refresh-icon">autorenew</i>
-                <i class="large material-icons protection-disabled-icon">power_settings_new</i>
-            </a>
-        </div>
-
-    </div>
+<div id="templates" style="display: none">
+    <div><span><sup></sup><span></span></span><span data-src="/" data-des="" data-type="*"></span><span data-src="." data-des="" data-type="*"></span><span data-src="." data-des="" data-type="*"></span></div>
+    <div id="actionSelector"><span id="dynaAllow"></span><span id="dynaNoop"></span><span id="dynaBlock"></span></div>
+    <div id="hotspotTip"></div>
+    <div id="tooltip"></div>
 </div>
 
-<div id="footer" class="bg-blue">
-    <div class="footer-btn share-btn" data-action="share">
-        <img src="img/popup/share_footer.svg" alt=""/>
-    </div>
-    <div class="tooltipped footer-btn logo" data-action="logo" data-position="top" data-tooltip="Learn more about Findx">
-        <img src="img/popup/findx_logo.svg" alt=""/>
-    </div>
-    <div class="tooltipped footer-btn fav-btn" data-action="favorites" data-position="top" data-tooltip="">
-        <img src="img/popup/heart_footer.svg" alt=""/>
-    </div>
-</div>
-
-
-
-<script id="filter_template" type="text/html">
-    <li class="protection-filter {{^trackedUrlsQty}}empty-filter{{/trackedUrlsQty}}">
-        <div class="collapsible-header">
-            <div class="filter-switcher-wrapper">
-                <div class="switch">
-                    <label>
-                        <input {{#isEnabled}}checked{{/isEnabled}} type="checkbox">
-                        <span class="lever"></span>
-                    </label>
-                </div>
-            </div>
-            <div class="filter-header-content">
-                <div class="truncate filter-title">{{title}}</div>
-                <div class="filter-subtitle">{{group}}</div>
-            </div>
-            <div class="filter-counts">
-                <span class="rules-blocked-count">{{blockedUrlsQty}}</span>
-                (<span class="rules-total-count">{{trackedUrlsQty}}</span>)
-            </div>
-            <div class="filter-chevron-icon">
-                <img src="img/popup/chevron_down.svg" alt=""/>
-            </div>
-        </div>
-        <div class="collapsible-body">
-            {{#trackedUrls}}
-                <div class="filter-rule">
-                    <div class="rule-radio" data-url="{{url}}">
-                        <label>
-                            <input class="with-gap" type="radio"  {{#isBlocked}}checked{{/isBlocked}}/>
-                            <span></span>
-                        </label>
-                    </div>
-                    <div class="truncate rule-title" title="{{url}}">{{url}}</div>
-                    <div class="rule-count">{{counter}}</div>
-                </div>
-            {{/trackedUrls}}
-        </div>
-    </li>
-</script>
-
-
-
-
-<script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
-<script src="lib/materialize.min.js"></script>
-<script src="lib/jquery.nicescroll.min.js"></script>
-<!--<script src="lib/punycode.js"></script>-->
-<script src="lib/mustache.js"></script>
+<script src="lib/punycode.js"></script>
 <script src="js/vapi.js"></script>
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-client.js"></script>
 <script src="js/udom.js"></script>
-<!--<script src="js/i18n.js"></script>-->
-<script src="js/popup-privacontrol.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/popup.js"></script>
 
 </body>
 

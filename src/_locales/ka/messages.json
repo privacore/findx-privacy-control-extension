@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "Findx Privacy Control",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "uBlock₀ — სამართავი დაფა",
-    "description": "English: uBlock₀ — Dashboard"
+    "message": "Findx Privacy Control — სამართავი დაფა",
+    "description": "English: Findx Privacy Control — Dashboard"
   },
   "settingsPageName": {
     "message": "პარამეტრები",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — აღმრიცხავი",
+    "message": "Findx Privacy Control — აღმრიცხავი",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -45,14 +45,14 @@
   },
   "popupPowerSwitchInfo": {
     "message": "დაწკაპუნება: ამ საიტისთვის uBlock-ის ჩართვა\/გამორთვა.\n\nCtrl+დაწკაპუნება: uBlock-ის მხოლოდ ამ გვერდზე გამორთვა.",
-    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "დააწკაპეთ uBlock₀-ის გამოსართავად ამ საიტზე.\n\nCtrl+დაწკაპებით uBlock₀ მხოლოდ ამ გვერდზე გამოირთვება.",
+    "message": "დააწკაპეთ Findx Privacy Control-ის გამოსართავად ამ საიტზე.\n\nCtrl+დაწკაპებით Findx Privacy Control მხოლოდ ამ გვერდზე გამოირთვება.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "დააწკაპეთ uBlock₀-ის ჩასართავად ამ საიტზე.",
+    "message": "დააწკაპეთ Findx Privacy Control-ის ჩასართავად ამ საიტზე.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>ეს პარამეტრი <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-სთან თავსებადი &ldquo;ელემენტის დასამალი&rdquo; ფილტრების<\/a> დამუშავებისა და გამოყენების შესაძლებლობას იძლევა. ეს ფილტრები, ძირითადად, იმ ხილული ელემენტების დასამალად გამოიყენება ვებგვერდზე, რომელსაც ქსელის მოთხოვნაზე დაფუძნებული ფილტრაციის საშუალებები ვერ ზღუდავს.<\/p><p>ამ შესაძლებლობის ჩართვის შედეგად გაიზრდება uBlock₀-ის მიერ მეხიერების მოხმარება.<\/p>",
+    "message": "<p>ეს პარამეტრი <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-სთან თავსებადი &ldquo;ელემენტის დასამალი&rdquo; ფილტრების<\/a> დამუშავებისა და გამოყენების შესაძლებლობას იძლევა. ეს ფილტრები, ძირითადად, იმ ხილული ელემენტების დასამალად გამოიყენება ვებგვერდზე, რომელსაც ქსელის მოთხოვნაზე დაფუძნებული ფილტრაციის საშუალებები ვერ ზღუდავს.<\/p><p>ამ შესაძლებლობის ჩართვის შედეგად გაიზრდება Findx Privacy Control-ის მიერ მეხიერების მოხმარება.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>ხილული ელემენტების საერთო ფილტრებია ის, რომელიც ყველა ვებსაიტს ესადაგება.<p>მიუხედავად uBlock₀-ის მიერ სიმსუბუქის შენარჩუნების შესაძლებლობისა, ხილული ელემენტების საერთო ფილტრებმა, შესაძლოა მაინც დატვირთოს მეხსიერება და პროცესორი ზოგიერთ ვებსაიტზე, განსაკუთრებით დიდსა და მოძველებულზე.<p>ამ პარამეტრის ჩართვით კი თავიდან აიცილებთ ხილული ელემენტების საერთო ფილტრების შედეგად მეხსიერებისა და პროცესორის და ასევე უშუალოდ uBlock₀-ის დატვირთვას.<p>ამ პარამეტრის ჩართვა სასურველია სუსტ მოწყობილობებზე.",
+    "message": "<p>ხილული ელემენტების საერთო ფილტრებია ის, რომელიც ყველა ვებსაიტს ესადაგება.<p>მიუხედავად Findx Privacy Control-ის მიერ სიმსუბუქის შენარჩუნების შესაძლებლობისა, ხილული ელემენტების საერთო ფილტრებმა, შესაძლოა მაინც დატვირთოს მეხსიერება და პროცესორი ზოგიერთ ვებსაიტზე, განსაკუთრებით დიდსა და მოძველებულზე.<p>ამ პარამეტრის ჩართვით კი თავიდან აიცილებთ ხილული ელემენტების საერთო ფილტრების შედეგად მეხსიერებისა და პროცესორის და ასევე უშუალოდ Findx Privacy Control-ის დატვირთვას.<p>ამ პარამეტრის ჩართვა სასურველია სუსტ მოწყობილობებზე.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -616,7 +616,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "თქვენს ყველა პარამეტრს გადაეწერება {{time}} დროინდელი დამარქაფებული მონაცემები და uBlock₀ გაეშვება ხელახლა.\n\nნამდვილად გსურთ არსებული პარამეტრების დამარქაფებული მონაცემებით ჩანაცვლება?",
+    "message": "თქვენს ყველა პარამეტრს გადაეწერება {{time}} დროინდელი დამარქაფებული მონაცემები და Findx Privacy Control გაეშვება ხელახლა.\n\nნამდვილად გსურთ არსებული პარამეტრების დამარქაფებული მონაცემებით ჩანაცვლება?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +624,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "თქვენ მიერ მითითებული ყველა პარამეტრი წაიშლება და uBlock₀ გაეშვება ხელახლა.\n\nნამდვილად გსურთ uBlock₀-ის ნაგულისხმევ პარამეტრებზე დაბრუნება?",
+    "message": "თქვენ მიერ მითითებული ყველა პარამეტრი წაიშლება და Findx Privacy Control გაეშვება ხელახლა.\n\nნამდვილად გსურთ Findx Privacy Control-ის ნაგულისხმევ პარამეტრებზე დაბრუნება?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +632,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "uBlock₀: გსურთ შემდეგი URL ბმულის საკუთარი ფილტრის სიაში ჩამატება?\n\nდასახელება: „{{title}}“\nURL: {{url}}",
+    "message": "Findx Privacy Control: გსურთ შემდეგი URL ბმულის საკუთარი ფილტრის სიაში ჩამატება?\n\nდასახელება: „{{title}}“\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +669,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "გამორთული",
-    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin-მა შეზღუდა მოცემული გვერდის ჩატვირთვა:",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "description": "English: Findx Privacy Control has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "მოცემული ფილტრიდან გამომდინარე",

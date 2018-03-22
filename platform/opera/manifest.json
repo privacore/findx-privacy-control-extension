@@ -8,7 +8,7 @@
       "19": "img/browsericons/icon19.png",
       "38": "img/browsericons/icon19.png"
     },
-    "default_popup": "popup.html",
+    "default_popup": "popup-privacycontrol.html",
     "default_title": "uBlock Origin"
   },
   "commands": {

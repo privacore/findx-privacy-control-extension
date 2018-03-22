@@ -1633,7 +1633,7 @@ var popupManager = (function() {
 
         popup = document.createElement('iframe');
         popup.addEventListener('load', onLoad);
-        popup.setAttribute('src', 'popup.html?tabId=' + realTabId);
+        popup.setAttribute('src', 'popup-privacycontrol.html?tabId=' + realTabId);
         popupObserver = new MutationObserver(resizePopup);
         container.appendChild(popup);
 

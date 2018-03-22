@@ -28,7 +28,7 @@
             "38": "img/browsericons/icon38.png"
         },
         "default_title": "Findx Privacy Control",
-        "default_popup": "popup.html"
+        "default_popup": "popup-privacycontrol.html"
     },
 
     "author": "All Findx Privacy Control contributors",

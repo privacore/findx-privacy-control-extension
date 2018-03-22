@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "Findx Privacy Control",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "uBlock₀ — Панель управления",
-    "description": "English: uBlock₀ — Dashboard"
+    "message": "Findx Privacy Control — Панель управления",
+    "description": "English: Findx Privacy Control — Dashboard"
   },
   "settingsPageName": {
     "message": "Настройки",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — Журнал сетевых запросов",
+    "message": "Findx Privacy Control — Журнал сетевых запросов",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "ЛКМ: отключить\/включить uBlock₀ для этого сайта.\n\nCtrl+ЛКМ: отключить uBlock₀ только на этой странице.",
-    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+    "message": "ЛКМ: отключить\/включить Findx Privacy Control для этого сайта.\n\nCtrl+ЛКМ: отключить Findx Privacy Control только на этой странице.",
+    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Кликните, чтобы отключить uBlock₀ для этого сайта.\nCtrl+клик, чтобы отключить uBlock₀ только на этой странице.",
+    "message": "Кликните, чтобы отключить Findx Privacy Control для этого сайта.\nCtrl+клик, чтобы отключить Findx Privacy Control только на этой странице.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Кликните, чтобы активировать uBlock₀ для этого сайта.",
+    "message": "Кликните, чтобы активировать Findx Privacy Control для этого сайта.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Эта опция включает использование анализатора <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-совместимых фильтров &ldquo;скрытия элементов&rdquo;<\/a>. Это косметические фильтры, дающие возможность скрыть ненужные элементы страницы, которые не могут быть заблокированы механизмом фильтрации сетевых запросов.<\/p><p>Использование данной опции увеличивает потребление памяти uBlock₀.<\/p>",
+    "message": "<p>Эта опция включает использование анализатора <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-совместимых фильтров &ldquo;скрытия элементов&rdquo;<\/a>. Это косметические фильтры, дающие возможность скрыть ненужные элементы страницы, которые не могут быть заблокированы механизмом фильтрации сетевых запросов.<\/p><p>Использование данной опции увеличивает потребление памяти Findx Privacy Control.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Общие косметические фильтры — это те косметические фильтры, которые должны применяться на всех веб-сайтах.<p>Хотя uBlock₀ и обращается с ними эффективно, общие косметические фильтры всё равно могут потреблять ощутимое количество оперативной памяти и нагружать ЦПУ на некоторых, в особенности больших, страницах.<p>Включение этой опции снизит потребление памяти веб-страницами, и избавит процессор от обработки общих косметических фильтров, а также снизит потребление памяти самого uBlock₀.<p>Рекомендуется включить этот параметр на слабых устройствах.",
+    "message": "<p>Общие косметические фильтры — это те косметические фильтры, которые должны применяться на всех веб-сайтах.<p>Хотя Findx Privacy Control и обращается с ними эффективно, общие косметические фильтры всё равно могут потреблять ощутимое количество оперативной памяти и нагружать ЦПУ на некоторых, в особенности больших, страницах.<p>Включение этой опции снизит потребление памяти веб-страницами, и избавит процессор от обработки общих косметических фильтров, а также снизит потребление памяти самого Findx Privacy Control.<p>Рекомендуется включить этот параметр на слабых устройствах.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -616,7 +616,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Текущие настройки будут заменены данными из резервной копии от {{time}}, и uBlock₀ будет перезапущен.\n\nПерезаписать все существующие параметры данными из резервной копии?",
+    "message": "Текущие настройки будут заменены данными из резервной копии от {{time}}, и Findx Privacy Control будет перезапущен.\n\nПерезаписать все существующие параметры данными из резервной копии?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +624,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Все ваши настройки будут удалены, uBlock₀ будет перезапущен. \n\nВосстановить настройки по умолчанию?",
+    "message": "Все ваши настройки будут удалены, Findx Privacy Control будет перезапущен. \n\nВосстановить настройки по умолчанию?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +632,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "uBlock₀: добавить следующий адрес в ваш список фильтров?\n\nНазвание: \"{{title}}\"\nURL-адрес: {{url}}",
+    "message": "Findx Privacy Control: добавить следующий адрес в ваш список фильтров?\n\nНазвание: \"{{title}}\"\nURL-адрес: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +669,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "выключен",
-    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin предотвратил загрузку следующей страницы:",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "description": "English: Findx Privacy Control has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Из-за следующего фильтра",

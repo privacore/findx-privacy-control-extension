@@ -865,7 +865,7 @@ var toggleMinimize = function(ev) {
             {
                 what: 'gotoURL',
                 details: {
-                    url: 'popup.html?tabId=' + popupData.tabId + '&fullsize=1',
+                    url: 'popup-privacycontrol.html?tabId=' + popupData.tabId + '&fullsize=1',
                     select: true,
                     index: -1
                 }

@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "Findx Privacy Control",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "uBlock₀ 控制面板",
-    "description": "English: uBlock₀ — Dashboard"
+    "message": "Findx Privacy Control 控制面板",
+    "description": "English: Findx Privacy Control — Dashboard"
   },
   "settingsPageName": {
     "message": "设置",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "uBlock₀ — 网络请求日志",
+    "message": "Findx Privacy Control — 网络请求日志",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "单击：对此网站禁用\/启用 uBlock₀。\n\nCtrl + 单击：在此页面上禁用 uBlock₀。",
-    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+    "message": "单击：对此网站禁用\/启用 Findx Privacy Control。\n\nCtrl + 单击：在此页面上禁用 Findx Privacy Control。",
+    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "单击：对此网站禁用 uBlock₀ 。\n\nCtrl + 单击：仅在此页面上禁用 uBlock₀ 。",
+    "message": "单击：对此网站禁用 Findx Privacy Control 。\n\nCtrl + 单击：仅在此页面上禁用 Findx Privacy Control 。",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "单击：对此网站启用 uBlock₀ 。",
+    "message": "单击：对此网站启用 Findx Privacy Control 。",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>此选项将启用<a href=\"https:\/\/adblockplus.org\/zh_CN\/faq_internal#elemhide\">与 Adblock Plus 兼容的&ldquo;元素隐藏&rdquo;规则的解析和应用<\/a>。这些过滤规则本质上只是装饰美化，它们用来隐藏一个网页上被认为碍眼且不能被网络请求过滤引擎所屏蔽的视觉元素。<\/p><p>启用这项功能将增加 <i>uBlock₀<\/i> 的内存使用量。<\/p>",
+    "message": "<p>此选项将启用<a href=\"https:\/\/adblockplus.org\/zh_CN\/faq_internal#elemhide\">与 Adblock Plus 兼容的&ldquo;元素隐藏&rdquo;规则的解析和应用<\/a>。这些过滤规则本质上只是装饰美化，它们用来隐藏一个网页上被认为碍眼且不能被网络请求过滤引擎所屏蔽的视觉元素。<\/p><p>启用这项功能将增加 <i>Findx Privacy Control<\/i> 的内存使用量。<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>通用元素过滤规则是应用到所有网站的元素过滤规则。<p>尽管 uBlock₀ 能很有效率地处理，通用元素过滤规则在一些网页上仍可能导致可见的内存和 CPU 占用增长，尤其是大和长期的内容。<p>启用此选项将解除这些添加到网页以处理通用元素过滤规则导致的内存和 CPU 占用，同时降低 uBlock₀ 本身的内存占用。<p>推荐低性能设备启用此选项。",
+    "message": "<p>通用元素过滤规则是应用到所有网站的元素过滤规则。<p>尽管 Findx Privacy Control 能很有效率地处理，通用元素过滤规则在一些网页上仍可能导致可见的内存和 CPU 占用增长，尤其是大和长期的内容。<p>启用此选项将解除这些添加到网页以处理通用元素过滤规则导致的内存和 CPU 占用，同时降低 Findx Privacy Control 本身的内存占用。<p>推荐低性能设备启用此选项。",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -616,7 +616,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "您的所有设置将被备份于 {{time}} 的数据覆盖，并且 uBlock₀ 将重新启动。\n确定要用备份的数据覆盖全部现有设置吗？",
+    "message": "您的所有设置将被备份于 {{time}} 的数据覆盖，并且 Findx Privacy Control 将重新启动。\n确定要用备份的数据覆盖全部现有设置吗？",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +624,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "您的设置将被清除，uBlock₀ 将重新启动。\n\n确定将 uBlock₀ 重置到初始状态？",
+    "message": "您的设置将被清除，Findx Privacy Control 将重新启动。\n\n确定将 Findx Privacy Control 重置到初始状态？",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +632,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "uBlock₀：添加下列 URL 到您的自定义规则列表吗？\n\n标题： \"{{title}}\"\nURL： {{url}}",
+    "message": "Findx Privacy Control：添加下列 URL 到您的自定义规则列表吗？\n\n标题： \"{{title}}\"\nURL： {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +669,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "关",
-    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
   },
   "docblockedPrompt1": {
-    "message": "uBlock₀ 阻止了下列页面加载：",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "message": "Findx Privacy Control 阻止了下列页面加载：",
+    "description": "English: Findx Privacy Control has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "因为下列过滤规则",
