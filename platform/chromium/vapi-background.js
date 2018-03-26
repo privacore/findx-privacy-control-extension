@@ -701,6 +701,12 @@ vAPI.openSharePage = function (social) {
     vAPI.tabs.open({url: url, select: true});
 };
 
+vAPI.saveActiveTabState = function (tabName) {
+    if (!tabName) return;
+
+    µBlock.localSettings.activePopupTab = tabName;
+};
+
 
 /******************************************************************************/
 /******************************************************************************/

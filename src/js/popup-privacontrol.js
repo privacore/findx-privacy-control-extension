@@ -175,24 +175,23 @@
             ev.stopPropagation();
             ev.preventDefault();
 
-            switchToMainPageTab($(ev.currentTarget));
-
-            // let tabId = $(ev.currentTarget).attr('data-id');
-            // elTabFrames.removeClass('active');
-            // $("#" + tabId).addClass('active');
-            // elMainPageTabs.removeClass('active');
-            // $(ev.currentTarget).addClass('active');
+            switchToMainPageTab($(ev.currentTarget).attr('data-id'));
         })
     };
 
-    var switchToMainPageTab = function (tabHeaderBtn) {
+    var switchToMainPageTab = function (tabId) {
         let elMainPageTabs = $('.main-content .tabs .tab a');
         let elTabFrames = $('.tab-frame');
-        let tabId = $(tabHeaderBtn).attr('data-id');
+        let tabHeaderBtn = $('.main-content .tabs .tab a[data-id="' + tabId + '"]');
         elTabFrames.removeClass('active');
         $("#" + tabId).addClass('active');
         elMainPageTabs.removeClass('active');
         $(tabHeaderBtn).addClass('active');
+        saveActiveTabState(tabId);
+    };
+
+    var saveActiveTabState = function (tabId) {
+        messager.send('popupPanel', {what: 'saveActiveTabState', tabId: tabId});
     };
 
     var handleProtectionListsBtn = function () {
@@ -205,12 +204,15 @@
         $('#close_protection_lists').on('click', closeProtectionListsPage);
     };
 
+    /**
+     * Handle search button located in a hedaer of "Protection lists" page
+     */
     var handleOpenSearchTabBtn = function () {
         $('#open_search_tab_btn').off('click');
         $('#open_search_tab_btn').on('click', function (ev) {
-            let searchTabHeaderBtn = $('.main-content .tabs .tab a[data-id="search_tab"]');
-            switchToMainPageTab(searchTabHeaderBtn);
+            switchToMainPageTab('search_tab');
             closeProtectionListsPage();
+            $("#search_input").focus();
         });
     };
 
@@ -332,7 +334,7 @@
 
     var openShareDialog = function () {
         $('body').addClass('share-active');
-        switchToMainPageTab($('.main-content .tabs .tab a[data-id="protection_tab"]'));
+        switchToMainPageTab('protection_tab');
         closeProtectionListsPage();
     };
     var closeShareDialog = function () {
@@ -491,7 +493,7 @@
 
     var stopProtection = function () {
         togglePauseFiltering();
-        switchToMainPageTab($('.main-content .tabs .tab a[data-id="protection_tab"]'));
+        switchToMainPageTab('protection_tab');
     };
 
     var handleStartProtectionBtn = function () {
@@ -957,6 +959,17 @@
     /***************************************************************************/
 
     var renderPopup = function (isInitial) {
+        if (isInitial) {
+            if (popupData.activePopupTab) {
+                switchToMainPageTab(popupData.activePopupTab);
+            }
+            else {
+                switchToMainPageTab("protection_tab");
+            }
+        }
+
+
+
         // Protection tab
         $(".protection-status-plate .plate-content-title").text(popupData.pageHostname);
         $(".blocked-on-site-plate .plate-content-text span").text(popupData.pageBlockedRequestCount);

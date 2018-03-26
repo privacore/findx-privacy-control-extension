@@ -213,6 +213,9 @@ var onMessage = function(request, sender, callback) {
     case 'shareTo':
         vAPI.openSharePage(request.social);
         break;
+    case 'saveActiveTabState':
+        vAPI.saveActiveTabState(request.tabId);
+        break;
         /**********************************/
 
     default:
@@ -383,7 +386,8 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         tabTitle: tabTitle,
         tooltipsDisabled: µb.userSettings.tooltipsDisabled,
         usedFilters: [],
-        urls: null
+        urls: null,
+        activePopupTab: µb.localSettings.activePopupTab
     };
 
     var pageStore = µb.pageStoreFromTabId(tabId);

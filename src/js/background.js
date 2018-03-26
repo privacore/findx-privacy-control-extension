@@ -121,7 +121,8 @@ var µBlock = (function() { // jshint ignore:line
             blockedRequestCount: 0,
             allowedRequestCount: 0,
             blockedToday: 0,
-            blockedTodayDate: ""
+            blockedTodayDate: "",
+            activePopupTab: "protection_tab"
         },
         localSettingsLastModified: 0,
         localSettingsLastSaved: 0,
