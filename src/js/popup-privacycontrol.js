@@ -400,8 +400,8 @@
     /***************************************************************************/
 
     var showTodayBlockedCount = function () {
-        $(".blocked-today-plate .plate-content-text span").text(popupData.blockedTodayCount);
-        $("#statusbar #today_blocked_count").text(popupData.blockedTodayCount);
+        $(".blocked-today-plate .plate-content-text span, #statusbar #today_blocked_count")
+            .text(popupData.blockedTodayCount || 0);
     };
 
     /***************************************************************************/
@@ -975,6 +975,7 @@
             }
         }
 
+        $('body').toggleClass('system-page', !popupData.canElementPicker);
 
 
         // Protection tab

@@ -162,19 +162,13 @@ html, body {
     font-family: Roboto-medium;
     text-transform: uppercase;
     -webkit-text-stroke: 1px rgba(230, 137, 137, 0);
+    line-height: 21px;
     letter-spacing: 0.2px;
     cursor: pointer;
-    border: 1px solid transparent;
     border-radius: 2px;
 }
 .footer-btn:not(:last-child) {
     margin-right: 8px;
-}
-.footer-btn:hover {
-    border: 1px solid rgba(0, 0, 0, 0.12);
-}
-.footer-btn:active {
-    background-color: rgba(0, 0, 0, 0.08);
 }
 .footer-btn.cancel-btn {
     margin-left: auto;

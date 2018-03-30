@@ -1125,6 +1125,12 @@ var FilterHostnameDict = function(filterPath) {
     this.h = ''; // short-lived register
     this.dict = new Set();
     this.filterPath = filterPath;
+    /**
+     * Igor. 30.03.2018 Current property added because few filters can have equal hostnames for blocking.
+     * In this case current map will have a hostname key and a filterPath list value.
+     * Also current property used for displaying a list of filters which contains a rule in a document-blocked.html page
+     * @type {Map<string, string[]>} - Map<hostname, filterPath[]>
+     */
     this.dictMap = new Map();
 };
 

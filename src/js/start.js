@@ -213,18 +213,19 @@ var onSystemSettingsReady = function(fetched) {
      */
     var checkFiltersListsSources = function (callback) {
         try {
-            // Igor. 30.03.2018 Current block of code must be removed
-            // if (compareVersions(vAPI.app.version, "1.12.0.0") >= 0) {
-            //     vAPI.storage.get('isCacheErased_1.12.5.15', function (data) {
-            //         if (!data || !Object.keys(data).length || !data["isCacheErased_1.12.5.15"]) {
-            //             µb.assets.remove(/./);
-            //             µb.scheduleAssetUpdater(0);
-            //             µb.assets.updateStart({ delay: µb.hiddenSettings.manualUpdateAssetFetchPeriod || 2000 });
-            //             vAPI.storage.set({ 'isCacheErased_1.12.5.15': true });
-            //         }
-            //         //if (callback) callback();
-            //     });
-            // }
+            // Igor. 30.03.2018 FilterHostnameDict logic was updated so we need to reload filters
+            if (compareVersions(vAPI.app.version, "1.15.5.1") >= 0) {
+                vAPI.storage.get('isListsUpdated_1.15.5.1', function (data) {
+                    if (!data || !Object.keys(data).length || !data["isListsUpdated_1.15.5.1"]) {
+                        µb.assets.remove(/./);
+                        µb.scheduleAssetUpdater(0);
+                        setTimeout(function () {
+                            µb.assets.updateStart({ delay: µb.hiddenSettings.manualUpdateAssetFetchPeriod || 2000 });
+                            vAPI.storage.set({ 'isListsUpdated_1.15.5.1': true });
+                        }, 5000);
+                    }
+                });
+            }
 
             if (callback) callback();
         }
@@ -234,6 +235,15 @@ var onSystemSettingsReady = function(fetched) {
         }
     };
 
+    /**
+     * Comapre two versions
+     * @param {string} version
+     * @param {string} compared
+     * @returns {number}
+     *          0  = equal versions
+     *          -1 = version < compared
+     *          1  = version > compared
+     */
     var compareVersions = function (version, compared) {
         var response = 0;
 

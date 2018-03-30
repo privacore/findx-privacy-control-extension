@@ -831,6 +831,16 @@ body.protection-off #protection_lists_page .fixed-action-btn .btn-floating {
     background-color: #6bad6f;
 }
 
+body.system-page #protection_lists_page .fixed-action-btn .btn-floating {
+    background-color: #2191d0;
+}
+body.system-page #protection_lists_page .fixed-action-btn .btn-floating i.material-icons {
+    display: none;
+}
+body.system-page #protection_lists_page .fixed-action-btn .btn-floating i.material-icons.add-filter-icon {
+    display: inline-block;
+}
+
 
 /******* FOOTER *******/
 
