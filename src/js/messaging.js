@@ -185,6 +185,12 @@ var onMessage = function(request, sender, callback) {
         µb.toggleHostnameSwitch(request);
         break;
 
+    case 'closeTabId':
+        if ( vAPI.isBehindTheSceneTabId(request.tabId) === false ) {
+            vAPI.tabs.remove(request.tabId);
+        }
+        break;
+
     case 'userSettings':
         response = µb.changeUserSettings(request.name, request.value);
         break;

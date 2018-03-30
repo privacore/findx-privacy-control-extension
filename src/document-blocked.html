@@ -2,108 +2,79 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Blocked</title>
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <title data-i18n="docBlockedTabTitle"></title>
+
+    <link rel="stylesheet" href="lib/jquery.mCustomScrollbar.css" type="text/css">
     <link rel="stylesheet" href="css/common-incognito.css" type="text/css">
     <link rel="stylesheet" href="css/document-blocked.css" type="text/css">
 </head>
 <body>
 
-    <div id="bg_image"></div>
-
     <div id="wrapper">
-        <div id="sidebar">
-            <div class="sidebar-top-block"></div>
-            <div class="sidebar-bot-block">
-                <div id="teaser_area">
-                    <div class="teaser-text">Find more ways to control online tracking</div>
-                    <div id="teaser_btn" class="button btn-red raised">take control</div>
+
+        <div id="main-dialog">
+            <div id="statusbar">
+                <span data-i18n="docBlockedStatusbar"></span>
+            </div>
+
+            <div id="header">
+                <div class="header-control logo"><img src="img/popup/shield.svg" alt="Findx"/></div>
+                <div class="header-title" data-i18n="docBlockedHeader"></div>
+                <div class="header-control header-close">
+                    <img src="img/popup/close.svg" alt="Close"/>
                 </div>
+            </div>
+
+            <div id="dialog_content">
+
+                <div class="content-header">
+                    <div class="content-header-title" data-i18n="docBlockedContentHeaderTitle"></div>
+                    <div class="content-header-text" data-i18n="docBlockedContentHeaderText"></div>
+                </div>
+
+                <div id="content">
+
+                    <div class="content-item">
+                        <div class="content-item-title" data-i18n="docBlockedItemTitleUrl"></div>
+                        <div class="content-data">
+                            <span id="blocked_url"></span>
+                        </div>
+                    </div>
+
+                    <div class="content-item rules-list-item">
+                        <div class="content-item-title" data-i18n="docBlockedItemTitleRule"></div>
+                        <div class="content-data">
+                            <div class="filter-rules"></div>
+                        </div>
+                    </div>
+
+                    <div class="content-item filters-list-item">
+                        <div class="content-item-title" data-i18n="docBlockedItemTitleFilter"></div>
+                        <div class="content-data">
+                            <div class="filter-list"></div>
+                        </div>
+                    </div>
+
             </div>
         </div>
 
-        <div id="content-wrapper">
-            <table id="title">
-                <tr>
-                    <td>
-                        <img src="img/dashboard_logo.png" class="dashboard-title-logo">
-                    </td>
-                    <td>
-                        <img src="img/alert_icon.png" class="dashboard-title-logo">
-                    </td>
-                </tr>
-            </table>
-
-
-            <div id="content">
-
-                <div class="f25 roboto">You decided to block this site earlier</div>
-                <div id="theURL" class="code"></div>
-
-                <div>If you don't miss it, then just leave it so and</div>
-
-                <div id="bye" class="button grey raised">close this window</div>
-
-                <br/>
-                <br/>
-                <br/>
-                <div class="f22 marg-bot">Do you want to visit this site anyway?</div>
-                <span>If you want to visit this site now, you can change your settings here</span>
-
-                <div class="marg-top">Disable blocking for:</div>
-                <div id="disable_blocking" class="code"></div>
-
-                <br/>
-
-                <div id="proceedTemporary" class="button grey raised">temporarily</div>
-                <div id="proceedPermanent" class="button grey raised">permanent</div>
-
-
-                <div class="community-teaser">
-                    <p>
-                    <div class="f14">Do you find this site harmfull?</div>
-                    </p>
-                    <div class="">Why did you block this site?</div>
-                    <div class="red marg-top">
-                        <a href="https://forum.privacore.com/categories/stories" target="_blank">Tell others why you blocked this site</a>
-                    </div>
-                </div>
-
-
-                <div id="content_footer">
-                    <div id="content_footer_controls">
-                        <a id="content_footer_logo" class="content-footer-control" href="https://www.privacore.com/" target="_blank"></a>
-                        <a class="content-footer-control twiet" href="https://www.twitter.com/privacore" target="_blank">
-                            <i class="fa fa-twitter-square"></i>
-                        </a>
-                        <a class="content-footer-control github" href="https://github.com/privacore/" target="_blank">
-                            <i class="fa fa-github-square"></i>
-                        </a>
-                        <a class="content-footer-control linkedin" href="https:/www.linkedin.com/company/privacore" target="_blank">
-                            <i class="fa fa-linkedin-square"></i>
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-
-            <div id="footer">
-                <div class="table full">
-                    <div class="table-cell vertical-middle full">
-                        <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Content on this page</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="Https://www.privacore.com" property="cc:attributionName" rel="cc:attributionURL">Privacore</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://github.com/privacore/privacontrol/" rel="dct:source">http://github.com/privacore/privacontrol/</a>.<br />Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="Https://www.privacore.com/privacontrol/license" rel="cc:morePermissions">Https://www.privacore.com/privacontrol/license</a>
-                    </div>
-                </div>
-            </div>
+        <div id="footer">
+            <div class="footer-btn always-allow-btn" data-i18n="docBlockedFooterBtnAlways"></div>
+            <div class="footer-btn allow-once-btn" data-i18n="docBlockedFooterBtnOnce"></div>
+            <div class="footer-btn cancel-btn" data-i18n="docBlockedFooterBtnCancel"></div>
         </div>
 
     </div>
+</div>
 
 
+<script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
+<script src="lib/jquery.mCustomScrollbar.concat.min.js"></script>
 <script src="js/vapi.js"></script>
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-client.js"></script>
 <script src="js/udom.js"></script>
 <script src="js/i18n.js"></script>
-<script src="js/document-blocked.js"></script>
+<script src="js/document-blocked-privacycontrol.js"></script>
 </body>
 </html>

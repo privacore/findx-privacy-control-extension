@@ -1125,6 +1125,7 @@ var FilterHostnameDict = function(filterPath) {
     this.h = ''; // short-lived register
     this.dict = new Set();
     this.filterPath = filterPath;
+    this.dictMap = new Map();
 };
 
 Object.defineProperty(FilterHostnameDict.prototype, 'size', {
@@ -1133,10 +1134,28 @@ Object.defineProperty(FilterHostnameDict.prototype, 'size', {
     }
 });
 
-FilterHostnameDict.prototype.add = function(hn) {
-    if ( this.dict.has(hn) === true ) { return false; }
+FilterHostnameDict.prototype.add = function(hn, filterPath) {
+    this.addToDictMap(hn, filterPath);
+    if ( this.dict.has(hn) === true ) {
+        return false;
+    }
     this.dict.add(hn);
     return true;
+};
+
+FilterHostnameDict.prototype.addToDictMap = function (hn, filterPath) {
+    var filtersContainsHn = this.dictMap.get(hn);
+    if (!filtersContainsHn) {
+        var filtersList = [];
+        filtersList.push(filterPath);
+        this.dictMap.set(hn, filtersList);
+    }
+    else {
+        if (!filtersContainsHn.includes(filterPath)) {
+            filtersContainsHn.push(filterPath);
+            return true;
+        }
+    }
 };
 
 FilterHostnameDict.prototype.remove = function(hn) {
@@ -1156,7 +1175,18 @@ FilterHostnameDict.prototype.match = function() {
         hostname = hostname.slice(pos + 1);
         
     }
-    this.f =  new ResponseObject(this.filterPath, '||' + hostname + '^');
+
+    var filters = this.dictMap.get(hostname);
+    if (filters && filters.length) {
+        if (filters.length === 1)
+            this.f =  new ResponseObject(filters[0], '||' + hostname + '^');
+        else {
+            this.f =  new ResponseObject(filters, '||' + hostname + '^');
+        }
+    }
+    else {
+        this.f = new ResponseObject(this.filterPath, '||' + hostname + '^');
+    }
     this.h = hostname;
     return true;
 };
@@ -1170,12 +1200,13 @@ FilterHostnameDict.prototype.logData = function() {
 };
 
 FilterHostnameDict.prototype.compile = function() {
-    return [ this.fid, µb.arrayFrom(this.dict), this.filterPath ];
+    return [ this.fid, µb.arrayFrom(this.dict), this.filterPath,  Array.from(this.dictMap)];
 };
 
 FilterHostnameDict.load = function(args) {
     var f = new FilterHostnameDict(args[2]);
     f.dict = new Set(args[1]);
+    f.dictMap = new Map(args[3]);
     return f;
 };
 
@@ -2356,11 +2387,11 @@ FilterContainer.prototype.fromCompiledContent = function(reader, path) {
         entry = bucket.get(tokenHash);
 
         if ( tokenHash === this.dotTokenHash ) {
-            if ( entry === undefined ) {
+            if ( entry === undefined) {
                 entry = new FilterHostnameDict(path);
                 bucket.set(this.dotTokenHash, entry);
             }
-            if ( entry.add(fdata) === false ) {
+            if ( entry.add(fdata, path) === false ) {
                 this.discardedCount += 1;
             }
             continue;
@@ -2610,6 +2641,20 @@ FilterContainer.prototype.matchStringGenericHide = function(context, requestURL)
 
     this.cbRegister = genericHideException;
     return 2;
+};
+
+/******************************************************************************/
+
+var getFiltersInUse = function () {
+    var filters = [];
+    Object.keys(µb.availableFilterLists).forEach(function (key) {
+        let filter = µb.availableFilterLists[key];
+        if (filter.inUse && !filter.off) {
+            filters.push(filter);
+        }
+    });
+
+    return filters || [];
 };
 
 /******************************************************************************/
@@ -2864,6 +2909,7 @@ FilterContainer.prototype.toLogData = function() {
     logData.source = 'static';
     logData.tokenHash = this.thRegister;
     logData.result = this.fRegister === null ? 0 : (this.cbRegister & 1 ? 2 : 1);
+    logData.filter = this.fRegister.f.filterPath;
     return logData;
 };
 

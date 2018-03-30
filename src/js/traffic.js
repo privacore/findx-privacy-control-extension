@@ -49,6 +49,27 @@ var isFilterAllowed = function (filterObj, request) {
     return µb.isDefaultOff(filterObj.filterPath );
 };
 
+/**
+ * Igor. 29.03.2018
+ * Current method added because in FilterHostnameDict we can return few filters pathes instead of one.
+ * @param filtersList
+ * @param context
+ * @returns {boolean}
+ */
+var isSomeFilterInListAllowed = function (filtersList, context) {
+    if (typeof filtersList === "string") {
+        return isFilterAllowed({filterPath: filtersList}, context)
+    }
+    else {
+        for (var i = 0; i < filtersList.length; i++) {
+            var filterPath = filtersList[i];
+            if (!isFilterAllowed({filterPath: filterPath}, context))
+                return false;
+        }
+        return true;
+    }
+};
+
 
 // https://github.com/gorhill/uBlock/issues/2067
 //   Experimental: Block everything until uBO is fully ready.
@@ -148,7 +169,8 @@ var onBeforeRequest = function(details) {
     var result = pageStore.filterRequest(requestContext);
 
     // Not blocked
-    if ( result && typeof result == "object" && isFilterAllowed(result.filter, requestContext) ) {
+    // if ( result && typeof result == "object" && isFilterAllowed(result.filter, requestContext) ) {
+    if ( result && typeof result == "object" && isSomeFilterInListAllowed(result.filter, requestContext) ) {
         // https://github.com/chrisaljoudi/uBlock/issues/114
         if ( details.parentFrameId !== -1 && isFrame ) {
             pageStore.setFrame(details.frameId, requestURL);
@@ -298,7 +320,10 @@ var onBeforeRootFrameRequest = function(details) {
 
    
     // Not blocked
-    if ((typeof result == "object" && isFilterAllowed(result.filter, context)) || (typeof result == "number" && result !== 1)) {
+    if ((typeof result == "object" && isFilterAllowed(result.filter, context)) ||
+        (typeof result == "number" && result !== 1) ||
+        (typeof result == "number" && result === 1 && logData && isSomeFilterInListAllowed(logData.filter, context)))
+    {
         return;
     }
      // Log
@@ -333,7 +358,9 @@ var onBeforeRootFrameRequest = function(details) {
         hn: requestHostname,
         dn: requestDomain,
         fc: logData.compiled,
-        fs: logData.raw
+        fs: logData.raw,
+        fp: getFilterData(logData.filter),
+        tabId: tabId
     }));
 
     vAPI.tabs.replace(tabId, vAPI.getURL('document-blocked.html?details=') + query);
@@ -342,6 +369,38 @@ var onBeforeRootFrameRequest = function(details) {
 };
 
 
+/******************************************************************************/
+
+/**
+ * Igor 28.03.2018
+ * Return a full filter data - name, path, group
+ * @param {string} filterPath
+ * @returns {{path: string, name: string, group: string}}
+ */
+var getFilterData = function (filterPath) {
+    var filters = [];
+    if (typeof filterPath === "string") {
+        var fullData = µBlock.availableFilterLists[filterPath];
+        filters.push({
+            path: filterPath,
+            name: encodeURIComponent(fullData.title),
+            group: fullData.group
+        });
+    }
+    else if (Array.isArray(filterPath)) {
+        for (var i = 0; i < filterPath.length; i++) {
+            var path = filterPath[i];
+            var fullData = µBlock.availableFilterLists[path];
+            filters.push({
+                path: path,
+                name: encodeURIComponent(fullData.title),
+                group: fullData.group
+            });
+        }
+    }
+
+    return filters;
+};
 
 /******************************************************************************/
 

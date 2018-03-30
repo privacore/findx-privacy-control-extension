@@ -353,7 +353,8 @@
         ],
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fpgl.yoyo.org%2Fadservers%2F",
         "defaultOff": true,
-        "inUse": true
+        "inUse": true,
+        "off": true
     },
     "ara-0": {
         "content": "filters",

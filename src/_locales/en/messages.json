@@ -207,6 +207,50 @@
     "message": "Rate this add-on",
     "description": ""
   },
+  "docBlockedTabTitle":{
+    "message": "Blocked by Findx privacy protection",
+    "description": "Document blocked page"
+  },
+  "docBlockedStatusbar":{
+    "message": "Blocked by Findx privacy protection",
+    "description": "Document blocked page"
+  },
+  "docBlockedHeader":{
+    "message": "Protection enabled",
+    "description": "Document blocked page"
+  },
+  "docBlockedContentHeaderTitle":{
+    "message": "Website blocked",
+    "description": "Document blocked page"
+  },
+  "docBlockedContentHeaderText":{
+    "message": "Access to this website is blocked by a filter rule. The rule is found in one or more filterlists. You can allow permanent or temporarily access to the site.",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleUrl":{
+    "message": "Website address",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleRule":{
+    "message": "Protection filter rule",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleFilter":{
+    "message": "Filterlist containing the rule",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnAlways":{
+    "message": "always allow",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnOnce":{
+    "message": "allow once",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnCancel":{
+    "message": "cancel",
+    "description": "Document blocked page"
+  },
   "popupPowerSwitchInfo":{
     "message":"Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page.",
     "description":"English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."

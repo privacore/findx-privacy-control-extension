@@ -747,7 +747,11 @@ PageStore.prototype.filterRequest = function(context, isNotRequest) {
     
     var isBlocked = false;
     if (result) {
-         isBlocked = !this.isFilterAllowed(result.filter, context);
+        if (typeof result.filter === "object" && Array.isArray(result.filter.filterPath)) {
+            isBlocked = !this.isSomeFilterInListAllowed(result.filter.filterPath, context);
+        }
+        else if (result.filter)
+            isBlocked = !this.isFilterAllowed(result.filter, context);
     }
     this.netFilteringCache.rememberResult(context, result, this.logData, isBlocked);
 
@@ -770,6 +774,20 @@ PageStore.prototype.isFilterAllowed = function (filterObj, request) {
         return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
     }
     return µb.isDefaultOff(filterObj.filterPath );
+};
+
+PageStore.prototype.isSomeFilterInListAllowed = function (filtersList, context) {
+    if (typeof filtersList === "string") {
+        return this.isFilterAllowed({filterPath: filtersList}, context)
+    }
+    else {
+        for (var i = 0; i < filtersList.length; i++) {
+            var filterPath = filtersList[i];
+            if (!this.isFilterAllowed({filterPath: filterPath}, context))
+                return false;
+        }
+        return true;
+    }
 };
 
 
