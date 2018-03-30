@@ -143,6 +143,13 @@
         M.Tooltip.init(footerFavBtn, {enterDelay: 500});
     };
 
+    var updateFiltersTitleTooltips = function () {
+        var elFiltersTitle = $('.protection-lists .protection-filter .filter-title');
+        elFiltersTitle.each(function (index, filter) {
+            M.Tooltip.init(filter, {enterDelay: 500});
+        });
+    };
+
     /***************************************************************************/
 
     var handleControls = function () {
@@ -985,6 +992,7 @@
         // ProtectionLists
         renderTrackedUrls();
         displayUsedFilters(isInitial);
+        updateFiltersTitleTooltips();
 
         $(".protection-lists-page-content").mCustomScrollbar({
             // scrollInertia: 0,

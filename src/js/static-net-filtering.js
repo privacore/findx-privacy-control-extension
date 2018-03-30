@@ -2909,7 +2909,10 @@ FilterContainer.prototype.toLogData = function() {
     logData.source = 'static';
     logData.tokenHash = this.thRegister;
     logData.result = this.fRegister === null ? 0 : (this.cbRegister & 1 ? 2 : 1);
-    logData.filter = this.fRegister.f.filterPath;
+    if (this.fRegister.f)
+        logData.filter = this.fRegister.f.filterPath;
+    else
+        logData.filter = this.fRegister.filterPath;
     return logData;
 };
 
