@@ -59,9 +59,9 @@
    "default_locale":"en",
    "description":"__MSG_extShortDesc__",
    "icons":{
-      "16":"img/privacontrol.svg",
-      "48":"img/privacontrol.svg",
-      "96":"img/privacontrol.svg"
+      "16":"img/findx_privacy_control.svg",
+      "48":"img/findx_privacy_control.svg",
+      "96":"img/findx_privacy_control.svg"
    },
    "manifest_version":2,
    "name":"Findx Privacy Control",
