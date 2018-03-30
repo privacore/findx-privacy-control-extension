@@ -170,7 +170,10 @@ var onBeforeRequest = function(details) {
 
     // Not blocked
     // if ( result && typeof result == "object" && isFilterAllowed(result.filter, requestContext) ) {
-    if ( result && typeof result == "object" && isSomeFilterInListAllowed(result.filter, requestContext) ) {
+
+    if ( result &&
+        ((result && typeof result == "object" && (typeof result.filter === "string" || Array.isArray(result.filter)) && isSomeFilterInListAllowed(result.filter, requestContext))
+            || (result && typeof result == "object" && typeof result.filter === "object" &&  isFilterAllowed(result.filter, requestContext))) ) {
         // https://github.com/chrisaljoudi/uBlock/issues/114
         if ( details.parentFrameId !== -1 && isFrame ) {
             pageStore.setFrame(details.frameId, requestURL);
