@@ -944,6 +944,9 @@
                 togglePauseFiltering();
                 reloadTab();
             }
+            else if (!popupData.canElementPicker) {
+                openOptionsPage();
+            }
             else if (!popupData.netFilteringSwitch) {
                 changeWhitelistStatus(ev);
                 reloadTab();
