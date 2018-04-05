@@ -3,5 +3,6 @@
 # This script assumes a linux environment
 
 echo "*** uBlock: Cleaning."
-rm -R dist/build
+rm -Rf dist/build
+rm -Rf .uassets
 echo "*** uBlock: Cleaned."

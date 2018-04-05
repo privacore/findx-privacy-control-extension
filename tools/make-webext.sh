@@ -10,13 +10,16 @@ rm -rf $DES
 mkdir -p $DES
 
 bash ./tools/make-assets.sh $DES
+bash ./tools/remove-nonfindx-localizations.sh
 
 cp -R src/css                           $DES/
 cp -R src/img                           $DES/
 cp -R src/js                            $DES/
 cp -R src/lib                           $DES/
 cp -R src/_locales                      $DES/
-cp -R $DES/_locales/nb                  $DES/_locales/no
+if [ -d $DES/_locales/nb ]; then
+	cp -R $DES/_locales/nb                  $DES/_locales/no
+fi
 cp src/*.html                           $DES/
 cp -R platform/chromium/img             $DES/
 cp platform/chromium/*.js               $DES/js/

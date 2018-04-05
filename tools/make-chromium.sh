@@ -11,6 +11,7 @@ rm -rf $DES
 mkdir -p $DES
 
 bash ./tools/make-assets.sh $DES
+bash ./tools/remove-nonfindx-localizations.sh
 
 cp -R src/css               $DES/
 cp -R src/img               $DES/
@@ -32,7 +33,9 @@ mv /tmp/contentscript.js $DES/js/contentscript.js
 rm $DES/js/vapi-usercss.js
 
 # Chrome store-specific
-cp -R $DES/_locales/nb      $DES/_locales/no
+if [ -d $DES/_locales/nb ]; then
+	cp -R $DES/_locales/nb      $DES/_locales/no
+fi
 
 echo "*** PrivacyControl.ch: Generating meta..."
 python tools/make-chromium-meta.py $DES/
