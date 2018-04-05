@@ -1,4 +1,8 @@
 {
+  "findxOfficial": {
+    "message": "",
+    "description": "Set this value for translation files approved by Findx"
+  },
   "extName": {
     "message": "Findx Privatlivskontrol",
     "description": "extension name."
@@ -8,7 +12,7 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Findx Privatlivskontrol — Overblik",
+    "message": "Findx Privatlivskontrol — Kontrolpanel",
     "description": "English: Findx Privatlivskontrol — Dashboard"
   },
   "settingsPageName": {

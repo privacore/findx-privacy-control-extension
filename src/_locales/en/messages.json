@@ -1,4 +1,8 @@
 {
+  "findxOfficial": {
+    "message": "",
+    "description": "Set this value for translation files approved by Findx"
+  },
   "extName":{
     "message":"Findx Privacy Control",
     "description":"extension name."
