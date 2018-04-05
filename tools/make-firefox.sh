@@ -2,9 +2,9 @@
 #
 # This script assumes a linux environment
 
-echo "*** PrivacyControl.FF: Copying files"
+echo "*** FindxPrivacyControl.FF: Copying files"
 
-DES=dist/build/privacontrol@privacore.com
+DES=dist/build/privacycontrol@findx.com
 rm -rf $DES
 mkdir -p $DES
 
@@ -31,22 +31,22 @@ cp    platform/firefox/install.rdf      $DES/
 cp    platform/firefox/*.xul            $DES/
 cp    LICENSE.txt                       $DES/
 
-echo "*** PrivacyControl.FF: concatenating content scripts"
+echo "*** FindxPrivacyControl.FF: concatenating content scripts"
 cat $DES/js/vapi-usercss.js > /tmp/contentscript.js
 echo >> /tmp/contentscript.js
 grep -v "^'use strict';$" $DES/js/contentscript.js >> /tmp/contentscript.js
 mv /tmp/contentscript.js $DES/js/contentscript.js
 rm $DES/js/vapi-usercss.js
 
-echo "*** PrivacyControl.FF: Generating meta..."
+echo "*** FindxPrivacyControl.FF: Generating meta..."
 python tools/make-firefox-meta.py $DES/
 
 if [ "$1" = all ]; then
     set +v
-    echo "*** PrivacyControl.FF: Creating package..."
+    echo "*** FindxPrivacyControl.FF: Creating package..."
     pushd $DES/ > /dev/null
-    zip ../uBlock0.firefox.xpi -qr *
+    zip ../$(basename $DES).xpi -qr *
     popd > /dev/null
 fi
 
-echo "*** PrivacyControl.FF: Package done."
+echo "*** FindxPrivacyControl.FF: Package done."

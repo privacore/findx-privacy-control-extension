@@ -3403,7 +3403,7 @@ vAPI.commands = (function() {
 /******************************************************************************/
 
 var optionsObserver = (function() {
-    var addonId = 'privacontrol@privacore.com';
+    var addonId = 'privacycontrol@findx.com';
 
     var commandHandler = function() {
         switch ( this.id ) {
