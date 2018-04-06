@@ -46,13 +46,23 @@ var loadDashboardPanel = function(tab, q) {
     //    return;
     //}
 
-    var tabButton = uDom('[href="#' + tab + '"]');
-    if ( !tabButton ) {
+    var tabButton = $('[href="#' + tab + '"]');
+    if ( !tabButton || !tabButton.length ) {
         return;
     }
-    q = q || '';
+    $("#tabs_nav li").removeClass('active');
+    tabButton.closest('li').addClass('active');
 
-    var iframe = $('#panels div:not(.ui-tabs-hide) iframe');
+
+
+
+    $("#panels .tab-panel").removeClass('active-panel');
+    var panel = $("#panels #" + tab + ".tab-panel");
+    panel.addClass('active-panel');
+
+    q = q || "";
+
+    var iframe = panel.find('iframe');
     if (!iframe || !iframe.length)
         return;
 
@@ -86,9 +96,6 @@ var onTabClickHandler = function(e) {
 /******************************************************************************/
 
 uDom.onLoad(function() {
-    // Display jQuery UI elements
-    $("#tabs").tabs();
-    $("button").button();
     //    window.addEventListener('resize', resizeFrame);
 
     var matches = window.location.search.slice(1).match(/\??(tab=([^&]+))?(.*)$/);

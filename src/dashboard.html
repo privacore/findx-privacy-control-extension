@@ -5,8 +5,7 @@
         <title>Findx Privacy Control options</title>
         <link rel="shortcut icon" type="image/png" href="img/icon_16.png">
 
-        <link type="text/css" href="lib/jquery-ui/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
-        <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+        <link href="css/font-awesome.min.css" rel="stylesheet"  type="text/css">
         <link href="css/dashboard.css" rel="stylesheet" type="text/css">
 
 
@@ -34,7 +33,7 @@
                 <div id="content">
                     <div id="tabs">
                         <ul id="tabs_nav">
-                            <li><a href="#3p-filters-privacontrol" class="tabButton"><span>Protection lists</span></a></li>
+                            <li class="active"><a href="#3p-filters-privacontrol" class="tabButton"><span>Protection lists</span></a></li>
                             <li><a href="#1p-filters" class="tabButton"><span>My tracking filter</span></a></li>
                             <li><a href="#dyna-rules" class="tabButton"><span>My detailed rules</span></a></li>
                             <li><a href="#whitelist" class="tabButton"><span>My Whitelist</span></a></li>
@@ -43,19 +42,19 @@
                         </ul>
 
                         <div id="panels">
-                            <div id="3p-filters-privacontrol">
+                            <div id="3p-filters-privacontrol" class="tab-panel active-panel">
                                 <iframe src=""></iframe>
                             </div>
-                            <div id="1p-filters">
+                            <div id="1p-filters" class="tab-panel">
                                 <iframe src=""></iframe>
                             </div>
-                            <div id="dyna-rules">
+                            <div id="dyna-rules" class="tab-panel">
                                 <iframe src=""></iframe>
                             </div>
-                            <div id="whitelist">
+                            <div id="whitelist" class="tab-panel">
                                 <iframe src=""></iframe>
                             </div>
-                            <div id="settings">
+                            <div id="settings" class="tab-panel">
                                 <iframe src=""></iframe>
                             </div>
                             <!--<div id="about">-->
@@ -94,8 +93,7 @@
         </div>
 
 
-        <script src="lib/jquery-ui/js/jquery-1.7.1.min.js"></script>
-        <script src="lib/jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script src="lib/jquery-3.3.1.min.js"></script>
         <script src="lib/jquery.nicescroll.min.js"></script>
 
         <script src="js/vapi.js"></script>

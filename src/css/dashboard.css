@@ -175,12 +175,6 @@ button {
     float: left;
     font-family: Roboto-regular;
     list-style: none;
-    color: #6BAC6F;
-}
-#tabs_nav li a {
-    text-decoration: none;
-}
-.ui-tabs .ui-tabs-nav li {
     display: table;
     vertical-align: middle;
     text-align: center;
@@ -191,32 +185,28 @@ button {
     border: none!important;
     border-radius: 0;
     top: 0!important;
-}
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
     background: white;
 }
-li.ui-state-default.ui-state-hover {
+#tabs_nav li:hover {
     background: #d1e5d3;
 }
-li.ui-state-default.ui-state-active.ui-tabs-selected {
+#tabs_nav li.active {
     color: white;
     background: #49854f;
 }
 
-.ui-tabs .ui-tabs-nav li a {
+#tabs_nav li a, #tabs_nav li a:link, #tabs_nav li a:visited {
+    text-decoration: none;
     padding: 0;
     display: table-cell;
     text-align: center;
     vertical-align: middle;
     float: none;
-}
-.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+    font-size: 1.1em;
     color: #6BAC6F;
 }
-.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+#tabs_nav li.active a, #tabs_nav li.active a:link, #tabs_nav li.active a:visited {
     color: white;
-}
-.ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
     cursor: default;
 }
 
@@ -228,12 +218,23 @@ li.ui-state-default.ui-state-active.ui-tabs-selected {
     height: calc(100% - 95px);
     position: relative;
 }
-#panels .ui-tabs-panel {
+#panels .tab-panel {
     height: 100%;
     width: 100%;
     position: relative;
     box-sizing: border-box;
+
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    /*display: block;*/
+    border-width: 0;
+    padding: 1em 1.4em;
     padding-bottom: 0;
+    background: none;
+    display: none;
+}
+#panels .tab-panel.active-panel {
+    display: block;
 }
 #panels iframe {
     width: 100%;

@@ -145,7 +145,7 @@ button.custom.reloadAll:not(.disabled) {
 }
 .nameColumn a {
     text-decoration: underline;
-    cursor: auto;
+    cursor: pointer;
     color: #222222;
 }
 .groupField {
