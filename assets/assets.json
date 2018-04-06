@@ -188,13 +188,6 @@
         ],
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fwww.malwaredomains.com%2F"
     },
-    "disconnect-malware": {
-        "content": "filters",
-        "group": "malware",
-        "off": true,
-        "title": "Malware filter list by Disconnect",
-        "contentURL": "http://download.privacontrol.com/filters/https.s3.amazonaws.com.lists.disconnect.me.simple.malware.txt"
-    },
     "spam404-0": {
         "content": "filters",
         "group": "malware",
