@@ -2,21 +2,24 @@
 #
 # This script assumes a linux environment
 
-echo "*** PrivacyControl.webext: Creating web store package"
-echo "*** PrivacyControl.webext: Copying files"
+echo "*** FindxPrivacyControl.webext: Creating web store package"
+echo "*** FindxPrivacyControl.webext: Copying files"
 
-DES=dist/build/PrivacyControl.webext
+DES=dist/build/FindxPrivacyControl.webext
 rm -rf $DES
 mkdir -p $DES
 
 bash ./tools/make-assets.sh $DES
+bash ./tools/remove-nonfindx-localizations.sh
 
 cp -R src/css                           $DES/
 cp -R src/img                           $DES/
 cp -R src/js                            $DES/
 cp -R src/lib                           $DES/
 cp -R src/_locales                      $DES/
-cp -R $DES/_locales/nb                  $DES/_locales/no
+if [ -d $DES/_locales/nb ]; then
+	cp -R $DES/_locales/nb                  $DES/_locales/no
+fi
 cp src/*.html                           $DES/
 cp -R platform/chromium/img             $DES/
 cp platform/chromium/*.js               $DES/js/
@@ -30,7 +33,7 @@ cp platform/webext/vapi-webrequest.js   $DES/js/
 cp platform/webext/vapi-cachestorage.js $DES/js/
 cp platform/webext/vapi-usercss.js      $DES/js/
 
-echo "*** PrivacyControl.webext: concatenating content scripts"
+echo "*** FindxPrivacyControl.webext: concatenating content scripts"
 cat $DES/js/vapi-usercss.js > /tmp/contentscript.js
 echo >> /tmp/contentscript.js
 grep -v "^'use strict';$" $DES/js/contentscript.js >> /tmp/contentscript.js
@@ -42,14 +45,14 @@ rm $DES/img/icon_128.png
 rm $DES/options_ui.html
 rm $DES/js/options_ui.js
 
-echo "*** PrivacyControl.webext: Generating meta..."
+echo "*** FindxPrivacyControl.webext: Generating meta..."
 python tools/make-webext-meta.py $DES/
 
 if [ "$1" = all ]; then
-    echo "*** PrivacyControl.webext: Creating package..."
+    echo "*** FindxPrivacyControl.webext: Creating package..."
     pushd $DES > /dev/null
     zip ../$(basename $DES).xpi -qr *
     popd > /dev/null
 fi
 
-echo "*** PrivacyControl.webext: Package done."
+echo "*** FindxPrivacyControl.webext: Package done."

@@ -1,10 +1,14 @@
 {
+  "findxOfficial": {
+    "message": "",
+    "description": "Set this value for translation files approved by Findx"
+  },
   "extName":{
     "message":"Findx Privacy Control",
     "description":"extension name."
   },
   "extShortDesc":{
-    "message":"Control your privacy and block the data collectors.",
+    "message":"Protect yourself from online tracking and search using Findx, an independent privacy-first search engine.",
     "description":"this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName":{
