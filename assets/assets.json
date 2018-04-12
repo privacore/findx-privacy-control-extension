@@ -754,7 +754,7 @@
         "title": "VIE: ABPVN List",
         "lang": "vi",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.abpvn.abpvn.master.filter.abpvn.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fabpvn.com%2F",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fabpvn.com%2F",
         "defaultOff": true,
         "inUse": true
     }
