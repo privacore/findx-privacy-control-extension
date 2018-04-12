@@ -210,6 +210,9 @@ body:not(.protection-off) .protection-status-off {
     font-size: 16px;
     padding: 12px 45px 12px 16px;
     border: none;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
     background-image: linear-gradient(to top, rgba(221, 221, 221, 0), rgba(221, 221, 221, 0) 80%, rgba(221, 221, 221, 0.86) 97%, #dddddd);
 }
 #search_input::-webkit-input-placeholder {  /* Chrome/Opera/Safari */
