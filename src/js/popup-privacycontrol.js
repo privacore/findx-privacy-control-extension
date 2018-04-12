@@ -302,7 +302,7 @@
                     openHelpPage();
                     break;
                 case 'favorites':
-                    // openRatePage();
+                    openRatePage();
                     break;
             }
         });
