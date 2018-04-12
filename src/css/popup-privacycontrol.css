@@ -375,7 +375,7 @@ body:not(.protection-off) .protection-status-off {
 }
 .plate .plate-content .plate-content-text img,
 .plate .plate-content .plate-content-text svg {
-    height: 37px;
+    height: 30px;
     margin-right: 5px;
 }
 #pause_site_btn {
@@ -386,12 +386,22 @@ body:not(.protection-off) .protection-status-off {
     height: 52px;
     background-color: rgba(255, 255, 255, 1);
     color: rgba(0, 0, 0, 0.56);
-    cursor: pointer;
+    cursor: default;
 }
 .plate .plate-footer .plate-footer-btn {
-    width: 100%;
-    height: 100%;
-    padding: 14px 16px;
+    width: 48px;
+    height: 48px;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 50%;
+    top: 2px;
+    left: 6px;
+}
+.plate .plate-footer .plate-footer-btn.waves-custom-grey .waves-ripple {
+    background-color: rgba(0,0,0,0.12);
+}
+.plate .plate-footer .plate-footer-btn:hover {
+    background-color: rgba(0,0,0,0.04);
 }
 .plate .plate-footer .plate-footer-btn img,
 .plate .plate-footer .plate-footer-btn svg {
