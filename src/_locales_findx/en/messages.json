@@ -1,0 +1,270 @@
+{
+  "extName":{
+    "message":"Findx Privacy Control",
+    "description":"extension name."
+  },
+  "extShortDesc":{
+    "message":"Protect yourself from online tracking and search using Findx, an independent privacy-first search engine.",
+    "description":"this will be in the chrome web store: must be 132 characters or less"
+  },
+  "statsPageName":{
+    "message":"Findx Privacy Control — Logger",
+    "description":"Title for the logger window"
+  },
+  "popupStatusbarBlockedToday":{
+    "message": "Blocked today:",
+    "description": "Message will be in a status bar and in a 'today blocked' plate"
+  },
+  "popupStatusbarProtection":{
+    "message": "Protection:",
+    "description": "Message will be in a status bar"
+  },
+  "popupOn":{
+    "message": "on",
+    "description": ""
+  },
+  "popupOff":{
+    "message": "off",
+    "description": ""
+  },
+  "popupSidenavTitle":{
+    "message": "Privacy control",
+    "description": ""
+  },
+  "popupSidenavSubHeader":{
+    "message": "Protection",
+    "description": ""
+  },
+  "popupSidenavProtectionLists":{
+    "message": "Active protection lists",
+    "description": ""
+  },
+  "popupSidenavTracking":{
+    "message": "Tracking monitor",
+    "description": ""
+  },
+  "popupSidenavStopProtection":{
+    "message": "Stop protection",
+    "description": ""
+  },
+  "popupSettings":{
+    "message": "Settings",
+    "description": ""
+  },
+  "popupSidenavFeedback":{
+    "message": "Send feedback",
+    "description": ""
+  },
+  "popupSidenavShare":{
+    "message": "Share",
+    "description": ""
+  },
+  "popupSidenavFindxMobile":{
+    "message": "Findx for mobile",
+    "description": ""
+  },
+  "popupHeaderTitle":{
+    "message": "Findx privacy control",
+    "description": ""
+  },
+  "popupSearchInputPlaceholder":{
+    "message": "Search here... in private...",
+    "description": ""
+  },
+  "popupSearch":{
+    "message": "Search",
+    "description": ""
+  },
+  "popupTabProtection":{
+    "message": "Protection",
+    "description": ""
+  },
+  "popupPlateWeather":{
+    "message": "Weather forecast",
+    "description": ""
+  },
+  "popupPlateTimer":{
+    "message": "Timer",
+    "description": ""
+  },
+  "popupPlateCalculator":{
+    "message": "Calculator",
+    "description": ""
+  },
+  "popupPlateVideos":{
+    "message": "Videos",
+    "description": ""
+  },
+  "popupPlateMaps":{
+    "message": "Maps",
+    "description": ""
+  },
+  "popupPlateImages":{
+    "message": "Images",
+    "description": ""
+  },
+  "popupTipPauseOnSite":{
+    "message": "Pause on this site",
+    "description": ""
+  },
+  "popupTipStartOnSite":{
+    "message": "Start protection on this site",
+    "description": ""
+  },
+  "popupPlateBlockedOnSite":{
+    "message": "Blocked on this site",
+    "description": ""
+  },
+  "popupPlateBlockedToday":{
+    "message": "Blocked today",
+    "description": ""
+  },
+  "popupPlateBlockedTotal":{
+    "message": "Blocked in total",
+    "description": ""
+  },
+  "popupDialogAlertTitle":{
+    "message": "Alert: Protection stopped",
+    "description": "Dialog displayed when protection is stopped for all sites"
+  },
+  "popupDialogAlertContent":{
+    "message": "You are exposed to behavioural tracking - it is possible for social media providers and advertisers to collect information about your interests while you are browsing.",
+    "description": "Dialog displayed when protection is stopped for all sites"
+  },
+  "popupDialogShareTitle":{
+    "message": "Share on",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareFacebook":{
+    "message": "Facebook",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareTwitter":{
+    "message": "Twitter",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareLinkedin":{
+    "message": "LinkedIn",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupPtorectionListsTitle":{
+    "message": "Protection lists",
+    "description": "Protection lists page title"
+  },
+  "popupAddMore":{
+    "message": "Adding more lists",
+    "description": "Protection lists page footer"
+  },
+  "popupAddMoreText":{
+    "message": "You can add more blocking lists easily. Choose from a wide range of country specific lists and lists from various providers. All lists are maintained by their respective communities.",
+    "description": "Protection lists page footer"
+  },
+  "popupTipRefreshBtn":{
+    "message": "Please refresh to see your changes",
+    "description": "Tooltip of floating refresh button"
+  },
+  "popupTipFooterLogo":{
+    "message": "Learn more about Findx",
+    "description": ""
+  },
+  "popupTipFooterRateExtension":{
+    "message": "Rate this Extension",
+    "description": ""
+  },
+  "popupTipFooterRateAddon":{
+    "message": "Rate this add-on",
+    "description": ""
+  },
+  "docBlockedTabTitle":{
+    "message": "Blocked by Findx privacy protection",
+    "description": "Document blocked page"
+  },
+  "docBlockedStatusbar":{
+    "message": "Blocked by Findx privacy protection",
+    "description": "Document blocked page"
+  },
+  "docBlockedHeader":{
+    "message": "Protection enabled",
+    "description": "Document blocked page"
+  },
+  "docBlockedContentHeaderTitle":{
+    "message": "Website blocked",
+    "description": "Document blocked page"
+  },
+  "docBlockedContentHeaderText":{
+    "message": "Access to this website is blocked by a filter rule. The rule is found in one or more filterlists. You can allow permanent or temporarily access to the site.",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleUrl":{
+    "message": "Website address",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleRule":{
+    "message": "Protection filter rule",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleFilter":{
+    "message": "Filterlist containing the rule",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnAlways":{
+    "message": "always allow",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnOnce":{
+    "message": "allow once",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnCancel":{
+    "message": "cancel",
+    "description": "Document blocked page"
+  },
+  "3pParseAllABPHideFiltersInfo":{
+    "message":"<p>This option enables the parsing and enforcing of <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-compatible &ldquo;element hiding&rdquo; filters<\/a>. These filters are essentially cosmetic, they serve to hide elements in a web page which are deemed to be a visual nuisance, and which can't be blocked by the net request-based filtering engine.<\/p><p>Enabling this feature increases Findx Privacy Control's memory footprint.<\/p>",
+    "description":"Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
+  },
+  "3pIgnoreGenericCosmeticFiltersInfo":{
+    "message":"<p>Generic cosmetic filters are those cosmetic filters which are meant to apply on all web sites.<p>Though handled efficiently by Findx Privacy Control, generic cosmetic filters may still contribute measurable memory and CPU overhead on some web pages, especially for large and long-lived ones.<p>Enabling this option will eliminate the memory and CPU overhead added to web pages as a result of handling generic cosmetic filters, and also lower the memory footprint of Findx Privacy Control itself.<p>It is recommended to enable this option on less powerful devices.",
+    "description":"Describes the purpose of the 'Ignore generic cosmetic filters' feature."
+  },
+  "3pExternalListsHint":{
+    "message":"One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored.",
+    "description":"English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+  },
+  "1pFormatHint":{
+    "message":"One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored.",
+    "description":"English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+  },
+  "1pExportFilename" : {
+    "message": "my-privacycontrol-static-filters_{{datetime}}.txt",
+    "description": "English: my-privacycontrol-static-filters_{{datetime}}.txt"
+  },
+  "rulesDefaultFileName": {
+    "message": "my-privacycontrol-dynamic-rules_{{datetime}}.txt",
+    "description": "default file name to use"
+  },
+  "whitelistPrompt":{
+    "message":"The whitelist directives dictate on which web pages Findx Privacy Control should be disabled. One entry per line. Invalid directives will be silently ignored and commented out.",
+    "description":"English: An overview of the content of the dashboard's Whitelist pane."
+  },
+  "whitelistExportFilename" : {
+    "message": "my-privacycontrol-whitelist_{{datetime}}.txt",
+    "description": "English: my-privacycontrol-whitelist_{{datetime}}.txt"
+  },
+  "aboutBackupFilename" : {
+    "message": "my-privacycontrol-backup_{{datetime}}.txt",
+    "description": "English: my-privacycontrol-backup_{{datetime}}.txt"
+  },
+  "aboutRestoreDataConfirm" : {
+    "message": "All your settings will be overwritten using data backed up on {{time}}, and Findx Privacy Control will restart.\n\nOverwrite all existing settings using backed up data?",
+    "description": "Message asking user to confirm restore"
+  },
+  "aboutResetDataConfirm" : {
+    "message": "All your settings will be removed, and Findx Privacy Control will restart.\n\nReset Findx Privacy Control to factory settings?",
+    "description": "Message asking user to confirm reset"
+  },
+  "subscriberConfirm":{
+    "message":"Findx Privacy Control: Add the following URL to your custom filter lists?\n\nTitle: \"{{title}}\"\nURL: {{url}}",
+    "description":"English: The message seen by the user to confirm subscription to a ABP filter list"
+  }
+}

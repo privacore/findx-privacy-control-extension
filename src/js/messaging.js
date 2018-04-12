@@ -839,7 +839,7 @@ var backupUserData = function(callback) {
 
     var onUserFiltersReady = function(details) {
         userData.userFilters = details.content;
-        var filename = 'my-privacontrol-backup_{{datetime}}.txt'
+        var filename = vAPI.i18n('aboutBackupFilename')
             .replace('{{datetime}}', µb.dateNowToSensibleString())
             .replace(/ +/g, '_');
         µb.restoreBackupSettings.lastBackupFile = filename;

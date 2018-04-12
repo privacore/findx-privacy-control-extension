@@ -137,7 +137,7 @@ var exportUserFiltersToFile = function() {
     if ( val === '' ) {
         return;
     }
-    var filename = "my-privacontrol-tracking-filters_{{datetime}}.txt"
+    var filename = vAPI.i18n('1pExportFilename')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())
         .replace(/ +/g, '_');
     vAPI.download({

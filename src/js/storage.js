@@ -337,12 +337,12 @@
 
     var µb = this;
     var onSaved = function() {
-        var compiledFilters = µb.compileFilters(filters),
+        var compiledFilters = µb.compileFilters(filters, µb.userFiltersPath),
             snfe = µb.staticNetFilteringEngine,
             cfe = µb.cosmeticFilteringEngine,
             acceptedCount = snfe.acceptedCount + cfe.acceptedCount,
             discardedCount = snfe.discardedCount + cfe.discardedCount;
-        µb.applyCompiledFilters(compiledFilters, true);
+        µb.applyCompiledFilters(compiledFilters, true, µb.userFiltersPath);
         var entry = µb.availableFilterLists[µb.userFiltersPath],
             deltaEntryCount = snfe.acceptedCount + cfe.acceptedCount - acceptedCount,
             deltaEntryUsedCount = deltaEntryCount - (snfe.discardedCount + cfe.discardedCount - discardedCount);

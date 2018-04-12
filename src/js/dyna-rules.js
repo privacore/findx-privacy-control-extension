@@ -153,7 +153,7 @@ var startImportFilePicker = function() {
 /******************************************************************************/
 
 function exportUserRulesToFile() {
-    var filename = "my-privacontrol-dynamic-rules_{{datetime}}.txt"
+    var filename = vAPI.i18n('rulesDefaultFileName')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())
         .replace(/ +/g, '_');
     vAPI.download({

@@ -1,0 +1,226 @@
+{
+  "extName": {
+    "message": "Findx Privatlivskontrol",
+    "description": "extension name."
+  },
+  "extShortDesc": {
+    "message": "Beskyt dig effektivt mod dataindsamling og søg via Findx, en uafhængig dansk søgemaskine der respekterer dit privatliv.",
+    "description": "this will be in the chrome web store: must be 132 characters or less"
+  },
+  "statsPageName": {
+    "message": "Findx Privatlivskontrol — Netværkslog",
+    "description": "Title for the logger window"
+  },
+  "popupStatusbarBlockedToday":{
+    "message": "Blokeret idag:",
+    "description": "Message will be in a status bar and in a 'today blocked' plate"
+  },
+  "popupStatusbarProtection":{
+    "message": "Beskyttelse:",
+    "description": "Message will be in a status bar"
+  },
+  "popupOn":{
+    "message": "til",
+    "description": ""
+  },
+  "popupOff":{
+    "message": "fra",
+    "description": ""
+  },
+  "popupSidenavTitle":{
+    "message": "Privatlivskontrol",
+    "description": ""
+  },
+  "popupSidenavSubHeader":{
+    "message": "Beskyttelse",
+    "description": ""
+  },
+  "popupSidenavProtectionLists":{
+    "message": "Aktive beskyttelseslister",
+    "description": ""
+  },
+  "popupSidenavTracking":{
+    "message": "Tracking monitor",
+    "description": "@@@"
+  },
+  "popupSidenavStopProtection":{
+    "message": "Slå beskyttelse fra",
+    "description": ""
+  },
+  "popupSettings":{
+    "message": "Indstillinger",
+    "description": ""
+  },
+  "popupSidenavFeedback":{
+    "message": "Send kommentar",
+    "description": ""
+  },
+  "popupSidenavShare":{
+    "message": "Del",
+    "description": ""
+  },
+  "popupSidenavFindxMobile":{
+    "message": "Findx til mobil",
+    "description": ""
+  },
+  "popupHeaderTitle":{
+    "message": "Findx Privatlivskontrol",
+    "description": ""
+  },
+  "searchInputPlaceholder":{
+    "message": "Søg her... helt privat.",
+    "description": ""
+  },
+  "popupSearch":{
+    "message": "Søg",
+    "description": ""
+  },
+  "popupTabProtection":{
+    "message": "Beskyttelse",
+    "description": ""
+  },
+  "popupPlateWeather":{
+    "message": "Vejrudsigt",
+    "description": ""
+  },
+  "popupPlateTimer":{
+    "message": "Timer",
+    "description": ""
+  },
+  "popupPlateCalculator":{
+    "message": "Beregn",
+    "description": ""
+  },
+  "popupPlateVideos":{
+    "message": "Videoer",
+    "description": ""
+  },
+  "popupPlateMaps":{
+    "message": "Kort",
+    "description": ""
+  },
+  "popupPlateImages":{
+    "message": "Billeder",
+    "description": ""
+  },
+  "popupTipPauseOnSite":{
+    "message": "Pause på dette websted",
+    "description": ""
+  },
+  "popupTipStartOnSite":{
+    "message": "Slå beskyttelse til på dette websted",
+    "description": ""
+  },
+  "popupPlateBlockedOnSite":{
+    "message": "Blokeret her",
+    "description": ""
+  },
+  "popupPlateBlockedToday":{
+    "message": "Blokeret idag",
+    "description": ""
+  },
+  "popupPlateBlockedTotal":{
+    "message": "Blokeret ialt",
+    "description": ""
+  },
+  "popupDialogAlertTitle":{
+    "message": "Advarsel: Al beskyttelse er slået fra",
+    "description": "Dialog displayed when protection is stopped for all sites"
+  },
+  "popupDialogAlertContent":{
+    "message": "Der er åbent for adfærsmæssig sporing - det er muligt for sociale medier og annoncører at indsamle information om dine interesser mens du surfer.",
+    "description": "Dialog displayed when protection is stopped for all sites"
+  },
+  "popupDialogShareTitle":{
+    "message": "Del på",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareFacebook":{
+    "message": "Facebook",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareTwitter":{
+    "message": "Twitter",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupDialogShareLinkedin":{
+    "message": "LinkedIn",
+    "description": "Dialog displayed when user clicks on Share button"
+  },
+  "popupPtorectionListsTitle":{
+    "message": "Beskyttelseslister",
+    "description": "Protection lists page title"
+  },
+  "popupAddMore":{
+    "message": "Tilføj flere lister",
+    "description": "Protection lists page footer"
+  },
+  "popupAddMoreText":{
+    "message": "Du kan let tilføje flere beskyttelseslister. Vælg fra en lang række landespecifikke lister og forskellige udbydere. Alle lister vedligeholdes af deres respektive fællesskaber.",
+    "description": "Protection lists page footer"
+  },
+  "popupTipRefreshBtn":{
+    "message": "Genindlæs for at se dine ændringer",
+    "description": "Tooltip of floating refresh button"
+  },
+  "popupTipFooterLogo":{
+    "message": "Læs mere om Findx",
+    "description": ""
+  },
+  "popupTipFooterRateExtension":{
+    "message": "Bedøm denne browserudviddelse",
+    "description": ""
+  },
+  "popupTipFooterRateAddon":{
+    "message": "Bedøm denne browserudviddelse",
+    "description": ""
+  },
+  "3pParseAllABPHideFiltersInfo": {
+    "message": "<p>Denne indstilling gør det muligt at analysere og anvende <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Ablock Plus kompatible &ldquo;element skjuldende&rdquo; filtre<\/a>. Disse filtre er essentielt set kosmetiske og har til formål at skjule irriterende visuelle elementer på diverse websider, som det ikke er muligt at blokere på andre måder. <\/p><p>Denne indstilling øger Findx Privatlivskontrols hukommelsesforbrug.<\/p>",
+    "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
+  },
+  "3pIgnoreGenericCosmeticFiltersInfo": {
+    "message": "<p>Fælles kosmetiske filtre er de kosmetiske filtre der er ment til anvendelse på alle websider. \n<p>Selvom Findx Privatlivskontrol behandler dem effektivt, kan de fælles kosmetiske filtre medføre forøget brug af hukommelse og CPU på nogle websider, specielt de store og længe-åbnede websider.\n<p>Aktiveres denne funktion vil Findx Privatlivskontrol ikke længere benytte de fælles kosmetiske filtre, hvilket medfører lavere hukommelses- og CPU-forbrug på hver side, samt mindre overordnet hukommelsesforbrug.\n<p>Det anbefales at aktivere denne funktion på mindre kraftfulde enheder.",
+    "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
+  },
+  "3pExternalListsHint": {
+    "message": "En URL pr. linje. Linjer der starter med &lsquo;!&rsquo; bliver ignoreret. Ugyldige URL'er bliver lydløst ignoreret.",
+    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+  },
+  "1pFormatHint": {
+    "message": "Ét filter pr. linje. Et filter kan være et almindeligt værtsnavn, eller et Adblock Plus-kompatibelt filter. Linjer der starter med &lsquo;!&rsquo; vil blive ignoreret.",
+    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+  },
+  "1pExportFilename": {
+    "message": "mine-privatlivskontrol-statiske-filtre_{{datetime}}.txt",
+    "description": "English: my-ublock-static-filters_{{datetime}}.txt"
+  },
+  "rulesDefaultFileName": {
+    "message": "mine-privatlivskontrol-dynamiske-regler_{{datetime}}.txt",
+    "description": "default file name to use"
+  },
+  "whitelistPrompt": {
+    "message": "Brugerdefineret liste over værtsnavne hvor Findx Privatlivskontrol vil være deaktiveret. Kun et værtsnavn pr. linje. Ugyldige værtsnavne ignoreres.",
+    "description": "English: An overview of the content of the dashboard's Whitelist pane."
+  },
+  "whitelistExportFilename": {
+    "message": "min-privatlivskontrol-whitelist_{{datetime}}.txt",
+    "description": "English: my-ublock-whitelist_{{datetime}}.txt"
+  },
+  "aboutBackupFilename": {
+    "message": "min-privatlivskontrol-sikkerhedskopi_{{datetime}}.txt",
+    "description": "English: my-ublock-backup_{{datetime}}.txt"
+  },
+  "aboutRestoreDataConfirm": {
+    "message": "Alle indstillinger vil blive erstattet af sikkerhedskopien fra {{time}}, hvorefter Findx Privatlivskontrol vil genstarte.\n\nErstat alle indstillinger med indstillingerne fra sikkerhedskopien?",
+    "description": "Message asking user to confirm restore"
+  },
+  "aboutResetDataConfirm": {
+    "message": "Alle dine indstillinger vil blive nulstillet, hvorefter Findx Privatlivskontrol vil genstarte.\n\nGendan alle indstillinger i Findx Privatlivskontrol til standard?",
+    "description": "Message asking user to confirm reset"
+  },
+  "subscriberConfirm": {
+    "message": "Findx Privatlivskontrol: Tilføj det følgende URL til din personlige filterliste?\n\nTitel: \"{{title}}\"\nURL: {{url}}",
+    "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
+  }
+}

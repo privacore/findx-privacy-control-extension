@@ -148,7 +148,7 @@ var startImportFilePicker = function() {
 var exportWhitelistToFile = function() {
     var val = getTextareaNode().value.trim();
     if ( val === '' ) { return; }
-    var filename = 'my-privacontrol-whitelist_{{datetime}}.txt'
+    var filename = vAPI.i18n('whitelistExportFilename')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())
         .replace(/ +/g, '_');
     vAPI.download({

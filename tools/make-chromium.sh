@@ -11,13 +11,13 @@ rm -rf $DES
 mkdir -p $DES
 
 bash ./tools/make-assets.sh $DES
-bash ./tools/remove-nonfindx-localizations.sh
 
 cp -R src/css               $DES/
 cp -R src/img               $DES/
 cp -R src/js                $DES/
 cp -R src/lib               $DES/
-cp -R src/_locales          $DES/
+cp -R src/_locales_findx          $DES/
+mv $DES/_locales_findx $DES/_locales
 cp src/*.html               $DES/
 cp platform/chromium/*.js   $DES/js/
 cp -R platform/chromium/img $DES/
@@ -39,6 +39,9 @@ fi
 
 echo "*** FindxPrivacyControl.ch: Generating meta..."
 python tools/make-chromium-meta.py $DES/
+
+echo "*** FindxPrivacyControl.ch: Merge localizations..."
+python tools/merge_locales.py $DES/
 
 if [ "$1" = all ]; then
     echo "*** FindxPrivacyControl.ch: Creating package..."
