@@ -408,9 +408,7 @@ var renderPopup = function() {
     elem.classList.toggle('advancedUser', popupData.advancedUserEnabled);
     elem.classList.toggle(
         'off',
-        popupData.pageURL === '' ||
-        !popupData.netFilteringSwitch ||
-        popupData.pageHostname === 'behind-the-scene' && !popupData.advancedUserEnabled
+        popupData.pageURL === '' || !popupData.netFilteringSwitch
     );
 
     // If you think the `=== true` is pointless, you are mistaken
@@ -621,7 +619,10 @@ var renderOnce = function() {
 /******************************************************************************/
 
 var renderPopupLazy = function() {
-    messaging.send('popupPanel', { what: 'getPopupLazyData', tabId: popupData.tabId });
+    messaging.send(
+        'popupPanel',
+        { what: 'getPopupLazyData', tabId: popupData.tabId }
+    );
 };
 
 var onPopupMessage = function(data) {
@@ -643,12 +644,6 @@ messaging.addChannelListener('popup', onPopupMessage);
 
 var toggleNetFilteringSwitch = function(ev) {
     if ( !popupData || !popupData.pageURL ) { return; }
-    if (
-        popupData.pageHostname === 'behind-the-scene' &&
-        !popupData.advancedUserEnabled
-    ) {
-        return;
-    }
     messaging.send(
         'popupPanel',
         {
@@ -1069,7 +1064,7 @@ var onHideTooltip = function() {
     // Extract the tab id of the page this popup is for
     var matches = window.location.search.match(/[\?&]tabId=([^&]+)/);
     if ( matches && matches.length === 2 ) {
-        tabId = matches[1];
+        tabId = parseInt(matches[1], 10) || 0;
     }
     getPopupData(tabId);
 
