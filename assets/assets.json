@@ -625,5 +625,21 @@
         "lang": "vi",
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.abpvn.abpvn.master.filter.abpvn.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fabpvn.com%2F"
+    },
+    "findx-antifacebook": {
+        "content": "filters",
+        "group": "facebook",
+        "off": true,
+        "title": "Findx Facebook Trackers List",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.privacore.filter.lists.master.facebook.antifacebook.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fprivacore%2Ffilter-lists"
+    },
+    "findx-antigoogle": {
+        "content": "filters",
+        "group": "google",
+        "off": true,
+        "title": "Findx Google Trackers List",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.privacore.filter.lists.master.google.antigoogle.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fprivacore%2Ffilter-lists"
     }
 }

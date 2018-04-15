@@ -434,5 +434,19 @@
         "lang": "sl",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fbetterwebleon%2Fslovenian-list",
         "defaultOff": true
+    },
+    "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.privacore.filter.lists.master.facebook.antifacebook.txt": {
+        "off": false,
+        "title": "Findx Facebook Trackers list",
+        "group": "facebook",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fprivacore%2Ffilter-lists",
+        "defaultOff": true
+    },
+    "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.privacore.filter.lists.master.google.antigoogle.txt": {
+        "off": false,
+        "title": "Findx Google Trackers list",
+        "group": "google",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fprivacore%2Ffilter-lists",
+        "defaultOff": true
     }
 }
