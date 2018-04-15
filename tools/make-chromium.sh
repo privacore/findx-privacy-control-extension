@@ -38,10 +38,10 @@ if [ -d $DES/_locales/nb ]; then
 fi
 
 echo "*** FindxPrivacyControl.ch: Generating meta..."
-python tools/make-chromium-meta.py $DES/
+python3 tools/make-chromium-meta.py $DES/
 
 echo "*** FindxPrivacyControl.ch: Merge localizations..."
-python tools/merge_locales.py $DES/
+python3 tools/merge_locales.py $DES/
 
 if [ "$1" = all ]; then
     echo "*** FindxPrivacyControl.ch: Creating package..."
