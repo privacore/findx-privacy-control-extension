@@ -167,6 +167,8 @@
 
         handleStartProtectionBtn();
 
+        handleSocialBlocking();
+
         handleCloseProtectionListsBtn();
         handleOpenSearchTabBtn();
 
@@ -529,6 +531,60 @@
         });
 
         showProtectionStoppedStatus();
+    };
+
+
+    /***************************************************************************/
+
+    var showSocialBlockingStatus = function () {
+        var fbFilterState = false,
+            googleFilterState = false;
+
+        if (popupData && popupData.usedFilters) {
+            if (popupData.usedFilters.hasOwnProperty('findx-antifacebook'))
+                fbFilterState = !popupData.usedFilters['findx-antifacebook'].defaultOff;
+
+            if (popupData.usedFilters.hasOwnProperty('findx-antigoogle'))
+                googleFilterState = !popupData.usedFilters['findx-antigoogle'].defaultOff;
+        }
+
+        $('#social_blocking_facebook input[type="checkbox"]').attr('checked', fbFilterState);
+        $('#social_blocking_google input[type="checkbox"]').attr('checked', googleFilterState);
+    };
+
+    var handleSocialBlocking = function () {
+        $('#social_blocking_facebook.switch input, #social_blocking_google.switch input').off('change');
+        $('#social_blocking_facebook.switch input, #social_blocking_google.switch input').on('change', function (ev) {
+            var action = $(ev.currentTarget).data('action');
+            switchSocialBlocking(action);
+        });
+    };
+
+    var switchSocialBlocking = function (filterGroup) {
+        var filterState = null;
+        var filterName = (filterGroup === 'google' ? 'findx-antigoogle' : 'findx-antifacebook');
+        var filter = null;
+
+        if (popupData && popupData.usedFilters && popupData.usedFilters.hasOwnProperty(filterName)) {
+            filter = popupData.usedFilters[filterName];
+            filterState = !filter.defaultOff;
+        }
+
+        if (filterState !== null && filter !== null) {
+            var switches = [];
+            switches.push({
+                assetKey: filterName,
+                defaultOff: filterState,
+                inUse: filter.inUse,
+                off: filter.off
+            });
+
+            messager.send('popupPanel', {
+                what: 'updateFilterState',
+                switches: switches,
+                update: true
+            });
+        }
     };
 
 
@@ -994,11 +1050,22 @@
         //Protection tab
         showWhitelistStatus();
         showProtectionStoppedStatus();
+        showSocialBlockingStatus();
 
         // ProtectionLists
         renderTrackedUrls();
         displayUsedFilters(isInitial);
         updateFiltersTitleTooltips();
+
+        $("#protection_tab").mCustomScrollbar({
+            // scrollInertia: 0,
+            autoHideScrollbar: false,
+            scrollButtons:{ enable: false },
+            advanced:{ updateOnContentResize: true },
+            mouseWheel:{
+                scrollAmount: 150
+            }
+        });
 
         $(".protection-lists-page-content").mCustomScrollbar({
             // scrollInertia: 0,

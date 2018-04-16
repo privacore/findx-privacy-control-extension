@@ -123,6 +123,10 @@
     "message": "Blocked in total",
     "description": ""
   },
+  "popupPlateSocialBlocking":{
+    "message": "Social blocking",
+    "description": ""
+  },
   "popupDialogAlertTitle":{
     "message": "Alert: Protection stopped",
     "description": "Dialog displayed when protection is stopped for all sites"

@@ -251,6 +251,7 @@
                             </a>
                         </div>
                     </div>
+
                     <div class="plates-row">
                         <div class="plate mid-plate bg-protection-status-dark blocked-on-site-plate">
                             <div class="plate-content">
@@ -293,21 +294,43 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="plate mid-plate invisible-plate">
-                            <div class="plate sm-wide-plate bg-grey blocked-today-plate">
-                                <div class="plate-content">
-                                    <div class="plate-content-title" data-i18n="popupPlateBlockedToday"></div>
-                                    <div class="plate-content-text">
-                                        <span></span>
+                        <div class="plate mid-plate">
+                            <div class="plate-content full-height-content">
+                                <div class="plate-content-title color-grey" data-i18n="popupPlateSocialBlocking"></div>
+                                <div class="plate-content-inner">
+                                    <div id="social_blocking_facebook" class="switch">
+                                        <label>
+                                            <input type="checkbox" data-action="facebook">
+                                            <span class="lever"></span>
+                                            Facebook
+                                        </label>
+                                    </div>
+                                    <div id="social_blocking_google" class="switch">
+                                        <label>
+                                            <input type="checkbox" data-action="google">
+                                            <span class="lever"></span>
+                                            Google
+                                        </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="plate sm-wide-plate bg-grey blocked-total-plate">
-                                <div class="plate-content">
-                                    <div class="plate-content-title" data-i18n="popupPlateBlockedTotal"></div>
-                                    <div class="plate-content-text">
-                                        <span></span>
-                                    </div>
+                        </div>
+                    </div>
+
+                    <div class="plates-row plates-sm-row">
+                        <div class="plate sm-wide-plate bg-grey blocked-today-plate">
+                            <div class="plate-content">
+                                <div class="plate-content-title" data-i18n="popupPlateBlockedToday"></div>
+                                <div class="plate-content-text">
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="plate sm-wide-plate bg-grey blocked-total-plate">
+                            <div class="plate-content">
+                                <div class="plate-content-title" data-i18n="popupPlateBlockedTotal"></div>
+                                <div class="plate-content-text">
+                                    <span></span>
                                 </div>
                             </div>
                         </div>

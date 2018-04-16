@@ -341,7 +341,13 @@ body:not(.protection-off) .protection-status-off {
     flex-direction: row;
 }
 
-
+.plates-row.plates-sm-row {
+    height: 67px;
+}
+.plates-row.plates-sm-row .plate.sm-wide-plate {
+    height: 100%;
+    width: calc(50% - 4px);
+}
 
 .plate .plate-content {
     flex: 1;
@@ -354,7 +360,8 @@ body:not(.protection-off) .protection-status-off {
 .plate .plate-content .plate-content-title {
     color: #ffffff;
 }
-.plate.bg-grey .plate-content-title {
+.plate.bg-grey .plate-content-title,
+.plate .plate-content-title.color-grey {
     color: rgba(0, 0, 0, 0.56);
 }
 .plate .plate-content .plate-content-text {
@@ -381,6 +388,22 @@ body:not(.protection-off) .protection-status-off {
 #pause_site_btn {
     cursor: pointer;
 }
+
+.plate .plate-content .plate-content-inner .switch {
+    margin-bottom: 24px;
+}
+.plate .plate-content .plate-content-inner .switch:first-child {
+    margin-top: 12px;
+}
+.plate .plate-content .plate-content-inner .switch label {
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(0, 0, 0, 0.87);
+}
+.plate .plate-content .plate-content-inner .switch label span.lever {
+    margin-right: 14px;
+}
+
 
 .plate .plate-footer {
     height: 52px;
@@ -411,6 +434,12 @@ body:not(.protection-off) .protection-status-off {
     background-color: #2191D0;
 }
 
+
+.plate .plate-content.full-height-content {
+    padding: 16px;
+}
+
+
 .plate .btn-floating {
     position: absolute;
     top: 66px;
@@ -430,6 +459,20 @@ body:not(.protection-off) .protection-status-off {
     background-color: rgba(107, 173, 111, 1);
 }
 
+
+
+
+
+#protection_tab  {
+    padding-right: 0;
+}
+#protection_tab .mCSB_inside > .mCSB_container {
+    margin-right: 15px;
+    padding-right: 4px;
+}
+#protection_tab .plates-row {
+    margin-left: 2px;
+}
 
 /******* Protection stopped, Share dialog *******/
 
