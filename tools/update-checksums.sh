@@ -6,8 +6,6 @@ echo "*** uBlock: generating checksums.txt file..."
 
 truncate -s 0 assets/checksums.txt
 
-echo `md5sum assets/ublock/filter-lists.json` >> assets/checksums.txt
-
 filters=(
     '../uAssets/filters/badware.txt'
     '../uAssets/filters/experimental.txt'

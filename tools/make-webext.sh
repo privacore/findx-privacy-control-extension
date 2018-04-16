@@ -46,10 +46,10 @@ rm $DES/options_ui.html
 rm $DES/js/options_ui.js
 
 echo "*** FindxPrivacyControl.webext: Generating meta..."
-python tools/make-webext-meta.py $DES/
+python3 tools/make-webext-meta.py $DES/
 
 echo "*** FindxPrivacyControl.ch: Merge localizations..."
-python tools/merge_locales.py $DES/
+python3 tools/merge_locales.py $DES/
 
 if [ "$1" = all ]; then
     echo "*** FindxPrivacyControl.webext: Creating package..."
