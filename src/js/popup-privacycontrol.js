@@ -130,6 +130,8 @@
         // Whitelist buttons (shield icon and floating button in Protection tab)
         M.Tooltip.init($("#protection_status_btn")[0], {enterDelay: 300});
         M.Tooltip.init($("#pause_site_btn")[0], {enterDelay: 300});
+        M.Tooltip.init($(".element-picker-btn")[0], {enterDelay: 300});
+        M.Tooltip.init($(".open-protection-lists-btn")[0], {enterDelay: 300});
 
         var footerLogo = document.querySelector('.footer-btn.logo');
         M.Tooltip.init(footerLogo, {enterDelay: 500});

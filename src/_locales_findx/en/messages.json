@@ -111,6 +111,14 @@
     "message": "Start protection on this site",
     "description": ""
   },
+  "popupTipElPicker":{
+    "message": "Select element",
+    "description": ""
+  },
+  "popupTipManageLists":{
+    "message": "Manage lists",
+    "description": ""
+  },
   "popupPlateBlockedOnSite":{
     "message": "Blocked on this site",
     "description": ""
