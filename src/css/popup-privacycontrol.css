@@ -602,6 +602,14 @@ body.share-active .protection-stopped-dialog {
     height: 100%;
 }
 
+#search_tab .plate.bg-grey:hover {
+    background-color: #ffffff;
+}
+#search_tab .plate.bg-blue-70:hover,
+#search_tab .plate.bg-blue-60:hover {
+    background-color: rgba(33, 145, 208, 1);
+}
+
 #search_tab .plate .plate-content {
     color: #ffffff;
     cursor: pointer;
@@ -619,23 +627,35 @@ body.share-active .protection-stopped-dialog {
     height: 30px;
     margin-bottom: 4px;
 }
+
+#search_tab .mid-plate.bg-grey .plate-content-icon {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    bottom: 48px;
+    left: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 #search_tab .plate-content-icon i {
-    font-size: 36px;
+    font-size: 34px;
+    color: rgba(33, 145, 208, 1);
 }
 
 #search_tab .plate-content-bottom-block {
     width: 100%;
-    height: calc(50% - 4px);
+    height: 48px;
     position: absolute;
     bottom: 0;
-    padding: 20px 16px 16px;
+    padding: 12px;
 }
 
 #search_tab .plate-bg {
     width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 0;
+    z-index: 1;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
