@@ -197,6 +197,9 @@
         elMainPageTabs.removeClass('active');
         $(tabHeaderBtn).addClass('active');
         saveActiveTabState(tabId);
+
+
+        $('.main-tabs-slider').attr('data-active-tab', tabId);
     };
 
     var saveActiveTabState = function (tabId) {

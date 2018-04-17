@@ -302,6 +302,7 @@ body:not(.protection-off) .protection-status-off {
     width: 100%;
     height: 322px;
     overflow: hidden;
+    position: relative;
 }
 
 /******* Protection tab *******/
@@ -424,7 +425,7 @@ body:not(.protection-off) .protection-status-off {
     background-color: rgba(0,0,0,0.12);
 }
 .plate .plate-footer .plate-footer-btn:hover {
-    background-color: rgba(0,0,0,0.04);
+    background-color: rgba(0,0,0,0.06);
 }
 .plate .plate-footer .plate-footer-btn img,
 .plate .plate-footer .plate-footer-btn svg {
@@ -489,11 +490,11 @@ body:not(.protection-off) .protection-status-off {
     display: none;
     align-items: center;
 }
-body.protection-stopped .protection-stopped-dialog,
-body.share-active .share-dialog {
+body.protection-stopped .main-tabs-slider[data-active-tab="protection_tab"] .protection-stopped-dialog,
+body.share-active .main-tabs-slider[data-active-tab="protection_tab"] .share-dialog {
     display: flex;
 }
-body.share-active .protection-stopped-dialog {
+body.share-active .main-tabs-slider[data-active-tab="protection_tab"] .protection-stopped-dialog {
     display: none;
 }
 .protection-stopped-inner,
