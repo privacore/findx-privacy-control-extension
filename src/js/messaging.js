@@ -363,6 +363,63 @@ var getBlockedTodayCount = function () {
     return µb.localSettings.blockedToday;
 };
 
+
+/**
+ * Filters group can be enabled or disabled for each domain separately.
+ * @param {string} pageDomain
+ */
+var getFiltersGroupsExceptions = function (pageDomain) {
+    let exceptions = {};
+    let groups = Object.keys(µb.filterGroupsExceptions);
+
+    groups.forEach(function (group) {
+        if (µb.filterGroupsExceptions.hasOwnProperty(group)
+            && µb.filterGroupsExceptions[group].hasOwnProperty(pageDomain))
+        {
+            exceptions[group] = {};
+            exceptions[group][pageDomain] = µb.filterGroupsExceptions[group][pageDomain];
+        }
+    });
+
+    return exceptions;
+};
+
+var setFiltersGroupException = function (groupName, pageDomain, state) {
+    if (!µb.filterGroupsExceptions.hasOwnProperty(groupName)) {
+        µb.filterGroupsExceptions[groupName] = {};
+    }
+
+    µb.filterGroupsExceptions[groupName][pageDomain] = state;
+
+    let groupFilters = getFiltersFromGroup(groupName);
+    Object.keys(groupFilters).forEach(function (filterName) {
+        let updates = {
+            filterPath: filterName,
+            domains: {
+                domain: pageDomain,
+                state: state
+            }
+        };
+        µb.updateFilter(updates);
+    });
+};
+
+var getFiltersFromGroup = function (groupName) {
+    let filters = {};
+
+    let filterNames = Object.keys(µb.availableFilterLists);
+    filterNames.forEach(function (filterName) {
+        if (µb.availableFilterLists.hasOwnProperty(filterName) && !µb.availableFilterLists[filterName].off
+                && µb.availableFilterLists[filterName].group === groupName)
+        {
+            filters[filterName] = µb.availableFilterLists[filterName];
+        }
+    });
+
+    return filters;
+};
+
+
 /******************************************************************************/
 
 var popupDataFromTabId = function(tabId, tabTitle) {
@@ -424,6 +481,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.largeMediaCount = pageStore.largeMediaCount;
         r.noRemoteFonts = µb.hnSwitches.evaluateZ('no-remote-fonts', rootHostname);
         r.remoteFontCount = pageStore.remoteFontCount;
+        r.filtersGroupsExceptions = getFiltersGroupsExceptions(r.pageDomain);
 
         r.usedFilters = getAllFiltersInUse();
         // r.urls = pageStore.netFilteringCache.results;
@@ -529,6 +587,10 @@ var onMessage = function(request, sender, callback) {
     case 'togglePauseFiltering':
         µb.togglePauseFilteringSwitch(request.state);
         µb.updateBadgeAsync(request.tabId);
+        break;
+
+    case 'setFiltersGroupException':
+        setFiltersGroupException(request.data.group, request.data.pageDomain, request.data.state);
         break;
 
     default:

@@ -483,6 +483,7 @@
         showWhitelistStatus();
 
         reloadTab();
+        vAPI.closePopup();
     };
 
     /***************************************************************************/
@@ -531,60 +532,66 @@
         });
 
         showProtectionStoppedStatus();
+        reloadTab();
+        vAPI.closePopup();
     };
 
 
     /***************************************************************************/
 
+    var socialBlockingGroups = ['facebook', 'google'];
+
     var showSocialBlockingStatus = function () {
-        var fbFilterState = false,
-            googleFilterState = false;
+        var whitelistStatus = (popupData.pageURL === '' || !popupData.netFilteringSwitch);
 
-        if (popupData && popupData.usedFilters) {
-            if (popupData.usedFilters.hasOwnProperty('findx-antifacebook'))
-                fbFilterState = !popupData.usedFilters['findx-antifacebook'].defaultOff;
-
-            if (popupData.usedFilters.hasOwnProperty('findx-antigoogle'))
-                googleFilterState = !popupData.usedFilters['findx-antigoogle'].defaultOff;
+        if (whitelistStatus || popupData.pauseFiltering) {
+            $('.social-blocking-plate .switch input[type="checkbox"]').attr('disabled', true);
+            $('.social-blocking-plate .switch input[type="checkbox"]').attr('checked', false);
         }
+        else {
+            $('.social-blocking-plate .switch input[type="checkbox"]').removeAttr('disabled');
 
-        $('#social_blocking_facebook input[type="checkbox"]').attr('checked', fbFilterState);
-        $('#social_blocking_google input[type="checkbox"]').attr('checked', googleFilterState);
+            socialBlockingGroups.forEach(function (groupName) {
+                let groupStatus = false;
+                if (popupData.filtersGroupsExceptions && popupData.filtersGroupsExceptions.hasOwnProperty(groupName)
+                        && popupData.filtersGroupsExceptions[groupName].hasOwnProperty(popupData.pageDomain))
+                {
+                    groupStatus =  popupData.filtersGroupsExceptions[groupName][popupData.pageDomain];
+                }
+
+                $('.social-blocking-plate .switch input[data-action="' + groupName + '"]').attr('checked', groupStatus);
+            });
+        }
     };
 
     var handleSocialBlocking = function () {
-        $('#social_blocking_facebook.switch input, #social_blocking_google.switch input').off('change');
-        $('#social_blocking_facebook.switch input, #social_blocking_google.switch input').on('change', function (ev) {
+        $('.social-blocking-plate .switch input[type="checkbox"]').off('change');
+        $('.social-blocking-plate .switch input[type="checkbox"]').on('change', function (ev) {
             var action = $(ev.currentTarget).data('action');
             switchSocialBlocking(action);
         });
     };
 
-    var switchSocialBlocking = function (filterGroup) {
-        var filterState = null;
-        var filterName = (filterGroup === 'google' ? 'findx-antigoogle' : 'findx-antifacebook');
-        var filter = null;
+    var switchSocialBlocking = function (groupName) {
+        let filterState = false;
 
-        if (popupData && popupData.usedFilters && popupData.usedFilters.hasOwnProperty(filterName)) {
-            filter = popupData.usedFilters[filterName];
-            filterState = !filter.defaultOff;
+        if (popupData.filtersGroupsExceptions && popupData.filtersGroupsExceptions.hasOwnProperty(groupName)
+            && popupData.filtersGroupsExceptions[groupName].hasOwnProperty(popupData.pageDomain))
+        {
+            filterState = popupData.filtersGroupsExceptions[groupName][popupData.pageDomain];
         }
 
-        if (filterState !== null && filter !== null) {
-            var switches = [];
-            switches.push({
-                assetKey: filterName,
-                defaultOff: filterState,
-                inUse: filter.inUse,
-                off: filter.off
-            });
+        messager.send('popupPanel', {
+            what:  'setFiltersGroupException',
+            data: {
+                group: groupName,
+                pageDomain: popupData.pageDomain,
+                state: !filterState
+            }
+        });
 
-            messager.send('popupPanel', {
-                what: 'updateFilterState',
-                switches: switches,
-                update: true
-            });
-        }
+        reloadTab();
+        vAPI.closePopup();
     };
 
 

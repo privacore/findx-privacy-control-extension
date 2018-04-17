@@ -156,6 +156,8 @@ var µBlock = (function() { // jshint ignore:line
         selectedFilterLists: [],
         availableFilterLists: {},
 
+        filterGroupsExceptions: {},
+
         selfieAfter: 17 * oneMinute,
 
         pageStores: {},

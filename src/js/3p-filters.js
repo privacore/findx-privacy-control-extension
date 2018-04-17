@@ -448,7 +448,7 @@ var renderFilterLists = function(soft) {
     var createFilterItem = function (data) {
         try {
             var template = $("#filter_template").html();
-            template = template.replace(new RegExp('{{delete_possibility}}', 'g'), (data.path === listDetails.userFiltersPath ? "disabled" : ""));
+            template = template.replace(new RegExp('{{delete_possibility}}', 'g'), (isFilterNotRemovable(data.path, data.group) ? "disabled" : ""));
             template = template.replace(new RegExp('{{path}}', 'g'), data.path);
             template = template.replace(new RegExp('{{inuse_checked}}', 'g'), (data.inUse ? "checked" : ""));
             template = template.replace(new RegExp('{{default_disabled}}', 'g'), data.defaultOff ? "disabled" : "");
@@ -478,6 +478,18 @@ var renderFilterLists = function(soft) {
             console.error("Exception in 'createFilterItem' (3p-filters.js) :\n\t", exception);
             return null;
         }
+    };
+
+
+    /**
+     * Current logic is temporary. After version 1.0 can be changed.
+     *
+     * @type {string[]}
+     */
+    var notRemovableFiltersGroups = ['facebook', 'google'];
+
+    var isFilterNotRemovable = function (filterName, groupName) {
+        return (filterName === listDetails.userFiltersPath || notRemovableFiltersGroups.indexOf(groupName) !== -1);
     };
 
     var getFilterUrl = function (filterData) {
