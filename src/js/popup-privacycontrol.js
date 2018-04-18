@@ -563,6 +563,13 @@
                 {
                     groupStatus =  popupData.filtersGroupsExceptions[groupName][popupData.pageDomain];
                 }
+                else {
+                    // If just one filterlist in a group is default turned on,  the switch for group must be default on.
+                    let groupFilters = getFiltersFromGroup(groupName);
+                    if (Object.keys(groupFilters).length === 1) {
+                        groupStatus = !groupFilters[Object.keys(groupFilters)[0]].defaultOff;
+                    }
+                }
 
                 $('.social-blocking-plate .switch input[data-action="' + groupName + '"]').attr('checked', groupStatus);
             });
@@ -580,10 +587,18 @@
     var switchSocialBlocking = function (groupName) {
         let filterState = false;
 
-        if (popupData.filtersGroupsExceptions && popupData.filtersGroupsExceptions.hasOwnProperty(groupName)
+        if (popupData.filtersGroupsExceptions
+            && popupData.filtersGroupsExceptions.hasOwnProperty(groupName)
             && popupData.filtersGroupsExceptions[groupName].hasOwnProperty(popupData.pageDomain))
         {
             filterState = popupData.filtersGroupsExceptions[groupName][popupData.pageDomain];
+        }
+        else {
+            // If just one filterlist in a group is default turned on,  the switch for group must be default on.
+            let groupFilters = getFiltersFromGroup(groupName);
+            if (Object.keys(groupFilters).length === 1) {
+                filterState = !groupFilters[Object.keys(groupFilters)[0]].defaultOff;
+            }
         }
 
         messager.send('popupPanel', {
@@ -599,6 +614,19 @@
         vAPI.closePopup();
     };
 
+    var getFiltersFromGroup = function (groupName) {
+        let filters = {};
+
+        Object.keys(popupData.usedFilters).forEach(function (filterName) {
+            if (popupData.usedFilters.hasOwnProperty(filterName)
+                &&  popupData.usedFilters[filterName].group === groupName)
+            {
+                filters[filterName] = popupData.usedFilters[filterName];
+            }
+        });
+
+        return filters;
+    };
 
     /***************************************************************************/
 
