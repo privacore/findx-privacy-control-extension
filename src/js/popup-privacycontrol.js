@@ -563,12 +563,9 @@
                 {
                     groupStatus =  popupData.filtersGroupsExceptions[groupName][popupData.pageDomain];
                 }
-                else {
+                else if (isSomeFilterInGroupDefaultOn(groupName)) {
                     // If just one filterlist in a group is default turned on,  the switch for group must be default on.
-                    let groupFilters = getFiltersFromGroup(groupName);
-                    if (Object.keys(groupFilters).length === 1) {
-                        groupStatus = !groupFilters[Object.keys(groupFilters)[0]].defaultOff;
-                    }
+                    groupStatus = true;
                 }
 
                 $('.social-blocking-plate .switch input[data-action="' + groupName + '"]').attr('checked', groupStatus);
@@ -593,12 +590,9 @@
         {
             filterState = popupData.filtersGroupsExceptions[groupName][popupData.pageDomain];
         }
-        else {
+        else if (isSomeFilterInGroupDefaultOn(groupName)) {
             // If just one filterlist in a group is default turned on,  the switch for group must be default on.
-            let groupFilters = getFiltersFromGroup(groupName);
-            if (Object.keys(groupFilters).length === 1) {
-                filterState = !groupFilters[Object.keys(groupFilters)[0]].defaultOff;
-            }
+            filterState = true;
         }
 
         messager.send('popupPanel', {
@@ -612,6 +606,18 @@
 
         reloadTab();
         vAPI.closePopup();
+    };
+
+    var isSomeFilterInGroupDefaultOn = function (groupName) {
+        let groupFilters = getFiltersFromGroup(groupName);
+        for (let i = 0; i < Object.keys(groupFilters).length; i++) {
+            let filter = groupFilters[Object.keys(groupFilters)[i]];
+            if (!filter.defaultOff) {
+                return true;
+            }
+        }
+
+        return false;
     };
 
     var getFiltersFromGroup = function (groupName) {
