@@ -622,6 +622,69 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 
 /******************************************************************************/
 /******************************************************************************/
+// Igor. 19.04.2018  vAPI.cookies added for handling and blocking cookies
+
+vAPI.cookies = {};
+
+vAPI.cookies.registerListeners = function () {
+    var onChangedClient = this.onChanged || noopFunc;
+
+    
+    var onChanged = function (changeInfo) {
+        onChangedClient(changeInfo);
+    };
+
+    chrome.cookies.onChanged.addListener(onChanged);
+};
+
+/******************************************************************************/
+
+vAPI.cookies.getCookieStores = function (callback) {
+    chrome.cookies.getAllCookieStores(callback);
+};
+
+/******************************************************************************/
+
+vAPI.cookies.getDomainCookies = function (rootDomain, callback) {
+    let allCookies = [];
+    let handledStores = 0;
+    vAPI.cookies.getCookieStores(function (cookieStores) {
+        cookieStores.forEach(function (cookieStore) {
+            let options = {domain: rootDomain || ""};
+            if (typeof cookieStore.id !== null) {
+                options.storeId = cookieStore.id;
+            }
+            chrome.cookies.getAll(options, function (storeCookies) {
+                allCookies = allCookies.concat(storeCookies);
+                handledStores++;
+                if (handledStores === cookieStores.length) {
+                    if (callback)
+                        callback(allCookies);
+                }
+            });
+        });
+    });
+};
+
+/******************************************************************************/
+
+vAPI.cookies.removeCookie = function (cookie, url) {
+    let cookieOptions = {
+        name: cookie.name,
+        url: url,
+        storeId: cookie.storeId
+    };
+
+    if (typeof vAPI.webextFlavor === 'string' &&
+            vAPI.webextFlavor.startsWith('Mozilla-Firefox-'))
+    {
+        cookieOptions.firstPartyDomain = cookie.firstPartyDomain;
+    }
+    chrome.cookies.remove(cookieOptions);
+};
+
+/******************************************************************************/
+/******************************************************************************/
 
 vAPI.openOptionsPage = function () {
     var optionsUrl = vAPI.getURL(µBlock.optionsUrl);

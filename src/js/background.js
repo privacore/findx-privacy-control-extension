@@ -82,7 +82,9 @@ var µBlock = (function() { // jshint ignore:line
             requestLogMaxEntries: 1000,
             showIconBadge: true,
             tooltipsDisabled: false,
-            webrtcIPAddressHidden: true
+            webrtcIPAddressHidden: true,
+            clearDomainCookiesOnTabClose: true,
+            clearDomainCookiesAfter: 2 * oneSecond
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,

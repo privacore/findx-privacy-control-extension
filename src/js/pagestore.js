@@ -381,6 +381,14 @@ PageStore.prototype.init = function(tabId, context) {
         }
     }
 
+
+    // Igor 19.04.2018 CookieHandling
+    this.cookies = [];
+    let _this = this;
+    this.updatePageCookiesList(function (cookies) {
+        _this.cookies = cookies || [];
+    });
+
     return this;
 };
 
@@ -391,6 +399,11 @@ PageStore.prototype.reuse = function(context) {
     // If the hostname changes, we can't merely just update the context.
     var tabContext = µb.tabContextManager.mustLookup(this.tabId);
     if ( tabContext.rootHostname !== this.tabHostname ) {
+
+        // Igor. 19.04.2018
+        // If another url is loaded in the same tab - we need to clear all cookies of previous url (if this feature is enabled)
+        this.onDomainClosed();
+
         context = '';
     }
 
@@ -422,6 +435,9 @@ PageStore.prototype.reuse = function(context) {
 /******************************************************************************/
 
 PageStore.prototype.dispose = function() {
+    // Igor. 19.04.2018
+    this.onDomainClosed();
+
     this.tabHostname = '';
     this.title = '';
     this.rawURL = '';
@@ -919,6 +935,29 @@ PageStore.prototype.updateBadge = function() {
 PageStore.prototype.getIsPauseFiltering = function() {
     return µb.userSettings.pauseFiltering;
 };
+
+/******************************************************************************/
+
+// Igor 19.04.2018 CookieHandling
+/**
+ * Receive all cookies for this page domain
+ */
+PageStore.prototype.updatePageCookiesList = function (callback) {
+    let rootDomain = µb.URI.domainFromHostname(this.tabHostname) || "";
+
+    if (!rootDomain) {
+        if (callback) callback([]);
+        return;
+    }
+
+    vAPI.cookies.getDomainCookies(rootDomain, callback);
+};
+
+PageStore.prototype.onDomainClosed = function () {
+    let rootDomain = µb.URI.domainFromHostname(this.tabHostname);
+    µb.cookieHandling.onDomainClosed(rootDomain, this.rawURL);
+};
+
 
 /******************************************************************************/
 
