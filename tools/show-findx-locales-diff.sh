@@ -5,12 +5,12 @@
 #  comm - compare two sorted files line by line
 
 
-jq -c 'to_entries[] | [.key]' en/messages.json|sort > default.tmp
+jq -c 'to_entries[] | [.key]' src/_locales_findx/en/messages.json|sort > default.tmp
 
 # for i in {'da','en'}
 for i in 'da'
 do
-        jq -c 'to_entries[] | [.key]' $i/messages.json|sort > t.tmp
+        jq -c 'to_entries[] | [.key]' src/_locales_findx/$i/messages.json|sort > t.tmp
 
         echo ""
         echo "Entries that should be REMOVED from $i/messages.json:"
