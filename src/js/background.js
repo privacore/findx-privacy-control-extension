@@ -26,6 +26,15 @@
 
 /******************************************************************************/
 
+// Not all platforms may have properly declared vAPI.webextFlavor.
+
+if ( vAPI.webextFlavor === undefined ) {
+    vAPI.webextFlavor = { major: 0, soup: new Set([ 'ublock' ]) };
+}
+
+
+/******************************************************************************/
+
 var µBlock = (function() { // jshint ignore:line
 
     var oneSecond = 1000,
@@ -38,7 +47,7 @@ var µBlock = (function() { // jshint ignore:line
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
         streamScriptInjectFilters: false,
-        manualUpdateAssetFetchPeriod: 2000,
+        manualUpdateAssetFetchPeriod: 500,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false,
         userResourcesLocation: 'unset'
@@ -111,6 +120,7 @@ var µBlock = (function() { // jshint ignore:line
             'moz-extension-scheme',
             'opera-scheme',
             'vivaldi-scheme',
+            'wyciwyg-scheme',   // Firefox's "What-You-Cache-Is-What-You-Get"
             ''
         ].join('\n'),
 
@@ -123,8 +133,8 @@ var µBlock = (function() { // jshint ignore:line
 
         // read-only
         systemSettings: {
-            compiledMagic: 'puuijtkfpspv',
-            selfieMagic: 'tuqilngsxkwo'
+            compiledMagic: 1,
+            selfieMagic: 1
         },
 
         restoreBackupSettings: {
@@ -168,11 +178,7 @@ var µBlock = (function() { // jshint ignore:line
         epickerZap: false,
         epickerEprom: null,
 
-        scriptlets: {
-        },
-
-        // so that I don't have to care for last comma
-        dummy: 0
+        scriptlets: {},
     };
 
 })();
