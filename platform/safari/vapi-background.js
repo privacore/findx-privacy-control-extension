@@ -166,7 +166,7 @@ vAPI.tabs = {
 /******************************************************************************/
 
 vAPI.isBehindTheSceneTabId = function(tabId) {
-    return tabId.toString() === '-1';
+    return tabId < 0;
 };
 
 vAPI.noTabId = '-1';

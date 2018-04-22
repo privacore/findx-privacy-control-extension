@@ -21,17 +21,40 @@ cp -R src/_locales                "$DES"/
 cp src/*.html                     "$DES"/
 mv $DES/img/icon_128.png          "$DES"/Icon.png
 cp platform/safari/*.js           "$DES"/js/
-cp platform/safari/*.html         "$DES"/
 cp -R platform/safari/img         "$DES"/
 cp platform/safari/Info.plist     "$DES"/
 cp platform/safari/Settings.plist "$DES"/
 cp LICENSE.txt                    "$DES"/
 
-cp platform/chromium/vapi.js      "$DES"/js/
+# Use some chromium scripts
+echo -n '*** uBlock0.safariextension: Copying chromium files...'
+chromium_files=(vapi.js is-webrtc-supported.{html,js} options_ui.{html,js})
+for file in "${chromium_files[@]}"; do
+    file=platform/chromium/"$file"
+    if [[ ! -e "$file" ]]; then
+        >&2 echo "ERROR: $file not found."
+        exit 1
+    fi
+    if [[ "$file" == *.js ]]; then
+        cp "$file" "$DES"/js/
+    else
+        cp "$file" "$DES"/
+    fi
+done
+echo ' ✔'
 
-# Use chrome's usercss polyfill
-echo "*** uBlock0.safariextension: Concatenating content scripts..."
-cat platform/chromium/vapi-usercss.js > /tmp/contentscript.js
+# Detect OS for sed arguments
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sedargs=('-i' '')
+else
+    sedargs=('-i')
+fi
+
+# Use pseudo usercss polyfill
+echo -n "*** uBlock0.safariextension: Concatenating content scripts..."
+cat platform/chromium/vapi-usercss.pseudo.js > /tmp/contentscript.js
+# Delete browser check from usercss
+sed "${sedargs[@]}" -e '1,/Edge/{/Edge/d;}' -e '1,/ &&/ s///' /tmp/contentscript.js
 echo >> /tmp/contentscript.js
 grep -v "^'use strict';$" $DES/js/contentscript.js >> /tmp/contentscript.js
 mv /tmp/contentscript.js $DES/js/contentscript.js
@@ -45,13 +68,6 @@ echo ' ✔'
 echo -n '*** uBlock0.safariextension: Generating Info.plist...'
 python tools/make-safari-meta.py "$DES"/
 echo ' ✔'
-
-# Detect OS for sed arguments
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    declare -a sedargs=('-i' '')
-else
-    declare -a sedargs=('-i')
-fi
 
 # https://github.com/el1t/uBlock-Safari/issues/15
 echo -n '*** uBlock0.safariextension: Correcting ctrl to ⌘ in messages...'

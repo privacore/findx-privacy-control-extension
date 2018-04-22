@@ -27,7 +27,12 @@
 
 /******************************************************************************/
 
-vAPI.net = {};
+vAPI.net = {
+    onBeforeRequest: {},
+    onBeforeMaybeSpuriousCSPReport: {},
+    onHeadersReceived: {},
+    nativeCSPReportFiltering: false
+};
 
 vAPI.net.registerListeners = function() {
     var µb = µBlock,

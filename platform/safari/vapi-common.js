@@ -1,7 +1,7 @@
 /*******************************************************************************
 
-    µBlock - a browser extension to block requests.
-    Copyright (C) 2014 The µBlock authors
+    uBlock Origin - a browser extension to block requests.
+    Copyright (C) 2014-2018 The uBlock Origin authors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,6 +32,36 @@ var vAPI = self.vAPI = self.vAPI || {};
 /******************************************************************************/
 
 vAPI.setTimeout = vAPI.setTimeout || self.setTimeout.bind(self);
+
+/******************************************************************************/
+vAPI.webextFlavor = {
+    major: 0,
+    soup: new Set()
+};
+
+(function() {
+    var ua = navigator.userAgent,
+        flavor = vAPI.webextFlavor,
+        soup = flavor.soup;
+    var dispatch = function() {
+        window.dispatchEvent(new CustomEvent('webextFlavor'));
+    };
+
+    soup.add('ublock');
+
+    // Whether this is a dev build.
+    if ( /^\d+\.\d+\.\d+\D/.test(safari.extension.displayVersion) ) {
+        soup.add('devbuild');
+    }
+
+    var match = /\bSafari\/(\d+)/.exec(ua);
+    if ( match !== null ) {
+        flavor.major = parseInt(match[1], 10) || 0;
+        soup.add('apple').add('safari');
+    }
+
+    vAPI.setTimeout(dispatch, 97);
+})()
 
 /******************************************************************************/
 
