@@ -519,7 +519,10 @@ vAPI.tabs.onUpdated = function(tabId, changeInfo, tab) {
     }
     µb.tabContextManager.commit(tabId, changeInfo.url);
     µb.bindTabToPageStats(tabId, 'tabUpdated');
-    // µb.cookieHandling.onTabUpdate(tabId);
+
+    if (changeInfo.status) {
+        µb.cookieHandling.onTabUpdate(tabId);
+    }
 };
 
 /******************************************************************************/

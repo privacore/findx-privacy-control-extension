@@ -627,14 +627,11 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 vAPI.cookies = {};
 
 vAPI.cookies.registerListeners = function () {
-    var onChangedClient = this.onChanged || noopFunc;
+    chrome.cookies.onChanged.addListener(this.onChanged || noopFunc);
+};
 
-    
-    var onChanged = function (changeInfo) {
-        onChangedClient(changeInfo);
-    };
-
-    chrome.cookies.onChanged.addListener(onChanged);
+vAPI.cookies.removeListeners = function () {
+    chrome.cookies.onChanged.removeListener(this.onChanged || noopFunc);
 };
 
 /******************************************************************************/
@@ -1193,6 +1190,8 @@ vAPI.onLoadAllCompleted = function() {
                 scriptStart(tab.id);
             }
         }
+
+        µb.cookieHandling.init();
     };
 
     chrome.tabs.query({ url: '<all_urls>' }, bindToTabs);

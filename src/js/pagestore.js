@@ -958,6 +958,55 @@ PageStore.prototype.onDomainClosed = function () {
     µb.cookieHandling.onDomainClosed(rootDomain, this.rawURL);
 };
 
+PageStore.prototype.addDomainCookie = function (cookie) {
+    if (this.isCookieExists(cookie)) {
+        this.updateStoredCookie(cookie);
+    }
+    else {
+        this.cookies.push(cookie);
+    }
+};
+
+PageStore.prototype.rmDomainCookie = function (cookie) {
+    if (this.isCookieExists(cookie)) {
+        this.removeStoredCookie(cookie);
+    }
+};
+
+/**
+ * Check is cookie exists in "cookies" list. Cookies compared by its name.
+ * @param {object} cookie
+ * @returns {boolean}
+ */
+PageStore.prototype.isCookieExists = function (cookie) {
+    return this.cookies.some(function (storedCookie) {
+        return cookie.name === storedCookie.name;
+    });
+};
+
+/**
+ * If cookie with this name is already in a cookies list - we need just update it.
+ * @param {object} cookie
+ * @returns {boolean}
+ */
+PageStore.prototype.updateStoredCookie = function (cookie) {
+    let cookieIndex = this.cookies.findIndex(function (storedCookie, index) {
+        return cookie.name === storedCookie.name;
+    });
+    if (cookieIndex !== -1) {
+        this.cookies[cookieIndex] = cookie;
+    }
+};
+
+PageStore.prototype.removeStoredCookie = function (cookie) {
+    let cookieIndex = this.cookies.findIndex(function (storedCookie, index) {
+        return cookie.name === storedCookie.name;
+    });
+    if (cookieIndex !== -1) {
+        this.cookies = this.cookies.splice(cookieIndex, 1);
+    }
+};
+
 
 /******************************************************************************/
 

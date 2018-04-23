@@ -84,7 +84,8 @@ var µBlock = (function() { // jshint ignore:line
             tooltipsDisabled: false,
             webrtcIPAddressHidden: true,
             clearDomainCookiesOnTabClose: true,
-            clearDomainCookiesAfter: 2 * oneSecond
+            clearDomainCookiesAfter: 2 * oneSecond,
+            thirdPartyCookiesBlocking: true
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,
