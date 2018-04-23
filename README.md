@@ -35,9 +35,12 @@ Much of the platform shim from the original uBlock Safari version is still being
 
 ## Installation
 
-Until relatively stable, this extension must be installed [manually](https://github.com/el1t/uBlock-Safari/tree/safari/dist#install).
+The preferred method of installation is to install from the [extension gallery](https://safari-extensions.apple.com/details/?id=com.el1t.uBlock-3NU33NW2M3).
+This allows the extension to update automatically, and the submissions are approved by Apple.
 
-Compatible with Safari 10, untested on older versions.
+To learn more about installation and updates, visit the [wiki](https://github.com/el1t/uBlock-Safari/wiki/Installation-and-Updates).
+
+Compatible with Safari 11, untested on older versions (but should work).
 
 #### Note
 
