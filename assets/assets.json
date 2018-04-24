@@ -377,7 +377,7 @@
         "off": true,
         "title": "CZE, SVK: EasyList Czech and Slovak",
         "lang": "cs sk",
-        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.tomasko126.easylistczechandslovak.master.filters.ublock.txt",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.tomasko126.easylistczechandslovak.master.filters.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ftomasko126%2Feasylistczechandslovak",
         "defaultOff": true
     },
