@@ -82,10 +82,7 @@ var µBlock = (function() { // jshint ignore:line
             requestLogMaxEntries: 1000,
             showIconBadge: true,
             tooltipsDisabled: false,
-            webrtcIPAddressHidden: true,
-            clearDomainCookiesOnTabClose: true,
-            clearDomainCookiesAfter: 2 * oneSecond,
-            thirdPartyCookiesBlocking: true
+            webrtcIPAddressHidden: true
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,
@@ -200,6 +197,30 @@ var µBlock = (function() { // jshint ignore:line
 
         // so that I don't have to care for last comma
         dummy: 0,
+
+
+
+        cookiesSettings: {
+            clearDomainCookiesOnTabClose: true,
+            clearDomainCookiesAfter: 2 * oneSecond,
+            thirdPartyCookiesBlocking: true,
+            protection: {
+                domains: [],
+                cookies: {
+                    /**
+                     * {domain: Map<cookie_name:cookie>[]}
+                     */
+                    firstParty: {},
+                    /**
+                     * {domain: Map<cookie_name:cookie>[]}
+                     */
+                    thirdParty: {}
+                }
+            }
+        },
+
+
+
         optionsUrl: "dashboard.html",
         aboutPageUrl: "https://get.findx.com",
         findxMobileUrl: "https://get.findx.com/mobile",

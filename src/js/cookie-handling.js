@@ -1,6 +1,7 @@
 /**
  * @file
 
+    TODO: change cookie handling settings via "µBlock.changeUserSettings"
  * @author Igor Petrenko
  * @date  4/18/2018
  */
@@ -25,6 +26,39 @@
         this.updateTabsDomainsList();
 
         vAPI.cookies.registerListeners();
+
+        this.protectDomain('file.org');
+        this.protectCookie({
+            domain:".file.org",
+            expirationDate:1587630965,
+            hostOnly:false,
+            httpOnly:false,
+            name:"__utma",
+            path:"/",
+            sameSite:"no_restriction",
+            secure:false,
+            session:false,
+            storeId:"0",
+            value:"35879863.1994226522.1524558835.1524558835.1524558835.1"
+        }, true, 'file.org');
+
+        this.protectCookie({
+            domain:".doubleclick.net",
+            expirationDate:1524560253.961126,
+            hostOnly:false,
+            httpOnly:false,
+            name:"test_cookie",
+            path:"/",
+            sameSite:"no_restriction",
+            secure:false,
+            session:false,
+            storeId:"0",
+            value:"CheckForPermission"
+        }, false);
+
+        setTimeout(function () {
+            this.changeSettings('clearDomainCookiesAfter', 1000);
+        }.bind(this), 5000);
     };
 
     CookieHandling.prototype.onTabUpdate = function (tabId) {
@@ -55,13 +89,13 @@
 
     CookieHandling.prototype.onDomainClosed = function (domain, url) {
         this.updateTabsDomainsList();
-        if (ub.userSettings.clearDomainCookiesOnTabClose) {
+        if (ub.cookiesSettings.clearDomainCookiesOnTabClose && !this.isDomainProtected(domain)) {
             setTimeout(function () {
                 this.updateTabsDomainsList();
-                if (!this.isDomainOpenedInTabs(domain)) { // TODO: check is domain not protected
-                    clearDomainCookies(domain, url);
+                if (!this.isDomainOpenedInTabs(domain)) {
+                    this.clearDomainCookies(domain, url);
                 }
-            }.bind(this), ub.userSettings.clearDomainCookiesAfter);
+            }.bind(this), ub.cookiesSettings.clearDomainCookiesAfter);
         }
     };
 
@@ -157,7 +191,7 @@
     CookieHandling.prototype.handleThirdPartyCookie = function (cookie, isRemoved) {
         console.group("%c3p", 'color:orange');
 
-        if (!isRemoved && ub.userSettings.thirdPartyCookiesBlocking) { // TODO: check is 3p cookie protected
+        if (!isRemoved && ub.cookiesSettings.thirdPartyCookiesBlocking && !this.isCookieProtected(cookie, true)) {
             vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
             console.log("%cBLOCK", 'color:red');
         }
@@ -177,7 +211,7 @@
         console.log("\tisRemoved: ", isRemoved);
         console.log("\tthirdPartyCookies: ", JSON.parse(JSON.stringify(this.thirdPartyCookies)));
         console.log("\ttabsDomainsList: ", this.tabsDomainsList);
-        console.groupEnd("3p");
+        console.groupEnd();
     };
 
     CookieHandling.prototype.isThirdPartyCookieExists = function (cookie) {
@@ -204,15 +238,87 @@
             return cookie.name === storedCookie.name && cookie.domain === storedCookie.domain;
         });
         if (cookieIndex !== -1) {
-            this.thirdPartyCookies = this.thirdPartyCookies.splice(cookieIndex, 1);
+            this.thirdPartyCookies.splice(cookieIndex, 1);
         }
     };
 
 
     /******************************************************************************/
 
+    CookieHandling.prototype.isDomainProtected = function (domain) {
+        return ub.cookiesSettings.protection.domains.indexOf(domain) !== -1;
+    };
 
-    var clearDomainCookies = function (domain, url) {
+    CookieHandling.prototype.protectDomain = function (domain) {
+        domain = prepareRootDomain(domain);
+        if (ub.cookiesSettings.protection.domains.indexOf(domain) === -1)
+            ub.cookiesSettings.protection.domains.push(domain);
+    };
+
+    CookieHandling.prototype.unProtectDomain = function (domain) {
+        domain = prepareRootDomain(domain);
+        let domainIndex = ub.cookiesSettings.protection.domains.indexOf(domain);
+
+        if (domainIndex !== -1)
+            ub.cookiesSettings.protection.domains.splice(domainIndex, 1);
+    };
+
+    /******************************************************************************/
+
+    CookieHandling.prototype.isCookieProtected = function (cookie, isThirdParty, forDomain) {
+        let protectionList = isThirdParty ?
+            ub.cookiesSettings.protection.cookies.thirdParty
+            : ub.cookiesSettings.protection.cookies.firstParty;
+
+        let domain = isThirdParty ? cookie.domain : forDomain;
+        domain = prepareRootDomain(domain);
+
+        return protectionList.hasOwnProperty(domain) && protectionList[domain].has(cookie.name);
+    };
+
+    /**
+     * Protect cookie.
+     * List of separate first/third party cookie protected for each domain.
+     * If protected cookie is first party - domain must be set in "domain" parameter.
+     * If protected cookie is third party - domain received from cookie object.
+     * @param {Cookie} cookie
+     * @param {boolean} isFirstParty
+     * @param {string} [domain] - used on first party cookie protect
+     */
+    CookieHandling.prototype.protectCookie = function (cookie, isFirstParty, domain) {
+        domain = prepareRootDomain((isFirstParty ? domain: cookie.domain));
+        let partyName = isFirstParty ? 'firstParty' : 'thirdParty';
+        if (!ub.cookiesSettings.protection.cookies[partyName][domain]
+            || !ub.cookiesSettings.protection.cookies[partyName][domain].size)
+        {
+            ub.cookiesSettings.protection.cookies[partyName][domain] = new Map();
+        }
+        if (!ub.cookiesSettings.protection.cookies[partyName][domain].has(cookie.name)) {
+            ub.cookiesSettings.protection.cookies[partyName][domain].set(cookie.name, cookie);
+        }
+    };
+
+    CookieHandling.prototype.unProtectCookie = function (cookie, isFirstParty, domain) {
+        domain = prepareRootDomain((isFirstParty ? domain: cookie.domain));
+        let partyName = isFirstParty ? 'firstParty' : 'thirdParty';
+        if (!ub.cookiesSettings.protection.cookies[partyName][domain]
+            || !ub.cookiesSettings.protection.cookies[partyName][domain].size)
+        {
+            return;
+        }
+        if (ub.cookiesSettings.protection.cookies[partyName][domain].has(cookie.name)) {
+            ub.cookiesSettings.protection.cookies[partyName][domain].delete(cookie.name);
+        }
+
+        if (!ub.cookiesSettings.protection.cookies[partyName][domain].size) {
+            delete ub.cookiesSettings.protection.cookies[partyName][domain];
+        }
+    };
+
+
+    /******************************************************************************/
+
+    CookieHandling.prototype.clearDomainCookies = function (domain, url) {
         vAPI.cookies.getDomainCookies(domain, function (cookies) {
             console.groupCollapsed('%cDOMAIN COOKIES CLEARING: %s', 'color: red', domain);
             console.log('\t%c%s', 'color: black', domain);
@@ -220,16 +326,64 @@
             console.log('\t%O', JSON.parse(JSON.stringify(cookies)));
 
             cookies.forEach(function (cookieItem) {
-                // TODO: check is cookie not protected
-                vAPI.cookies.removeCookie(cookieItem, url);
+                if (!this.isCookieProtected(cookieItem, false, domain)) {
+                    vAPI.cookies.removeCookie(cookieItem, url);
 
-                console.log("\t%cRemoved: %c%s", "color: red", "color:black", cookieItem.name);
+                    console.log("\t%cRemoved: %c%s", "color: red", "color:black", cookieItem.name);
+                }
+                else {
+                    console.log("\t%cProtected: %c%s", "color: green", "color:black", cookieItem.name);
+                }
                 console.log("\t", cookieItem);
-            });
+            }, this);
 
             console.groupEnd();
-        });
+        }.bind(this));
     };
+
+    /******************************************************************************/
+
+    CookieHandling.prototype.changeSettings = function (name, value) {
+        var settings = ub.cookiesSettings;
+
+        if ( name === undefined || typeof name !== 'string' || name === '' || value === undefined) {
+            return;
+        }
+
+        settings[name] = value;
+
+        this.saveSettings();
+    };
+
+    CookieHandling.prototype.saveSettings = function () {
+        var settings = JSON.parse(JSON.stringify(ub.cookiesSettings));
+
+        settings.protection.cookies.firstParty = this.serializeCookiesProtectionList(ub.cookiesSettings.protection.cookies.firstParty);
+        settings.protection.cookies.thirdParty = this.serializeCookiesProtectionList(ub.cookiesSettings.protection.cookies.thirdParty);
+
+        vAPI.storage.set(settings);
+    };
+
+    /**
+     * Convert protected cookies list to object which can be saved in storage.
+     * Cookies for each domain is a Map, so we need to convert it to array to save in storage.
+     * @param {{string: Map<string, object>}} list - {domain: Map<cookieName, cookieObject>}
+     * @returns {{string: [string, object][]}}
+     */
+    CookieHandling.prototype.serializeCookiesProtectionList = function (list) {
+        var response = {};
+        let domains = Object.keys(list);
+        if (!domains.length)
+            return list;
+
+        domains.forEach(function (domain) {
+            response[domain] = Array.from(list[domain]);
+        });
+        return response;
+    };
+
+    /******************************************************************************/
+
 
     var getPageStoresByDomain = function (domain) {
         let allPageStores = ub.pageStores;
@@ -264,6 +418,13 @@
         }
         cookieDomain = cookie.secure ? `https://${cookieDomain}${cookie.path}` : `http://${cookieDomain}${cookie.path}`;
         return cookieDomain;
+    };
+
+    var prepareRootDomain = function (domain) {
+        if (domain.charAt(0) === '.') {
+            domain = domain.slice(1);
+        }
+        return ub.URI.domainFromHostname(domain);
     };
 
 

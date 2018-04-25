@@ -298,6 +298,7 @@ var onFirstFetchReady = function(fetched) {
         fromFetch(µb.localSettings, fetched);
         onUserSettingsReady(fetched);
         fromFetch(µb.restoreBackupSettings, fetched);
+        // fromFetch(µb.cookiesSettings, fetched); // TODO: Igor 25.04.18 Fetched data must be set to cookiesSettings object. Cookies protection list must be converted to Map objects (new Map(arr))
         onNetWhitelistReady(fetched.netWhitelist);
         onVersionReady(fetched.version);
 
@@ -359,6 +360,7 @@ var onSelectedFilterListsLoaded = function() {
     toFetch(µb.localSettings, fetchableProps);
     toFetch(µb.userSettings, fetchableProps);
     toFetch(µb.restoreBackupSettings, fetchableProps);
+    toFetch(µb.cookiesSettings, fetchableProps);
 
     vAPI.storage.get(fetchableProps, onFirstFetchReady);
 };

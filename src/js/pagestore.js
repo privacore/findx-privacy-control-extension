@@ -383,11 +383,13 @@ PageStore.prototype.init = function(tabId, context) {
 
 
     // Igor 19.04.2018 CookieHandling
+    /**
+     * List of first party cookies for tab's root domain
+     */
     this.cookies = [];
-    let _this = this;
     this.updatePageCookiesList(function (cookies) {
-        _this.cookies = cookies || [];
-    });
+        this.cookies = cookies || [];
+    }.bind(this));
 
     return this;
 };
@@ -1003,7 +1005,7 @@ PageStore.prototype.removeStoredCookie = function (cookie) {
         return cookie.name === storedCookie.name;
     });
     if (cookieIndex !== -1) {
-        this.cookies = this.cookies.splice(cookieIndex, 1);
+        this.cookies.splice(cookieIndex, 1);
     }
 };
 
