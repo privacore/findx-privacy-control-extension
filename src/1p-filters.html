@@ -3,36 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>uBlock — Your filters</title>
+<title>Findx Privacy Control — Your filters</title>
+
+<link rel="stylesheet" href="lib/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="lib/codemirror/addon/search/matchesonscrollbar.css">
+
 <link rel="stylesheet" type="text/css" href="css/common.css">
 <link rel="stylesheet" type="text/css" href="css/dashboard-common.css">
-<link rel="stylesheet" type="text/css" href="css/dashboard-common-privacontrol.css">
+<link rel="stylesheet" type="text/css" href="css/dashboard-common-privacycontrol.css">
 <link rel="stylesheet" type="text/css" href="css/cloud-ui.css">
 <!--<link rel="stylesheet" type="text/css" href="css/1p-filters.css">-->
-<link rel="stylesheet" type="text/css" href="css/1p-filters-privacontrol.css">
+<link rel="stylesheet" href="css/codemirror.css">
+<link rel="stylesheet" type="text/css" href="css/1p-filters-privacycontrol.css">
 </head>
 
 <body>
 
-<div>
+<div class="body">
     <div id="cloudWidget" class="hide" data-cloud-entry="myFiltersPane"></div>
     <div class="marg-bot">
         <span data-i18n="1pFormatHint"></span>
         <a class="fa info" href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax" target="_blank">&#xf05a;</a>
     </div>
     <div class="marg-top marg-bot">
-        <!--<button id="userFiltersApply" class="custom important" type="button" disabled="true" data-i18n="1pApplyChanges"></button>-->
-        <div id="userFiltersApply" class="button btn-green" DISABLED>apply changes</div>
-        <div id="userFiltersRevert" class="button btn-green" DISABLED>revert</div>
+        <div id="userFiltersApply" class="button btn-green" DISABLED data-i18n="1pApplyChanges"></div>
+        <div id="userFiltersRevert" class="button btn-green" DISABLED data-i18n="genericRevert"></div>
     </div>
     <div class="marg-top">
-        <textarea class="userFilters" id="userFilters" dir="auto" spellcheck="false"></textarea>
+        <div id="userFilters" class="codeMirrorContainer codeMirrorFillVertical" spellcheck="false"></div>
     </div>
     <div class="marg-top">
-        <div id="importUserFiltersFromFile" class="button btn-green">import and append</div>
-        <div id="exportUserFiltersToFile" class="button btn-green">Export</div>
+        <div id="importUserFiltersFromFile" class="button btn-green" data-i18n="1pImport"></div>
+        <div id="exportUserFiltersToFile" class="button btn-green" data-i18n="1pExport"></div>
 
-        <input id="importFilePicker" type="file" accept="text/plain" class="hiddenFileInput">
+        <input id="importFilePicker" type="file" accept="text/plain" class="hidden">
     </div>
 </div>
 
@@ -55,6 +59,16 @@
 
 <script src="lib/jquery-3.3.1.min.js"></script>
 <script src="lib/jquery.nicescroll.min.js"></script>
+
+<script src="lib/codemirror/lib/codemirror.js"></script>
+<script src="lib/codemirror/addon/display/panel.js"></script>
+<script src="lib/codemirror/addon/scroll/annotatescrollbar.js"></script>
+<script src="lib/codemirror/addon/search/matchesonscrollbar.js"></script>
+<script src="lib/codemirror/addon/search/searchcursor.js"></script>
+<script src="lib/codemirror/addon/selection/active-line.js"></script>
+
+<script src="js/codemirror/search.js"></script>
+<script src="js/codemirror/ubo-static-filtering.js"></script>
 
 <script src="js/vapi.js"></script>
 <script src="js/vapi-common.js"></script>

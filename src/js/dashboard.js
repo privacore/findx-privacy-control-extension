@@ -108,7 +108,7 @@ uDom.onLoad(function() {
         }
     }
     if ( !tab ) {
-        tab = '3p-filters-privacontrol';
+        tab = '3p-filters-privacycontrol';
     }
 
     //resizeFrame();

@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock₀",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,15 +8,15 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Findx Privacy Control — Töölaud",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "message": "uBlock₀ — Töölaud",
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "Seaded",
     "description": "appears as tab name in dashboard"
   },
   "3pPageName": {
-    "message": "Kolmanda osapoole filtrid",
+    "message": "Filtri loendid",
     "description": "appears as tab name in dashboard"
   },
   "1pPageName": {
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control — Võrgutaotluste logi",
+    "message": "uBlock₀ — Võrgutaotluste logi",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Klõps: keela\/luba Findx Privacy Control sellel saidil.\n\nCtrl+klõps: keela Findx Privacy Control ainult sellel lehel.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "message": "Klõps: keela\/luba uBlock₀ sellel saidil.\n\nCtrl+klõps: keela uBlock₀ ainult sellel lehel.",
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Klõpsa, et keelata Findx Privacy Control sellel saidil.\n\nCtrl+klõps, et keelata Findx Privacy Control ainult sellel lehel.",
+    "message": "Klõpsa, et keelata uBlock₀ sellel saidil.\n\nCtrl+klõps, et keelata uBlock₀ ainult sellel lehel.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Klõpsa, et lubada Findx Privacy Control sellel saidil.",
+    "message": "Klõpsa, et lubada uBlock₀ sellel saidil.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>See valik lubab <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plusiga ühilduvate &ldquo;elemente peitvate&rdquo; filtrite<\/a> lubamist. Need filtrid parandavad lehtede välimust, peites elemente, mida ei blokeerita võrgupäringutel põhinevate filtritega.<\/p><p>Selle valiku lubamine suurendab <i>Findx Privacy Control<\/i>'i mälu kasutavust.<\/p>",
+    "message": "<p>See valik lubab <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plusiga ühilduvate &ldquo;elemente peitvate&rdquo; filtrite<\/a> lubamist. Need filtrid parandavad lehtede välimust, peites elemente, mida ei blokeerita võrgupäringutel põhinevate filtritega.<\/p><p>Selle valiku lubamine suurendab <i>uBlock₀<\/i>'i mälu kasutavust.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Üldised ilufiltrid on need ilufiltrid, mis töötavad kõikidel veebisaitidel.<p>Kuigi Findx Privacy Control käsitleb neid tõhusalt, võivad üldised ilufiltrid siiski tarbida küllaltki palju mälu ja protsessori ressursse teatud veebisaitidel, eriti suurte ja kaua eksisteerivate puhul.<p>Selle valiku lubamine vähendab üldiste ilufiltrite kasutamisest tulenevat mälu ja protsessori koormust ning vähendab ka Findx Privacy Controli mälu tarbimist.<p>Selle valiku lubamine on soovitatav vähem võimekates seadmetes.",
+    "message": "<p>Üldised ilufiltrid on need ilufiltrid, mis töötavad kõikidel veebisaitidel.<p>Kuigi uBlock₀ käsitleb neid tõhusalt, võivad üldised ilufiltrid siiski tarbida küllaltki palju mälu ja protsessori ressursse teatud veebisaitidel, eriti suurte ja kaua eksisteerivate puhul.<p>Selle valiku lubamine vähendab üldiste ilufiltrite kasutamisest tulenevat mälu ja protsessori koormust ning vähendab ka uBlock₀i mälu tarbimist.<p>Selle valiku lubamine on soovitatav vähem võimekates seadmetes.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "Kinnita muudatused",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "Seadmes",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "Reklaamid",
@@ -379,9 +383,13 @@
     "message": "Kohandatud",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "Impordi...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
-    "message": "Üks URL rea kohta, märgiga &lsquo;!&rsquo; algavaid ridu eiratakse. Vigased URLid jäetakse vahele.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "message": "Üks URL rea kohta. Vigased URLid jäetakse taustal vahele.",
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "vananenud",
@@ -400,8 +408,8 @@
     "description": "used as a tooltip for error icon beside a list"
   },
   "1pFormatHint": {
-    "message": "Üks filter rea kohta, filtriks võib olla tavaline domeenilist või Adblock Plusiga-ühilduv filter. Märgiga &lsquo;!&rsquo; algavaid ridu eiratakse.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "message": "Üks filter rea kohta. Filtriks võib olla tavaline domeenilist või Adblock Plusiga-ühilduv filter. Märgiga <code>!<\/code> algavaid ridu eiratakse.",
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "Impordi ja lisa",
@@ -616,7 +624,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Kõik seaded kirjutatakse üle, kasutades varundust kuupäevast {{time}} ning Findx Privacy Control taaskäivitatakse.\n\nKirjutan üle kõik praegused seaded varundusandmetega?",
+    "message": "Kõik seaded kirjutatakse üle, kasutades varundust kuupäevast {{time}} ning uBlock₀ taaskäivitatakse.\n\nKirjutan üle kõik praegused seaded varundusandmetega?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +632,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Kõik seaded kustutatakse ning Findx Privacy Control taaskäivitatakse.\n\nTaastan Findx Privacy Control'i algseadetele?",
+    "message": "Kõik seaded kustutatakse ning uBlock₀ taaskäivitatakse.\n\nTaastan uBlock₀'i algseadetele?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control: Lisan järgneva URLi sinu kohandatud filtrite nimekirja?\n\nPealkiri: \"{{title}}\"\nURL: {{url}}",
+    "message": "uBlock₀: Lisan järgneva URLi sinu kohandatud filtrite nimekirja?\n\nPealkiri: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "väljas",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin on keelanud järgneva lehe laadimise:",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Järgneva filtri tõttu",

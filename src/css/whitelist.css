@@ -1,16 +1,14 @@
-div > p:first-child {
-    margin-top: 0;
+html {
+    height: 100vh;
+    overflow: hidden;
     }
-div > p:last-child {
-    margin-bottom: 0;
+body {
+    overflow: hidden;
     }
 #whitelist {
-    /*box-sizing: border-box;*/
-    /*font-size: small;*/
-    /*height: 45vh;*/
-	/*text-align: left;*/
-    border: 1px solid gray;
-    height: 45vh;
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    height: 45vh!important;
     margin: 0;
     padding: 1px;
     position: relative;

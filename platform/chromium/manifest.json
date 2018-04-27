@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Findx Privacy Control",
-    "version": "1.15.5.4",
+    "version": "1.15.11.0",
 
     "commands": {
         "launch-element-zapper": {
@@ -71,5 +71,8 @@
     "short_name": "Findx Privacy Control",
     "storage": {
         "managed_schema": "managed_storage.json"
-    }
+    },
+    "web_accessible_resources": [
+        "/web_accessible_resources/*"
+    ]
 }

@@ -646,10 +646,21 @@
             filterPath = popupData.urls[key].filterPath;
             if (!filterPath) continue;
 
-            if (!popupData.trackedUrls[filterPath])
-                popupData.trackedUrls[filterPath] = [];
+            // If multiple filters has equal rule - filterPath will be an array of names
+            if (typeof filterPath === 'object') {
+                filterPath.forEach(function (path) {
+                    if (!popupData.trackedUrls[path])
+                        popupData.trackedUrls[path] = [];
 
-            popupData.trackedUrls[filterPath].push(key);
+                    popupData.trackedUrls[path].push(key);
+                })
+            }
+            else { // If current url has a rule which exists in only one filter
+                if (!popupData.trackedUrls[filterPath])
+                    popupData.trackedUrls[filterPath] = [];
+
+                popupData.trackedUrls[filterPath].push(key);
+            }
         }
     };
 

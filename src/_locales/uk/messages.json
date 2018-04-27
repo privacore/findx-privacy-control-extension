@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock Origin",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -9,7 +9,7 @@
   },
   "dashboardName": {
     "message": "µBlock — Панель керування",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "Налаштування",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control — Журнал мережевих запитів",
+    "message": "uBlock₀ — Журнал мережевих запитів",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Натиснення: вимикає\/умикає Findx Privacy Control для поточного сайту.\n\nCtrl+натиснення: вимикає Findx Privacy Control тільки для цієї сторінки.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "message": "Натиснення: вимикає\/умикає uBlock₀ для поточного сайту.\n\nCtrl+натиснення: вимикає uBlock₀ тільки для цієї сторінки.",
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Натисніть для вимкнення Findx Privacy Control для поточного сайту.\n\nНатисніть з Ctrl для вимкнення Findx Privacy Control лише для цієї сторінки.",
+    "message": "Натисніть для вимкнення uBlock₀ для поточного сайту.\n\nНатисніть з Ctrl для вимкнення uBlock₀ лише для цієї сторінки.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Натисніть для увімкнення Findx Privacy Control для поточного сайту.",
+    "message": "Натисніть для увімкнення uBlock₀ для поточного сайту.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Ця опція вмикає аналіз та застосування <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-сумісних фільтрів &ldquo;приховання елементв&rdquo; <\/a>. По суті це косметичні фільтри – приховують елементи сторінки, які візуально дратують і не можуть бути блоковані механізмом фільтрації мережевих запитів.<\/p><p>Увімкнення цієї функції збільшує споживання пам’яті <i>Findx Privacy Control<\/i>'ом.<\/p>",
+    "message": "<p>Ця опція вмикає аналіз та застосування <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-сумісних фільтрів &ldquo;приховання елементв&rdquo; <\/a>. По суті це косметичні фільтри – приховують елементи сторінки, які візуально дратують і не можуть бути блоковані механізмом фільтрації мережевих запитів.<\/p><p>Увімкнення цієї функції збільшує споживання пам’яті <i>uBlock₀<\/i>'ом.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "Застосувати зміни",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "Локальні",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "Реклама",
@@ -379,9 +383,13 @@
     "message": "Користувацькі",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "Імпорт...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
     "message": "Одне посилання на рядок. Рядки, що починаються з &lsquo;!&rsquo;  будуть проігноровані. Невірні посилання будуть тихо проігноровані.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "Застарілий.",
@@ -401,7 +409,7 @@
   },
   "1pFormatHint": {
     "message": "Один фільтр на рядок. Фільтром може бути адреса сайту або фільтр у Adblock Plus-сумісному записі. Рядки, що починаються з &lsquo;!&rsquo; ігноруються.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "Імпортувати та додати",
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control: Додати це посилання до списку ваших фільтрів?\n\nНазва: \"{{title}}\"\nПосилання: {{url}}",
+    "message": "uBlock₀: Додати це посилання до списку ваших фільтрів?\n\nНазва: \"{{title}}\"\nПосилання: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "Відключений",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock запобіг завантаженню наступної сторінки:",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Через наступний фільтр",

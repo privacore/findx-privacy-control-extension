@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock Origin",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Findx Privacy Control — Tableau de bord",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "message": "uBlock₀ — Tableau de bord",
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "Paramètres",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control — Journal des requêtes réseau",
+    "message": "uBlock₀ — Journal des requêtes réseau",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Clic : Désactiver\/Activer Findx Privacy Control pour ce site.\n\nCtrl+clic : Désactiver Findx Privacy Control uniquement sur cette page.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "message": "Clic : Désactiver\/Activer uBlock₀ pour ce site.\n\nCtrl+clic : Désactiver uBlock₀ uniquement sur cette page.",
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Cliquez pour désactiver Findx Privacy Control  pour ce site\n\nCtrl+Clic pour désactiver Findx Privacy Control uniquement pour cette page",
+    "message": "Cliquez pour désactiver uBlock₀  pour ce site\n\nCtrl+Clic pour désactiver uBlock₀ uniquement pour cette page",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Cliquez pour activer Findx Privacy Control pour ce site",
+    "message": "Cliquez pour activer uBlock₀ pour ce site",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -100,7 +100,7 @@
     "description": "Tooltip for the no-popups per-site switch"
   },
   "popupTipNoPopups2": {
-    "message": "Cliquez pour cesser de bloquer toutes les pop-up de ce site",
+    "message": "Cliquez pour cesser de bloquer toutes les pop-ups de ce site",
     "description": "Tooltip for the no-popups per-site switch"
   },
   "popupTipNoLargeMedia": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Cette option permet de prendre en charge les filtres Adblock Plus de type <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">&ldquo;element hiding&rdquo;<\/a>. Ces filtres ont principalement un impact visuel, servant à dissimuler des éléments nuisibles d'une page Web et qui ne sont pas blocables par le filtrage standard.<\/p><p>L'activation de cette fonctionnalité augmente l'empreinte mémoire de Findx Privacy Control.<\/p>",
+    "message": "<p>Cette option permet de prendre en charge les filtres Adblock Plus de type <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">&ldquo;element hiding&rdquo;<\/a>. Ces filtres ont principalement un impact visuel, servant à dissimuler des éléments nuisibles d'une page Web et qui ne sont pas blocables par le filtrage standard.<\/p><p>L'activation de cette fonctionnalité augmente l'empreinte mémoire de uBlock₀.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Les filtres esthétiques génériques sont des filtres esthétiques conçus pour être appliqués sur tous les sites Web.<p>Bien qu'ils soient pris en charge efficacement par Findx Privacy Control, les filtres esthétiques génériques restent susceptibles de consommer des ressources supplémentaires en mémoire vive & en processeur central sur certaines pages Web, tout particulièrement ceux de grandes taille & longévité.<p>Ignorer ce type de filtrage esthétique réduira l'utilisation supplémentaire en RAM & en CPU sur les pages Web, diminuant également l'empreinte mémoire d'Findx Privacy Control.<p>Il est recommandé d'activer ce paramètre sur des appareils modestes.",
+    "message": "<p>Les filtres esthétiques génériques sont des filtres esthétiques conçus pour être appliqués sur tous les sites Web.<p>Bien qu'ils soient pris en charge efficacement par uBlock₀, les filtres esthétiques génériques restent susceptibles de consommer des ressources supplémentaires en mémoire vive & en processeur central sur certaines pages Web, tout particulièrement ceux de grandes taille & longévité.<p>Ignorer ce type de filtrage esthétique réduira l'utilisation supplémentaire en RAM & en CPU sur les pages Web, diminuant également l'empreinte mémoire d'uBlock₀.<p>Il est recommandé d'activer ce paramètre sur des appareils modestes.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "Appliquer",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "Intégrées",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "Publicités",
@@ -379,9 +383,13 @@
     "message": "Vos propres listes",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "Importer",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
-    "message": "Une adresse Web par ligne. Les lignes débutant par un &lsquo;!&rsquo; seront ignorées. Les adresses Web invalides seront ignorées sans avertissement.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "message": "Une adresse Web par ligne. Les adresses Web invalides seront ignorées sans avertissement.",
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "Obsolète",
@@ -400,8 +408,8 @@
     "description": "used as a tooltip for error icon beside a list"
   },
   "1pFormatHint": {
-    "message": "Une règle par ligne. Une règle peut être un simple nom d'hôte, ou encore un filtre respectant la syntaxe des filtres Adblock Plus. Les lignes débutant par &lsquo;!&rsquo; seront ignorées.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "message": "Une règle par ligne. Une règle peut être un simple nom d'hôte, ou encore un filtre respectant la syntaxe des filtres Adblock Plus. Les lignes débutant par <code>!<\/code> seront ignorées.",
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "Importer",
@@ -616,7 +624,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Vos paramètres seront remplacés par les données sauvegardées le {{time}}, puis Findx Privacy Control redémarrera.\n\nProcéder à l'importation ?",
+    "message": "Vos paramètres seront remplacés par les données sauvegardées le {{time}}, puis uBlock₀ redémarrera.\n\nProcéder à l'importation ?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +632,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Vos paramètres seront effacés, puis Findx Privacy Control redémarrera.\n\nProcéder à la réinitialisation des paramètres ?",
+    "message": "Vos paramètres seront effacés, puis uBlock₀ redémarrera.\n\nProcéder à la réinitialisation des paramètres ?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control : Ajouter la ressource Web suivante à votre sélection de listes de filtrage ?\n\nTitre : \"{{title}}\"\nURL : {{url}}",
+    "message": "uBlock₀ : Ajouter la ressource Web suivante à votre sélection de listes de filtrage ?\n\nTitre : \"{{title}}\"\nURL : {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "Arrêt",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
-    "message": "Findx Privacy Control a empêché le chargement de la page suivante :",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "message": "uBlock₀ a empêché le chargement de la page suivante :",
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "À cause du filtre suivant :",

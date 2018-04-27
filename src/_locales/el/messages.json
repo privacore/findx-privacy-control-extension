@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock Origin",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Findx Privacy Control - Πίνακας ελέγχου",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "message": "uBlock₀ - Πίνακας ελέγχου",
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "Ρυθμίσεις",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control - Καταγραφή αιτημάτων δικτύου",
+    "message": "uBlock₀ - Καταγραφή αιτημάτων δικτύου",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Κλικ: απενεργοποίηση\/ενεργοποίηση του Findx Privacy Control για αυτόν τον ιστότοπο.\n\nCtrl+κλικ: απενεργοποίηση του Findx Privacy Control μόνο για αυτήν την σελίδα.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "message": "Κλικ: απενεργοποίηση\/ενεργοποίηση του uBlock₀ για αυτόν τον ιστότοπο.\n\nCtrl+κλικ: απενεργοποίηση του uBlock₀ μόνο για αυτήν την σελίδα.",
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Κάντε κλικ για απενεργοποίηση του Findx Privacy Control για αυτή την ιστοσελίδα.\n\nCtrl+κλικ για απενεργοποίηση του Findx Privacy Control μόνο σε αυτή τη σελίδα.",
+    "message": "Κάντε κλικ για απενεργοποίηση του uBlock₀ για αυτή την ιστοσελίδα.\n\nCtrl+κλικ για απενεργοποίηση του uBlock₀ μόνο σε αυτή τη σελίδα.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Κάντε κλικ για ενεργοποίηση του Findx Privacy Control για αυτή την ιστοσελίδα.",
+    "message": "Κάντε κλικ για ενεργοποίηση του uBlock₀ για αυτή την ιστοσελίδα.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -100,7 +100,7 @@
     "description": "Tooltip for the no-popups per-site switch"
   },
   "popupTipNoPopups2": {
-    "message": "Click to no longer block all popups on this site",
+    "message": "Κάντε κλικ για φραγή όλων των αναδυόμενων σε αυτή την ιστοσελίδα",
     "description": "Tooltip for the no-popups per-site switch"
   },
   "popupTipNoLargeMedia": {
@@ -108,11 +108,11 @@
     "description": "Tooltip for the no-large-media per-site switch"
   },
   "popupTipNoLargeMedia1": {
-    "message": "Click to block large media elements on this site",
+    "message": "Κάντε κλικ για αποκλεισμό μεγάλων στοιχείων πολυμέσων σε αυτή την ιστοσελίδα",
     "description": "Tooltip for the no-large-media per-site switch"
   },
   "popupTipNoLargeMedia2": {
-    "message": "Click to no longer block large media elements on this site",
+    "message": "Κάντε κλικ για φραγή πλέον μεγάλων στοιχείων πολυμέσων σε αυτή την ιστοσελίδα",
     "description": "Tooltip for the no-large-media per-site switch"
   },
   "popupTipNoCosmeticFiltering": {
@@ -120,11 +120,11 @@
     "description": "Tooltip for the no-cosmetic-filtering per-site switch"
   },
   "popupTipNoCosmeticFiltering1": {
-    "message": "Click to disable cosmetic filtering on this site",
+    "message": "Κάντε κλικ για να απενεργοποιήσετε το καλλυντικό φιλτράρισμα σε αυτή την σελίδα",
     "description": "Tooltip for the no-cosmetic-filtering per-site switch"
   },
   "popupTipNoCosmeticFiltering2": {
-    "message": "Click to enable cosmetic filtering on this site",
+    "message": "Κάντε κλικ για να ενεργοποιήσετε το καλλυντικό φιλτράρισμα σε αυτή την σελίδα",
     "description": "Tooltip for the no-cosmetic-filtering per-site switch"
   },
   "popupTipNoRemoteFonts": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Η επιλογή αυτή επιτρέπει την ανάλυση και επιβολή των συμβατών με τα <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">&ldquo;κρυμμένα στοιχεία&rdquo; του Adblock Plus φίλτρων<\/a>. Τα φίλτρα αυτά είναι ουσιαστικά κοσμητικά, χρησιμεύουν στην απόκρυψη στοιχείων από μια σελίδα στην οποία θεωρούνται οπτική όχληση και δεν μπορούν να αποκλειστούν με την, βασισμένη σε αιτήματα δικτύου, μηχανή φιλτραρίσματος.<\/p><p>Η ενεργοποίηση αυτής της λειτουργίας αυξάνει το αποτύπωμα μνήμης του <i>Findx Privacy Control<\/i>.<\/p>",
+    "message": "<p>Η επιλογή αυτή επιτρέπει την ανάλυση και επιβολή των συμβατών με τα <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">&ldquo;κρυμμένα στοιχεία&rdquo; του Adblock Plus φίλτρων<\/a>. Τα φίλτρα αυτά είναι ουσιαστικά κοσμητικά, χρησιμεύουν στην απόκρυψη στοιχείων από μια σελίδα στην οποία θεωρούνται οπτική όχληση και δεν μπορούν να αποκλειστούν με την, βασισμένη σε αιτήματα δικτύου, μηχανή φιλτραρίσματος.<\/p><p>Η ενεργοποίηση αυτής της λειτουργίας αυξάνει το αποτύπωμα μνήμης του <i>uBlock₀<\/i>.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Τα γενικά κοσμητικά φίλτρα είναι εκείνα τα κοσμητικά φίλτρα που εφαρμόζονται σε όλες τις ιστοσελίδες.<p>Αν και γίνεται αποτελεσματική διαχείρισή τους από το Findx Privacy Control, τα γενικά κοσμητικά φίλτρα ενδέχεται να καταναλώσουν σημαντική μνήμη και να υπερφορτώσουν τη CPU σε μερικές ιστοσελίδες, ειδικά για μεγάλες μακροχρόνιες.<p>Η ενεργοποίηση αυτής της επιλογής θα εξαλείψει την υπερφόρτωση μνήμης και CPU στις ιστοσελίδες ως αποτέλεσμα της διαχείρισης γενικών κοσμητικών φίλτρων, ενώ ενδέχεται να μειώσει την κατανάλωση μνήμης του ίδιου του Findx Privacy Control.<p>Προτείνεται η ενεργοποίηση αυτής της επιλογής στις λιγότερο ισχυρές συσκευές.",
+    "message": "<p>Τα γενικά κοσμητικά φίλτρα είναι εκείνα τα κοσμητικά φίλτρα που εφαρμόζονται σε όλες τις ιστοσελίδες.<p>Αν και γίνεται αποτελεσματική διαχείρισή τους από το uBlock₀, τα γενικά κοσμητικά φίλτρα ενδέχεται να καταναλώσουν σημαντική μνήμη και να υπερφορτώσουν τη CPU σε μερικές ιστοσελίδες, ειδικά για μεγάλες μακροχρόνιες.<p>Η ενεργοποίηση αυτής της επιλογής θα εξαλείψει την υπερφόρτωση μνήμης και CPU στις ιστοσελίδες ως αποτέλεσμα της διαχείρισης γενικών κοσμητικών φίλτρων, ενώ ενδέχεται να μειώσει την κατανάλωση μνήμης του ίδιου του uBlock₀.<p>Προτείνεται η ενεργοποίηση αυτής της επιλογής στις λιγότερο ισχυρές συσκευές.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "Εφαρμογή αλλαγών",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "Τοπικά",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "Διαφημίσεις",
@@ -379,9 +383,13 @@
     "message": "Προσαρμοσμένη",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "Εισαγωγή...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
     "message": "Ένα URL ανά γραμμή. Γραμμές με το πρόθεμα &lsquo;!&rsquo; θα παραβλέπονται. Άκυρα URL θα παρακάμπτονται σιωπηλά.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "ξεπερασμένη",
@@ -401,7 +409,7 @@
   },
   "1pFormatHint": {
     "message": "Ένα φίλτρο ανά γραμμή. Φίλτρο μπορεί να είναι ένα απλό όνομα κεντρικού υπολογιστή (hostname) ή ένα, συμβατό με το Adblock Plus, φίλτρο. Γραμμές με το πρόθεμα &lsquo;!&rsquo; θα παραβλέπονται.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "Εισαγωγή και προσάρτηση",
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control: Προσθήκη του παρακάτω URL στις προσαρμοσμένες λίστες φίλτρων σας;\n\nΤίτλος: \"{{title}}\"\nURL: {{url}}",
+    "message": "uBlock₀: Προσθήκη του παρακάτω URL στις προσαρμοσμένες λίστες φίλτρων σας;\n\nΤίτλος: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "απενεργοποιημένο",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
-    "message": "Το Findx Privacy Control έχει αποτρέψει τη φόρτωση της παρακάτω σελίδας:",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "message": "Το uBlock₀ έχει αποτρέψει τη φόρτωση της παρακάτω σελίδας:",
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Εξαιτίας του ακόλουθου φίλτρου",

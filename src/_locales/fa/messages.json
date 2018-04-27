@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock Origin",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,8 +8,8 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Findx Privacy Control — داشبورد",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "message": "uBlock₀ — داشبورد",
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "تنظیمات",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control — واقعه‌نگار",
+    "message": "uBlock₀ — واقعه‌نگار",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "کلیک: غیر فعال\/ فعال کردن Findx Privacy Control برای این سایت.\n\nکنترل+کلیک: غیر فعال کردن Findx Privacy Control فقط برای همین صفحه.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "message": "کلیک: غیر فعال\/ فعال کردن uBlock₀ برای این سایت.\n\nکنترل+کلیک: غیر فعال کردن uBlock₀ فقط برای همین صفحه.",
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "کلیک کنید تا Findx Privacy Control برای این سایت غیر فعال شود.\n\nهمزمان کلیدکنترل را نگهدارید و کلیک کنید تا Findx Privacy Control فقط برای این صفحه غیر فعال شود.",
+    "message": "کلیک کنید تا uBlock₀ برای این سایت غیر فعال شود.\n\nهمزمان کلیدکنترل را نگهدارید و کلیک کنید تا uBlock₀ فقط برای این صفحه غیر فعال شود.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "کلیک کنید تا Findx Privacy Control برای این سایت فعال شود.",
+    "message": "کلیک کنید تا uBlock₀ برای این سایت فعال شود.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>فیلترهای زیبا سازی عمومی، آن دسته از فیلترهای زیبا سازی هستند که در همه وب سایت ها کاربرد دارند.\n<p>اگر چه بصورت موثر توسط Findx Privacy Control انجام شده، ولی فیلترهای عمومی زیبا سازی هنوز هم ممکن است سربار حافظه قابل اندازه گیری و سربار پردازنده در برخی از صفحات وب به جای بگذارد، به ویژه برای صفحات وب بزرگ و طولانی مدت.<p>فعال کردن این گزینه سربارهای حافظه و پردازنده را که به صفحات اضافه شده به عنوان نتیجۀ اجرای فیلترهای عمومی زیبا سازی برطرف می‌کند، و همچنین ردپای حافظۀ خود Findx Privacy Control را کمتر می‌کند<p>توصیه می شود این گزینه را در دستگاه های با قدرت کمتر فعال کنید.",
+    "message": "<p>فیلترهای زیبا سازی عمومی، آن دسته از فیلترهای زیبا سازی هستند که در همه وب سایت ها کاربرد دارند.\n<p>اگر چه بصورت موثر توسط uBlock₀ انجام شده، ولی فیلترهای عمومی زیبا سازی هنوز هم ممکن است سربار حافظه قابل اندازه گیری و سربار پردازنده در برخی از صفحات وب به جای بگذارد، به ویژه برای صفحات وب بزرگ و طولانی مدت.<p>فعال کردن این گزینه سربارهای حافظه و پردازنده را که به صفحات اضافه شده به عنوان نتیجۀ اجرای فیلترهای عمومی زیبا سازی برطرف می‌کند، و همچنین ردپای حافظۀ خود uBlock₀ را کمتر می‌کند<p>توصیه می شود این گزینه را در دستگاه های با قدرت کمتر فعال کنید.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "اعمال تغییرات",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "محلی",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "تبلیغات",
@@ -379,9 +383,13 @@
     "message": "سفارشی",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "واردات...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
     "message": "هر آدرس در یک خط. خطوطی با پیشوند &lsquo;!&rsquo; در نظر گرفته نمیشوند. آدرس های نامعتبر نیز در سکوت نادیده گرفته میشوند.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "منقضی شده.",
@@ -401,7 +409,7 @@
   },
   "1pFormatHint": {
     "message": "یک فیلتر در هر خط. یک فیلتر می تواند آدرس هاست ساده یا فیلتر سازگار با Adblock plus باشد. خطوط با پیشوند &lsquo;!&rsquo; نادیده گرفته می شوند.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "وارد کردن و الحاق",
@@ -468,7 +476,7 @@
     "description": "English: dynamic rule syntax and full documentation."
   },
   "whitelistPrompt": {
-    "message": "دستور العمل‌های لیست سفید حکم می‌کند که Findx Privacy Control باید بر روی کدام یک از صفحات وب غیر فعال باشد. در هر خط فقط یک مورد. دستور العمل‌های نامعتبر بدون اشاره ای نادیده گرفته شده و بیرون انداخته می‌شوند.",
+    "message": "دستور العمل‌های لیست سفید حکم می‌کند که uBlock₀ باید بر روی کدام یک از صفحات وب غیر فعال باشد. در هر خط فقط یک مورد. دستور العمل‌های نامعتبر بدون اشاره ای نادیده گرفته شده و بیرون انداخته می‌شوند.",
     "description": "English: An overview of the content of the dashboard's Whitelist pane."
   },
   "whitelistImport": {
@@ -616,7 +624,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "تمام تنظیمات با استفاده از پشتیبان گیری در {{time}}،  رونویسی شده و Findx Privacy Control مجدد راه اندازی میشود.\n\nتمام تنظیمات موجود با استفاده از داده های پشتیبانی رونویسی شود؟",
+    "message": "تمام تنظیمات با استفاده از پشتیبان گیری در {{time}}،  رونویسی شده و uBlock₀ مجدد راه اندازی میشود.\n\nتمام تنظیمات موجود با استفاده از داده های پشتیبانی رونویسی شود؟",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +632,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "تمام تنظیمات شما حذف شده و Findx Privacy Control دوباره راه اندازی خواهد شد.\n\nتنظیم مجدد Findx Privacy Control به تنظیمات کارخانه؟",
+    "message": "تمام تنظیمات شما حذف شده و uBlock₀ دوباره راه اندازی خواهد شد.\n\nتنظیم مجدد uBlock₀ به تنظیمات کارخانه؟",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control: آدرس اینترنتی زیر به فهرست فیلتر های سفارشی شما اضافه شود؟\n\nعنوان: \"{{title}}\"\nآدرس: {{url}}",
+    "message": "uBlock₀: آدرس اینترنتی زیر به فهرست فیلتر های سفارشی شما اضافه شود؟\n\nعنوان: \"{{title}}\"\nآدرس: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "خاموش",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
-    "message": "Findx Privacy Control از بارگذاری این صفحات جلوگیری کرده:",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "message": "uBlock₀ از بارگذاری این صفحات جلوگیری کرده:",
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "بخاطر فیلتر زیر",

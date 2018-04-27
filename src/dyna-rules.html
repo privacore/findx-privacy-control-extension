@@ -2,61 +2,49 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Findx Privacy Control — Dynamic filtering rules</title>
-<link rel="stylesheet" type="text/css" href="css/common-incognito.css">
-<link rel="stylesheet" type="text/css" href="css/dashboard-common-privacontrol.css">
+<link rel="stylesheet" type="text/css" href="lib/codemirror/lib/codemirror.css">
+<link rel="stylesheet" type="text/css" href="lib/codemirror/addon/merge/merge.css">
+
+<link rel="stylesheet" type="text/css" href="css/common-privacycontrol.css">
+<link rel="stylesheet" type="text/css" href="css/dashboard-common-privacycontrol.css">
 <link rel="stylesheet" type="text/css" href="css/cloud-ui.css">
 <link rel="stylesheet" type="text/css" href="css/dyna-rules.css">
+<link rel="stylesheet" type="text/css" href="css/codemirror.css">
 </head>
 
 <body>
 
-<div>
+<div class="body">
     <div data-i18n="rulesHint"></div>
     <p data-i18n="rulesFormatHint"></p>
     <div id="diff">
-        <div class="pane left">
+        <div class="tools">
             <div class="ruleActions">
-                <h2 data-i18n="rulesPermanentHeader"></h2>
-
-                <div id="exportButton" class="button btn-green">export to file</div>
-                <div id="revertButton" class="button btn-green">revert</div>
+                <h3 data-i18n="rulesPermanentHeader"></h3>
+                <div class="button btn-green" id="exportButton"><span data-i18n="rulesExport"></span></div>
+                <div class="button btn-green" id="revertButton"><span data-i18n="rulesRevert"></span></div>
             </div>
-            <div class="rulesContainer">
-                <ul></ul>
-            </div>
-        </div>
-        <div class="pane right">
             <div class="ruleActions">
-                <h2 data-i18n="rulesTemporaryHeader"></h2>
-
+                <h3 data-i18n="rulesTemporaryHeader"></h3>
                 <div id="commitButton" class="button btn-green">commit</div>
-                <div id="editEnterButton" class="button btn-green">edit</div>
-                <div id="editStopButton" class="button btn-green">save</div>
-                <div id="editCancelButton" class="button btn-green">discard</div>
+                <div id="editSaveButton" class="button btn-green">save</div>
                 <div id="importButton" class="button btn-green">import from file</div>
-
-                <!--<button type="button" id="commitButton" data-i18n="rulesCommit"></button>-->
-                <!--<button type="button" id="editEnterButton" data-i18n="rulesEdit"></button>-->
-                <!--<button type="button" id="editStopButton" data-i18n="rulesEditSave"></button>-->
-                <!--<button type="button" id="editCancelButton" data-i18n="rulesEditDiscard"></button>-->
-                <!--<button type="button" id="importButton" data-i18n="rulesImport"></button>-->
+                <!--<button type="button" class="custom iconifiable" id="commitButton"><span data-i18n="rulesCommit"></span></button>-->
+                <!--<button type="button" class="custom iconifiable" id="importButton"><span class="fa">&#xf019;</span><span data-i18n="rulesImport"></span></button>-->
+                <!--<button type="button" class="custom iconifiable important disabled" id="editSaveButton"><span class="fa">&#xf0c7;</span><span data-i18n="rulesEditSave"></span></button>-->
             </div>
-            <div class="rulesContainer">
-                <textarea spellcheck="false"></textarea>
-                <ul></ul>
-            </div>
+            <div id="ruleFilter"><span class="fa">&#xf0b0;</span>&ensp;<input type="text" size="20"></div>
         </div>
-
-        <div id="templates" style="display: none;">
-            <input class="hidden" id="importFilePicker" type="file" accept="text/plain">
-            <span class="hidden" data-i18n="rulesDefaultFileName"></span>
-            <ul>
-                <li>&nbsp;</li>
-            </ul>
-        </div>
-
     </div>
+</div>
+
+<div class="codeMirrorContainer codeMirrorMergeContainer codeMirrorFillVertical"></div>
+
+<div id="templates" style="display: none;">
+    <input class="hidden" id="importFilePicker" type="file" accept="text/plain">
+    <span class="hidden" data-i18n="rulesDefaultFileName"></span>
 </div>
 
 
@@ -77,6 +65,11 @@
 
 <script src="lib/jquery-3.3.1.min.js"></script>
 <script src="lib/jquery.nicescroll.min.js"></script>
+
+<script src="lib/diff/swatinem_diff.js"></script>
+<script src="lib/codemirror/lib/codemirror.js"></script>
+<script src="lib/codemirror/addon/merge/merge.js"></script>
+<script src="lib/codemirror/addon/selection/active-line.js"></script>
 
 <script src="js/vapi.js"></script>
 <script src="js/vapi-common.js"></script>

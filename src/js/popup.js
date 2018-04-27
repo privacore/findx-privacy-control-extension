@@ -61,12 +61,11 @@ if (
 // The padlock/eraser must be manually positioned:
 // - Its vertical position depends on the height of the popup title bar
 // - Its horizontal position depends on whether there is a vertical scrollbar.
-document.getElementById('rulesetTools').style.setProperty(
-    'top',
-    (document.getElementById('appinfo').getBoundingClientRect().bottom + 3) + 'px'
-);
-
 var positionRulesetTools = function() {
+    document.getElementById('rulesetTools').style.setProperty(
+        'top',
+        (document.getElementById('appinfo').getBoundingClientRect().bottom + 3) + 'px'
+    );
     document.getElementById('rulesetTools').style.setProperty(
         'left',
         (document.getElementById('firewallContainer').getBoundingClientRect().left + 3) + 'px'
@@ -317,12 +316,11 @@ var updateAllFirewallCells = function() {
         );
     }
 
-    positionRulesetTools();
-
-    uDom.nodeFromId('firewallContainer').classList.toggle(
-        'dirty',
-        popupData.matrixIsDirty === true
-    );
+    var dirty = popupData.matrixIsDirty === true;
+    if ( dirty ) {
+        positionRulesetTools();
+    }
+    uDom.nodeFromId('firewallContainer').classList.toggle('dirty', dirty);
 };
 
 /******************************************************************************/
@@ -411,9 +409,7 @@ var renderPopup = function() {
     elem.classList.toggle('advancedUser', popupData.advancedUserEnabled);
     elem.classList.toggle(
         'off',
-        popupData.pageURL === '' ||
-        !popupData.netFilteringSwitch ||
-        popupData.pageHostname === 'behind-the-scene' && !popupData.advancedUserEnabled
+        popupData.pageURL === '' || !popupData.netFilteringSwitch
     );
 
     // If you think the `=== true` is pointless, you are mistaken
@@ -624,7 +620,10 @@ var renderOnce = function() {
 /******************************************************************************/
 
 var renderPopupLazy = function() {
-    messaging.send('popupPanel', { what: 'getPopupLazyData', tabId: popupData.tabId });
+    messaging.send(
+        'popupPanel',
+        { what: 'getPopupLazyData', tabId: popupData.tabId }
+    );
 };
 
 var onPopupMessage = function(data) {
@@ -646,12 +645,6 @@ messaging.addChannelListener('popup', onPopupMessage);
 
 var toggleNetFilteringSwitch = function(ev) {
     if ( !popupData || !popupData.pageURL ) { return; }
-    if (
-        popupData.pageHostname === 'behind-the-scene' &&
-        !popupData.advancedUserEnabled
-    ) {
-        return;
-    }
     messaging.send(
         'popupPanel',
         {
@@ -1072,7 +1065,7 @@ var onHideTooltip = function() {
     // Extract the tab id of the page this popup is for
     var matches = window.location.search.match(/[\?&]tabId=([^&]+)/);
     if ( matches && matches.length === 2 ) {
-        tabId = matches[1];
+        tabId = parseInt(matches[1], 10) || 0;
     }
     getPopupData(tabId);
 

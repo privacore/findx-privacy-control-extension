@@ -31,19 +31,23 @@ cp platform/webext/manifest.json        $DES/
 cp platform/webext/polyfill.js          $DES/js/
 cp platform/webext/vapi-webrequest.js   $DES/js/
 cp platform/webext/vapi-cachestorage.js $DES/js/
-cp platform/webext/vapi-usercss.js      $DES/js/
 
 echo "*** FindxPrivacyControl.webext: concatenating content scripts"
-cat $DES/js/vapi-usercss.js > /tmp/contentscript.js
+cat $DES/js/vapi-usercss.real.js > /tmp/contentscript.js
 echo >> /tmp/contentscript.js
 grep -v "^'use strict';$" $DES/js/contentscript.js >> /tmp/contentscript.js
 mv /tmp/contentscript.js $DES/js/contentscript.js
-rm $DES/js/vapi-usercss.js
+rm $DES/js/vapi-usercss.pseudo.js
+rm $DES/js/vapi-usercss.real.js
 
 # Webext-specific
 rm $DES/img/icon_128.png
 rm $DES/options_ui.html
 rm $DES/js/options_ui.js
+
+echo "*** FindxPrivacyControl.webext: Generating web accessible resources..."
+cp -R src/web_accessible_resources $DES/
+python3 tools/import-war.py $DES/
 
 echo "*** FindxPrivacyControl.webext: Generating meta..."
 python3 tools/make-webext-meta.py $DES/

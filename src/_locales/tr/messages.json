@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock Origin",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,15 +8,15 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Findx Privacy Control — Kontrol paneli",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "message": "uBlock₀ — Kontrol paneli",
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "Ayarlar",
     "description": "appears as tab name in dashboard"
   },
   "3pPageName": {
-    "message": "3. taraf süzgeçler",
+    "message": "Süzgeç listeleri",
     "description": "appears as tab name in dashboard"
   },
   "1pPageName": {
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control — Günlükçü",
+    "message": "uBlock₀ — Günlükçü",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Tıklama: Findx Privacy Control'i bu site için devre dışı bırak\/etkinleştir.\n\nCtrl+tıklama: Findx Privacy Control'i yalnızca bu sayfada devre dışı bırak.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "message": "Tıklama: uBlock₀'i bu site için devre dışı bırak\/etkinleştir.\n\nCtrl+tıklama: uBlock₀'i yalnızca bu sayfada devre dışı bırak.",
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Findx Privacy Control'i bu sitede devre dışı bırakmak için tıklayın.\n\nFindx Privacy Control'i yalnızca bu sayfada devre dışı bırakmak için Ctrl+tıklayın.",
+    "message": "uBlock₀'i bu sitede devre dışı bırakmak için tıklayın.\n\nuBlock₀'i yalnızca bu sayfada devre dışı bırakmak için Ctrl+tıklayın.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Findx Privacy Control'i bu sitede etkinleştirmek için tıklayın.",
+    "message": "uBlock₀'i bu sitede etkinleştirmek için tıklayın.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Bu seçenek <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\"> Adblock Plus-uyumlu &ldquo;öge gizleme&rdquo; süzgeçlerinin<\/a> işlenmesini ve uygulanmasını sağlar. Bu süzgeçler aslında kozmetiktir, bir web sayfasında görsel rahatsızlık yaratan ve ağ isteği-tabanlı süzme motoru tarafından engellenemeyecek olan ögelerin gizlenmesine yarar.<\/p><p>Bu özelliği etkinleştirmek Findx Privacy Control'in bellek kullanımını artırır.<\/p>",
+    "message": "<p>Bu seçenek <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\"> Adblock Plus-uyumlu &ldquo;öge gizleme&rdquo; süzgeçlerinin<\/a> işlenmesini ve uygulanmasını sağlar. Bu süzgeçler aslında kozmetiktir, bir web sayfasında görsel rahatsızlık yaratan ve ağ isteği-tabanlı süzme motoru tarafından engellenemeyecek olan ögelerin gizlenmesine yarar.<\/p><p>Bu özelliği etkinleştirmek uBlock₀'in bellek kullanımını artırır.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Genel kozmetik süzgeçler tüm web sayfalarına uygulanan kozmetik süzgeçlerdir.<p>Findx Privacy Control tarafından verimli bir şekilde işlenmesine rağmen genel kozmetik süzgeçler bazı web sayfalarında ölçülebilir bellek ve CPU ek yüküne neden olabilir, özellikle büyük ve uzun süreli olanlar.<p>Bu seçeneğin etkinleştirmesi, web sayfalarına eklenen genel kozmetik süzgeçlerin işlenmesinden kaynaklı bellek ve CPU ek yükünü ortadan kaldıracaktır ve ek olarak Findx Privacy Control'un kendi bellek izini de azaltacaktır.<p>Daha az güçlü cihazlarda bu seçeneğin etkinleştirilmesi tavsiye edilir.",
+    "message": "<p>Genel kozmetik süzgeçler tüm web sayfalarına uygulanan kozmetik süzgeçlerdir.<p>uBlock₀ tarafından verimli bir şekilde işlenmesine rağmen genel kozmetik süzgeçler bazı web sayfalarında ölçülebilir bellek ve CPU ek yüküne neden olabilir, özellikle büyük ve uzun süreli olanlar.<p>Bu seçeneğin etkinleştirmesi, web sayfalarına eklenen genel kozmetik süzgeçlerin işlenmesinden kaynaklı bellek ve CPU ek yükünü ortadan kaldıracaktır ve ek olarak uBlock₀'un kendi bellek izini de azaltacaktır.<p>Daha az güçlü cihazlarda bu seçeneğin etkinleştirilmesi tavsiye edilir.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "Değişiklikleri uygula",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "Yerel",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "Reklamlar",
@@ -379,9 +383,13 @@
     "message": "Özel",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "İçe aktar...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
-    "message": "Her satırda bir URL. &lsquo;!&rsquo; ile başlayan satırlar göz ardı edilir. Geçersiz URL'ler sessizce yok sayılır.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "message": "Her satırda bir URL. Geçersiz URL'ler sessizce yok sayılacaktır.",
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "Güncel değil.",
@@ -400,8 +408,8 @@
     "description": "used as a tooltip for error icon beside a list"
   },
   "1pFormatHint": {
-    "message": "Her satırda bir süzgeç. Süzgeç bir alan adı veya Adblock Plus uyumlu bir süzgeç olabilir. &lsquo;!&rsquo; ile başlayan satırlar yok sayılır.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "message": "Her satırda bir süzgeç. Bir süzgeç yalın bir alan adı veya Adblock Plus uyumlu bir süzgeç olabilir. <code>!<\/code> ile başlayan satırlar yok sayılır.",
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "İçe aktar ve sonuna ekle",
@@ -468,7 +476,7 @@
     "description": "English: dynamic rule syntax and full documentation."
   },
   "whitelistPrompt": {
-    "message": "Beyaz liste yönergeleri, Findx Privacy Control'in devre dışı bırakılması gerektiği web sayfalarını belirler. Satır başına bir girdi. Geçersiz yönergeler sessizce yok sayılır ve yoruma dönüştürülür.",
+    "message": "Beyaz liste yönergeleri, uBlock₀'in devre dışı bırakılması gerektiği web sayfalarını belirler. Satır başına bir girdi. Geçersiz yönergeler sessizce yok sayılır ve yoruma dönüştürülür.",
     "description": "English: An overview of the content of the dashboard's Whitelist pane."
   },
   "whitelistImport": {
@@ -616,7 +624,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Tüm ayarlarınız {{time}} tarihinde yedeklenmiş veriler kullanarak değiştirilecek ve Findx Privacy Control yeniden başlayacak. \n\nYedeklenmiş verileriniz kullanılarak var olan tüm ayarlarınız değiştirilsin mi?",
+    "message": "Tüm ayarlarınız {{time}} tarihinde yedeklenmiş veriler kullanarak değiştirilecek ve uBlock₀ yeniden başlayacak. \n\nYedeklenmiş verileriniz kullanılarak var olan tüm ayarlarınız değiştirilsin mi?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +632,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Tüm ayarlarınızı silinecek, ve Findx Privacy Control yeniden başlayacak.\n\nFindx Privacy Control fabrika ayarlarına sıfırlansın mı?",
+    "message": "Tüm ayarlarınızı silinecek, ve uBlock₀ yeniden başlayacak.\n\nuBlock₀ fabrika ayarlarına sıfırlansın mı?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control: Aşağıdaki URL, özel süzgeç listenize eklensin mi?\n\nBaşlık: \"{{title}}\"\nURL: {{url}}",
+    "message": "uBlock₀: Aşağıdaki URL, özel süzgeç listenize eklensin mi?\n\nBaşlık: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "kapalı",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
-    "message": "Findx Privacy Control aşağıdaki sayfanın yüklenmesini engelledi:",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "message": "uBlock₀ aşağıdaki sayfanın yüklenmesini engelledi:",
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Bu süzgeç nedeniyle",

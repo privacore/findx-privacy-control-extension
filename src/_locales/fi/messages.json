@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock Origin",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,15 +8,15 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Findx Privacy Control — Hallintapaneeli",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "message": "uBlock₀ — Hallintapaneeli",
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "Asetukset",
     "description": "appears as tab name in dashboard"
   },
   "3pPageName": {
-    "message": "3:nen osapuolen suodattimet",
+    "message": "Suodatuslistat",
     "description": "appears as tab name in dashboard"
   },
   "1pPageName": {
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control — Verkkopyyntöjen loki",
+    "message": "uBlock₀ — Verkkopyyntöjen loki",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -44,15 +44,15 @@
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
-    "message": "Painallus: poista käytöstä\/ota käyttöön Findx Privacy Control tällä sivustolla.\n\nCtrl+painallus: poista Findx Privacy Control käytöstä vain tällä sivulla.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "message": "Painallus: poista käytöstä\/ota käyttöön uBlock₀ tällä sivustolla.\n\nCtrl+painallus: poista uBlock₀ käytöstä vain tällä sivulla.",
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Klikkaa poistaksesi Findx Privacy Control:n käytöstä tällä sivustolla.\n\nCtrl+klikkaus poistaaksesi Findx Privacy Control:n käytöstä vain tällä sivulla.",
+    "message": "Klikkaa poistaksesi uBlock₀:n käytöstä tällä sivustolla.\n\nCtrl+klikkaus poistaaksesi uBlock₀:n käytöstä vain tällä sivulla.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Klikkaa ottaaksesi Findx Privacy Control:n käyttöön tällä sivustolla.",
+    "message": "Klikkaa ottaaksesi uBlock₀:n käyttöön tällä sivustolla.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Tämä asetus ottaa käyttöön <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-yhteensopivat &ldquo;elementtejä piilottavat&rdquo; suodattimet<\/a>. Nämä suodattimet ovat pääasiassa ehosteita. Ne piilottavat verkkosivuilta elementtejä, jotka ovat visuaalisesti häiritseviä eikä niitä voi estää verkkopyyntöihin pohjautuvalla suodatinmoottorilla. <\/p><p>Tämä ominaisuus nostaa <i>Findx Privacy Control<\/i>in muistinkäyttöä.<\/p>",
+    "message": "<p>Tämä asetus ottaa käyttöön <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-yhteensopivat &ldquo;elementtejä piilottavat&rdquo; suodattimet<\/a>. Nämä suodattimet ovat pääasiassa ehosteita. Ne piilottavat verkkosivuilta elementtejä, jotka ovat visuaalisesti häiritseviä eikä niitä voi estää verkkopyyntöihin pohjautuvalla suodatinmoottorilla. <\/p><p>Tämä ominaisuus nostaa <i>uBlock₀<\/i>in muistinkäyttöä.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Yleiset kosmeettiset suotimet ovat ne kosmeettiset suotimet joiden on tarkoitus päteä kaikkiin web-sivustoihin.<p>Vaikka Findx Privacy Control käsittelee ne tehokkaasti, yleiset kosmeettiset suotimet voivat silti lisätä mitattavaa muisti- ja CPU-ylikuormitusta joillakin web-sivuilla, erityisesti suurilla ja pitkäikäisillä sivuilla.<p>Tämän valinnan salliminen karsii pois web-sivuille lisätyn muisti- ja CPU-ylikuormituksen joka aiheutuu yleisten kosmeettisten suotimien käsittelystä, ja alentaa myös Findx Privacy Control sovelluksen muisti-jalanjälkeä.<p>On suositeltavaa sallia tämä vaihtoehto vähemmän tehokkailla laitteilla.",
+    "message": "<p>Yleiset kosmeettiset suotimet ovat ne kosmeettiset suotimet joiden on tarkoitus päteä kaikkiin web-sivustoihin.<p>Vaikka uBlock₀ käsittelee ne tehokkaasti, yleiset kosmeettiset suotimet voivat silti lisätä mitattavaa muisti- ja CPU-ylikuormitusta joillakin web-sivuilla, erityisesti suurilla ja pitkäikäisillä sivuilla.<p>Tämän valinnan salliminen karsii pois web-sivuille lisätyn muisti- ja CPU-ylikuormituksen joka aiheutuu yleisten kosmeettisten suotimien käsittelystä, ja alentaa myös uBlock₀ sovelluksen muisti-jalanjälkeä.<p>On suositeltavaa sallia tämä vaihtoehto vähemmän tehokkailla laitteilla.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "Vahvista muutokset",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "Built-in",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "Mainokset",
@@ -379,9 +383,13 @@
     "message": "Mukautettu",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "Import...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
     "message": "Yksi URL-osoite kullekin riville. Rivit, joiden alussa on &lsquo;!&rsquo;, jätetään huomiotta. Epäkelvot osoitteet ohitetaan ilman ilmoitusta.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "vanhentunut",
@@ -401,7 +409,7 @@
   },
   "1pFormatHint": {
     "message": "Yksi suodatin kullekin riville. Suodatin voi olla pelkkä osoite tai Adblock Plus -yhteensopiva suodatin. Rivit, joiden alussa on &lsquo;!&rsquo;, jätetään huomiotta.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "Tuo ja liitä loppuun",
@@ -468,7 +476,7 @@
     "description": "English: dynamic rule syntax and full documentation."
   },
   "whitelistPrompt": {
-    "message": "Lista osoitteista, joissa haluat kytkeä Findx Privacy Control:n pois päältä. Kirjoita yksi osoite kullekin riville. Virheelliset säännöt ohitetaan.",
+    "message": "Lista osoitteista, joissa haluat kytkeä uBlock₀:n pois päältä. Kirjoita yksi osoite kullekin riville. Virheelliset säännöt ohitetaan.",
     "description": "English: An overview of the content of the dashboard's Whitelist pane."
   },
   "whitelistImport": {
@@ -616,7 +624,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Kaikki asetuksesi korvataan käyttäen tietoja, jotka on varmuuskopioitu {{time}} ja Findx Privacy Control käynnistyy uudelleen.\nPäällekirjoitetaanko kaikki nykyiset asetukset käyttäen varmuuskopioituja tietoja?",
+    "message": "Kaikki asetuksesi korvataan käyttäen tietoja, jotka on varmuuskopioitu {{time}} ja uBlock₀ käynnistyy uudelleen.\nPäällekirjoitetaanko kaikki nykyiset asetukset käyttäen varmuuskopioituja tietoja?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -624,7 +632,7 @@
     "description": "Message to display when an error occurred during restore"
   },
   "aboutResetDataConfirm": {
-    "message": "Kaikki asetuksesi poistetaan ja Findx Privacy Control käynnistyy uudelleen. \n\nPalautetaanko Findx Privacy Control oletusasetuksiin?",
+    "message": "Kaikki asetuksesi poistetaan ja uBlock₀ käynnistyy uudelleen. \n\nPalautetaanko uBlock₀ oletusasetuksiin?",
     "description": "Message asking user to confirm reset"
   },
   "errorCantConnectTo": {
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control: Lisää seuraava URL-osoite mukautettujen suodattimien luetteloihisi?\n\nNimi: \"{{title}}\"\nURL-osoite: {{url}}",
+    "message": "uBlock₀: Lisää seuraava URL-osoite mukautettujen suodattimien luetteloihisi?\n\nNimi: \"{{title}}\"\nURL-osoite: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "pois päältä",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin on estänyt seuraavaa sivua lataamasta:",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Seuraavan suodattimen takia",

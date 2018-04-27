@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock Origin",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -9,7 +9,7 @@
   },
   "dashboardName": {
     "message": "म्यूब्लॉक — डैशबोर्ड",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "सेटिंग्ज",
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control — लॉगर",
+    "message": "uBlock₀ — लॉगर",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -40,19 +40,19 @@
     "description": "appears as tab name in dashboard"
   },
   "advancedSettingsPageName": {
-    "message": "Advanced settings",
+    "message": "प्रगत सेटिंग्ज",
     "description": "Title for the advanced settings page"
   },
   "popupPowerSwitchInfo": {
     "message": "क्लिक करा : या साइटसाठी म्यूब्लॉक अक्षम\/सक्षम.\n\nCtrl+क्लिक करा: फक्त या पृष्ठावर म्यूब्लॉक अक्षम.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
-    "message": "Click to disable Findx Privacy Control for this site.\n\nCtrl+click to disable Findx Privacy Control only on this page.",
+    "message": "Ctrl क्लिक करा फक्त या साइटवर म्यूब्लॉक बंद करण्यासाठी.",
     "description": "Message to be read by screen readers"
   },
   "popupPowerSwitchInfo2": {
-    "message": "Click to enable Findx Privacy Control for this site.",
+    "message": "Ctrl क्लिक करा फक्त या साइटवर म्यूब्लॉक चालू करण्यासाठी.",
     "description": "Message to be read by screen readers"
   },
   "popupBlockedRequestPrompt": {
@@ -164,11 +164,11 @@
     "description": ""
   },
   "popup3pAnyRulePrompt": {
-    "message": "3rd-party",
+    "message": "तृतीय पक्ष",
     "description": ""
   },
   "popup3pPassiveRulePrompt": {
-    "message": "3rd-party css\/images",
+    "message": "तृतीय पक्षी css\/चित्रे",
     "description": ""
   },
   "popupInlineScriptRulePrompt": {
@@ -256,7 +256,7 @@
     "description": ""
   },
   "settingsAdvancedUserSettings": {
-    "message": "advanced settings",
+    "message": "प्रगत सेटिंग्ज",
     "description": "For the tooltip of a link which gives access to advanced settings"
   },
   "settingsPrefetchingDisabledPrompt": {
@@ -304,7 +304,7 @@
     "description": "English: Last restore:"
   },
   "settingsLastBackupPrompt": {
-    "message": "Last backup:",
+    "message": "अंतिम बॅकअप:",
     "description": "English: Last backup:"
   },
   "3pListsOfBlockedHostsPrompt": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Generic cosmetic filters are those cosmetic filters which are meant to apply on all web sites.<p>Though handled efficiently by Findx Privacy Control, generic cosmetic filters may still contribute measurable memory and CPU overhead on some web pages, especially for large and long-lived ones.<p>Enabling this option will eliminate the memory and CPU overhead added to web pages as a result of handling generic cosmetic filters, and also lower the memory footprint of Findx Privacy Control itself.<p>It is recommended to enable this option on less powerful devices.",
+    "message": "<p>Generic cosmetic filters are those cosmetic filters which are meant to apply on all web sites.<p>Though handled efficiently by uBlock₀, generic cosmetic filters may still contribute measurable memory and CPU overhead on some web pages, especially for large and long-lived ones.<p>Enabling this option will eliminate the memory and CPU overhead added to web pages as a result of handling generic cosmetic filters, and also lower the memory footprint of uBlock₀ itself.<p>It is recommended to enable this option on less powerful devices.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "बदल लागू करा",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "Built-in",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "जाहिराती",
@@ -364,7 +368,7 @@
     "description": "English: Malware domains"
   },
   "3pGroupAnnoyances": {
-    "message": "Annoyances",
+    "message": "चिडवणाऱ्या गोष्टी",
     "description": "The header identifying the filter lists in the category 'annoyances'"
   },
   "3pGroupMultipurpose": {
@@ -379,9 +383,13 @@
     "message": "सानुकूल",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "Import...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
     "message": "प्रति ओळ एक युआरएल. ओळी सह प्रिफिक्स &lsquo;!&rsquo; कढे दुर्लक्ष केले जाईल. अवैध युआरएल शांतपणे दुर्लक्ष केले जाईल.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "कालबाह्य",
@@ -401,7 +409,7 @@
   },
   "1pFormatHint": {
     "message": "प्रति ओळ एक फिल्टर. फिल्टर एक साधे होस्ट नावाचा असू शकतो, किंवा एक अद्ब्लोक प्लस सुसंगत फिल्टर असू शकतो. ओळी सह प्रिफिक्स &lsquo;!&rsquo; कढे दुर्लक्ष केले जाईल.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "आयात आणि समावेश करा",
@@ -428,7 +436,7 @@
     "description": "header"
   },
   "rulesRevert": {
-    "message": "Revert",
+    "message": "मागे जा",
     "description": "This will remove all temporary rules"
   },
   "rulesCommit": {
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control: Add the following URL to your custom filter lists?\n\nTitle: \"{{title}}\"\nURL: {{url}}",
+    "message": "uBlock₀: Add the following URL to your custom filter lists?\n\nTitle: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "off",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin has prevented the following page from loading:",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "Because of the following filter",

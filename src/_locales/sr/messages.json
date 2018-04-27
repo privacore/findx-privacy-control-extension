@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Findx Privacy Control",
+    "message": "uBlock₀",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -8,15 +8,15 @@
     "description": "this will be in the chrome web store: must be 132 characters or less"
   },
   "dashboardName": {
-    "message": "Findx Privacy Control — Контролна табла",
-    "description": "English: Findx Privacy Control — Dashboard"
+    "message": "uBlock₀ — Контролна табла",
+    "description": "English: uBlock₀ — Dashboard"
   },
   "settingsPageName": {
     "message": "Подешавања",
     "description": "appears as tab name in dashboard"
   },
   "3pPageName": {
-    "message": "Додатни филтери",
+    "message": "Листе филтера",
     "description": "appears as tab name in dashboard"
   },
   "1pPageName": {
@@ -32,7 +32,7 @@
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
-    "message": "Findx Privacy Control — Евиденција",
+    "message": "uBlock₀ — Евиденција",
     "description": "Title for the logger window"
   },
   "aboutPageName": {
@@ -45,7 +45,7 @@
   },
   "popupPowerSwitchInfo": {
     "message": "Клик: онемогући\/омогући µBlock₀ за овај сајт.\n\nCtrl+клик: онемогући\/омогући µBlock₀ само за ову страницу.",
-    "description": "English: Click: disable\/enable Findx Privacy Control for this site.\n\nCtrl+click: disable Findx Privacy Control only on this page."
+    "description": "English: Click: disable\/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
   },
   "popupPowerSwitchInfo1": {
     "message": "Кликните да бисте онемогућили µBlock₀ за овај сајт.\n\nCtrl+клик да бисте онемогућили µBlock₀ само на овој страници.",
@@ -80,11 +80,11 @@
     "description": "English: Click to open the dashboard"
   },
   "popupTipZapper": {
-    "message": "Ући у режим уклањања елемената",
+    "message": "Режим уклањања елемената",
     "description": "Tooltip for the element-zapper icon in the popup panel"
   },
   "popupTipPicker": {
-    "message": "Ући у режим избора елемената",
+    "message": "Режим избора елемената",
     "description": "English: Enter element picker mode"
   },
   "popupTipLog": {
@@ -332,7 +332,7 @@
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
-    "message": "<p>Ова опција омогућава рашчлањавање и спровођење <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus компатибилних филтера &ldquo;за сакривање елемената&rdquo; <\/a>. Ови филтери су углавном естетски, они служе за сакривање елемената на веб страници који се сматрају визуелном сметњом и који не могу бити блокирани од стране мрежних захтева базираних на филтрирању.<\/p><p>Омогућавањем ове функције повећава се количина меморије коју Findx Privacy Control користи.<\/p>",
+    "message": "<p>Ова опција омогућава рашчлањавање и спровођење <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus компатибилних филтера &ldquo;за сакривање елемената&rdquo; <\/a>. Ови филтери су углавном естетски, они служе за сакривање елемената на веб страници који се сматрају визуелном сметњом и који не могу бити блокирани од стране мрежних захтева базираних на филтрирању.<\/p><p>Омогућавањем ове функције повећава се количина меморије коју uBlock₀ користи.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
@@ -340,7 +340,7 @@
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
-    "message": "<p>Општи естетски филтери су они естетски филтери који су намењени за примену на свим сајтовима.<p>Иако Findx Privacy Control ефикасно рукује њима, општи естетски филтери могу довести до повећане потрошње меморије и оптерећења процесора на неким страницама, нарочито на оним великим. <p>Омогућавањем ове опције, елиминисаће се повећана потрошња меморије и оптерећење процесора на страницама као резултат руковања општим естетским филтерима, а такође и смањити меморијски отисак самог Findx Privacy Control-а.<p>Препоручује се да се ова опција омогући на мање моћним уређајима.",
+    "message": "<p>Општи естетски филтери су они естетски филтери који су намењени за примену на свим сајтовима.<p>Иако uBlock₀ ефикасно рукује њима, општи естетски филтери могу довести до повећане потрошње меморије и оптерећења процесора на неким страницама, нарочито на оним великим. <p>Омогућавањем ове опције, елиминисаће се повећана потрошња меморије и оптерећење процесора на страницама као резултат руковања општим естетским филтерима, а такође и смањити меморијски отисак самог uBlock₀-а.<p>Препоручује се да се ова опција омогући на мање моћним уређајима.",
     "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
   },
   "3pListsOfBlockedHostsHeader": {
@@ -350,6 +350,10 @@
   "3pApplyChanges": {
     "message": "Примени промене",
     "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "Локално",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
     "message": "Рекламе",
@@ -379,9 +383,13 @@
     "message": "Прилагођени",
     "description": "English: Custom"
   },
+  "3pImport": {
+    "message": "Увези...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
   "3pExternalListsHint": {
-    "message": "Једна адреса по реду. Редови са префиксом &lsquo;!&rsquo; ће бити игнорисани. Неисправне адресе ће бити тихо игнорисане.",
-    "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+    "message": "Једна адреса по реду. Неисправне адресе ће бити тихо игнорисане.",
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
     "message": "Застарело.",
@@ -400,8 +408,8 @@
     "description": "used as a tooltip for error icon beside a list"
   },
   "1pFormatHint": {
-    "message": "Један филтер по реду. Филтер може бити назив хоста или филтер компатибилан са Adblock Plus форматом. Редови са префиксом &lsquo;!&rsquo; ће бити игнорисани.",
-    "description": "English: One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored."
+    "message": "Један филтер по реду. Филтер може бити назив хоста или филтер компатибилан са Adblock Plus форматом. Редови са префиксом <code>!<\/code> ће бити игнорисани.",
+    "description": "Short information about how to create custom filters"
   },
   "1pImport": {
     "message": "Увези и додај",
@@ -616,7 +624,7 @@
     "description": "English: Reset to default settings..."
   },
   "aboutRestoreDataConfirm": {
-    "message": "Сва ваша подешавања ће бити прегажена резервном копијом података сачуваним {{time}} и Findx Privacy Control ће се поново покренути.\n\nПрегазити сва постојећа подешавања резервном копијом података?",
+    "message": "Сва ваша подешавања ће бити прегажена резервном копијом података сачуваним {{time}} и uBlock₀ ће се поново покренути.\n\nПрегазити сва постојећа подешавања резервном копијом података?",
     "description": "Message asking user to confirm restore"
   },
   "aboutRestoreDataError": {
@@ -632,7 +640,7 @@
     "description": "English: Network error: {{msg}}"
   },
   "subscriberConfirm": {
-    "message": "Findx Privacy Control: Додати следећу УРЛ адресу у вашу прилагођену листу филтера?\n\nНазив: \"{{title}}\"\nУРЛ: {{url}}",
+    "message": "uBlock₀: Додати следећу УРЛ адресу у вашу прилагођену листу филтера?\n\nНазив: \"{{title}}\"\nУРЛ: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
   },
   "elapsedOneMinuteAgo": {
@@ -669,11 +677,11 @@
   },
   "fennecMenuItemBlockingOff": {
     "message": "искључен",
-    "description": "Firefox-specific: appears as 'Findx Privacy Control (off)'"
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin је спречио учитавање следеће странице:",
-    "description": "English: Findx Privacy Control has prevented the following page from loading:"
+    "description": "English: uBlock₀ has prevented the following page from loading:"
   },
   "docblockedPrompt2": {
     "message": "због следећег филтера",

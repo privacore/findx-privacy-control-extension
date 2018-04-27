@@ -287,7 +287,7 @@ var onUserSettingsReceived = function(details) {
 /******************************************************************************/
 
 var niceScroll = function () {
-    $("html").niceScroll({cursorcolor:"#49854F", autohidemode: false});
+    $(".body").niceScroll({cursorcolor:"#49854F", autohidemode: false});
 };
 
 /******************************************************************************/

@@ -4,12 +4,11 @@ div > p:first-child {
 div > p:last-child {
     margin-bottom: 0;
     }
-.userFilters {
+#userFilters {
     box-sizing: border-box;
-    font-size: small;
-    height: 45vh;
+    height: 50vh!important;
     text-align: left;
-    white-space: pre;
     width: 100%;
     word-wrap: normal;
+    border: 1px solid rgba(0, 0, 0, 0.3);
 }
