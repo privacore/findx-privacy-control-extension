@@ -71,6 +71,10 @@
     "message": "Søg her... helt privat.",
     "description": ""
   },
+  "popupSearchInputPlaceholder":{
+    "message": "Søg her... helt privat.",
+    "description": ""
+  },
   "popupSearch":{
     "message": "Søg",
     "description": ""
@@ -111,6 +115,14 @@
     "message": "Slå beskyttelse til på dette websted",
     "description": ""
   },
+  "popupTipElPicker":{
+    "message": "Vælg element",
+    "description": ""
+  },
+  "popupTipManageLists":{
+    "message": "Administrer lister",
+    "description": ""
+  },
   "popupPlateBlockedOnSite":{
     "message": "Blokeret her",
     "description": ""
@@ -122,6 +134,10 @@
   "popupPlateBlockedTotal":{
     "message": "Blokeret ialt",
     "description": ""
+  },
+  "popupPlateSocialBlocking":{
+    "message": "Usynlig sporing",
+    "description": "@@@"
   },
   "popupDialogAlertTitle":{
     "message": "Advarsel: Al beskyttelse er slået fra",
@@ -174,6 +190,50 @@
   "popupTipFooterRateAddon":{
     "message": "Bedøm denne browserudviddelse",
     "description": ""
+  },
+  "docBlockedTabTitle":{
+    "message": "Blokeret af Findx privatlivskontrol",
+    "description": "Document blocked page"
+  },
+  "docBlockedStatusbar":{
+    "message": "Blokeret af Findx privatlivskontrol",
+    "description": "Document blocked page"
+  },
+  "docBlockedHeader":{
+    "message": "Beskyttelse er aktiveret",
+    "description": "Document blocked page"
+  },
+  "docBlockedContentHeaderTitle":{
+    "message": "Websted blokeret",
+    "description": "Document blocked page"
+  },
+  "docBlockedContentHeaderText":{
+    "message": "Adgang til dette websted blev blokeret af en kontrolregel. Reglen findes i en eller flere blokeringslister. Du kan tillade permanent eller midlertidig adgang til webstedet.",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleUrl":{
+    "message": "Adresse på websted",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleRule":{
+    "message": "Blokeringsregel",
+    "description": "Document blocked page"
+  },
+  "docBlockedItemTitleFilter":{
+    "message": "Reglen findes i disse lister",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnAlways":{
+    "message": "tillad altid",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnOnce":{
+    "message": "tillad en gang",
+    "description": "Document blocked page"
+  },
+  "docBlockedFooterBtnCancel":{
+    "message": "afbryd",
+    "description": "Document blocked page"
   },
   "3pParseAllABPHideFiltersInfo": {
     "message": "<p>Denne indstilling gør det muligt at analysere og anvende <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Ablock Plus kompatible &ldquo;element skjuldende&rdquo; filtre<\/a>. Disse filtre er essentielt set kosmetiske og har til formål at skjule irriterende visuelle elementer på diverse websider, som det ikke er muligt at blokere på andre måder. <\/p><p>Denne indstilling øger Findx Privatlivskontrols hukommelsesforbrug.<\/p>",
