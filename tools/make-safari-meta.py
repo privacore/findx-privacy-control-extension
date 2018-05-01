@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import re
 import json
 import sys
 from io import open
@@ -57,6 +58,19 @@ with open(chromium_manifest, encoding='utf-8') as m:
 
 manifest['buildNumber'] = int(time())
 manifest['description'] = description
+
+# Fetch extension version
+with open(os.path.join(proj_dir, 'dist', 'version')) as f:
+    version = f.read().strip()
+manifest['version'] = version
+
+# Development build? If so, modify name accordingly.
+match = re.search('^\d+\.\d+\.\d+\.\d+$', version)
+if match:
+    dev_build = ' dev build'
+    manifest['name'] += dev_build
+    manifest['short_name'] += dev_build
+    manifest['browser_action']['default_title'] += dev_build
 
 info_plist = pj(build_dir, 'Info.plist')
 

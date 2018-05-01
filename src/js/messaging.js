@@ -493,7 +493,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.urls = pageStore.netFilteringCache.getResultsList();
         // r.urls = pageStore.netFilteringCache.urls;
     } else {
-        r.hostnameDict = {};
+        r.hostnameDict = Object.create(null);
         r.firewallRules = getFirewallRules();
     }
     r.matrixIsDirty = !µb.sessionFirewall.hasSameRules(

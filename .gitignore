@@ -1,6 +1,10 @@
 *.bak
 *.pem
 /dist/build/
+/dist/certs/siglen.txt
+/dist/certs/SafariDeveloper.cer
 /tmp/
-/nbproject/private/
-.idea
+.DS_Store
+*.iml
+.idea/
+/tools/xar
