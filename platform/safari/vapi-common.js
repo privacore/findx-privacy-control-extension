@@ -108,6 +108,11 @@ vAPI.download = function(details) {
 };
 
 /******************************************************************************/
+vAPI.insertHTML = function(node, html) {
+    node.innerHTML = html;
+};
+
+/******************************************************************************/
 
 vAPI.getURL = function(path) {
     // https://github.com/el1t/uBlock-Safari/issues/4

@@ -25,42 +25,15 @@ if ( typeof safari.self === 'undefined' || window.top !== window ) {
     return;
 }
 
+/**
+ * Modified by alexey.lepesin on 04.27.2017
+ */
 var onLoaded = function() {
-    var _toggle = DOMTokenList.prototype.toggle;
-    var unchainPane2Timeout = false;
-    var unchainPane2 = function() {
-        pane2.style.removeProperty('display');
-    };
-    DOMTokenList.prototype.toggle = function(className, enabled) {
-        if ( className === 'dfEnabled' ) {
-            if ( unchainPane2Timeout !== false ) {
-                clearTimeout(unchainPane2Timeout);
-                unchainPane2Timeout = false;
-            }
-            _toggle.apply(this, arguments);
-            pane2.style.setProperty('display', 'inline-block', 'important');
-            unchainPane2Timeout = setTimeout(unchainPane2, 400);
-            updateSize(enabled);
-        }
-        else {
-            _toggle.apply(this, arguments);
-        }
-    };
     var body = document.body,
-        popover = safari.self,
-        panes = document.getElementById('panes'),
-        pane1 = panes.children[0],
-        pane2 = panes.children[1];
+        popover = safari.self;
 
-    body.style.width = '100%';
-    panes.style.width = '100%';
-
-    var updateSize = function(isOpen) {
-        var w = pane2.clientWidth;
-        if ( typeof isOpen === 'undefined' ) {
-            isOpen = (w !== 0);
-        }
-        popover.width = (isOpen ? w : 0) + pane1.clientWidth;
+    var updateSize = function() {
+        popover.width = body.clientWidth;
         popover.height = body.clientHeight;
     };
 
