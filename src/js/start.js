@@ -298,7 +298,8 @@ var onFirstFetchReady = function(fetched) {
         fromFetch(µb.localSettings, fetched);
         onUserSettingsReady(fetched);
         fromFetch(µb.restoreBackupSettings, fetched);
-        // fromFetch(µb.cookiesSettings, fetched); // TODO: Igor 25.04.18 Fetched data must be set to cookiesSettings object. Cookies protection list must be converted to Map objects (new Map(arr))
+        fromFetch(µb.cookiesSettings, fetched);
+        µb.cookieHandling.restoreFromFetched(); // Findx. We need restore protection lists separately
         onNetWhitelistReady(fetched.netWhitelist);
         onVersionReady(fetched.version);
 

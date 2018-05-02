@@ -95,7 +95,13 @@
                 if (!this.isDomainOpenedInTabs(domain)) {
                     this.clearDomainCookies(domain, url);
                 }
+                else {
+                    console.log("Domain %copened in tab %c so it's cookies wasn't cleared", 'color:green', 'color: black');
+                }
             }.bind(this), ub.cookiesSettings.clearDomainCookiesAfter);
+        }
+        else if (this.isDomainProtected(domain)) {
+            console.log("Domain '%s' %cProtected %c so it's cookies wasn't cleared", domain, 'color:green', 'color: black');
         }
     };
 
@@ -105,14 +111,10 @@
      * Current list used just for faster checking of third parties cookies and cookies clearing.
      */
     CookieHandling.prototype.updateTabsDomainsList = function () {
-        let allPageStores = ub.pageStores;
-        let tabIds = Object.keys(allPageStores);
-
         this.tabsDomainsList = new Set();
 
-        tabIds.forEach(function (tabId) {
-            let pageStore = allPageStores[tabId];
-            if (pageStore && tabId !== -1 && tabId !== "-1") {
+        ub.pageStores.forEach(function (pageStore, tabId) {
+            if (pageStore && !(tabId === -1 || tabId === "-1" || tabId === -2 || tabId === "-2")) {
                 let domain = ub.URI.domainFromHostname(pageStore.tabHostname);
                 if (!this.tabsDomainsList.has(domain)) {
                     this.tabsDomainsList.add(domain);
@@ -122,8 +124,8 @@
 
         console.groupCollapsed("TABS UPDATING");
         console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(this.tabsDomainsList))));
-        console.log("\tallPageStores: ", JSON.parse(JSON.stringify(allPageStores)));
-        console.log("\tµb.tabContextManager: ", JSON.parse(JSON.stringify(ub.tabContextManager.getAll())));
+        console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(ub.pageStores))));
+        console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(ub.tabContextManager.getAll()))));
         console.groupEnd();
     };
 
@@ -176,7 +178,7 @@
         console.log("\tcookie: ", cookie);
         console.log("\tisRemoved: ", isRemoved);
         console.log("\tdomainPageStores: ", JSON.parse(JSON.stringify(domainPageStores)));
-        console.log("\tpageStores: ", JSON.parse(JSON.stringify(ub.pageStores)));
+        console.log("\tpageStores: ", JSON.parse(JSON.stringify(Array.from(ub.pageStores))));
         console.log("\ttabsDomainsList: ", this.tabsDomainsList);
         console.groupEnd();
     };
@@ -253,6 +255,8 @@
         domain = prepareRootDomain(domain);
         if (ub.cookiesSettings.protection.domains.indexOf(domain) === -1)
             ub.cookiesSettings.protection.domains.push(domain);
+
+        this.saveSettings();
     };
 
     CookieHandling.prototype.unProtectDomain = function (domain) {
@@ -261,6 +265,8 @@
 
         if (domainIndex !== -1)
             ub.cookiesSettings.protection.domains.splice(domainIndex, 1);
+
+        this.saveSettings();
     };
 
     /******************************************************************************/
@@ -296,6 +302,8 @@
         if (!ub.cookiesSettings.protection.cookies[partyName][domain].has(cookie.name)) {
             ub.cookiesSettings.protection.cookies[partyName][domain].set(cookie.name, cookie);
         }
+
+        this.saveSettings();
     };
 
     CookieHandling.prototype.unProtectCookie = function (cookie, isFirstParty, domain) {
@@ -313,12 +321,19 @@
         if (!ub.cookiesSettings.protection.cookies[partyName][domain].size) {
             delete ub.cookiesSettings.protection.cookies[partyName][domain];
         }
+
+        this.saveSettings();
     };
 
 
     /******************************************************************************/
 
     CookieHandling.prototype.clearDomainCookies = function (domain, url) {
+        if (this.isDomainProtected(domain)) {
+            console.log("Domain %cProtected %c so it's cookies wasn't cleared", 'color:green', 'color: black');
+            return;
+        }
+
         vAPI.cookies.getDomainCookies(domain, function (cookies) {
             console.groupCollapsed('%cDOMAIN COOKIES CLEARING: %s', 'color: red', domain);
             console.log('\t%c%s', 'color: black', domain);
@@ -382,22 +397,38 @@
         return response;
     };
 
+    /**
+     * Restore saved settings and protection lists fetched from storage on app start.
+     * Protection lists for each domain stored in local storage as array, so we need convert them to a Map objects.
+     */
+    CookieHandling.prototype.restoreFromFetched = function () {
+        this.protectedCookiesFromFetch('firstParty');
+        this.protectedCookiesFromFetch('thirdParty');
+    };
+
+    /**
+     * Protection lists for each domain stored in local storage as array, so we need convert them to a Map objects.
+     * @param party
+     */
+    CookieHandling.prototype.protectedCookiesFromFetch = function (party) {
+        for (var domain in ub.cookiesSettings.protection.cookies[party]) {
+            if (!ub.cookiesSettings.protection.cookies[party].hasOwnProperty(domain))
+                continue;
+            ub.cookiesSettings.protection.cookies[party][domain] = new Map(ub.cookiesSettings.protection.cookies[party][domain]);
+        }
+    };
+
     /******************************************************************************/
 
 
     var getPageStoresByDomain = function (domain) {
-        let allPageStores = ub.pageStores;
-        let tabIds = Object.keys(allPageStores);
-        let initDomain = domain;
-
         if (domain.charAt(0) === '.') {
             domain = domain.slice(1);
         }
         domain = ub.URI.domainFromHostname(domain);
 
         let domainPageStores = {};
-        tabIds.forEach(function (tabId) {
-            let pageStore = allPageStores[tabId];
+        ub.pageStores.forEach(function (pageStore, tabId) {
             if (pageStore && tabId !== -1 && domain === ub.URI.domainFromHostname(pageStore.tabHostname)) {
                 domainPageStores[tabId] = pageStore;
             }
@@ -405,9 +436,8 @@
 
         // console.log ("getPageStoresByDomain ()            cookie-handling.js" +
         //                 "\n\t domain: ", domain,
-        //                 "\n\t initDomain: ", initDomain,
         //                 "\n\t domainPageStores: ", domainPageStores,
-        //                 "\n\t allPageStores: ", allPageStores);
+        //                 "\n\t allPageStores: ", JSON.parse(JSON.stringify(Array.from(ub.pageStores))));
         return domainPageStores;
     };
 
