@@ -81,7 +81,7 @@ safari.extension.settings.addEventListener('change', function(e) {
     }
 }, false);
 
-vAPI.storage = {
+vAPI.storage = vAPI.cacheStorage = {
     _storage: safari.extension.settings,
     get: function(keys, callback) {
         if ( typeof callback !== 'function' ) {
@@ -411,6 +411,14 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
     }
 };
 
+/******************************************************************************/
+
+/******************************************************************************/
+vAPI.saveActiveTabState = function (tabName) {
+    if (!tabName) return;
+
+    µBlock.localSettings.activePopupTab = tabName;
+};
 /******************************************************************************/
 
 // reload the popup when it's opened
