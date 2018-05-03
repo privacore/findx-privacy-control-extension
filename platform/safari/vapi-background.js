@@ -412,6 +412,28 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 };
 
 /******************************************************************************/
+/******************************************************************************/
+
+vAPI.openSearch = function (query, type) {
+    var locale = "default";
+    if (navigator.language.slice(0, 2) === "da") {
+        locale = "da";
+    }
+
+    var searchUrl = µBlock.searchDomain[locale] + µBlock.searchQueries[type];
+    if (!searchUrl) return;
+
+    if (type === "calculator") {
+        query = encodeURIComponent(query);
+    }
+
+    searchUrl = searchUrl.replace(/\{\{query\}\}/, query || '');
+
+    vAPI.tabs.open({url: searchUrl, select: true});
+};
+
+/******************************************************************************/
+/******************************************************************************/
 
 /******************************************************************************/
 vAPI.saveActiveTabState = function (tabName) {

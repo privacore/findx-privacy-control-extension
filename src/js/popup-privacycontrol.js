@@ -40,7 +40,7 @@
         }
         var domain, prefix;
         for (var hostname in hostnameDict) {
-            if (hostnameDict.hasOwnProperty(hostname) === false) {
+            if (typeof hostnameDict[hostname] === 'object' && typeof hostnameDict[hostname].domain !== 'undefined') {
                 continue;
             }
             domain = hostnameDict[hostname].domain;
