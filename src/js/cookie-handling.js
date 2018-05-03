@@ -34,6 +34,10 @@
         if (ub.cookiesSettings.periodicalClearing) {
             this.startPeriodicalClearing();
         }
+
+        if (ub.cookiesSettings.clearCookiesOnAppStart) {
+            this.clearAllUnprotected();
+        }
     };
 
     CookieHandling.prototype.onTabUpdate = function (tabId) {
