@@ -637,47 +637,77 @@ vAPI.cookies.removeListeners = function () {
 /******************************************************************************/
 
 vAPI.cookies.getCookieStores = function (callback) {
-    chrome.cookies.getAllCookieStores(callback);
+    try {
+        chrome.cookies.getAllCookieStores(callback);
+    }
+    catch (exception) {
+        console.error("Exception in 'getCookieStores' (vapi-background.js) :\n\t", exception);
+        if (callback) callback();
+    }
 };
 
 /******************************************************************************/
 
 vAPI.cookies.getDomainCookies = function (rootDomain, callback) {
-    let allCookies = [];
-    let handledStores = 0;
-    vAPI.cookies.getCookieStores(function (cookieStores) {
-        cookieStores.forEach(function (cookieStore) {
-            let options = {domain: rootDomain || ""};
-            if (typeof cookieStore.id !== null) {
-                options.storeId = cookieStore.id;
-            }
-            chrome.cookies.getAll(options, function (storeCookies) {
-                allCookies = allCookies.concat(storeCookies);
-                handledStores++;
-                if (handledStores === cookieStores.length) {
-                    if (callback)
-                        callback(allCookies);
+    let options = {domain: rootDomain || ""};
+    vAPI.cookies.getAllCookies(callback, options);
+};
+
+/******************************************************************************/
+
+vAPI.cookies.getAllCookies = function (callback, filters) {
+    try {
+        let allCookies = [];
+        let handledStores = 0;
+        vAPI.cookies.getCookieStores(function (cookieStores) {
+            cookieStores.forEach(function (cookieStore) {
+                let options = filters ? filters : {};
+                if (typeof cookieStore.id !== null) {
+                    options.storeId = cookieStore.id;
                 }
+                chrome.cookies.getAll(options, function (storeCookies) {
+                    allCookies = allCookies.concat(storeCookies);
+                    handledStores++;
+                    if (handledStores === cookieStores.length) {
+                        if (callback)
+                            callback(allCookies);
+                    }
+                });
             });
         });
-    });
+    }
+    catch (exception) {
+        console.error("Exception in 'getAllCookies' (vapi-background.js) :" +
+            "\n\tfilters: ", filters,
+            "\n\texception: ", exception);
+        if (callback)
+            callback();
+    }
 };
 
 /******************************************************************************/
 
 vAPI.cookies.removeCookie = function (cookie, url) {
-    let cookieOptions = {
-        name: cookie.name,
-        url: url,
-        storeId: cookie.storeId
-    };
+    try {
+        let cookieOptions = {
+            name: cookie.name,
+            url: url,
+            storeId: cookie.storeId
+        };
 
-    if (typeof vAPI.webextFlavor === 'string' &&
+        if (typeof vAPI.webextFlavor === 'string' &&
             vAPI.webextFlavor.startsWith('Mozilla-Firefox-'))
-    {
-        cookieOptions.firstPartyDomain = cookie.firstPartyDomain;
+        {
+            cookieOptions.firstPartyDomain = cookie.firstPartyDomain;
+        }
+        chrome.cookies.remove(cookieOptions);
     }
-    chrome.cookies.remove(cookieOptions);
+    catch (exception) {
+        console.error("Exception in 'removeCookie' (vapi-background.js) :" +
+            "\n\tcookie: ", cookie,
+            "\n\turl: ", url,
+            "\n\texception:", exception);
+    }
 };
 
 /******************************************************************************/

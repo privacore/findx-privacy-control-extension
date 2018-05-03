@@ -22,43 +22,18 @@
     CookieHandling.prototype.thirdPartyCookies = null;
 
 
+    /**
+     * Init method will be called from start.js after all settings will be loaded from storage
+     *  and all tabs will be handled.
+     */
     CookieHandling.prototype.init = function () {
         this.updateTabsDomainsList();
 
         vAPI.cookies.registerListeners();
 
-        this.protectDomain('file.org');
-        this.protectCookie({
-            domain:".file.org",
-            expirationDate:1587630965,
-            hostOnly:false,
-            httpOnly:false,
-            name:"__utma",
-            path:"/",
-            sameSite:"no_restriction",
-            secure:false,
-            session:false,
-            storeId:"0",
-            value:"35879863.1994226522.1524558835.1524558835.1524558835.1"
-        }, true, 'file.org');
-
-        this.protectCookie({
-            domain:".doubleclick.net",
-            expirationDate:1524560253.961126,
-            hostOnly:false,
-            httpOnly:false,
-            name:"test_cookie",
-            path:"/",
-            sameSite:"no_restriction",
-            secure:false,
-            session:false,
-            storeId:"0",
-            value:"CheckForPermission"
-        }, false);
-
-        setTimeout(function () {
-            this.changeSettings('clearDomainCookiesAfter', 1000);
-        }.bind(this), 5000);
+        if (ub.cookiesSettings.periodicalClearing) {
+            this.startPeriodicalClearing();
+        }
     };
 
     CookieHandling.prototype.onTabUpdate = function (tabId) {
@@ -146,11 +121,7 @@
      * @returns {boolean}
      */
     CookieHandling.prototype.isThirdParty = function (cookie) {
-        let domain = cookie.domain;
-        if (domain.charAt(0) === '.') {
-            domain = domain.slice(1);
-        }
-        domain = ub.URI.domainFromHostname(domain);
+        let domain = prepareRootDomain(cookie.domain);
         return !this.tabsDomainsList.has(domain);
     };
 
@@ -160,11 +131,7 @@
      * @param {boolean} isRemoved
      */
     CookieHandling.prototype.handleFirstPartyCookie = function (cookie, isRemoved) {
-        let domain = cookie.domain;
-        if (domain.charAt(0) === '.') {
-            domain = domain.slice(1);
-        }
-        domain = ub.URI.domainFromHostname(domain);
+        let domain = prepareRootDomain(cookie.domain);
         let domainPageStores = getPageStoresByDomain(domain);
         if (Object.keys(domainPageStores).length) {
             Object.keys(domainPageStores).forEach(function (id) {
@@ -174,7 +141,10 @@
                     domainPageStores[id].addDomainCookie(cookie);
             });
         }
-        console.groupCollapsed("%c1p", 'color: green');
+        if (isRemoved)
+            console.groupCollapsed("%c1p", 'color: purple');
+        else
+            console.groupCollapsed("%c1p", 'color: green');
         console.log("\tcookie: ", cookie);
         console.log("\tisRemoved: ", isRemoved);
         console.log("\tdomainPageStores: ", JSON.parse(JSON.stringify(domainPageStores)));
@@ -191,7 +161,10 @@
      * @param {boolean} isRemoved
      */
     CookieHandling.prototype.handleThirdPartyCookie = function (cookie, isRemoved) {
-        console.group("%c3p", 'color:orange');
+        if (isRemoved)
+            console.groupCollapsed("%c3p", 'color:purple');
+        else
+            console.group("%c3p", 'color:orange');
 
         if (!isRemoved && ub.cookiesSettings.thirdPartyCookiesBlocking && !this.isCookieProtected(cookie, true)) {
             vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
@@ -276,10 +249,15 @@
             ub.cookiesSettings.protection.cookies.thirdParty
             : ub.cookiesSettings.protection.cookies.firstParty;
 
-        let domain = isThirdParty ? cookie.domain : forDomain;
+        let domain = forDomain ? forDomain : cookie.domain;
         domain = prepareRootDomain(domain);
 
         return protectionList.hasOwnProperty(domain) && protectionList[domain].has(cookie.name);
+    };
+
+    CookieHandling.prototype.isCookieProtectedAnyParty = function (cookie) {
+        let domain = prepareRootDomain(cookie.domain);
+        return this.isCookieProtected(cookie, true, domain) || this.isCookieProtected(cookie, false, domain);
     };
 
     /**
@@ -417,6 +395,69 @@
             ub.cookiesSettings.protection.cookies[party][domain] = new Map(ub.cookiesSettings.protection.cookies[party][domain]);
         }
     };
+
+    /******************************************************************************/
+
+    CookieHandling.prototype.clearingInterval = null;
+
+    CookieHandling.prototype.startPeriodicalClearing = function () {
+        if (!ub.cookiesSettings.periodicalClearing)
+            return;
+
+        if (this.clearingInterval)
+            clearInterval(this.clearingInterval);
+
+        this.clearingInterval = setInterval(function () {
+            this.clearAllUnprotected();
+        }.bind(this), ub.cookiesSettings.clearingPeriod);
+    };
+
+    CookieHandling.prototype.stopPeriodicalClearing = function () {
+        if (this.clearingInterval)
+            clearInterval(this.clearingInterval);
+    };
+
+    CookieHandling.prototype.clearAllUnprotected = function () {
+        console.groupCollapsed("%cClear all unprotected cookies", 'color: red');
+        try {
+            vAPI.cookies.getAllCookies(function (cookies) {
+                console.log("ALL cookies: ", cookies);
+                if (!cookies)
+                    return;
+
+                cookies.forEach(function (cookie) {
+                    console.log('\tcookie: ', cookie);
+                    if (this.isDomainProtected(prepareRootDomain(cookie.domain)) || this.isCookieProtected(cookie, true)
+                        || (!this.isThirdParty(cookie) && this.isCookieProtected(cookie, false)))
+                    {
+                        // TODO: Test logs. Current block of if else statements used only for tests. Must be removed in a release version.
+                        if (this.isDomainProtected(prepareRootDomain(cookie.domain))) {
+                            console.log('\t  %cprotected %ccookie domain %c"%s"', 'color: green', 'color: black', 'color: green', cookie.domain);
+                        }
+                        else if (this.isCookieProtected(cookie, true)) {
+                            console.log('\t  %cprotected %c3p', 'color: green', 'color: black');
+                        }
+                        else if (!this.isThirdParty(cookie) && this.isCookieProtected(cookie, false)) {
+                            console.log('\t  %cprotected %c1p', 'color: green', 'color: black');
+                        }
+                        /////////////////////////////////////// end of test logs
+
+                        return;
+                    }
+
+                    console.log('\t  %cremoved', 'color: red');
+
+                    vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
+                }.bind(this));
+                console.groupEnd();
+            }.bind(this), null);
+        }
+        catch (exception) {
+            console.error("Exception in 'clearAllUnprotected' (cookie-handling.js) :\n\t", exception);
+            console.groupEnd();
+        }
+    };
+
 
     /******************************************************************************/
 
