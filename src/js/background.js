@@ -221,6 +221,33 @@ var µBlock = (function() { // jshint ignore:line
                 }
             }
         },
+        cookiesStats: {
+            statistics: {
+                total: {
+                    cleared: {
+                        firstParty: 0,
+                        thirdParty: 0
+                    },
+                    allowed: {
+                        firstParty: 0,
+                        thirdParty: 0
+                    }
+                },
+                today: {
+                    cleared: {
+                        firstParty: 0,
+                        thirdParty: 0
+                    },
+                    allowed: {
+                        firstParty: 0,
+                        thirdParty: 0
+                    }
+                }
+            },
+            statsTodayDate: ''
+        },
+        cookiesStatsLastModified: 0,
+        cookiesStatsLastSaved: 0,
 
 
 

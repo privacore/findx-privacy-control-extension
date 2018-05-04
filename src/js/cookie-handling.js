@@ -29,6 +29,8 @@
     CookieHandling.prototype.init = function () {
         this.updateTabsDomainsList();
 
+        this.handleStatistics();
+        
         vAPI.cookies.registerListeners();
 
         if (ub.cookiesSettings.periodicalClearing) {
@@ -69,7 +71,7 @@
     CookieHandling.prototype.onDomainClosed = function (domain, url) {
         this.updateTabsDomainsList();
         if (ub.cookiesSettings.clearDomainCookiesOnTabClose && !this.isDomainProtected(domain)) {
-            setTimeout(function () {
+            vAPI.setTimeout(function () {
                 this.updateTabsDomainsList();
                 if (!this.isDomainOpenedInTabs(domain)) {
                     this.clearDomainCookies(domain, url);
@@ -141,9 +143,11 @@
             Object.keys(domainPageStores).forEach(function (id) {
                 if (isRemoved)
                     domainPageStores[id].rmDomainCookie(cookie);
-                else
+                else {
                     domainPageStores[id].addDomainCookie(cookie);
-            });
+                    this.increaseStats(false, true);
+                }
+            }.bind(this));
         }
         if (isRemoved)
             console.groupCollapsed("%c1p", 'color: purple');
@@ -172,17 +176,21 @@
 
         if (!isRemoved && ub.cookiesSettings.thirdPartyCookiesBlocking && !this.isCookieProtected(cookie, true)) {
             vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
+            this.increaseStats(true, false);
             console.log("%cBLOCK", 'color:red');
         }
         else { // 3p cookie not blocked. So we need to add/remove it from thirdPartyCookies list
             if (this.isThirdPartyCookieExists(cookie)) {
                 if (isRemoved)
                     this.rmThirdPartyCookie(cookie);
-                else
+                else {
                     this.updateThirdPartyCookie(cookie);
+                    this.increaseStats(false, false);
+                }
             }
             else if (!isRemoved) {
                 this.addThirdPartyCookie(cookie);
+                this.increaseStats(false, false);
             }
         }
 
@@ -325,7 +333,7 @@
             cookies.forEach(function (cookieItem) {
                 if (!this.isCookieProtected(cookieItem, false, domain)) {
                     vAPI.cookies.removeCookie(cookieItem, url);
-
+                    this.increaseStats(true, true);
                     console.log("\t%cRemoved: %c%s", "color: red", "color:black", cookieItem.name);
                 }
                 else {
@@ -449,6 +457,8 @@
                         return;
                     }
 
+                    this.increaseStats(true, !this.isThirdParty(cookie));
+
                     console.log('\t  %cremoved', 'color: red');
 
                     vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
@@ -460,6 +470,75 @@
             console.error("Exception in 'clearAllUnprotected' (cookie-handling.js) :\n\t", exception);
             console.groupEnd();
         }
+    };
+
+
+    /******************************************************************************/
+
+    CookieHandling.prototype.handleStatistics = function () {
+        this.correctTodayStats();
+
+        // var saveAfter = 4 * 60 * 1000;
+        var saveAfter = 10 * 1000;
+
+        var onTimeout = function() {
+            this.correctTodayStats();
+            if ( ub.cookiesStatsLastModified > ub.cookiesStatsLastSaved ) {
+                console.log('%ccookies statistics updated', 'color: blue');
+                console.log('\tstatistics: ', ub.cookiesStats.statistics);
+                this.saveStatistics();
+            }
+            vAPI.setTimeout(onTimeout, saveAfter);
+        }.bind(this);
+
+        vAPI.setTimeout(onTimeout, saveAfter);
+    };
+
+    CookieHandling.prototype.saveStatistics = function () {
+        ub.cookiesStatsLastSaved = Date.now();
+        vAPI.storage.set(ub.cookiesStats);
+    };
+
+    /**
+     * Today statistics collects for 00:00 - 24:00.
+     */
+    CookieHandling.prototype.correctTodayStats = function () {
+        let today = new Date();
+        let lastDate = ub.cookiesStats.statsTodayDate ?
+            new Date(ub.cookiesStats.statsTodayDate)
+            : new Date();
+        if (!ub.cookiesStats.statsTodayDate || today.withoutTime() > lastDate.withoutTime()) {
+            console.log('%ctoday cookies statistics clear', 'color: blue');
+            this.clearTodayStats();
+        }
+    };
+
+    CookieHandling.prototype.clearTodayStats = function () {
+        ub.cookiesStats.statsTodayDate = (new Date()).toDateString();
+        ub.cookiesStats.statistics.today.allowed.firstParty = 0;
+        ub.cookiesStats.statistics.today.allowed.thirdParty = 0;
+        ub.cookiesStats.statistics.today.cleared.firstParty = 0;
+        ub.cookiesStats.statistics.today.cleared.thirdParty = 0;
+        this.saveStatistics();
+    };
+
+    /**
+     * Increase total and today statistics of cookies collection/clearing
+     * @param {boolean} isCleared
+     * @param {boolean} isFirstParty
+     */
+    CookieHandling.prototype.increaseStats = function (isCleared, isFirstParty) {
+        ub.cookiesStats.statistics.today
+            [(isCleared ? 'cleared' : 'allowed')][isFirstParty ? 'firstParty' : 'thirdParty']++;
+        ub.cookiesStats.statistics.total
+            [(isCleared ? 'cleared' : 'allowed')][isFirstParty ? 'firstParty' : 'thirdParty']++;
+        ub.cookiesStatsLastModified = Date.now();
+    };
+
+    Date.prototype.withoutTime = function () {
+        var d = new Date(this);
+        d.setHours(0, 0, 0, 0);
+        return d;
     };
 
 

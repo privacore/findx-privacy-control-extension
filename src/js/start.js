@@ -299,6 +299,7 @@ var onFirstFetchReady = function(fetched) {
         onUserSettingsReady(fetched);
         fromFetch(µb.restoreBackupSettings, fetched);
         fromFetch(µb.cookiesSettings, fetched);
+        fromFetch(µb.cookiesStats, fetched);
         µb.cookieHandling.restoreFromFetched(); // Findx. We need restore protection lists separately
         onNetWhitelistReady(fetched.netWhitelist);
         onVersionReady(fetched.version);
@@ -362,6 +363,7 @@ var onSelectedFilterListsLoaded = function() {
     toFetch(µb.userSettings, fetchableProps);
     toFetch(µb.restoreBackupSettings, fetchableProps);
     toFetch(µb.cookiesSettings, fetchableProps);
+    toFetch(µb.cookiesStats, fetchableProps);
 
     vAPI.storage.get(fetchableProps, onFirstFetchReady);
 };
