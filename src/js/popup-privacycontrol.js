@@ -241,7 +241,14 @@
 
         var sidebarLinks = $('#slide-out li a');
         sidebarLinks.off("click");
-        sidebarLinks.on("click", ev => onSidebarLinkClick($(ev.currentTarget).attr("data-action")));
+
+        sidebarLinks.on("click", function(ev) {
+            onSidebarLinkClick($(ev.currentTarget).attr("data-action"))
+
+            // When clicking on the link in the popover, the user moves to the address within this popover.
+            // To open the address in a new window, it is required to prevent the default browser behavior.
+            stopEvent(ev);
+        });
     };
 
     var closeSidebar = function () {
@@ -1149,6 +1156,11 @@
         );
     };
 
+    var stopEvent = function(ev) {
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+    };
 
 
     uDom.onLoad(function () {

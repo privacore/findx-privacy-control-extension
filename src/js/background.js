@@ -206,7 +206,8 @@ var µBlock = (function() { // jshint ignore:line
 
         ratePageUrl: {
             'chrome': 'https://chrome.google.com/webstore/detail/findx-privacy-control/hmindffkcgchnijdapipnaoajajkhjpn',
-            "firefox": 'https://addons.mozilla.org/en-US/firefox/addon/findx-privacy-control/'
+            "firefox": 'https://addons.mozilla.org/en-US/firefox/addon/findx-privacy-control/',
+            "safari": 'https://example.com'
         },
 
         searchDomain: {

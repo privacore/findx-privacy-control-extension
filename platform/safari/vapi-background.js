@@ -414,6 +414,43 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 /******************************************************************************/
 /******************************************************************************/
 
+vAPI.openOptionsPage = function () {
+    var optionsUrl = vAPI.getURL(µBlock.optionsUrl);
+    vAPI.tabs.open({url: optionsUrl, select: true});
+};
+
+vAPI.openHelpPage = function () {
+    var helpPageUrl = µBlock.aboutPageUrl;
+    vAPI.tabs.open({url: helpPageUrl, select: true});
+};
+
+vAPI.openRatePage = function () {
+    var browserType = 'chrome';
+    if (navigator.userAgent.match(/Firefox/)) {
+        browserType = "firefox";
+    } else if ((/safari/i.test(navigator.userAgent) && !(/chrome/i.test(navigator.userAgent)))) {
+        browserType = "safari";
+    }
+
+    var ratePageUrl = µBlock.ratePageUrl[browserType];
+    vAPI.tabs.open({url: ratePageUrl, select: true});
+};
+
+vAPI.openFindxMobile = function () {
+    var findxMobileUrl = µBlock.findxMobileUrl;
+    vAPI.tabs.open({url: findxMobileUrl, select: true});
+};
+
+vAPI.openTrackingMonitor = function (tabId) {
+    var trackingMonitorUrl = µBlock.trackingMonitorUrl + tabId;
+    vAPI.tabs.open({url: trackingMonitorUrl, select: true});
+};
+
+vAPI.openFeedback = function (tabId) {
+    var feedbackEmail = 'mailto:' + µBlock.feedbackEmail;
+    vAPI.tabs.open({url: feedbackEmail, select: true});
+};
+
 vAPI.openSearch = function (query, type) {
     var locale = "default";
     if (navigator.language.slice(0, 2) === "da") {
@@ -431,6 +468,14 @@ vAPI.openSearch = function (query, type) {
 
     vAPI.tabs.open({url: searchUrl, select: true});
 };
+
+vAPI.openSharePage = function (social) {
+    if (!social) return;
+
+    var url = µBlock.shareTo[social].replace(/\{\{url\}\}/, µBlock.shareUrl);
+
+    vAPI.tabs.open({url: url, select: true});
+}
 
 /******************************************************************************/
 /******************************************************************************/
