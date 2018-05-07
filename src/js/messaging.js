@@ -591,6 +591,7 @@ var onMessage = function(request, sender, callback) {
     case 'togglePauseFiltering':
         µb.togglePauseFilteringSwitch(request.state);
         µb.updateBadgeAsync(request.tabId);
+        µb.cookieHandling.toggleStopProtection(request.state);
         break;
 
     case 'setFiltersGroupException':

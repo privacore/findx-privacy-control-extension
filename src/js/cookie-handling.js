@@ -30,7 +30,10 @@
         this.updateTabsDomainsList();
 
         this.handleStatistics();
-        
+
+        if (ub.userSettings.pauseFiltering)
+            return;
+
         vAPI.cookies.registerListeners();
 
         if (ub.cookiesSettings.periodicalClearing) {
@@ -42,7 +45,23 @@
         }
     };
 
-    CookieHandling.prototype.onTabUpdate = function (tabId) {
+    CookieHandling.prototype.reset = function () {
+        vAPI.cookies.removeListeners();
+        this.stopPeriodicalClearing();
+    };
+
+    /****************************************************************************/
+
+    CookieHandling.prototype.toggleStopProtection = function (isStopped) {
+        if (isStopped)
+            this.reset();
+        else
+            this.init();
+    };
+
+    /****************************************************************************/
+
+    CookieHandling.prototype.onTabUpdate = function () {
         this.updateTabsDomainsList();
     };
 
@@ -60,6 +79,9 @@
         // console.log("removed: ", changeInfo.removed);
         // console.groupEnd(changeInfo.cookie.name);
 
+        if (ub.userSettings.pauseFiltering)
+            return;
+
         if (this.isThirdParty(changeInfo.cookie)) {
             this.handleThirdPartyCookie(changeInfo.cookie, changeInfo.removed);
         }
@@ -70,6 +92,11 @@
 
     CookieHandling.prototype.onDomainClosed = function (domain, url) {
         this.updateTabsDomainsList();
+
+        if (ub.userSettings.pauseFiltering) {
+            return;
+        }
+
         if (ub.cookiesSettings.clearDomainCookiesOnTabClose && !this.isDomainProtected(domain)) {
             vAPI.setTimeout(function () {
                 this.updateTabsDomainsList();
@@ -119,7 +146,7 @@
         return this.tabsDomainsList.has(domain);
     };
 
-    /******************************************************************************/
+    /****************************************************************************/
 
     /**
      * Check is cookie domain is opened in any tab.
@@ -161,7 +188,7 @@
         console.groupEnd();
     };
 
-    /******************************************************************************/
+    /****************************************************************************/
 
     /**
      * Add/remove cookie to thirdPartyCookies list
@@ -230,7 +257,7 @@
     };
 
 
-    /******************************************************************************/
+    /****************************************************************************/
 
     CookieHandling.prototype.isDomainProtected = function (domain) {
         return ub.cookiesSettings.protection.domains.indexOf(domain) !== -1;
@@ -254,7 +281,7 @@
         this.saveSettings();
     };
 
-    /******************************************************************************/
+    /****************************************************************************/
 
     CookieHandling.prototype.isCookieProtected = function (cookie, isThirdParty, forDomain) {
         let protectionList = isThirdParty ?
@@ -316,7 +343,7 @@
     };
 
 
-    /******************************************************************************/
+    /****************************************************************************/
 
     CookieHandling.prototype.clearDomainCookies = function (domain, url) {
         if (this.isDomainProtected(domain)) {
@@ -346,7 +373,7 @@
         }.bind(this));
     };
 
-    /******************************************************************************/
+    /****************************************************************************/
 
     CookieHandling.prototype.changeSettings = function (name, value) {
         var settings = ub.cookiesSettings;
@@ -408,7 +435,7 @@
         }
     };
 
-    /******************************************************************************/
+    /****************************************************************************/
 
     CookieHandling.prototype.clearingInterval = null;
 
@@ -473,13 +500,12 @@
     };
 
 
-    /******************************************************************************/
+    /****************************************************************************/
 
     CookieHandling.prototype.handleStatistics = function () {
         this.correctTodayStats();
 
-        // var saveAfter = 4 * 60 * 1000;
-        var saveAfter = 10 * 1000;
+        var saveAfter = 4 * 60 * 1000;
 
         var onTimeout = function() {
             this.correctTodayStats();
@@ -542,7 +568,7 @@
     };
 
 
-    /******************************************************************************/
+    /****************************************************************************/
 
 
     var getPageStoresByDomain = function (domain) {
