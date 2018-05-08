@@ -31,6 +31,26 @@
                 <a class="fa info important" href="https://github.com/gorhill/uBlock/wiki/Prevent-WebRTC-from-leaking-local-IP-address" target="_blank">&#xf05a;</a>
             </li>
         </ul>
+        <li class="subgroup"><span>Cookies</span><ul>
+            <li>
+                <div id="tab-close-clearing" type="checkbox" data-setting-name="clearDomainCookiesOnTabClose" data-setting-type="bool"></div>
+                <label for="tab-close-clearing">Clear domain cookies on tab close</label>
+            </li>
+            <li>
+                <div id="third-party-blocking" type="checkbox" data-setting-name="thirdPartyCookiesBlocking" data-setting-type="bool"></div>
+                <label for="third-party-blocking">Third party cookies blocking</label>
+            </li>
+            <li>
+                <div id="periodical-clearing" type="checkbox" data-setting-name="periodicalClearing" data-setting-type="bool"></div>
+                <label for="periodical-clearing">Periodical cookies clearing every
+                    <input type="number" data-setting-name="clearingPeriod" min="1" max="1440"> min
+                </label>
+            </li>
+            <li>
+                <div id="clear-on-start" type="checkbox" data-setting-name="clearCookiesOnAppStart" data-setting-type="bool"></div>
+                <label for="clear-on-start">Clear cookies on browser start</label>
+            </li>
+        </ul>
     </ul>
 
     <div id="localData" style="margin: 0 1em;">

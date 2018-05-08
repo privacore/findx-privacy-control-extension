@@ -43,6 +43,8 @@
         if (ub.cookiesSettings.clearCookiesOnAppStart) {
             this.clearAllUnprotected();
         }
+
+
     };
 
     CookieHandling.prototype.reset = function () {
@@ -57,6 +59,12 @@
             this.reset();
         else
             this.init();
+    };
+
+    /****************************************************************************/
+
+    CookieHandling.prototype.getSettings = function () {
+        return ub.cookiesSettings;
     };
 
     /****************************************************************************/
@@ -382,9 +390,28 @@
             return;
         }
 
-        settings[name] = value;
+        var mustSave = false;
 
-        this.saveSettings();
+        switch (name) {
+            case 'periodicalClearing':
+            case 'clearingPeriod':
+                this.stopPeriodicalClearing();
+                settings[name] = value;
+                if (value && !ub.userSettings.pauseFiltering)
+                    this.startPeriodicalClearing();
+
+                mustSave = true;
+                break;
+        }
+
+        if (settings.hasOwnProperty(name) && settings[name] !== value) {
+            settings[name] = value;
+            mustSave = true;
+        }
+
+        if (mustSave) {
+            this.saveSettings();
+        }
     };
 
     CookieHandling.prototype.saveSettings = function () {
@@ -433,6 +460,30 @@
                 continue;
             ub.cookiesSettings.protection.cookies[party][domain] = new Map(ub.cookiesSettings.protection.cookies[party][domain]);
         }
+    };
+
+    /****************************************************************************/
+
+    CookieHandling.prototype.backupSettings = function () {
+        var settings = JSON.parse(JSON.stringify(ub.cookiesSettings));
+        settings.protection.cookies.firstParty = this.serializeCookiesProtectionList(ub.cookiesSettings.protection.cookies.firstParty);
+        settings.protection.cookies.thirdParty = this.serializeCookiesProtectionList(ub.cookiesSettings.protection.cookies.thirdParty);
+        return settings
+    };
+
+    CookieHandling.prototype.restoreBackup = function (data) {
+        for ( var k in ub.cookiesSettings ) {
+            if ( ub.cookiesSettings.hasOwnProperty(k) === false ) {
+                continue;
+            }
+            if ( data.hasOwnProperty(k) === false ) {
+                continue;
+            }
+            ub.cookiesSettings[k] = data[k];
+        }
+
+        this.restoreFromFetched();
+        this.saveSettings();
     };
 
     /****************************************************************************/

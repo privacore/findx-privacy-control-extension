@@ -226,6 +226,12 @@ var onMessage = function(request, sender, callback) {
     case 'saveActiveTabState':
         vAPI.saveActiveTabState(request.tabId);
         break;
+    case 'cookiesSettings':
+        response = µb.cookieHandling.getSettings();
+        break;
+    case 'changeCookiesSettings':
+        response = µb.cookieHandling.changeSettings(request.name, request.value);
+        break;
         /**********************************/
 
     default:
@@ -902,7 +908,8 @@ var backupUserData = function(callback) {
         dynamicFilteringString: µb.permanentFirewall.toString(),
         urlFilteringString: µb.permanentURLFiltering.toString(),
         hostnameSwitchesString: µb.hnSwitches.toString(),
-        userFilters: ''
+        userFilters: '',
+        cookiesSettings: µb.cookieHandling.backupSettings()
     };
 
     var onUserFiltersReady = function(details) {
@@ -937,6 +944,9 @@ var restoreUserData = function(request) {
                 userData.hiddenSettingsString || ''
             );
         }
+
+        µBlock.cookieHandling.restoreBackup(userData.cookiesSettings);
+
         vAPI.storage.set({
             hiddenSettings: hiddenSettings,
             netWhitelist: userData.netWhitelist || '',
