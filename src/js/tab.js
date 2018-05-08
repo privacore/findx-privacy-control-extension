@@ -489,6 +489,17 @@ vAPI.tabs.onNavigation = function(details) {
     if ( details.frameId !== 0 ) {
         return;
     }
+
+    /**
+     * Modified by alexey.lepesin on 05.08.2017
+     */
+    // In other places tabId has the type int, so it is required to convert the tabId to the same type.
+    // Otherwise, this.pageStores (type Map) will store several identical objects with numeric and string keys.
+    // This leads to incorrect script operation.
+    if ( typeof details.tabId === 'string' ) {
+        details.tabId = parseInt(details.tabId);
+    }
+
     µb.tabContextManager.commit(details.tabId, details.url);
     var pageStore = µb.bindTabToPageStats(details.tabId, 'tabCommitted');
     if ( pageStore ) {

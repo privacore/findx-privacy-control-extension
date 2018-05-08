@@ -11,7 +11,7 @@
     <key>CFBundleDisplayName</key>
     <string>{name}</string>
     <key>CFBundleIdentifier</key>
-    <string>com.el1t.uBlock</string>
+    <string>findx.privacy.control</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleShortVersionString</key>
