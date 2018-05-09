@@ -11,7 +11,7 @@
     <key>CFBundleDisplayName</key>
     <string>{name}</string>
     <key>CFBundleIdentifier</key>
-    <string>findx.privacy.control</string>
+    <string>com.findx.privacycontrol</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleShortVersionString</key>
