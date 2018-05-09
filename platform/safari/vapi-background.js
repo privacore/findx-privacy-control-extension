@@ -81,7 +81,7 @@ safari.extension.settings.addEventListener('change', function(e) {
     }
 }, false);
 
-vAPI.storage = vAPI.cacheStorage = {
+vAPI.storage = {
     _storage: safari.extension.settings,
     get: function(keys, callback) {
         if ( typeof callback !== 'function' ) {
@@ -152,8 +152,28 @@ vAPI.storage = vAPI.cacheStorage = {
         if ( typeof callback === 'function' ) {
             callback();
         }
-    }
+    },
     // No getBytesInUse; too slow
+    /**
+     * Modified by alexey.lepesin on 05.09.2017
+     */
+    // The developer notes that it works very slowly, but we decided to try.
+    getBytesInUse: function(keys, callback) {
+        if ( typeof callback !== 'function' ) {
+            return;
+        }
+
+        // Too slow:
+        var getBytesInUseHandler = function(cacheSize) {
+            var i, storage = vAPI.storage._storage;
+            for ( i in storage ) {
+                if ( !storage.hasOwnProperty(i) ) continue;
+                    cacheSize += (storage[i] || '').length;
+            }
+            callback(cacheSize);
+        };
+        vAPI.cacheStorage.getBytesInUse(null, getBytesInUseHandler);
+    }
 };
 
 /******************************************************************************/
@@ -732,10 +752,13 @@ vAPI.messaging.onMessage = (function() {
             delete toAuxPending[this.timerId];
             this.timerId = null;
         }
+
+        /**
+         * Modified by alexey.lepesin on 05.09.2017
+         */
         // If page is undefined, we cannot send a message to it (and probably don't want to)
-        var page = this.port.target.page;
-        if ( page && typeof page.dispatchMessage === 'function' ) {
-            page.dispatchMessage(this.request.name, {
+        if ( this.port && this.port.target.page && typeof this.port.target.page.dispatchMessage === 'function' ) {
+            this.port.target.page.dispatchMessage(this.request.name, {
                 auxProcessId: this.request.message.auxProcessId,
                 channelName: this.request.message.channelName,
                 msg: response !== undefined ? response : null
