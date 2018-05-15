@@ -123,6 +123,9 @@
         var protectionList = document.querySelector('.collapsible.protection-lists');
         M.Collapsible.init(protectionList, {"accordion": false});
 
+        var domainCookiesList = document.querySelector('.collapsible.domain-cookies-list');
+        M.Collapsible.init(domainCookiesList, {"accordion": false});
+
         initializeTooltips();
     };
 
@@ -132,6 +135,10 @@
         M.Tooltip.init($("#pause_site_btn")[0], {enterDelay: 300});
         M.Tooltip.init($(".element-picker-btn")[0], {enterDelay: 300});
         M.Tooltip.init($(".open-protection-lists-btn")[0], {enterDelay: 300});
+
+        M.Tooltip.init($(".domain-cookies-blacklist-btn")[0], {enterDelay: 300});
+        M.Tooltip.init($(".domain-cookies-whitelist-btn")[0], {enterDelay: 300});
+        M.Tooltip.init($("#domain_cookies_remove_btn")[0], {enterDelay: 300});
 
         var footerLogo = document.querySelector('.footer-btn.logo');
         M.Tooltip.init(footerLogo, {enterDelay: 500});
@@ -168,6 +175,10 @@
         handleElementPickerBtn();
 
         handleStartProtectionBtn();
+
+        handleAdvancedSettingsBtn();
+        handleCookiesSettings();
+
 
         handleSocialBlocking();
 
@@ -1083,6 +1094,178 @@
 
     /***************************************************************************/
 
+    var renderCookiesTab = function () {
+        console.log ("renderCookiesTab ()            popup-privacycontrol.js" +
+                        "\n\t popupData: ", popupData);
+
+        let pageDomain = popupData.pageHostname;
+        if (!pageDomain.match(/^\./)) {
+            pageDomain = "." + pageDomain;
+        }
+        pageDomain = "*" + pageDomain;
+        $(".cookies-domain").text(pageDomain);
+
+        $("#cookies_tab .domain-cookies-count")
+            .text(popupData.cookies ? popupData.cookies.length || 0 : 0);
+
+        renderCookiesSettings();
+        renderCookiesList();
+    };
+
+    /***************************************************************************/
+
+    var handleAdvancedSettingsBtn = function () {
+        $('.advanced-settings-btn').off("click");
+        $('.advanced-settings-btn').on("click", openOptionsPage);
+    };
+
+    /***************************************************************************/
+
+    var handleCookiesSettings = function () {
+        $('.third-party-blocking-setting .setting-state-switcher input').off("change");
+        $('.third-party-blocking-setting .setting-state-switcher input').on("change", onThirdPartySettingSwitch);
+
+        $('.periodical-cookies-clearing-setting .setting-state-switcher input').off("change");
+        $('.periodical-cookies-clearing-setting .setting-state-switcher input').on("change", onPeriodicalClearingSettingSwitch);
+    };
+
+    var renderCookiesSettings = function () {
+        if (popupData.cookiesSettings.thirdPartyCookiesBlocking)
+            $('.third-party-blocking-setting .setting-state-switcher input')
+                .attr('checked', popupData.cookiesSettings.thirdPartyCookiesBlocking);
+
+        if (popupData.cookiesSettings.periodicalClearing)
+            $('.periodical-cookies-clearing-setting .setting-state-switcher input')
+                .attr('checked', popupData.cookiesSettings.periodicalClearing);
+    };
+
+    var onThirdPartySettingSwitch = function () {
+        popupData.cookiesSettings.thirdPartyCookiesBlocking = !popupData.cookiesSettings.thirdPartyCookiesBlocking;
+        messager.send(
+            'popupPanel',
+            {
+                what: 'changeCookiesSettings',
+                name: 'thirdPartyCookiesBlocking',
+                value: popupData.cookiesSettings.thirdPartyCookiesBlocking
+            }
+        );
+    };
+
+    var onPeriodicalClearingSettingSwitch = function () {
+        popupData.cookiesSettings.periodicalClearing = !popupData.cookiesSettings.periodicalClearing;
+        messager.send(
+            'popupPanel',
+            {
+                what: 'changeCookiesSettings',
+                name: 'periodicalClearing',
+                value: popupData.cookiesSettings.periodicalClearing
+            }
+        );
+    };
+
+    /***************************************************************************/
+
+    var cookies = [];
+
+    var renderCookiesList = function () {
+        cookies = [];
+        var divCookieList = $('.domain-cookies-list .collapsible-body');
+        divCookieList.html("");
+
+        if (!popupData.cookies)
+            return;
+
+        popupData.cookies.forEach(function (cookieData) {
+            let cookieItem = new CookieItem(cookieData);
+            cookieItem.appendTo(divCookieList);
+            cookies.push(cookieItem);
+        });
+
+
+
+
+        var divCookiesContainer = $('.domain-cookies-list');
+
+        divCookiesContainer.find(".collapsible-header").off('click');
+        divCookiesContainer.find(".collapsible-header").on('click', function (ev) {
+            setTimeout(function () {
+                if ($(divCookiesContainer).find(".collapsible-body").is(":visible")
+                    && popupData.cookies && popupData.cookies.length > 5)
+                {
+                    $(divCookiesContainer).find(".collapsible-body").mCustomScrollbar({
+                        scrollInertia: 0,
+                        autoHideScrollbar: false,
+                        scrollButtons:{ enable: false },
+                        advanced:{ updateOnContentResize: true },
+                        mouseWheel:{
+                            scrollAmount: 50
+                        }
+                    });
+                }
+                else {
+                    $(divCookiesContainer).find(".collapsible-body").mCustomScrollbar("destroy");
+                }
+            }, 400);
+        });
+    };
+
+    /***************************************************************************/
+
+    var CookieItem = function (initData) {
+        this.cookieData = initData;
+        this.divElement = null;
+
+        this.init();
+    };
+
+    CookieItem.prototype.itemTemplate = $('#cookie_template').html();
+
+    CookieItem.prototype.init = function () {
+        this.divElement = $(Mustache.render(this.itemTemplate, this.cookieData));
+        this.handleTooltips();
+        this.handleControls();
+    };
+
+    CookieItem.prototype.handleTooltips = function () {
+        var divCookieControls = $(this.divElement).find('.cookie-control');
+        divCookieControls.each(function (index, divBtn) {
+            let tooltip = vAPI.i18n.prepareTemplateText(vAPI.i18n($(divBtn).attr('data-tooltip')));
+            if ( tooltip ) {
+                $(divBtn).attr('data-tooltip', tooltip);
+            }
+
+            M.Tooltip.init(divBtn, {enterDelay: 500});
+        });
+    };
+
+    CookieItem.prototype.handleControls = function () {
+        var btnBlacklist = $(this.divElement).find('.cookie-control.blacklist-cookie-btn');
+        btnBlacklist.off('click');
+        btnBlacklist.on('click', function (ev) {
+            console.log("blacklist btn: ", this);
+        }.bind(this));
+
+        var btnWhitelist = $(this.divElement).find('.cookie-control.whitelist-cookie-btn');
+        btnWhitelist.off('click');
+        btnWhitelist.on('click', function (ev) {
+            console.log("whitelist btn: ", this);
+        }.bind(this));
+
+        var btnDelete = $(this.divElement).find('.cookie-control.delete-cookie-btn');
+        btnDelete.off('click');
+        btnDelete.on('click', function (ev) {
+            console.log("delete btn: ", this);
+        }.bind(this));
+    };
+
+    CookieItem.prototype.appendTo = function (divParent) {
+        if (!divParent) return;
+
+        $(divParent).append(this.divElement);
+    };
+
+    /***************************************************************************/
+
     var renderPopup = function (isInitial) {
         if (isInitial) {
             if (popupData.activePopupTab) {
@@ -1109,12 +1292,25 @@
         showProtectionStoppedStatus();
         showSocialBlockingStatus();
 
+        // Cookies
+        renderCookiesTab();
+
         // ProtectionLists
         renderTrackedUrls();
         displayUsedFilters(isInitial);
         updateFiltersTitleTooltips();
 
         $("#protection_tab").mCustomScrollbar({
+            // scrollInertia: 0,
+            autoHideScrollbar: false,
+            scrollButtons:{ enable: false },
+            advanced:{ updateOnContentResize: true },
+            mouseWheel:{
+                scrollAmount: 150
+            }
+        });
+
+        $("#cookies_tab").mCustomScrollbar({
             // scrollInertia: 0,
             autoHideScrollbar: false,
             scrollButtons:{ enable: false },

@@ -79,6 +79,10 @@
     "message": "Protection",
     "description": ""
   },
+  "popupTabCookies":{
+    "message": "Cookies",
+    "description": ""
+  },
   "popupPlateWeather":{
     "message": "Weather forecast",
     "description": ""
@@ -117,6 +121,62 @@
   },
   "popupTipManageLists":{
     "message": "Manage lists",
+    "description": ""
+  },
+  "popupTipBlacklist":{
+    "message": "Blacklist",
+    "description": ""
+  },
+  "popupTipWhitelist":{
+    "message": "Whitelist",
+    "description": ""
+  },
+  "popupTipDelete":{
+    "message": "Delete",
+    "description": ""
+  },
+  "popupTipRemoveAll":{
+    "message": "Remove all",
+    "description": ""
+  },
+  "popupCookiesPlateTitle":{
+    "message": "Cookies from",
+    "description": ""
+  },
+  "popupCookiesListTitle":{
+    "message": "Cookies from this website",
+    "description": ""
+  },
+  "popupCookiesListSubTitle":{
+    "message": "Set by",
+    "description": ""
+  },
+  "popupCookiesThirdPartyTitle":{
+    "message": "Prevent cross-site tracking",
+    "description": "Third party cookies blocking setting title"
+  },
+  "popupCookiesThirdPartySubTitle":{
+    "message": "Third party cookies blocked",
+    "description": "Third party cookies blocking setting sub title"
+  },
+  "popupCookiesPeriodicalClearingTitle":{
+    "message": "Autodelete unwanted cookies",
+    "description": "Periodical unprotected cookies clearing setting title"
+  },
+  "popupCookiesPeriodicalClearingSubTitle":{
+    "message": "Do not delete cookies periodically",
+    "description": "Periodical unprotected cookies clearing setting sub title"
+  },
+  "popupCookiesAdvSettings":{
+    "message": "Advanced settings",
+    "description": ""
+  },
+  "popupCookiesAdvSettingsText":{
+    "message": "You can adjust more advanced settings in the settings page",
+    "description": ""
+  },
+  "popupCookiesOpenSettings":{
+    "message": "Open settings",
     "description": ""
   },
   "popupPlateBlockedOnSite":{

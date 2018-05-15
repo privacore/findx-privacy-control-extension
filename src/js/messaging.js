@@ -460,7 +460,8 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         tooltipsDisabled: µb.userSettings.tooltipsDisabled,
         usedFilters: [],
         urls: null,
-        activePopupTab: µb.localSettings.activePopupTab
+        activePopupTab: µb.localSettings.activePopupTab,
+        cookiesSettings: µb.cookiesSettings
     };
 
     var pageStore = µb.pageStoreFromTabId(tabId);
@@ -492,6 +493,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.noRemoteFonts = µb.hnSwitches.evaluateZ('no-remote-fonts', rootHostname);
         r.remoteFontCount = pageStore.remoteFontCount;
         r.filtersGroupsExceptions = getFiltersGroupsExceptions(r.pageDomain);
+        r.cookies = pageStore.cookies || [];
 
         r.usedFilters = getAllFiltersInUse();
         // r.urls = pageStore.netFilteringCache.results;
@@ -601,6 +603,10 @@ var onMessage = function(request, sender, callback) {
         break;
 
     case 'setFiltersGroupException':
+        setFiltersGroupException(request.data.group, request.data.pageDomain, request.data.state);
+        break;
+
+    case 'thirdPartyBlockingState':
         setFiltersGroupException(request.data.group, request.data.pageDomain, request.data.state);
         break;
 

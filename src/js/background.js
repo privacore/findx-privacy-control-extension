@@ -203,7 +203,7 @@ var µBlock = (function() { // jshint ignore:line
         cookiesSettings: {
             clearDomainCookiesOnTabClose: true,
             clearDomainCookiesAfter: 5 * oneSecond,
-            thirdPartyCookiesBlocking: false,
+            thirdPartyCookiesBlocking: true,
             periodicalClearing: false,
             clearingPeriod: 10 * oneMinute,
             clearCookiesOnAppStart: false,
