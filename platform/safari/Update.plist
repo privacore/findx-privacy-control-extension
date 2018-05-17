@@ -6,7 +6,7 @@
 		<array>
 			<dict>
 				<key>CFBundleIdentifier</key>
-				<string>findx.privacy.control</string>
+				<string>com.findx.privacycontrol</string>
 				<key>Developer Identifier</key>
 				<string>3TN2DC58A4</string>
 				<key>CFBundleShortVersionString</key>
@@ -14,7 +14,7 @@
 				<key>CFBundleVersion</key>
 				<string>{buildNumber}</string>
 				<key>URL</key>
-				<string>https://raw.githubusercontent.com/el1t/uBlock-Safari-releases/master/uBlock0.safariextz</string>
+				<string>https://get.findx.com/findx.safariextz</string>
 			</dict>
 		</array>
 	</dict>

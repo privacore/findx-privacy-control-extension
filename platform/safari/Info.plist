@@ -96,8 +96,8 @@
         </dict>
     </dict>
     <key>Update Manifest URL</key>
-    <string>https://raw.githubusercontent.com/el1t/uBlock-Safari-releases/master/Update.plist</string>
+    <string>https://get.findx.com/Update.plist</string>
     <key>Website</key>
-    <string>https://www.github.com/el1t/uBlock-Safari</string>
+    <string>https://get.findx.com</string>
 </dict>
 </plist>
