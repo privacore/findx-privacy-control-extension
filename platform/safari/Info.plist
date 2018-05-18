@@ -96,7 +96,7 @@
         </dict>
     </dict>
     <key>Update Manifest URL</key>
-    <string>https://get.findx.com/Update.plist</string>
+    <string>https://download.findx.com/Update.plist</string>
     <key>Website</key>
     <string>https://get.findx.com</string>
 </dict>
