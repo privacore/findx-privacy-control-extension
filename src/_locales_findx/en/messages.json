@@ -123,20 +123,16 @@
     "message": "Manage lists",
     "description": ""
   },
-  "popupTipBlacklist":{
-    "message": "Blacklist",
-    "description": ""
-  },
-  "popupTipWhitelist":{
-    "message": "Whitelist",
-    "description": ""
-  },
   "popupTipDelete":{
     "message": "Delete",
     "description": ""
   },
   "popupTipRemoveAll":{
     "message": "Remove all",
+    "description": ""
+  },
+  "popupTipReset":{
+    "message": "Reset",
     "description": ""
   },
   "popupCookiesPlateTitle":{
@@ -149,6 +145,14 @@
   },
   "popupCookiesListSubTitle":{
     "message": "Set by",
+    "description": ""
+  },
+  "popupCookiesBlacklist":{
+    "message": "Blacklist",
+    "description": ""
+  },
+  "popupCookiesWhitelist":{
+    "message": "Whitelist",
     "description": ""
   },
   "popupCookiesThirdPartyTitle":{

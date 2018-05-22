@@ -300,7 +300,6 @@ var onFirstFetchReady = function(fetched) {
         fromFetch(µb.restoreBackupSettings, fetched);
         fromFetch(µb.cookiesSettings, fetched);
         fromFetch(µb.cookiesStats, fetched);
-        µb.cookieHandling.restoreFromFetched(); // Findx. We need restore protection lists separately
         onNetWhitelistReady(fetched.netWhitelist);
         onVersionReady(fetched.version);
 

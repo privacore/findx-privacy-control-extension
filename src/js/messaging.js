@@ -610,6 +610,29 @@ var onMessage = function(request, sender, callback) {
         setFiltersGroupException(request.data.group, request.data.pageDomain, request.data.state);
         break;
 
+    case 'toggleCookiesDomainWhitelist':
+        if (request.state)
+            µb.cookieHandling.addToWhitelist(null, request.domain);
+        else
+            µb.cookieHandling.rmFromWhitelist(null, request.domain);
+        break;
+
+    case 'toggleCookiesDomainBlacklist':
+        if (request.state)
+            µb.cookieHandling.addToBlacklist(null, request.domain);
+        else
+            µb.cookieHandling.rmFromBlacklist(null, request.domain);
+        break;
+
+    case 'resetCookiesDomain':
+        µb.cookieHandling.rmFromBlacklist(null, request.domain);
+        µb.cookieHandling.rmFromWhitelist(null, request.domain);
+        break;
+
+    case 'removeDomainCookies':
+        µb.cookieHandling.clearDomainCookies(request.domain);
+        break;
+
     default:
         return vAPI.messaging.UNHANDLED;
     }

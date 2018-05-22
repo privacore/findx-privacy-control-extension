@@ -952,7 +952,7 @@ PageStore.prototype.updatePageCookiesList = function (callback) {
         return;
     }
 
-    vAPI.cookies.getDomainCookies(rootDomain, callback);
+    µb.cookieHandling.getDomainInitCookies(rootDomain, callback);
 };
 
 PageStore.prototype.onDomainClosed = function () {

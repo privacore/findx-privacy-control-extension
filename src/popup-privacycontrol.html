@@ -114,7 +114,7 @@
                 </li>
                 <li class="tab">
                     <a class="" data-id="cookies_tab" href="">
-                        <img src="img/popup/shield.svg" alt=""/>
+                        <img src="img/popup/cookie.svg" alt=""/>
                         <span data-i18n="popupTabCookies"></span>
                     </a>
                 </li>
@@ -283,29 +283,30 @@
                 <div id="cookies_tab" class="col s12 tab-frame">
 
                     <div class="plates-row">
-                        <div class="plate full-plate bg-cookies-plate">
+                        <div class="plate full-plate domain-cookies-plate bg-cookies-plate">
                             <div class="plate-content">
                                 <div class="plate-content-title truncate">
                                     <span data-i18n="popupCookiesPlateTitle"></span>
                                     <span class="cookies-domain"></span>
                                 </div>
                                 <div class="plate-content-text">
-                                    <span class="domain-cookies-count"></span>
+                                    <span class="domain-cookies-count"></span> (<span class="domain-cookies-count-total"></span>)
                                 </div>
                             </div>
                             <div class="plate-footer">
-                                <div class="waves-effect waves-custom-grey plate-footer-btn tooltipped domain-cookies-blacklist-btn"
-                                     data-position="bottom" data-delay="50" data-tooltip="popupTipBlacklist">
-                                    <img src="img/popup/flash.svg" alt=""/>
+                                <div class="waves-effect waves-custom-grey plate-footer-btn domain-cookies-reset-btn tooltipped"
+                                     data-position="bottom" data-delay="50" data-tooltip="popupTipReset">
+                                    <img src="img/popup/restore.svg" alt=""/>
                                 </div>
-                                <div class="waves-effect waves-custom-grey plate-footer-btn tooltipped domain-cookies-whitelist-btn"
-                                     data-position="bottom" data-delay="50" data-tooltip="popupTipWhitelist">
-                                    <img src="img/popup/flash.svg" alt=""/>
-                                </div>
+                                <div class="waves-effect waves-custom-grey plate-footer-btn text-btn domain-cookies-blacklist-btn"
+                                      data-i18n="popupCookiesBlacklist"></div>
+                                <div class="waves-effect waves-custom-grey plate-footer-btn text-btn domain-cookies-whitelist-btn"
+                                     data-i18n="popupCookiesWhitelist"></div>
                             </div>
                             <a id="domain_cookies_remove_btn" class="btn-floating btn-large waves-effect waves-light tooltipped"
                                data-position="bottom" data-delay="50" data-tooltip="popupTipRemoveAll">
-                                <img src="img/popup/on_off_button.svg" alt=""/>
+                                <img class="trash-white-icon" src="img/popup/trash_white.svg" alt=""/>
+                                <img class="trash-grey-icon" src="img/popup/trash_grey.svg" alt=""/>
                             </a>
                         </div>
                     </div>
@@ -332,7 +333,7 @@
                     <div class="settings-container">
                         <div class="setting-item third-party-blocking-setting">
                             <div class="setting-icon">
-                                <img src="img/popup/filterlists.svg" alt=""/>
+                                <img src="img/popup/cookies_cross_site.svg" alt=""/>
                             </div>
                             <div class="setting-content">
                                 <div class="setting-title" data-i18n="popupCookiesThirdPartyTitle"></div>
@@ -349,7 +350,7 @@
                         </div>
                         <div class="setting-item periodical-cookies-clearing-setting">
                             <div class="setting-icon">
-                                <img src="img/popup/filterlists.svg" alt=""/>
+                                <img src="img/popup/cookies_timer.svg" alt=""/>
                             </div>
                             <div class="setting-content">
                                 <div class="setting-title" data-i18n="popupCookiesPeriodicalClearingTitle"></div>
@@ -536,19 +537,11 @@
     </li>
 </script>
 
-<script id="cookie_template" type="text/html">
+<script id="cookie_item_template" type="text/html">
     <div class="collapsible-item-body-row cookie-item">
         <div class="truncate cookie-name" title="{{name}}">{{name}}</div>
-        <div class="cookie-controls">
-            <div class="cookie-control blacklist-cookie-btn" data-tooltip="popupTipBlacklist">
-                <img src="img/popup/filterlists.svg" alt="Blacklist"/>
-            </div>
-            <div class="cookie-control whitelist-cookie-btn" data-tooltip="popupTipWhitelist">
-                <img src="img/popup/filterlists.svg" alt="Whitelist"/>
-            </div>
-            <div class="cookie-control delete-cookie-btn" data-tooltip="popupTipDelete">
-                <img src="img/popup/filterlists.svg" alt="Delete"/>
-            </div>
+        <div class="waves-effect waves-custom-grey cookie-control cookie-details-btn">
+            <img src="img/popup/dots-vertical.svg" alt="Details"/>
         </div>
     </div>
 </script>

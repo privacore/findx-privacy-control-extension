@@ -136,9 +136,7 @@
         M.Tooltip.init($(".element-picker-btn")[0], {enterDelay: 300});
         M.Tooltip.init($(".open-protection-lists-btn")[0], {enterDelay: 300});
 
-        M.Tooltip.init($(".domain-cookies-blacklist-btn")[0], {enterDelay: 300});
-        M.Tooltip.init($(".domain-cookies-whitelist-btn")[0], {enterDelay: 300});
-        M.Tooltip.init($("#domain_cookies_remove_btn")[0], {enterDelay: 300});
+        M.Tooltip.init($(".domain-cookies-reset-btn")[0], {enterDelay: 300});
 
         var footerLogo = document.querySelector('.footer-btn.logo');
         M.Tooltip.init(footerLogo, {enterDelay: 500});
@@ -159,6 +157,25 @@
         });
     };
 
+
+    /**
+     * "Remove all" cookies floating button can be disabled if domain has no cookies
+     *      in this case we must disable button tooltip.
+     * @type {null} - instance of Material tooltip object
+     * @private
+     */
+    var _removeCookiesBtnTip = null;
+    var addRemoveCookiesBtnTip = function () {
+        if (_removeCookiesBtnTip)
+            rmRemoveCookiesBtnTip();
+
+        _removeCookiesBtnTip = M.Tooltip.init($("#domain_cookies_remove_btn")[0], {enterDelay: 300});
+    };
+    var rmRemoveCookiesBtnTip = function () {
+        if (_removeCookiesBtnTip)
+            _removeCookiesBtnTip.destroy();
+    };
+
     /***************************************************************************/
 
     var handleControls = function () {
@@ -176,9 +193,7 @@
 
         handleStartProtectionBtn();
 
-        handleAdvancedSettingsBtn();
-        handleCookiesSettings();
-
+        handleCookiesTab();
 
         handleSocialBlocking();
 
@@ -1094,22 +1109,255 @@
 
     /***************************************************************************/
 
+    /**
+     * Handle controls in cookies tab.
+     */
+    var handleCookiesTab = function () {
+        handleRemoveAllCookiesBtn();
+        handleWhitelistCookiesDomainBtn();
+        handleBlacklistCookiesDomainBtn();
+        handleResetCookiesDomainBtn();
+
+        handleNoCookiesListOpening();
+
+        handleAdvancedSettingsBtn();
+        handleCookiesSettings();
+    };
+
+    var handleRemoveAllCookiesBtn = function () {
+        $("#domain_cookies_remove_btn").off('click');
+        $("#domain_cookies_remove_btn").on('click', function (ev) {
+            messager.send('popupPanel', {
+                what:  'removeDomainCookies',
+                domain:   popupData.pageDomain
+            });
+        });
+    };
+
+    var handleWhitelistCookiesDomainBtn = function () {
+        $('#cookies_tab .domain-cookies-whitelist-btn').off('click');
+        $('#cookies_tab .domain-cookies-whitelist-btn').on('click', onDomainWhitelistClick);
+    };
+
+    var handleBlacklistCookiesDomainBtn = function () {
+        $('#cookies_tab .domain-cookies-blacklist-btn').off('click');
+        $('#cookies_tab .domain-cookies-blacklist-btn').on('click', onDomainBlacklistClick);
+    };
+
+    var handleResetCookiesDomainBtn = function () {
+        $('#cookies_tab .domain-cookies-reset-btn').off('click');
+        $('#cookies_tab .domain-cookies-reset-btn').on('click', resetCookiesDomainState);
+    };
+
+    /**
+     * If domain has no cookies - we'll prevent cookies list expanding.
+     */
+    var handleNoCookiesListOpening = function () {
+        var divCookiesContainer = $('.domain-cookies-list');
+        divCookiesContainer.find(".collapsible-header").off('click');
+        divCookiesContainer.find(".collapsible-header").on('click', function (ev) {
+            if (isNoDomainCookies()) {
+                ev.stopPropagation();
+                ev.preventDefault();
+            }
+        });
+    };
+
+
+    /***************************************************************************/
+
     var renderCookiesTab = function () {
         console.log ("renderCookiesTab ()            popup-privacycontrol.js" +
                         "\n\t popupData: ", popupData);
 
+        showCookiesDomain();
+        showDomainWhitelistState();
+        showDomainBlacklistState();
+        showCookiesQuantity();
+        updateNoCookies();
+        renderCookiesSettings();
+        renderCookiesList();
+    };
+
+    /***************************************************************************/
+
+    var showCookiesDomain = function () {
         let pageDomain = popupData.pageHostname;
         if (!pageDomain.match(/^\./)) {
             pageDomain = "." + pageDomain;
         }
         pageDomain = "*" + pageDomain;
         $(".cookies-domain").text(pageDomain);
+    };
 
-        $("#cookies_tab .domain-cookies-count")
+    /***************************************************************************/
+
+    /**
+     * If opened domain has no cookies - we must disable "Remove all" floating button
+     *      and make cookies list not expandable.
+     */
+    var updateNoCookies = function () {
+        if (isNoDomainCookies()) {
+            $('body').toggleClass('no-cookies', true);
+            rmRemoveCookiesBtnTip(); // disable button tooltip.
+        }
+        else {
+            $('body').toggleClass('no-cookies', false);
+            if (!_removeCookiesBtnTip) // enable button tooltip if it is not enabled yet
+                addRemoveCookiesBtnTip();
+        }
+    };
+
+    /***************************************************************************/
+
+    var showCookiesQuantity = function () {
+        $("#cookies_tab .domain-cookies-count").text(getAllowedCookiesQty());
+        $("#cookies_tab .domain-cookies-count-total")
             .text(popupData.cookies ? popupData.cookies.length || 0 : 0);
+    };
 
-        renderCookiesSettings();
-        renderCookiesList();
+    /**
+     * Returns quantity of cookies which were not blocked.
+     * Current number is displays in a plate (large font number)
+     * @returns {number}
+     */
+    var getAllowedCookiesQty = function () {
+        let qty = 0;
+
+        if (popupData && popupData.cookies) {
+            popupData.cookies.forEach(function (cookie) {
+                if (!cookie.removed)
+                    qty++;
+            });
+        }
+
+        return qty;
+    };
+
+    /***************************************************************************/
+
+    var isNoDomainCookies = function () {
+        return !popupData.cookies || !popupData.cookies.length;
+    };
+
+    /***************************************************************************/
+
+    var onDomainWhitelistClick = function () {
+        var state = isCookieDomainWhitelisted(popupData.pageDomain);
+        if (state)
+            return;
+
+        setDomainWhitelistState(!state);
+
+        var blacklisted = isCookieDomainBlacklisted(popupData.pageDomain);
+        if (blacklisted) {
+            setDomainBlacklistState(!blacklisted);
+        }
+    };
+
+    var setDomainWhitelistState = function (state) {
+        // Add domain to whitelist locally.
+        // TODO: if we'll reload a tab after button clicked - remove this line
+        if (state)
+            popupData.cookiesSettings.whitelist.domains.push(popupData.pageDomain);
+        else
+            rmDomainFromWhitelist();
+
+        showDomainWhitelistState();
+
+        messager.send('popupPanel', {
+            what:  'toggleCookiesDomainWhitelist',
+            domain:   popupData.pageDomain,
+            state: state
+        });
+    };
+
+    var showDomainWhitelistState = function () {
+        $('#cookies_tab .domain-cookies-plate')
+            .toggleClass('whitelisted-domain', isCookieDomainWhitelisted(popupData.pageDomain));
+    };
+
+    var isCookieDomainWhitelisted = function (domain) {
+        if (!popupData || !popupData.cookiesSettings || !popupData.cookiesSettings.whitelist)
+            return false;
+
+        return popupData.cookiesSettings.whitelist.domains.indexOf(domain) !== -1;
+    };
+
+    /**
+     * Current method used only for removing from local variable "popupData.cookiesSettings.blacklist.whitelist"
+     */
+    var rmDomainFromWhitelist = function () {
+        let domainIndex = popupData.cookiesSettings.whitelist.domains.indexOf(popupData.pageDomain);
+        if (domainIndex !== -1)
+            popupData.cookiesSettings.whitelist.domains.splice(domainIndex, 1);
+    };
+
+    /***************************************************************************/
+
+    var onDomainBlacklistClick = function () {
+        var state = isCookieDomainBlacklisted(popupData.pageDomain);
+
+        if (state)
+            return;
+
+        setDomainBlacklistState(!state);
+
+        var whitelisted = isCookieDomainWhitelisted(popupData.pageDomain);
+        if (whitelisted) {
+            setDomainWhitelistState(!whitelisted);
+        }
+    };
+
+    var setDomainBlacklistState = function (state) {
+        // Add\remove domain to blacklist locally.
+        // TODO: if we'll reload a tab after button clicked - remove this line
+        if (state) {
+            popupData.cookiesSettings.blacklist.domains.push(popupData.pageDomain);
+        }
+        else
+            rmDomainFromBlacklist();
+
+        showDomainBlacklistState();
+
+        messager.send('popupPanel', {
+            what:  'toggleCookiesDomainBlacklist',
+            domain:   popupData.pageDomain,
+            state: state
+        });
+    };
+
+    var showDomainBlacklistState = function () {
+        $('#cookies_tab .domain-cookies-plate')
+            .toggleClass('blacklisted-domain', isCookieDomainBlacklisted(popupData.pageDomain));
+    };
+
+    var isCookieDomainBlacklisted = function (domain) {
+        if (!popupData || !popupData.cookiesSettings || !popupData.cookiesSettings.blacklist)
+            return false;
+
+        return popupData.cookiesSettings.blacklist.domains.indexOf(domain) !== -1;
+    };
+
+    /**
+     * Current method used only for removing from local variable "popupData.cookiesSettings.blacklist.domains"
+     */
+    var rmDomainFromBlacklist = function () {
+        let domainIndex = popupData.cookiesSettings.blacklist.domains.indexOf(popupData.pageDomain);
+        if (domainIndex !== -1)
+            popupData.cookiesSettings.blacklist.domains.splice(domainIndex, 1);
+    };
+
+    /***************************************************************************/
+
+    var resetCookiesDomainState = function () {
+        messager.send('popupPanel', {
+            what:  'resetCookiesDomain',
+            domain:   popupData.pageDomain
+        });
+
+        setDomainWhitelistState(false);
+        setDomainBlacklistState(false);
     };
 
     /***************************************************************************/
@@ -1180,33 +1428,6 @@
             cookieItem.appendTo(divCookieList);
             cookies.push(cookieItem);
         });
-
-
-
-
-        var divCookiesContainer = $('.domain-cookies-list');
-
-        divCookiesContainer.find(".collapsible-header").off('click');
-        divCookiesContainer.find(".collapsible-header").on('click', function (ev) {
-            setTimeout(function () {
-                if ($(divCookiesContainer).find(".collapsible-body").is(":visible")
-                    && popupData.cookies && popupData.cookies.length > 5)
-                {
-                    $(divCookiesContainer).find(".collapsible-body").mCustomScrollbar({
-                        scrollInertia: 0,
-                        autoHideScrollbar: false,
-                        scrollButtons:{ enable: false },
-                        advanced:{ updateOnContentResize: true },
-                        mouseWheel:{
-                            scrollAmount: 50
-                        }
-                    });
-                }
-                else {
-                    $(divCookiesContainer).find(".collapsible-body").mCustomScrollbar("destroy");
-                }
-            }, 400);
-        });
     };
 
     /***************************************************************************/
@@ -1218,11 +1439,11 @@
         this.init();
     };
 
-    CookieItem.prototype.itemTemplate = $('#cookie_template').html();
+    CookieItem.prototype.itemTemplate = $('#cookie_item_template').html();
 
     CookieItem.prototype.init = function () {
         this.divElement = $(Mustache.render(this.itemTemplate, this.cookieData));
-        this.handleTooltips();
+        // this.handleTooltips(); // Currently we don't have tooltips. Remove this block if it is not used
         this.handleControls();
     };
 
@@ -1239,22 +1460,10 @@
     };
 
     CookieItem.prototype.handleControls = function () {
-        var btnBlacklist = $(this.divElement).find('.cookie-control.blacklist-cookie-btn');
-        btnBlacklist.off('click');
-        btnBlacklist.on('click', function (ev) {
-            console.log("blacklist btn: ", this);
-        }.bind(this));
-
-        var btnWhitelist = $(this.divElement).find('.cookie-control.whitelist-cookie-btn');
-        btnWhitelist.off('click');
-        btnWhitelist.on('click', function (ev) {
-            console.log("whitelist btn: ", this);
-        }.bind(this));
-
-        var btnDelete = $(this.divElement).find('.cookie-control.delete-cookie-btn');
-        btnDelete.off('click');
-        btnDelete.on('click', function (ev) {
-            console.log("delete btn: ", this);
+        var btnDetails = $(this.divElement).find('.cookie-control.cookie-details-btn');
+        btnDetails.off('click');
+        btnDetails.on('click', function (ev) {
+            console.log("details btn: ", this);
         }.bind(this));
     };
 

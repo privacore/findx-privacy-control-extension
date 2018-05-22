@@ -207,18 +207,14 @@ var µBlock = (function() { // jshint ignore:line
             periodicalClearing: false,
             clearingPeriod: 10 * oneMinute,
             clearCookiesOnAppStart: false,
-            protection: {
+
+            blacklist: {
                 domains: [],
-                cookies: {
-                    /**
-                     * {domain: Map<cookie_name:cookie>[]}
-                     */
-                    firstParty: {},
-                    /**
-                     * {domain: Map<cookie_name:cookie>[]}
-                     */
-                    thirdParty: {}
-                }
+                cookies: []
+            },
+            whitelist: {
+                domains: [],
+                cookies: []
             }
         },
         cookiesStats: {
