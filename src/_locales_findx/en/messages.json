@@ -207,6 +207,14 @@
     "message": "Do not delete cookies periodically",
     "description": "Periodical unprotected cookies clearing setting sub title"
   },
+  "popupCookiesControlSettingTitle":{
+    "message": "Cookie control",
+    "description": ""
+  },
+  "popupCookiesControlSettingSubTitle":{
+    "message": "See domains with cookies, and control white- and blacklisted sites",
+    "description": ""
+  },
   "popupCookiesAdvSettings":{
     "message": "Advanced settings",
     "description": ""

@@ -1088,9 +1088,16 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     width: 100%;
     display: flex;
     align-items: center;
+    cursor: default;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
 }
 #cookies_tab .settings-container .setting-item:not(:last-child) {
     margin-bottom: 20px;
+}
+#cookies_tab .settings-container .setting-item.clickable-setting {
+    cursor: pointer;
 }
 #cookies_tab .setting-item .setting-icon {
     width: 24px;
@@ -1099,10 +1106,6 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 }
 #cookies_tab .setting-item .setting-content {
     flex: 1;
-    cursor: default;
-}
-#cookies_tab .setting-item .setting-state-switcher .switch label .lever {
-    margin-right: 10px;
 }
 #cookies_tab .setting-item .setting-title {
     font-size: 16px;
@@ -1110,6 +1113,22 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 }
 #cookies_tab .setting-item .setting-subtitle {
     color: rgba(0,0,0,0.54);
+    line-height: 16px;
+}
+#cookies_tab .setting-item .setting-control {
+    width: 55px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#cookies_tab .setting-item .setting-state-switcher .switch label .lever {
+    margin-right: 10px;
+}
+#cookies_tab .setting-item .setting-control > img {
+    width: 24px;
+    height: 24px;
+    transform: rotate(-90deg); /** Current line must be removed after chevron icon added **/
 }
 
 #cookies_tab .advanced-settings-container {
@@ -1285,6 +1304,10 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 .cookie-details-container.blacklisted-cookie .cookie-blacklist-btn,
 .cookie-details-container.whitelisted-cookie .cookie-whitelist-btn {
     color: rgba(0,0,0,.32);
+}
+
+.cookie-details-container:not(.blacklisted-cookie):not(.whitelisted-cookie) .cookie-details-footer .cookie-reset-btn {
+    display: none;
 }
 
 /******* FOOTER *******/

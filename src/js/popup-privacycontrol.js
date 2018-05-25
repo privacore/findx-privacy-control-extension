@@ -1543,6 +1543,15 @@
             $(elem).html(vAPI.i18n.prepareTemplateText(vAPI.i18n($(elem).attr('data-i18n'))));
         });
 
+        this.divDetailsWnd.find('[data-tooltip]').each(function(index, elem) {
+            var tooltip = vAPI.i18n.prepareTemplateText(vAPI.i18n($(elem).attr('data-tooltip')));
+            if ( tooltip ) {
+                $(elem).attr('data-tooltip', tooltip);
+            }
+
+            M.Tooltip.init(elem, {enterDelay: 300});
+        });
+
         this.handleDetailsWnd();
         this.divDetailsWrapper.append(this.divDetailsWnd);
     };
@@ -1569,11 +1578,15 @@
         this.handleWhitelistBtn();
         this.handleBlacklistBtn();
         this.handleRemoveBtn();
+        this.handleResetBtn();
     };
 
     CookieItem.prototype.handleWhitelistBtn = function () {
         this.divDetailsWnd.find('.cookie-whitelist-btn').off('click');
         this.divDetailsWnd.find('.cookie-whitelist-btn').on('click', function (ev) {
+            if (this.cookieData.whitelisted)
+                return;
+
             this.setWhitelistSate(!this.cookieData.whitelisted);
             this.setBlacklistState(false); // Always remove from blacklist
             reloadTab();
@@ -1599,6 +1612,9 @@
     CookieItem.prototype.handleBlacklistBtn = function () {
         this.divDetailsWnd.find('.cookie-blacklist-btn').off('click');
         this.divDetailsWnd.find('.cookie-blacklist-btn').on('click', function (ev) {
+            if (this.cookieData.blacklisted)
+                return;
+
             this.setBlacklistState(!this.cookieData.blacklisted);
             this.setWhitelistSate(false); // Always remove from whitelist
             reloadTab();
@@ -1632,6 +1648,17 @@
                     state: this.cookieData.blacklisted
                 }
             );
+
+            reloadTab();
+            vAPI.closePopup();
+        }.bind(this));
+    };
+
+    CookieItem.prototype.handleResetBtn = function () {
+        this.divDetailsWnd.find('.cookie-reset-btn').off('click');
+        this.divDetailsWnd.find('.cookie-reset-btn').on('click', function (ev) {
+            this.setBlacklistState(false);
+            this.setWhitelistSate(false);
 
             reloadTab();
             vAPI.closePopup();
