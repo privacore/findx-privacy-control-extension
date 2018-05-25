@@ -1127,6 +1127,10 @@
     var handleRemoveAllCookiesBtn = function () {
         $("#domain_cookies_remove_btn").off('click');
         $("#domain_cookies_remove_btn").on('click', function (ev) {
+            if (isNoDomainCookies()) {
+                return;
+            }
+
             messager.send('popupPanel', {
                 what:  'removeDomainCookies',
                 domain:   popupData.pageDomain
