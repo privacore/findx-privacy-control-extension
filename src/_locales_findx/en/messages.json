@@ -155,6 +155,42 @@
     "message": "Whitelist",
     "description": ""
   },
+  "popupCookieDetailsName":{
+    "message": "Name",
+    "description": ""
+  },
+  "popupCookieDetailsContent":{
+    "message": "Content",
+    "description": ""
+  },
+  "popupCookieDetailsHost":{
+    "message": "Host",
+    "description": ""
+  },
+  "popupCookieDetailsPath":{
+    "message": "Path",
+    "description": ""
+  },
+  "popupCookieDetailsSendFor":{
+    "message": "Send for",
+    "description": ""
+  },
+  "popupCookieDetailsSendForAny":{
+    "message": "Any kind of connection",
+    "description": ""
+  },
+  "popupCookieDetailsSendForSecure":{
+    "message": "Secure connections only",
+    "description": ""
+  },
+  "popupCookieDetailsExpires":{
+    "message": "Expires",
+    "description": ""
+  },
+  "popupCookieDetailsExpiresSession":{
+    "message": "When the browsing session ends",
+    "description": ""
+  },
   "popupCookiesThirdPartyTitle":{
     "message": "Prevent cross-site tracking",
     "description": "Third party cookies blocking setting title"

@@ -477,7 +477,9 @@ body:not(.protection-off) .protection-status-off {
 
 /******* Protection stopped, Share dialog *******/
 
-.protection-stopped-dialog, .share-dialog {
+.protection-stopped-dialog,
+.share-dialog,
+.cookie-details-dialog {
     position: absolute;
     left: 0;
     top: 0;
@@ -491,10 +493,13 @@ body:not(.protection-off) .protection-status-off {
     align-items: center;
 }
 body.protection-stopped .main-tabs-slider[data-active-tab="protection_tab"] .protection-stopped-dialog,
+body.protection-stopped .main-tabs-slider[data-active-tab="cookies_tab"] .protection-stopped-dialog,
 body.share-active .main-tabs-slider[data-active-tab="protection_tab"] .share-dialog {
     display: flex;
 }
-body.share-active .main-tabs-slider[data-active-tab="protection_tab"] .protection-stopped-dialog {
+body.share-active .main-tabs-slider[data-active-tab="protection_tab"] .protection-stopped-dialog,
+body.share-active .main-tabs-slider[data-active-tab="cookies_tab"] .cookie-details-dialog,
+body.protection-stopped .main-tabs-slider[data-active-tab="cookies_tab"] .cookie-details-dialog{
     display: none;
 }
 .protection-stopped-inner,
@@ -1035,6 +1040,7 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     padding-left: 16px;
     border: none;
     max-height: none;
+    background-color: #fff;
 }
 #cookies_tab .domain-cookies-list .collapsible-item-body-row {
     margin-right: 10px;
@@ -1042,6 +1048,12 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 #cookies_tab .domain-cookies-list .cookie-name {
     flex: 1;
     padding-right: 15px;
+}
+#cookies_tab .domain-cookies-list .cookie-item.whitelisted-cookie .cookie-name {
+    color: #6bad6f;
+}
+#cookies_tab .domain-cookies-list .cookie-item.blacklisted-cookie .cookie-name {
+    color: #e55a50;
 }
 
 #cookies_tab .domain-cookies-list .cookie-control {
@@ -1103,6 +1115,7 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 #cookies_tab .advanced-settings-container {
     padding: 20px 16px 70px;
     cursor: default;
+    background-color: #fff;
 }
 #cookies_tab .adv-container-title {
     line-height: 16px;
@@ -1114,6 +1127,165 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     color: #2191d0;
 }
 
+
+/******* Cookie details *******/
+
+.cookie-details-dialog {
+    padding: 8px;
+}
+.main-tabs-slider[data-active-tab="cookies_tab"] .cookie-details-dialog.active {
+    display: flex;
+}
+
+.cookie-details-container {
+    width: 100%;
+    max-height: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    padding-bottom: 0;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+}
+
+.cookie-details-container .cookie-details-header {
+    height: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+.cookie-details-container .close-cookie-details-btn {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+.cookie-details-container .close-cookie-details-btn:hover {
+    background-color: rgba(153, 153, 153, 0.2);
+}
+.cookie-details-container .close-cookie-details-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+
+.cookie-details-container .cookie-details-content {
+    font-size: 12px;
+    cursor: default;
+    padding: 0 8px;
+}
+.cookie-details-container .cookie-details-content .row {
+    margin: 0;
+}
+.cookie-details-container .cookie-details-content .row .col {
+    padding: 0;
+    position: relative;
+    height: 36px;
+    line-height: 12px;
+}
+.cookie-details-container .cookie-details-content .row .col.s9 {
+    padding-right: 15px;
+    box-sizing: border-box;
+}
+.cookie-details-container .cookie-details-content .row .col .cookie-prop-value-full {
+    overflow: hidden;
+    position: absolute;
+    text-align: justify!important;
+    margin-right: -1em;
+    margin-top: -6px;
+    padding: 6px;
+    padding-right: 1em;
+    word-wrap: break-word;
+    word-break: break-all;
+    background-color: white;
+    border-radius: 2px;
+    z-index: 2;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.38);
+    width: 100%;
+    max-height: 210px;
+}
+.cookie-details-container .cookie-details-content .row .col .cookie-prop-value {
+    overflow: hidden;
+    position: absolute;
+    max-height: 30px;
+    text-align: justify!important;
+    margin-right: -1em;
+    margin-top: -6px;
+    padding: 6px;
+    padding-right: 1em;
+    word-wrap: break-word;
+    word-break: break-all;
+    box-shadow: none;
+    z-index: 0;
+    width: 100%;
+}
+.cookie-details-container .cookie-details-content .cookie-prop-value-full.cookie-prop-value:before {
+    content: '...';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+.cookie-details-container .cookie-details-content .cookie-prop-value-full.cookie-prop-value:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    margin-top: 0.5em;
+    background: white;
+}
+
+
+.cookie-details-container .cookie-details-footer {
+    height: 52px;
+    background-color: rgba(255, 255, 255, 1);
+    color: rgba(0, 0, 0, 0.56);
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+}
+.cookie-details-container .cookie-details-footer .cookie-details-footer-buttons-wrap {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.cookie-details-container .cookie-details-footer .cookie-details-footer-btn {
+    cursor: pointer;
+    height: 36px;
+    width: auto;
+    text-transform: uppercase;
+    color: #fbac29;
+    font-weight: 500;
+    padding: 6px;
+    border-radius: 50%;
+}
+.cookie-details-container .cookie-details-footer .cookie-details-footer-btn:not(:last-child) {
+    margin-right: 5px;
+}
+.cookie-details-container .cookie-details-footer .cookie-details-footer-btn.text-btn {
+    padding: 10px;
+    border-radius: 2px;
+}
+.cookie-details-container .cookie-details-footer .cookie-details-footer-btn:hover {
+    background-color: rgba(153, 153, 153, 0.2);
+}
+.cookie-details-container .cookie-details-footer .cookie-details-footer-btn img {
+    height: 100%;
+}
+
+.cookie-details-container.blacklisted-cookie .cookie-blacklist-btn,
+.cookie-details-container.whitelisted-cookie .cookie-whitelist-btn {
+    color: rgba(0,0,0,.32);
+}
 
 /******* FOOTER *******/
 

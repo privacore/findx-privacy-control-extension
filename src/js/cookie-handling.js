@@ -189,8 +189,7 @@
         // If a domain or a separate cookie is blacklisted we must remove it
         if (!isRemoved && isBlacklisted)
         {
-            vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
-            // isRemoved = true;
+            this.removeCookie(cookie);
             cookie.removed = true;
             this.increaseStats(true, true);
         }
@@ -253,7 +252,7 @@
                 this.increaseStats(false, false);
             }
             else {
-                vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
+                this.removeCookie(cookie);
                 this.increaseStats(true, false); // Add to statistics as blocked 3p cookie
                 console.log("%cBLOCK", 'color:red');
             }
@@ -297,14 +296,21 @@
     CookieHandling.prototype.rmFromWhitelist = function (cookie, domain) {
         if (cookie) { // Remove separate cookie from a whitelist
             let cookieIndex = this.getWhitelistedCookieIndex(cookie);
-            if (cookieIndex !== -1)
+            if (cookieIndex !== -1) {
                 ub.cookiesSettings.whitelist.cookies.splice(cookieIndex, 1);
+
+                // Remove cookie from browser.
+                // If domain is blacklisted and cookie removed from whitelist - we need to remove it from browser
+                this.removeCookie(cookie);
+            }
         }
         else if (domain) { // Remove a whole domain from a whitelist
             domain = prepareRootDomain(domain);
             let domainIndex = ub.cookiesSettings.whitelist.domains.indexOf(domain);
-            if (domainIndex !== -1)
+            if (domainIndex !== -1) {
                 ub.cookiesSettings.whitelist.domains.splice(domainIndex, 1);
+                this.clearDomainCookies(domain);
+            }
         }
         this.saveSettings();
     };
@@ -333,13 +339,19 @@
      */
     CookieHandling.prototype.addToBlacklist = function (cookie, domain) {
         if (cookie) { // Add separate cookie to a blacklist
-            if (!this.isCookieBlacklisted(cookie))
+            if (!this.isCookieBlacklisted(cookie)) {
                 ub.cookiesSettings.blacklist.cookies.push({name: cookie.name, domain: cookie.domain});
+
+                // Remove cookie from browser.
+                this.removeCookie(cookie);
+            }
         }
         else if (domain) { // Add a whole domain to a blacklist
             domain = prepareRootDomain(domain);
-            if (!this.isDomainBlacklisted(domain))
+            if (!this.isDomainBlacklisted(domain)) {
                 ub.cookiesSettings.blacklist.domains.push(domain);
+                this.clearDomainCookies(domain);
+            }
         }
         this.saveSettings();
     };
@@ -420,9 +432,7 @@
 
             cookies.forEach(function (cookieItem) {
                 if (!this.isCookieWhitelisted(cookieItem) && !this.isDomainWhitelisted(cookieItem.domain)) {
-                    if (!url)
-                        url = urlFromCookieDomain(cookieItem);
-                    vAPI.cookies.removeCookie(cookieItem, url);
+                    this.removeCookie(cookieItem, url);
                     this.increaseStats(true, true);
                     console.log("\t%cRemoved: %c%s", "color: red", "color:black", cookieItem.name);
                 }
@@ -434,6 +444,14 @@
 
             console.groupEnd();
         }.bind(this));
+    };
+
+    /****************************************************************************/
+
+    CookieHandling.prototype.removeCookie = function (cookieItem, url) {
+        if (!url)
+            url = urlFromCookieDomain(cookieItem);
+        vAPI.cookies.removeCookie(cookieItem, url);
     };
 
     /****************************************************************************/
@@ -543,7 +561,7 @@
 
                     console.log('\t  %cremoved', 'color: red');
 
-                    vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
+                    this.removeCookie(cookie);
                 }.bind(this));
                 console.groupEnd();
             }.bind(this), null);

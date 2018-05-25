@@ -1131,6 +1131,9 @@
                 what:  'removeDomainCookies',
                 domain:   popupData.pageDomain
             });
+
+            reloadTab();
+            vAPI.closePopup();
         });
     };
 
@@ -1248,11 +1251,13 @@
             return;
 
         setDomainWhitelistState(!state);
+        reloadTab();
+        vAPI.closePopup();
 
-        var blacklisted = isCookieDomainBlacklisted(popupData.pageDomain);
-        if (blacklisted) {
-            setDomainBlacklistState(!blacklisted);
-        }
+        // var blacklisted = isCookieDomainBlacklisted(popupData.pageDomain);
+        // if (blacklisted) {
+        //     setDomainBlacklistState(!blacklisted);
+        // }
     };
 
     var setDomainWhitelistState = function (state) {
@@ -1302,11 +1307,13 @@
             return;
 
         setDomainBlacklistState(!state);
+        reloadTab();
+        vAPI.closePopup();
 
-        var whitelisted = isCookieDomainWhitelisted(popupData.pageDomain);
-        if (whitelisted) {
-            setDomainWhitelistState(!whitelisted);
-        }
+        // var whitelisted = isCookieDomainWhitelisted(popupData.pageDomain);
+        // if (whitelisted) {
+        //     setDomainWhitelistState(!whitelisted);
+        // }
     };
 
     var setDomainBlacklistState = function (state) {
@@ -1356,8 +1363,10 @@
             domain:   popupData.pageDomain
         });
 
-        setDomainWhitelistState(false);
-        setDomainBlacklistState(false);
+        // setDomainWhitelistState(false);
+        // setDomainBlacklistState(false);
+        reloadTab();
+        vAPI.closePopup();
     };
 
     /***************************************************************************/
@@ -1423,47 +1432,78 @@
         if (!popupData.cookies)
             return;
 
+        sortCookiesList();
+
         popupData.cookies.forEach(function (cookieData) {
-            let cookieItem = new CookieItem(cookieData);
+            let cookieItem = new CookieItem(cookieData, CookieItem.type.MAIN_DOMAIN);
             cookieItem.appendTo(divCookieList);
             cookies.push(cookieItem);
         });
     };
 
+    /**
+     * Sort order
+     * 1) Whitelist
+     * 2) No State
+     * 3) Blacklist
+     */
+    var sortCookiesList = function () {
+        popupData.cookies = popupData.cookies.sort(function(a, b) {
+            let typeA = a.whitelisted ? 1 : (a.blacklisted ? 3 : 2);
+            let typeB = b.whitelisted ? 1 : (b.blacklisted ? 3 : 2);
+            return typeA > typeB;
+        });
+    };
+
     /***************************************************************************/
 
-    var CookieItem = function (initData) {
+    var CookieItem = function (initData, type) {
         this.cookieData = initData;
         this.divElement = null;
+
+        this.cookieType = type ? type : CookieItem.type.DOMAIN;
+
+        this.divDetailsWrapper = null;
 
         this.init();
     };
 
-    CookieItem.prototype.itemTemplate = $('#cookie_item_template').html();
+    /**
+     * Current property used for detecting a place where cookie item is displayed.
+     * Cookie item can be placed in a main "Cookies" tab. In this case cookie details dialog
+     *      must be placed in this tab.
+     * And cookie item can be placed in "Cookie control" feature pages. In this case cookie details dialog
+     *      must be expanded to all page.
+     */
+    Object.defineProperty(CookieItem, 'type', {
+        value: {
+            MAIN_DOMAIN: 1, // Cookie item of domain opened in a tab.
+            DOMAIN: 0 // Cookie item of domain from "Cookie control" pages
+        },
+        writable: false
+    });
+    Object.defineProperty(CookieItem, 'ITEM_TMPLT', {
+        value: $('#cookie_item_template').html(),
+        writable: false
+    });
+    Object.defineProperty(CookieItem, 'DETAILS_TMPLT', {
+        value: $('#cookie_details_template').html(),
+        writable: false
+    });
+
+
 
     CookieItem.prototype.init = function () {
-        this.divElement = $(Mustache.render(this.itemTemplate, this.cookieData));
-        // this.handleTooltips(); // Currently we don't have tooltips. Remove this block if it is not used
-        this.handleControls();
+        this.divElement = $(Mustache.render(CookieItem.ITEM_TMPLT, this.cookieData));
+        this.handleDetailsBtn();
     };
 
-    CookieItem.prototype.handleTooltips = function () {
-        var divCookieControls = $(this.divElement).find('.cookie-control');
-        divCookieControls.each(function (index, divBtn) {
-            let tooltip = vAPI.i18n.prepareTemplateText(vAPI.i18n($(divBtn).attr('data-tooltip')));
-            if ( tooltip ) {
-                $(divBtn).attr('data-tooltip', tooltip);
-            }
-
-            M.Tooltip.init(divBtn, {enterDelay: 500});
-        });
-    };
-
-    CookieItem.prototype.handleControls = function () {
+    CookieItem.prototype.handleDetailsBtn = function () {
         var btnDetails = $(this.divElement).find('.cookie-control.cookie-details-btn');
         btnDetails.off('click');
         btnDetails.on('click', function (ev) {
-            console.log("details btn: ", this);
+            this.createDetailsWnd();
+            this.openDetails();
         }.bind(this));
     };
 
@@ -1471,6 +1511,140 @@
         if (!divParent) return;
 
         $(divParent).append(this.divElement);
+    };
+
+    CookieItem.prototype.createDetailsWnd = function () {
+        // If details window was already created and added to a DOM
+        if (this.divDetailsWrapper && this.divDetailsWrapper.length) {
+            return;
+        }
+
+        // Details window in a Cookies tab
+        if (this.cookieType === CookieItem.type.MAIN_DOMAIN) {
+            this.divDetailsWrapper =
+                $('<div class="cookie-details-dialog" data-cookie-name="'
+                    + this.cookieData.name + '"></div>');
+            $("#main_page .main-tabs-slider").append(this.divDetailsWrapper);
+        }
+
+        // Parse expire date for displaying in details a popup
+        this.cookieData.expirationParsed = '';
+        if (this.cookieData.expirationDate) {
+            this.cookieData.expirationParsed =
+                (new Date(this.cookieData.expirationDate * 1000)).toUTCString();
+        }
+        else if (this.cookieData.session) { // Session cookies hasn't expirationDate prop
+            this.cookieData.expirationParsed =
+                vAPI.i18n.prepareTemplateText(vAPI.i18n('popupCookieDetailsExpiresSession'));
+        }
+
+        this.divDetailsWnd = $(Mustache.render(CookieItem.DETAILS_TMPLT, this.cookieData));
+        this.divDetailsWnd.find('[data-i18n]').each(function(index, elem) {
+            $(elem).html(vAPI.i18n.prepareTemplateText(vAPI.i18n($(elem).attr('data-i18n'))));
+        });
+
+        this.handleDetailsWnd();
+        this.divDetailsWrapper.append(this.divDetailsWnd);
+    };
+
+    CookieItem.prototype.handleDetailsWnd = function () {
+        this.divDetailsWnd.find('.close-cookie-details-btn').off('click');
+        this.divDetailsWnd.find('.close-cookie-details-btn').on('click', function (ev) {
+            this.closeDetails();
+        }.bind(this));
+
+        this.divDetailsWnd.find('.cookie-prop-value-full').on('mouseover', function (ev) {
+            var divItem = $(ev.currentTarget);
+
+            // Expand full value only if collapsed container has two lines of text
+            if (divItem.hasClass('cookie-prop-value') && divItem.height() > 12)
+                divItem.removeClass('cookie-prop-value');
+        }.bind(this));
+        this.divDetailsWnd.find('.cookie-prop-value-full').on('mouseout', function (ev) {
+            var divItem = $(ev.currentTarget);
+            if (!divItem.hasClass('cookie-prop-value'))
+                divItem.addClass('cookie-prop-value');
+        }.bind(this));
+
+        this.handleWhitelistBtn();
+        this.handleBlacklistBtn();
+        this.handleRemoveBtn();
+    };
+
+    CookieItem.prototype.handleWhitelistBtn = function () {
+        this.divDetailsWnd.find('.cookie-whitelist-btn').off('click');
+        this.divDetailsWnd.find('.cookie-whitelist-btn').on('click', function (ev) {
+            this.setWhitelistSate(!this.cookieData.whitelisted);
+            this.setBlacklistState(false); // Always remove from blacklist
+            reloadTab();
+            vAPI.closePopup();
+        }.bind(this));
+    };
+
+    CookieItem.prototype.setWhitelistSate = function (state) {
+        this.cookieData.whitelisted = state;
+        messager.send(
+            'popupPanel',
+            {
+                what: 'setCookieWhitelist',
+                cookie: this.cookieData,
+                state: this.cookieData.whitelisted
+            }
+        );
+
+        this.divElement.toggleClass('whitelisted-cookie', this.cookieData.whitelisted);
+        this.divDetailsWnd.toggleClass('whitelisted-cookie', this.cookieData.whitelisted);
+    };
+
+    CookieItem.prototype.handleBlacklistBtn = function () {
+        this.divDetailsWnd.find('.cookie-blacklist-btn').off('click');
+        this.divDetailsWnd.find('.cookie-blacklist-btn').on('click', function (ev) {
+            this.setBlacklistState(!this.cookieData.blacklisted);
+            this.setWhitelistSate(false); // Always remove from whitelist
+            reloadTab();
+            vAPI.closePopup();
+        }.bind(this));
+    };
+
+    CookieItem.prototype.setBlacklistState = function (state) {
+        this.cookieData.blacklisted = state;
+        messager.send(
+            'popupPanel',
+            {
+                what: 'setCookieBlacklist',
+                cookie: this.cookieData,
+                state: this.cookieData.blacklisted
+            }
+        );
+
+        this.divElement.toggleClass('blacklisted-cookie', this.cookieData.blacklisted);
+        this.divDetailsWnd.toggleClass('blacklisted-cookie', this.cookieData.blacklisted);
+    };
+
+    CookieItem.prototype.handleRemoveBtn = function () {
+        this.divDetailsWnd.find('.remove-cookie-btn').off('click');
+        this.divDetailsWnd.find('.remove-cookie-btn').on('click', function (ev) {
+            messager.send(
+                'popupPanel',
+                {
+                    what: 'removeCookie',
+                    cookie: this.cookieData,
+                    state: this.cookieData.blacklisted
+                }
+            );
+
+            reloadTab();
+            vAPI.closePopup();
+        }.bind(this));
+    };
+
+
+    CookieItem.prototype.openDetails = function () {
+        this.divDetailsWrapper.addClass('active');
+    };
+
+    CookieItem.prototype.closeDetails = function () {
+        this.divDetailsWrapper.removeClass('active');
     };
 
     /***************************************************************************/

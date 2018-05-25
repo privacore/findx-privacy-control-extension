@@ -633,6 +633,28 @@ var onMessage = function(request, sender, callback) {
         µb.cookieHandling.clearDomainCookies(request.domain);
         break;
 
+    case 'setCookieWhitelist':
+        if (request.state) {
+            µb.cookieHandling.addToWhitelist(request.cookie);
+        }
+        else {
+            µb.cookieHandling.rmFromWhitelist(request.cookie);
+        }
+        break;
+
+    case 'setCookieBlacklist':
+        if (request.state) {
+            µb.cookieHandling.addToBlacklist(request.cookie);
+        }
+        else {
+            µb.cookieHandling.rmFromBlacklist(request.cookie);
+        }
+        break;
+
+    case 'removeCookie':
+        µb.cookieHandling.removeCookie(request.cookie);
+        break;
+
     default:
         return vAPI.messaging.UNHANDLED;
     }

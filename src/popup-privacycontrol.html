@@ -446,6 +446,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -538,10 +539,73 @@
 </script>
 
 <script id="cookie_item_template" type="text/html">
-    <div class="collapsible-item-body-row cookie-item">
+    <div class="collapsible-item-body-row cookie-item {{#whitelisted}}whitelisted-cookie{{/whitelisted}} {{#blacklisted}}blacklisted-cookie{{/blacklisted}}">
         <div class="truncate cookie-name" title="{{name}}">{{name}}</div>
         <div class="waves-effect waves-custom-grey cookie-control cookie-details-btn">
             <img src="img/popup/dots-vertical.svg" alt="Details"/>
+        </div>
+    </div>
+</script>
+
+<script id="cookie_details_template" type="text/html">
+    <div class="cookie-details-container {{#whitelisted}}whitelisted-cookie{{/whitelisted}} {{#blacklisted}}blacklisted-cookie{{/blacklisted}}">
+        <div class="cookie-details-header">
+            <div class="waves-effect waves-custom-grey close-cookie-details-btn">
+                <img src="img/popup/close_dialog.svg" alt="Close"/>
+            </div>
+        </div>
+
+        <div class="cookie-details-content">
+            <div class="row">
+                <div class="col s3 cookie-prop-title"><span data-i18n="popupCookieDetailsName"></span>:</div>
+                <div class="col s9">
+                    <div class="cookie-prop-value-full cookie-prop-value">{{name}}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 cookie-prop-title"><span data-i18n="popupCookieDetailsContent"></span>:</div>
+                <div class="col s9">
+                    <div class="cookie-prop-value-full cookie-prop-value">{{value}}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 cookie-prop-title"><span data-i18n="popupCookieDetailsHost"></span>:</div>
+                <div class="col s9">
+                    <div class="cookie-prop-value">{{domain}}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 cookie-prop-title"><span data-i18n="popupCookieDetailsPath"></span>:</div>
+                <div class="col s9">
+                    <div class="cookie-prop-value">{{path}}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 cookie-prop-title"><span data-i18n="popupCookieDetailsSendFor"></span>:</div>
+                <div class="col s9">
+                    <div class="cookie-prop-value" data-i18n="{{#secure}}popupCookieDetailsSendForSecure{{/secure}}{{^secure}}popupCookieDetailsSendForAny{{/secure}}"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 cookie-prop-title"><span data-i18n="popupCookieDetailsExpires"></span>:</div>
+                <div class="col s9">
+                    <div class="cookie-prop-value">{{expirationParsed}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cookie-details-footer">
+            <div class="cookie-details-footer-buttons-wrap">
+                <div class="waves-effect waves-custom-grey cookie-details-footer-btn text-btn cookie-blacklist-btn"
+                     data-i18n="popupCookiesBlacklist"></div>
+                <div class="waves-effect waves-custom-grey cookie-details-footer-btn text-btn cookie-whitelist-btn"
+                     data-i18n="popupCookiesWhitelist"></div>
+            </div>
+            <div class="cookie-details-footer-buttons-wrap">
+                <div class="waves-effect waves-custom-grey cookie-details-footer-btn remove-cookie-btn">
+                    <img src="img/popup/trash_grey.svg" alt="Delete"/>
+                </div>
+            </div>
         </div>
     </div>
 </script>
