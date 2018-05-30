@@ -516,7 +516,11 @@ var popupDataFromTabId = function(tabId, tabTitle) {
 
 var popupDataFromRequest = function(request, callback) {
     if ( request.tabId ) {
-        callback(popupDataFromTabId(request.tabId, ''));
+        var data = popupDataFromTabId(request.tabId, '');
+        vAPI.cookies.getAllCookies(function (allCookies) {
+            data.allCookies = allCookies;
+            callback(data);
+        });
         return;
     }
 
@@ -528,7 +532,11 @@ var popupDataFromRequest = function(request, callback) {
             tabId = tab.id;
             tabTitle = tab.title || '';
         }
-        callback(popupDataFromTabId(tabId, tabTitle));
+        var data = popupDataFromTabId(tabId, tabTitle);
+        vAPI.cookies.getAllCookies(function (allCookies) {
+            data.allCookies = allCookies;
+            callback(data);
+        });
     });
 };
 
@@ -653,6 +661,14 @@ var onMessage = function(request, sender, callback) {
 
     case 'removeCookie':
         µb.cookieHandling.removeCookie(request.cookie);
+        break;
+
+    case 'clearCookiesDomainsWhitelist':
+        µb.cookieHandling.clearDomainsWhitelist();
+        break;
+
+    case 'clearCookiesDomainsBlacklist':
+        µb.cookieHandling.clearDomainsBlacklist();
         break;
 
     default:

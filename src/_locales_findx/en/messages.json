@@ -131,6 +131,10 @@
     "message": "Remove all",
     "description": ""
   },
+  "popupTipRemove":{
+    "message": "Remove",
+    "description": ""
+  },
   "popupTipReset":{
     "message": "Reset",
     "description": ""
@@ -221,6 +225,30 @@
   },
   "popupCookiesAdvSettingsText":{
     "message": "You can adjust more advanced settings in the settings page",
+    "description": ""
+  },
+  "popupCookieControlSitesTitle":{
+    "message": "Sites with cookies set",
+    "description": ""
+  },
+  "popupCookieControlSitesSubTitle":{
+    "message": "Clear cookies and add to white- or blacklist",
+    "description": ""
+  },
+  "popupCookieControlWhitelistedSitesTitle":{
+    "message": "Whitelisted sites",
+    "description": ""
+  },
+  "popupCookieControlWhitelistedSitesSubTitle":{
+    "message": "Import, export or clear the list",
+    "description": ""
+  },
+  "popupCookieControlBlacklistedSitesTitle":{
+    "message": "Blacklisted sites",
+    "description": ""
+  },
+  "popupCookieControlBlacklistedSitesSubTitle":{
+    "message": "Import, export or clear the list",
     "description": ""
   },
   "popupCookiesOpenSettings":{

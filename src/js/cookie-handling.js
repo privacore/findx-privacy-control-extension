@@ -330,6 +330,15 @@
         });
     };
 
+    CookieHandling.prototype.clearDomainsWhitelist = function () {
+        for (var i = 0; i < ub.cookiesSettings.whitelist.domains.length;) {
+            var domain = ub.cookiesSettings.whitelist.domains[i];
+            ub.cookiesSettings.whitelist.domains.splice(i, 1);
+            this.clearDomainCookies(domain);
+        }
+        this.saveSettings();
+    };
+
     /****************************************************************************/
 
     /**
@@ -388,6 +397,11 @@
         return ub.cookiesSettings.blacklist.cookies.findIndex(function (cookieItem) {
             return cookieItem.name === cookie.name && cookieItem.domain === cookieItem.domain;
         });
+    };
+
+    CookieHandling.prototype.clearDomainsBlacklist = function () {
+        ub.cookiesSettings.blacklist.domains = [];
+        this.saveSettings();
     };
 
     /****************************************************************************/
@@ -561,7 +575,7 @@
 
                     console.log('\t  %cremoved', 'color: red');
 
-                    this.removeCookie(cookie);
+                    vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
                 }.bind(this));
                 console.groupEnd();
             }.bind(this), null);

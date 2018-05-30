@@ -330,16 +330,16 @@
                     </ul>
 
 
-                    <div class="settings-container">
-                        <div class="setting-item third-party-blocking-setting">
-                            <div class="setting-icon">
+                    <div class="items-list settings-container">
+                        <div class="list-item third-party-blocking-setting">
+                            <div class="list-item-icon">
                                 <img src="img/popup/cookies_cross_site.svg" alt=""/>
                             </div>
-                            <div class="setting-content">
-                                <div class="setting-title" data-i18n="popupCookiesThirdPartyTitle"></div>
-                                <div class="setting-subtitle" data-i18n="popupCookiesThirdPartySubTitle"></div>
+                            <div class="list-item-content">
+                                <div class="list-item-title" data-i18n="popupCookiesThirdPartyTitle"></div>
+                                <div class="list-item-subtitle" data-i18n="popupCookiesThirdPartySubTitle"></div>
                             </div>
-                            <div class="setting-control setting-state-switcher">
+                            <div class="list-item-control setting-state-switcher">
                                 <div class="switch">
                                     <label>
                                         <input type="checkbox">
@@ -348,21 +348,33 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="setting-item periodical-cookies-clearing-setting">
-                            <div class="setting-icon">
+                        <div class="list-item periodical-cookies-clearing-setting">
+                            <div class="list-item-icon">
                                 <img src="img/popup/cookies_timer.svg" alt=""/>
                             </div>
-                            <div class="setting-content">
-                                <div class="setting-title" data-i18n="popupCookiesPeriodicalClearingTitle"></div>
-                                <div class="setting-subtitle" data-i18n="popupCookiesPeriodicalClearingSubTitle"></div>
+                            <div class="list-item-content">
+                                <div class="list-item-title" data-i18n="popupCookiesPeriodicalClearingTitle"></div>
+                                <div class="list-item-subtitle" data-i18n="popupCookiesPeriodicalClearingSubTitle"></div>
                             </div>
-                            <div class="setting-control setting-state-switcher">
+                            <div class="list-item-control setting-state-switcher">
                                 <div class="switch">
                                     <label>
                                         <input type="checkbox">
                                         <span class="lever"></span>
                                     </label>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="waves-effect waves-custom-grey list-item clickable-item cookie-control-setting">
+                            <div class="list-item-icon">
+                                <img src="img/popup/filterlists.svg" alt=""/>
+                            </div>
+                            <div class="list-item-content">
+                                <div class="list-item-title" data-i18n="popupCookiesControlSettingTitle"></div>
+                                <div class="list-item-subtitle" data-i18n="popupCookiesControlSettingSubTitle"></div>
+                            </div>
+                            <div class="list-item-control">
+                                <img src="img/popup/chevron_down.svg" alt=""/>
                             </div>
                         </div>
                     </div>
@@ -457,7 +469,7 @@
         <div class="header">
             <a id="close_protection_lists"  class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
             <span class="header-title" data-i18n="popupPtorectionListsTitle"></span>
-            <a id="open_search_tab_btn" class="header-btn"><i class="material-icons">search</i></a>
+            <a class="header-btn open-search-tab-btn"><i class="material-icons">search</i></a>
             <a class="header-btn settings-btn">
                 <img src="img/popup/settings-icon.svg" alt=""/>
             </a>
@@ -482,6 +494,81 @@
         </div>
 
     </div>
+
+    <div class="page" id="cookie_control_page">
+        <div class="header">
+            <a id="close_cookie_control_page"  class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
+            <span class="header-title" data-i18n="popupCookiesControlSettingTitle"></span>
+            <a class="header-btn open-search-tab-btn"><i class="material-icons">search</i></a>
+            <a class="header-btn settings-btn">
+                <img src="img/popup/settings-icon.svg" alt=""/>
+            </a>
+        </div>
+
+
+        <div class="items-list no-top-border">
+            <div class="waves-effect waves-custom-grey list-item clickable-item" data-item-type="all">
+                <div class="list-item-content">
+                    <div class="list-item-title" data-i18n="popupCookieControlSitesTitle"></div>
+                    <div class="list-item-subtitle" data-i18n="popupCookieControlSitesSubTitle"></div>
+                </div>
+                <div class="list-item-control">
+                    <img src="img/popup/chevron_down.svg" alt=""/>
+                </div>
+            </div>
+            <div class="waves-effect waves-custom-grey list-item clickable-item" data-item-type="whitelisted">
+                <div class="list-item-content">
+                    <div class="list-item-title" data-i18n="popupCookieControlWhitelistedSitesTitle"></div>
+                    <div class="list-item-subtitle" data-i18n="popupCookieControlWhitelistedSitesSubTitle"></div>
+                </div>
+                <div class="list-item-control">
+                    <img src="img/popup/chevron_down.svg" alt=""/>
+                </div>
+            </div>
+            <div class="waves-effect waves-custom-grey list-item clickable-item" data-item-type="blacklisted">
+                <div class="list-item-content">
+                    <div class="list-item-title" data-i18n="popupCookieControlBlacklistedSitesTitle"></div>
+                    <div class="list-item-subtitle" data-i18n="popupCookieControlBlacklistedSitesSubTitle"></div>
+                </div>
+                <div class="list-item-control">
+                    <img src="img/popup/chevron_down.svg" alt=""/>
+                </div>
+            </div>
+        </div>
+
+        <div class="advanced-settings-container">
+            <div class="adv-container-title" data-i18n="popupCookiesAdvSettings"></div>
+            <div>
+                <span data-i18n="popupCookiesAdvSettingsText"></span>
+                &nbsp;-&nbsp;
+                <span data-i18n="popupCookiesOpenSettings" class="advanced-settings-btn"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="page" id="listed_sites_page">
+        <div class="header">
+            <a class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
+            <span class="header-title"></span>
+            <a class="header-btn open-search-tab-btn"><i class="material-icons">search</i></a>
+            <a class="header-btn settings-btn">
+                <img src="img/popup/settings-icon.svg" alt=""/>
+            </a>
+        </div>
+
+        <div class="mCustomScrollbar listed-sites-page-content">
+            <ul class="sites-list"></ul>
+        </div>
+
+        <div class="fixed-action-btn">
+            <a class="btn-floating btn-large tooltipped" data-position="left" data-delay="300" data-tooltip="popupTipRemoveAll">
+                <img src="img/popup/close.svg"/>
+            </a>
+        </div>
+
+    </div>
+
 </div>
 
 <div id="footer" class="bg-blue">
@@ -614,6 +701,16 @@
     </div>
 </script>
 
+<script id="listed_site_template" type="text/html">
+    <li class="listed-site" data-domain="{{domain}}">
+        <div class="listed-site__quantity">({{quantity}})</div>
+        <div class="listed-site__domain truncate">{{domain}}</div>
+        <div class="waves-effect waves-custom-grey listed-site__remove_btn" data-position="left">
+            <img src="img/popup/close_black.svg"/>
+        </div>
+    </li>
+</script>
+
 
 
 
@@ -622,6 +719,7 @@
 <script src="lib/jquery.mCustomScrollbar.concat.min.js"></script>
 <!--<script src="lib/punycode.js"></script>-->
 <script src="lib/mustache.js"></script>
+<script src="lib/publicsuffixlist.js"></script>
 <script src="js/vapi.js"></script>
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-client.js"></script>
