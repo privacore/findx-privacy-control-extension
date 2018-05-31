@@ -7,7 +7,7 @@
     <key>Builder Version</key>
     <string>534.57.2</string>
     <key>DeveloperIdentifier</key>
-    <string>3TN2DC58A4</string>
+    <string>5QE6FTCMP9</string>
     <key>CFBundleDisplayName</key>
     <string>{name}</string>
     <key>CFBundleIdentifier</key>
@@ -98,6 +98,6 @@
     <key>Update Manifest URL</key>
     <string>https://download.findx.com/Update.plist</string>
     <key>Website</key>
-    <string>https://get.findx.com</string>
+    <string>https://get.findx.com/privacycontrol/</string>
 </dict>
 </plist>

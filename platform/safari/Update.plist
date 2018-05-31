@@ -8,13 +8,15 @@
 				<key>CFBundleIdentifier</key>
 				<string>com.findx.privacycontrol</string>
 				<key>Developer Identifier</key>
-				<string>3TN2DC58A4</string>
+				<string>5QE6FTCMP9</string>
 				<key>CFBundleShortVersionString</key>
 				<string>{version}</string>
 				<key>CFBundleVersion</key>
 				<string>{buildNumber}</string>
 				<key>URL</key>
-				<string>https://get.findx.com/findx.safariextz</string>
+				<string>https://download.findx.com/FindxPrivacyControl.safariextz</string>
+				<key>Update From Gallery</key>
+				<true/>
 			</dict>
 		</array>
 	</dict>
