@@ -431,9 +431,10 @@
      * Clear all unprotected cookies from a set domain
      * @param {String} domain
      * @param {String} [url] - we need a full url for cookies deleting.
+     * @param {boolean} [force] - remove all domain cookies even if they are whitelisted
      */
-    CookieHandling.prototype.clearDomainCookies = function (domain, url) {
-        if (this.isDomainWhitelisted(domain)) {
+    CookieHandling.prototype.clearDomainCookies = function (domain, url, force) {
+        if (!force && this.isDomainWhitelisted(domain)) {
             console.log("Domain %cProtected %c so it's cookies wasn't cleared", 'color:green', 'color: black');
             return;
         }
@@ -445,7 +446,7 @@
             console.log('\t%O', JSON.parse(JSON.stringify(cookies)));
 
             cookies.forEach(function (cookieItem) {
-                if (!this.isCookieWhitelisted(cookieItem) && !this.isDomainWhitelisted(cookieItem.domain)) {
+                if (force || (!this.isCookieWhitelisted(cookieItem) && !this.isDomainWhitelisted(cookieItem.domain))) {
                     this.removeCookie(cookieItem, url);
                     this.increaseStats(true, true);
                     console.log("\t%cRemoved: %c%s", "color: red", "color:black", cookieItem.name);
@@ -582,6 +583,29 @@
         }
         catch (exception) {
             console.error("Exception in 'clearAllUnprotected' (cookie-handling.js) :\n\t", exception);
+            console.groupEnd();
+        }
+    };
+
+    CookieHandling.prototype.clearAllCookiesForce = function () {
+        console.groupCollapsed("%cClear all cookies (force)", 'color: red');
+        try {
+            vAPI.cookies.getAllCookies(function (cookies) {
+                console.log("ALL cookies: ", cookies);
+                if (!cookies)
+                    return;
+
+                cookies.forEach(function (cookie) {
+                    console.log('\tcookie: ', cookie);
+                    this.increaseStats(true, !this.isThirdParty(cookie));
+                    console.log('\t  %cremoved', 'color: red');
+                    vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
+                }.bind(this));
+                console.groupEnd();
+            }.bind(this), null);
+        }
+        catch (exception) {
+            console.error("Exception in 'clearAllCookiesForce' (cookie-handling.js) :\n\t", exception);
             console.groupEnd();
         }
     };

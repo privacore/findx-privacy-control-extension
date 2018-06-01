@@ -139,6 +139,14 @@
     "message": "Reset",
     "description": ""
   },
+  "popupTipClearCookies":{
+    "message": "Clear cookies",
+    "description": ""
+  },
+  "popupTipClearAllCookies":{
+    "message": "Clear all cookies",
+    "description": ""
+  },
   "popupCookiesPlateTitle":{
     "message": "Cookies from",
     "description": ""

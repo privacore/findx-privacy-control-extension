@@ -278,7 +278,7 @@
         'cookie_control': 'cookie_control_page',
         'whitelisted_sites': 'listed_sites_page',
         'blacklisted_sites': 'listed_sites_page',
-        'all_sites': 'all_sites_page'
+        'all_sites': 'listed_sites_page'
     };
 
     var openPage = function (pageId) {
@@ -1121,13 +1121,17 @@
                 return;
             }
 
-            messager.send('popupPanel', {
-                what:  'removeDomainCookies',
-                domain:   popupData.pageDomain
-            });
+            clearDomainCookies(popupData.pageDomain);
 
             reloadTab();
             vAPI.closePopup();
+        });
+    };
+
+    var clearDomainCookies = function (domain) {
+        messager.send('popupPanel', {
+            what:  'removeDomainCookies',
+            domain: domain
         });
     };
 
@@ -1244,28 +1248,22 @@
         if (state)
             return;
 
-        setDomainWhitelistState(!state);
+        setDomainWhitelistState(popupData.pageDomain, !state);
+        // showDomainWhitelistState();
         reloadTab();
         vAPI.closePopup();
-
-        // var blacklisted = isCookieDomainBlacklisted(popupData.pageDomain);
-        // if (blacklisted) {
-        //     setDomainBlacklistState(!blacklisted);
-        // }
     };
 
-    var setDomainWhitelistState = function (state) {
+    var setDomainWhitelistState = function (domain, state) {
         // Add domain to whitelist locally.
         if (state)
-            popupData.cookiesSettings.whitelist.domains.push(popupData.pageDomain);
+            popupData.cookiesSettings.whitelist.domains.push(domain);
         else
-            rmDomainFromWhitelist(popupData.pageDomain);
-
-        showDomainWhitelistState();
+            rmDomainFromWhitelist(domain);
 
         messager.send('popupPanel', {
             what:  'toggleCookiesDomainWhitelist',
-            domain:   popupData.pageDomain,
+            domain:   domain,
             state: state
         });
     };
@@ -1299,29 +1297,22 @@
         if (state)
             return;
 
-        setDomainBlacklistState(!state);
+        setDomainBlacklistState(popupData.pageDomain, !state);
         reloadTab();
         vAPI.closePopup();
-
-        // var whitelisted = isCookieDomainWhitelisted(popupData.pageDomain);
-        // if (whitelisted) {
-        //     setDomainWhitelistState(!whitelisted);
-        // }
     };
 
-    var setDomainBlacklistState = function (state) {
+    var setDomainBlacklistState = function (domain, state) {
         // Add\remove domain to blacklist locally.
         if (state) {
-            popupData.cookiesSettings.blacklist.domains.push(popupData.pageDomain);
+            popupData.cookiesSettings.blacklist.domains.push(domain);
         }
         else
-            rmDomainFromBlacklist(popupData.pageDomain);
-
-        showDomainBlacklistState();
+            rmDomainFromBlacklist(domain);
 
         messager.send('popupPanel', {
             what:  'toggleCookiesDomainBlacklist',
-            domain:   popupData.pageDomain,
+            domain:   domain,
             state: state
         });
     };
@@ -1355,8 +1346,6 @@
             domain:   popupData.pageDomain
         });
 
-        // setDomainWhitelistState(false);
-        // setDomainBlacklistState(false);
         reloadTab();
         vAPI.closePopup();
     };
@@ -1634,8 +1623,7 @@
                 'popupPanel',
                 {
                     what: 'removeCookie',
-                    cookie: this.cookieData,
-                    state: this.cookieData.blacklisted
+                    cookie: this.cookieData
                 }
             );
 
@@ -1687,6 +1675,7 @@
 
             switch (itemType) {
                 case 'all':
+                    renderListedSitesPage('all');
                     openPage(PAGES.all_sites);
                     break;
                 case 'whitelisted':
@@ -1738,7 +1727,7 @@
             openPage(PAGES.cookie_control);
         });
 
-        handleRemoveAllListedSitesBtn();
+        handleListedSitesPAgeFloatingBtn();
     };
 
     var setListedSitesPageHeader = function (title) {
@@ -1763,15 +1752,45 @@
         return $('#listed_sites_page').attr('data-page-type') === 'whitelist';
     };
 
+    /**
+     * Check is opened a "Sites with cookies set" page
+     * @returns {boolean}
+     */
+    var isAllSitesPageType = function () {
+        return $('#listed_sites_page').attr('data-page-type') === 'all';
+    };
+
 
     var renderListedSitesPage = function (type) {
-        setListedSitesPageHeader(vAPI.i18n(type === 'whitelist'
-            ? 'popupCookieControlWhitelistedSitesTitle' : 'popupCookieControlBlacklistedSitesTitle'));
+        let headerTitle = type === 'whitelist' ? 'popupCookieControlWhitelistedSitesTitle'
+            : (type === 'all' ? 'popupCookieControlSitesTitle' : 'popupCookieControlBlacklistedSitesTitle');
+
+        setListedSitesPageHeader(vAPI.i18n(headerTitle));
         setListedSitesPageType(type);
 
-        fillSitesList(geListedSites(type));
+        fillSitesList(geListedSites(type), type);
 
+        handleListedSitesControls(type);
+    };
 
+    var handleListedSitesControls = function () {
+        handleListedSitesPageControls();
+        handleAllSitesWithCookiesPage();
+
+        // Set "Clear all cookies"/"Remove all from whitelist/blacklist" floating button tooltip
+        var tipClearAll = isAllSitesPageType() ? vAPI.i18n('popupTipClearAllCookies') : vAPI.i18n('popupTipRemoveAll');
+        $('#listed_sites_page .fixed-action-btn .btn-floating').attr('data-tooltip', tipClearAll);
+        $('#listed_sites_page .fixed-action-btn .btn-floating').each(function (index, elem) {
+            M.Tooltip.init(elem, {enterDelay: 300});
+        });
+    };
+
+    /**
+     * Handle "Whitelisted"/"Blacklisted" sites pages controls:
+     * Set tooltips
+     * Handle "remove domain from list" buttons
+     */
+    var handleListedSitesPageControls = function () {
         var divSitesList = $('#listed_sites_page .sites-list');
 
         // Set and handle "Remove" button tooltip
@@ -1793,7 +1812,7 @@
             if (isWhitelistedSitesPageType()) {
                 removeDomainFromWhitelist(domain);
             }
-            else {
+            else if (!isAllSitesPageType()) { // if blacklisted sites page opened
                 removeDomainFromBlacklist(domain);
             }
 
@@ -1805,17 +1824,124 @@
     };
 
     /**
+     * Set localization texts and tooltips, handle controls on "Sites with cookies set" page:
+     * Clear domain cookies
+     * Popup menu
+     * Whitelist/Blacklist site
+     */
+    var handleAllSitesWithCookiesPage = function () {
+        var divSitesList = $('#listed_sites_page .sites-list');
+
+        // Set and handle "Clear domain cookies" button tooltip
+        var tipClear = vAPI.i18n('popupTipClearCookies');
+        divSitesList.find('.listed-site__clear_btn').attr('data-tooltip', tipClear);
+        divSitesList.find('.listed-site__clear_btn').each(function (index, elem) {
+            M.Tooltip.init(elem, {enterDelay: 300});
+        });
+
+        // Set "Clear domain cookies" button click listener
+        divSitesList.find('.listed-site__clear_btn').off('click');
+        divSitesList.find('.listed-site__clear_btn').on('click', function (ev) {
+            let listedSite = ev.currentTarget.closest('.listed-site');
+            let domain = listedSite.getAttribute('data-domain');
+
+            clearDomainCookies(domain);
+            allCookies.set(domain, []);
+
+            listedSite.querySelector('.listed-site__quantity').innerHTML = '(0)';
+        });
+
+        // Handle "menu" button
+        divSitesList.find('.listed-site__more_btn').off('click');
+        divSitesList.find('.listed-site__more_btn').on('click', function (ev) {
+            let listedSite = ev.currentTarget.closest('.listed-site');
+            closeListedSitePopupMenu();
+            listedSite.querySelector('.listed-site__menu').classList.add('active');
+        });
+
+        // Set list item popup menu texts
+        divSitesList.find('.listed-site__menu [data-i18n]').each(function(index, elem) {
+            $(elem).html(vAPI.i18n.prepareTemplateText(vAPI.i18n($(elem).attr('data-i18n'))));
+        });
+
+        // Handle menu popup "close" buttons
+        divSitesList.find('.listed-site__menu .listed-site__menu__header__close_btn').off('click');
+        divSitesList.find('.listed-site__menu .listed-site__menu__header__close_btn').on('click', function (ev) {
+            closeListedSitePopupMenu();
+        });
+
+        // Close menu popup if user clicks outside popup
+        $('body').off('click');
+        $('body').on('click', function (ev) {
+            if (ev.target.classList.contains('listed-site__menu') || ev.target.closest('.listed-site__menu')
+                || ev.target.classList.contains('listed-site__more_btn') || ev.target.closest('.listed-site__more_btn'))
+            {
+                return;
+            }
+
+            closeListedSitePopupMenu();
+        });
+
+        divSitesList.find('.listed-site__menu_item').off('click');
+        divSitesList.find('.listed-site__menu_item').on('click', function (ev) {
+            let action = ev.currentTarget.getAttribute('data-action');
+            let domain = ev.currentTarget.getAttribute('data-domain');
+            let divListedSite = ev.currentTarget.closest('.listed-site');
+            let state = false;
+
+            switch (action) {
+                case 'whitelisted':
+                    state = !isCookieDomainWhitelisted(domain);
+                    setDomainWhitelistState(domain, state);
+                    break;
+                case 'blacklisted':
+                    state = !isCookieDomainBlacklisted(domain);
+                    setDomainBlacklistState(domain, state);
+                    break;
+            }
+
+            // Set attribute to a domain title element to highlight a row (green or red)
+            toggleListedSiteElAttribute(divListedSite, action, state);
+            closeListedSitePopupMenu();
+        });
+    };
+
+    /**
+     * Toggle whitelisted/blacklisted attribute for site item (row in list) element
+     *      for highlighting by green/red color.
+     * @param {DOMElement} elem
+     * @param {string} setAttr - whitelisted | blacklisted
+     * @param {boolean} state
+     */
+    var toggleListedSiteElAttribute = function (elem, setAttr, state) {
+        elem.removeAttribute('whitelisted');
+        elem.removeAttribute('blacklisted');
+        if (state)
+            elem.setAttribute(setAttr, state);
+    };
+
+    // Close all opened popup menus on a "Sites with cookies set" page.
+    var closeListedSitePopupMenu = function () {
+        $('.listed-site__menu').removeClass('active');
+    };
+
+    /**
      * Returns the list of all sites listed in a whitelist/blacklist with a quantity of cookies set for these sites.
-     * @param {string<whitelist>|string<blacklist>} type
+     * @param {string<whitelist>|string<blacklist>|string<all>} type
      * @returns {Map<string, number>} - {domain: cookies quantity}
      */
     var geListedSites = function (type) {
         var response = new Map();
 
-        if (!popupData.cookiesSettings[type])
-            return response;
+        var domains = [];
 
-        var domains = popupData.cookiesSettings[type].domains;
+        if (type === 'all') {
+            domains = Array.from(allCookies.keys());
+        }
+        else if (!popupData.cookiesSettings[type]) // No whitelisted/blacklisted sites
+            return response;
+        else
+            domains = popupData.cookiesSettings[type].domains;
 
         domains.forEach(function (domain) {
             if (allCookies.has(domain)) {
@@ -1829,26 +1955,39 @@
         return response;
     };
 
-    var fillSitesList = function (sitesList) {
+    var fillSitesList = function (sitesList, type) {
         var divSitesList = $('#listed_sites_page .sites-list');
         divSitesList.html('');
 
-        var template = $('#listed_site_template').html();
+        var template = "";
+
+        if (type === 'all') {
+            template = $('#all_sites_item_template').html();
+        }
+        else {
+            template = $('#listed_site_template').html();
+        }
 
         sitesList.forEach(function (quantity, domain) {
-            divSitesList.append(createSitesListRow(domain, quantity, template));
+            let data = {domain: domain, quantity: quantity};
+            if (type === 'all') {
+                data.whitelisted = isCookieDomainWhitelisted(domain);
+                data.blacklisted = isCookieDomainBlacklisted(domain);
+            }
+            divSitesList.append(createSitesListRow(data, template));
         });
     };
 
     /**
-     * Create an element row for whitelisted/blacklisted sites page
-     * @param {string} domain - site domain
-     * @param {number} quantity - number of cookies set for this domain
+     * Create an element row for whitelisted/blacklisted/all sites page
+     * @param {Object} data -
+     *                                  domain - site domain
+     *                                  quantity - number of cookies set for this domain
      * @param {string} template - element template for using with Mustache
      * @returns {*|jQuery|HTMLElement}
      */
-    var createSitesListRow = function (domain, quantity, template) {
-        return $(Mustache.render(template, {domain: domain, quantity: quantity}));
+    var createSitesListRow = function (data, template) {
+        return $(Mustache.render(template, data));
     };
 
 
@@ -1875,13 +2014,20 @@
 
     /***************************************************************************/
 
-    var handleRemoveAllListedSitesBtn = function () {
+    /**
+     * Floating button has two states: 1) Whitelisted/Blacklisted sites pages 2) All sites page
+     * Current states has two different icons and tooltips
+     */
+    var handleListedSitesPAgeFloatingBtn = function () {
         $('#listed_sites_page .fixed-action-btn .btn-floating').off('click');
         $('#listed_sites_page .fixed-action-btn .btn-floating').on('click', function (ev) {
             if (isWhitelistedSitesPageType())
                 clearWhitelist();
-            else
+            else if (!isAllSitesPageType()) // if blacklisted sites page opened
                 clearBlacklist();
+            else if (isAllSitesPageType()) {
+                clearAllCookies();
+            }
         });
     };
 
@@ -1896,6 +2042,16 @@
         document.querySelector('#listed_sites_page .sites-list').innerHTML = "";
         popupData.cookiesSettings.blacklist.domains = [];
     };
+
+    var clearAllCookies = function () {
+        messager.send('popupPanel', { what:  'clearAllCookies' });
+        document.querySelector('#listed_sites_page .sites-list').innerHTML = "";
+        allCookies = new Map();
+    };
+
+    /***************************************************************************/
+
+
 
     /***************************************************************************/
 

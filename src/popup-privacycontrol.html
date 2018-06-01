@@ -562,8 +562,9 @@
         </div>
 
         <div class="fixed-action-btn">
-            <a class="btn-floating btn-large tooltipped" data-position="left" data-delay="300" data-tooltip="popupTipRemoveAll">
-                <img src="img/popup/close.svg"/>
+            <a class="btn-floating btn-large tooltipped" data-position="left" data-delay="300">
+                <img class="icon-close" src="img/popup/close.svg"/>
+                <img class="icon-trash" src="img/popup/trash_white.svg"/>
             </a>
         </div>
 
@@ -705,8 +706,40 @@
     <li class="listed-site" data-domain="{{domain}}">
         <div class="listed-site__quantity">({{quantity}})</div>
         <div class="listed-site__domain truncate">{{domain}}</div>
-        <div class="waves-effect waves-custom-grey listed-site__remove_btn" data-position="left">
+        <div class="waves-effect waves-custom-grey listed-site__btn listed-site__remove_btn" data-position="left">
             <img src="img/popup/close_black.svg"/>
+        </div>
+    </li>
+</script>
+
+<script id="all_sites_item_template" type="text/html">
+    <li class="listed-site" data-domain="{{domain}}" {{#whitelisted}}whitelisted{{/whitelisted}} {{#blacklisted}}blacklisted{{/blacklisted}}>
+        <div class="listed-site__quantity">({{quantity}})</div>
+        <div class="listed-site__domain truncate">{{domain}}</div>
+        <div class="waves-effect waves-custom-grey listed-site__btn listed-site__clear_btn" data-position="bottom">
+            <img src="img/popup/trash_grey.svg"/>
+        </div>
+        <div class="listed-site__btn listed-site__more_btn">
+            <img src="img/popup/dots-vertical.svg"/>
+        </div>
+        <div class="listed-site__menu">
+            <div class="listed-site__menu__header">
+                <div class="listed-site__menu__header__close_btn">
+                    <img src="img/popup/close_black.svg"/>
+                </div>
+            </div>
+            <div class="waves-effect waves-custom-grey listed-site__menu_item" data-action="blacklisted" data-domain="{{domain}}">
+                <div class="listed-site__menu_item_icon">
+                    <img src="img/popup/block.svg"/>
+                </div>
+                <div class="listed-site__menu_item_title" data-i18n="popupCookiesBlacklist"></div>
+            </div>
+            <div class="waves-effect waves-custom-grey listed-site__menu_item" data-action="whitelisted" data-domain="{{domain}}">
+                <div class="listed-site__menu_item_icon">
+                    <img src="img/popup/done.svg"/>
+                </div>
+                <div class="listed-site__menu_item_title" data-i18n="popupCookiesWhitelist"></div>
+            </div>
         </div>
     </li>
 </script>
