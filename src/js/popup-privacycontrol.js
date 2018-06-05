@@ -1098,7 +1098,18 @@
         messager.send('popupPanel', {what: 'reloadTab', tabId: popupData.tabId});
     };
 
+
+
+
+
+
+
+
+
+
+
     /***************************************************************************/
+    /******************************** COOKIES ***********************************/
 
     /**
      * Handle controls in cookies tab.
@@ -1117,6 +1128,9 @@
         handleCookieControlSettingBtn();
     };
 
+    /**
+     * Handle "Remove all" button in the Cookies tab domain plate
+     */
     var handleRemoveAllCookiesBtn = function () {
         $("#domain_cookies_remove_btn").off('click');
         $("#domain_cookies_remove_btn").on('click', function (ev) {
@@ -1364,7 +1378,7 @@
         $('.advanced-settings-btn').on("click", openOptionsPage);
     };
 
-    /***************************************************************************/
+    /*************************** Cookies tab settings ********************************/
 
     var handleCookiesSettings = function () {
         $('.third-party-blocking-setting .setting-state-switcher input').off("change");
@@ -1375,13 +1389,28 @@
     };
 
     var renderCookiesSettings = function () {
+        // Third party blocking
         if (popupData.cookiesSettings.thirdPartyCookiesBlocking)
             $('.third-party-blocking-setting .setting-state-switcher input')
                 .attr('checked', popupData.cookiesSettings.thirdPartyCookiesBlocking);
 
+        // Sub title text changes after user enable/disable setting
+        $('.third-party-blocking-setting .list-item-subtitle').html(
+            vAPI.i18n.prepareTemplateText(popupData.cookiesSettings.thirdPartyCookiesBlocking ?
+                vAPI.i18n('popupCookiesThirdPartySubTitleBlocked')
+                : vAPI.i18n('popupCookiesThirdPartySubTitleAllowed')));
+
+
+        // Periodical clearing
         if (popupData.cookiesSettings.periodicalClearing)
             $('.periodical-cookies-clearing-setting .setting-state-switcher input')
                 .attr('checked', popupData.cookiesSettings.periodicalClearing);
+
+        // Sub title text changes after user enable/disable setting
+        $('.periodical-cookies-clearing-setting .list-item-subtitle').html(
+            vAPI.i18n.prepareTemplateText(popupData.cookiesSettings.periodicalClearing ?
+                vAPI.i18n('popupCookiesPeriodicalClearingSubTitleDisabled')
+                : vAPI.i18n('popupCookiesPeriodicalClearingSubTitleEnabled')));
     };
 
     var onThirdPartySettingSwitch = function () {
@@ -1394,6 +1423,8 @@
                 value: popupData.cookiesSettings.thirdPartyCookiesBlocking
             }
         );
+
+        renderCookiesSettings();
     };
 
     var onPeriodicalClearingSettingSwitch = function () {
@@ -1406,6 +1437,8 @@
                 value: popupData.cookiesSettings.periodicalClearing
             }
         );
+
+        renderCookiesSettings();
     };
 
     /***************************************************************************/

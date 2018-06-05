@@ -207,16 +207,24 @@
     "message": "Prevent cross-site tracking",
     "description": "Third party cookies blocking setting title"
   },
-  "popupCookiesThirdPartySubTitle":{
+  "popupCookiesThirdPartySubTitleBlocked":{
     "message": "Third party cookies blocked",
+    "description": "Third party cookies blocking setting sub title"
+  },
+  "popupCookiesThirdPartySubTitleAllowed":{
+    "message": "Third party cookies allowed",
     "description": "Third party cookies blocking setting sub title"
   },
   "popupCookiesPeriodicalClearingTitle":{
     "message": "Autodelete unwanted cookies",
     "description": "Periodical unprotected cookies clearing setting title"
   },
-  "popupCookiesPeriodicalClearingSubTitle":{
+  "popupCookiesPeriodicalClearingSubTitleEnabled":{
     "message": "Do not delete cookies periodically",
+    "description": "Periodical unprotected cookies clearing setting sub title"
+  },
+  "popupCookiesPeriodicalClearingSubTitleDisabled":{
+    "message": "Deletes cookies every 10 minutes",
     "description": "Periodical unprotected cookies clearing setting sub title"
   },
   "popupCookiesControlSettingTitle":{
