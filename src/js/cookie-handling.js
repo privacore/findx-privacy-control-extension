@@ -326,7 +326,7 @@
 
     CookieHandling.prototype.getWhitelistedCookieIndex = function (cookie) {
         return ub.cookiesSettings.whitelist.cookies.findIndex(function (cookieItem) {
-            return cookieItem.name === cookie.name && cookieItem.domain === cookieItem.domain;
+            return cookieItem.name === cookie.name && cookieItem.domain === cookie.domain;
         });
     };
 
@@ -395,7 +395,7 @@
 
     CookieHandling.prototype.getBlacklistedCookieIndex = function (cookie) {
         return ub.cookiesSettings.blacklist.cookies.findIndex(function (cookieItem) {
-            return cookieItem.name === cookie.name && cookieItem.domain === cookieItem.domain;
+            return cookieItem.name === cookie.name && cookieItem.domain === cookie.domain;
         });
     };
 
