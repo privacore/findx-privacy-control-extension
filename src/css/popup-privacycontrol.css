@@ -490,7 +490,7 @@ body:not(.protection-off) .protection-status-off {
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 100;
+    z-index: 999;
     background-color: rgba(0, 0, 0, 0.37);
     box-sizing: border-box;
     padding: 17px 37px;
@@ -1046,18 +1046,18 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 #cookies_tab .domain-cookies-list .collapsible-item-body-row {
     margin-right: 10px;
 }
-#cookies_tab .domain-cookies-list .cookie-name {
+.domain-cookies-list .cookie-name {
     flex: 1;
     padding-right: 15px;
 }
-#cookies_tab .domain-cookies-list .cookie-item.whitelisted-cookie .cookie-name {
+.domain-cookies-list .cookie-item.whitelisted-cookie .cookie-name {
     color: #6bad6f;
 }
-#cookies_tab .domain-cookies-list .cookie-item.blacklisted-cookie .cookie-name {
+.domain-cookies-list .cookie-item.blacklisted-cookie .cookie-name {
     color: #e55a50;
 }
 
-#cookies_tab .domain-cookies-list .cookie-control {
+.domain-cookies-list .cookie-control {
     width: 24px;
     height: 24px;
     opacity: 0.8;
@@ -1069,12 +1069,12 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     justify-content: center;
     align-items: center;
 }
-#cookies_tab .domain-cookies-list .cookie-control:hover {
+.domain-cookies-list .cookie-control:hover {
     opacity: 1;
     background-color: rgba(153, 153, 153, 0.2);
 }
 /* TODO: Current selector must be removed after correct icon will be received */
-#cookies_tab .domain-cookies-list .cookie-control.cookie-details-btn img {
+.domain-cookies-list .cookie-control.cookie-details-btn img {
     width: 18px;
     height: 18px;
 }
@@ -1334,7 +1334,7 @@ span.advanced-settings-btn {
 ul.sites-list {
     margin-bottom: 100px;
 }
-.sites-list .listed-site {
+.listed-site {
     display: flex;
     padding: 0 16px;
     margin-bottom: 6px;
@@ -1358,6 +1358,9 @@ ul.sites-list {
 #listed_sites_page[data-page-type="blacklist"] .listed-site .listed-site__domain,
 .listed-site[blacklisted] .listed-site__domain {
     color: #e55a50;
+}
+#listed_sites_page[data-page-type="all"] .listed-site .listed-site__domain {
+    cursor: pointer;
 }
 
 .listed-site .listed-site__btn {
@@ -1454,7 +1457,40 @@ ul.sites-list {
 }
 
 
+/******* Domain cookies page (Cookies set on) *******/
 
+#domain_cookies_page .domain-cookies-page-content {
+    overflow: auto;
+    width: 100%;
+    height: calc(100% - 56px);
+}
+#domain_cookies_page .listed-site {
+    padding-top: 16px;
+}
+#domain_cookies_page .listed-site__domain {
+    font-family: Roboto-medium;
+}
+
+#domain_cookies_page .domain-cookies-list {
+    padding: 16px 0 100px 16px;
+}
+
+
+#domain_cookies_page .cookie-details-dialog.active {
+    display: flex;
+}
+
+
+#domain_cookies_page .fixed-action-btn .btn-floating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f08303;
+}
+#domain_cookies_page .fixed-action-btn .btn-floating img {
+    width: 24px;
+    height: 24px;
+}
 
 
 /******* FOOTER *******/

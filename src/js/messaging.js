@@ -638,7 +638,7 @@ var onMessage = function(request, sender, callback) {
         break;
 
     case 'removeDomainCookies':
-        µb.cookieHandling.clearDomainCookies(request.domain, null, true);
+        µb.cookieHandling.clearDomainCookies(request.domain, null, false);
         break;
 
     case 'setCookieWhitelist':
@@ -672,7 +672,7 @@ var onMessage = function(request, sender, callback) {
         break;
 
     case 'clearAllCookies':
-        µb.cookieHandling.clearAllCookiesForce();
+        µb.cookieHandling.clearAllUnprotected();
         break;
 
     default:

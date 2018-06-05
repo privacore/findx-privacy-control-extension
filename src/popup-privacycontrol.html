@@ -570,6 +570,33 @@
 
     </div>
 
+    <div class="page" id="domain_cookies_page" data-domain="">
+        <div class="header">
+            <a class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
+            <span class="header-title" data-i18n="popupCookiesSetOn"></span>
+            <a class="header-btn open-search-tab-btn"><i class="material-icons">search</i></a>
+            <a class="header-btn settings-btn">
+                <img src="img/popup/settings-icon.svg" alt=""/>
+            </a>
+        </div>
+
+        <div class="mCustomScrollbar domain-cookies-page-content">
+            <div class="listed-site">
+                <div class="listed-site__quantity">(<span></span>)</div>
+                <div class="listed-site__domain truncate"></div>
+            </div>
+
+            <div class="domain-cookies-list"></div>
+        </div>
+
+        <div class="fixed-action-btn">
+            <a class="btn-floating btn-large tooltipped" data-position="left" data-delay="300">
+                <img class="icon-trash" src="img/popup/trash_white.svg"/>
+            </a>
+        </div>
+
+    </div>
+
 </div>
 
 <div id="footer" class="bg-blue">
@@ -714,7 +741,7 @@
 
 <script id="all_sites_item_template" type="text/html">
     <li class="listed-site" data-domain="{{domain}}" {{#whitelisted}}whitelisted{{/whitelisted}} {{#blacklisted}}blacklisted{{/blacklisted}}>
-        <div class="listed-site__quantity">({{quantity}})</div>
+        <div class="listed-site__quantity">(<span>{{quantity}}</span>)</div>
         <div class="listed-site__domain truncate">{{domain}}</div>
         <div class="waves-effect waves-custom-grey listed-site__btn listed-site__clear_btn" data-position="bottom">
             <img src="img/popup/trash_grey.svg"/>

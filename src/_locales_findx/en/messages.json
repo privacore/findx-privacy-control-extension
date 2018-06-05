@@ -263,6 +263,10 @@
     "message": "Open settings",
     "description": ""
   },
+  "popupCookiesSetOn":{
+    "message": "Cookies set on",
+    "description": ""
+  },
   "popupPlateBlockedOnSite":{
     "message": "Blocked on this site",
     "description": ""
