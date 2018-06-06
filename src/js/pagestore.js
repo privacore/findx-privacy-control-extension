@@ -387,8 +387,10 @@ PageStore.prototype.init = function(tabId, context) {
      * List of first party cookies for tab's root domain
      */
     this.cookies = [];
+    this.cookiesTotal = 0;
     this.updatePageCookiesList(function (cookies) {
         this.cookies = cookies || [];
+        this.cookiesTotal = this.cookies.length;
     }.bind(this));
 
     return this;

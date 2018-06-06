@@ -410,7 +410,7 @@
      * Receive all domain cookies.
      * Used on pagestore create.
      * Receives all domain cookies and mark each cookies if it is whitelisted or blacklisted
-     * @param {String} domain
+     * @param {String} domain - root domain without dots at the beginning
      * @param {Function} callback
      */
     CookieHandling.prototype.getDomainInitCookies = function (domain, callback) {

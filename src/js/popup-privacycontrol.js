@@ -1234,8 +1234,7 @@
 
     var showCookiesQuantity = function () {
         $("#cookies_tab .domain-cookies-count").text(getAllowedCookiesQty());
-        $("#cookies_tab .domain-cookies-count-total")
-            .text(popupData.cookies ? popupData.cookies.length || 0 : 0);
+        $("#cookies_tab .domain-cookies-count-total").text(getTotalDomainCookiesQty());
     };
 
     /**
@@ -1256,10 +1255,32 @@
         return qty;
     };
 
+    var getTotalDomainCookiesQty = function () {
+        return popupData.cookies ? popupData.cookies.length || 0 : 0;
+    };
+
     /***************************************************************************/
 
+    /**
+     * If domain is blacklisted we count only whitelisted/blacklisted cookies.
+     * If separate cookie in such domain hasn't its own setting blacklist -
+     *      don't count it, we don't show such cookies in a list.
+     * @returns {boolean}
+     */
     var isNoDomainCookies = function () {
-        return !popupData.cookies || !popupData.cookies.length;
+        if (isCookieDomainBlacklisted(popupData.pageDomain)) {
+            let cookiesExists = false;
+            if (popupData && popupData.cookies) {
+                cookiesExists = popupData.cookies.some(function (cookie) {
+                    return (!cookie.removed || (cookie.removed && cookie.blacklisted));
+                });
+            }
+
+            return !cookiesExists;
+        }
+        else {
+            return !popupData.cookies || !popupData.cookies.length;
+        }
     };
 
     /***************************************************************************/
@@ -1455,7 +1476,14 @@
 
         popupData.cookies = sortCookiesList(popupData.cookies);
 
+        let isDomainBlacklisted = isCookieDomainBlacklisted(popupData.pageDomain);
+
         popupData.cookies.forEach(function (cookieData) {
+            // If domain blacklisted - show in a list only cookies which are whitelisted/blacklisted.
+            // Cookie blocked because of domain blacklisting shouldn't be shown.
+            if (isDomainBlacklisted && cookieData.removed && !cookieData.blacklisted)
+                return;
+
             let cookieItem = new CookieItem(cookieData, CookieItem.type.MAIN_DOMAIN);
             cookieItem.appendTo(divCookieList);
             cookies.push(cookieItem);
