@@ -311,7 +311,7 @@
     var onSidebarLinkClick = function (action) {
         switch (action) {
             case "protection_lists":
-                openPage(PAGES.protection_lists);
+                openOptionsPage();
                 break;
             case "tracking_monitor":
                 openTrackingMonitor();
@@ -1477,7 +1477,7 @@
         });
     };
 
-    /***************************************************************************/
+    /******************************* Cookie item **********************************/
 
     var CookieItem = function (initData, type) {
         this.cookieData = initData;
@@ -1761,7 +1761,7 @@
         this.divElement.remove();
     };
 
-    /***************************************************************************/
+    /************************** Cookie control page *********************************/
 
     var handleCookieControlSettingBtn = function () {
         $('.cookie-control-setting').off("click");
@@ -1800,6 +1800,7 @@
     };
 
     /***************************************************************************/
+    /**************************** Listed cookies page *******************************/
 
     var allCookies = new Map();
 
@@ -1988,6 +1989,7 @@
             closeListedSitePopupMenu();
         });
 
+        // Blacklist/Whitelist buttons in a popup (vertical dots button)
         divSitesList.find('.listed-site__menu_item').off('click');
         divSitesList.find('.listed-site__menu_item').on('click', function (ev) {
             let action = ev.currentTarget.getAttribute('data-action');
@@ -2014,8 +2016,10 @@
         // After user clicks on domain element - open domain details page (list of cookies)
         divSitesList.find('.listed-site__domain').off('click');
         divSitesList.find('.listed-site__domain').on('click', function (ev) {
-            let domain = ev.currentTarget.closest('.listed-site').getAttribute('data-domain');
-            openDomainCookiesPage(domain);
+            if (ev.currentTarget.closest('#listed_sites_page').getAttribute('data-page-type') === 'all') {
+                let domain = ev.currentTarget.closest('.listed-site').getAttribute('data-domain');
+                openDomainCookiesPage(domain);
+            }
         });
     };
 
