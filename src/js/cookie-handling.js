@@ -301,7 +301,7 @@
 
                 // Remove cookie from browser.
                 // If domain is blacklisted and cookie removed from whitelist - we need to remove it from browser
-                this.removeCookie(cookie);
+                // this.removeCookie(cookie);
             }
         }
         else if (domain) { // Remove a whole domain from a whitelist

@@ -1718,6 +1718,11 @@
             );
 
             if (this.cookieType === CookieItem.type.MAIN_DOMAIN) {
+                // If cookie is a first party cookie of a domain opened in current tab -
+                //  remove it from whitelist/blacklist after removing this cookie from browser
+                this.setWhitelistSate(false);
+                this.setBlacklistState(false);
+
                 reloadTab();
                 vAPI.closePopup();
             }
