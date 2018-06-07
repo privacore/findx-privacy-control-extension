@@ -180,7 +180,8 @@
         if (cookie.blacklisted /* if separate cookie is blacklisted */
             /* Separate cookie whitelisting/blacklisting has more priority then domain blacklisting
              * so if domain is blacklisted but cookie is whitelisted we don't remove it */
-            || (this.isDomainBlacklisted(domain) && !this.isCookieWhitelisted(cookie)))
+            || (this.isDomainBlacklisted(domain) && !this.isCookieWhitelisted(cookie))
+            || this.isCookieTmpBlacklisted(cookie))
         {
             isBlacklisted = true;
         }
@@ -467,6 +468,64 @@
         if (!url)
             url = urlFromCookieDomain(cookieItem);
         vAPI.cookies.removeCookie(cookieItem, url);
+    };
+
+    /****************************************************************************/
+
+    /**
+     * Temporary blacklist used for removing domain cookies.
+     * When user clicks "Remove all" button in a Cookies tab in a popup -
+     *      we set all cookies except whitelisted/blacklisted to a temporary blacklist.
+     *      After page reload these cookies should be blocked. Then tmpBlacklist will be cleared.
+     * @type {Cookie[]}
+     */
+    CookieHandling.prototype.tmpBlacklist = [];
+
+    CookieHandling.prototype.temporaryBlacklistCookies = function (cookies, callback) {
+        if (!this.tmpBlacklist.length)
+            this.tmpBlacklist = cookies;
+        else {
+            this.tmpBlacklist = this.tmpBlacklist.concat(cookies);
+        }
+
+        // cookies.forEach(function (cookie) {
+        //     this.removeCookie(cookie);
+        // }.bind(this));
+
+        if (callback)
+            callback();
+
+        // Clear tmpBlacklist after 5 seconds.
+        setTimeout(function () {
+            this.rmTmpBlacklistedCookies(cookies);
+        }.bind(this), 5000);
+    };
+
+    CookieHandling.prototype.rmTmpBlacklistedCookies = function (cookies) {
+        if (this.tmpBlacklist.length === cookies.length) {
+            // If blacklisted only cookies of one tab.
+            this.tmpBlacklist = [];
+        }
+        else if (this.tmpBlacklist.length) {
+            // If user temporary blacklists few tabs - we are clearing only cookies received in arguments (cookies)
+            for (var i = 0; i < this.tmpBlacklist.length;) {
+                var cookie = this.tmpBlacklist[i];
+                let cookieIndex = cookies.findIndex(function (item) {
+                    return item.name === cookie.name && item.domain === cookie.domain;
+                });
+                if (cookieIndex !== -1) {
+                    this.tmpBlacklist.splice(i, 1);
+                }
+                else
+                    i++;
+            }
+        }
+    };
+
+    CookieHandling.prototype.isCookieTmpBlacklisted = function (cookie) {
+        return this.tmpBlacklist.some(function (item) {
+            return item.name === cookie.name && item.domain === cookie.domain;
+        });
     };
 
     /****************************************************************************/

@@ -559,6 +559,10 @@ var onMessage = function(request, sender, callback) {
         popupDataFromRequest(request, callback);
         return;
 
+    case 'temporaryBlacklistCookies':
+        µb.cookieHandling.temporaryBlacklistCookies(request.cookies, callback);
+        return;
+
     default:
         break;
     }

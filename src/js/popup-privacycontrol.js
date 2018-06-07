@@ -1138,21 +1138,33 @@
                 return;
             }
 
-            rmTabDomainCookies(popupData.pageDomain);
-
-            reloadTab();
-            vAPI.closePopup();
+            rmTabDomainCookies(popupData.pageDomain, function () {
+                reloadTab();
+                vAPI.closePopup();
+            });
         });
     };
 
     /**
-     * Remove cookies of domain opened in a tab
-     * @param {string} domain
+     * Remove all unprotected cookies of domain opened in a tab.
+     * If cookie isn't whitelisted/blacklisted - set it temporary to a blacklist.
+     * After page reload temporary blacklist will be cleared.
+     * @param {string} [domain]
+     * @param {Function} [callback]
      */
-    var rmTabDomainCookies = function (domain) {
+    var rmTabDomainCookies = function (domain, callback) {
+        let cookies = getDomainRegularCookies();
+
         messager.send('popupPanel', {
-            what:  'removeDomainCookies',
-            domain: domain
+            what:  'temporaryBlacklistCookies',
+            cookies: cookies
+        }, function () {
+            messager.send('popupPanel', {
+                what:  'removeDomainCookies',
+                domain: domain
+            });
+            if (callback)
+                callback();
         });
     };
 
@@ -1262,25 +1274,39 @@
     /***************************************************************************/
 
     /**
-     * If domain is blacklisted we count only whitelisted/blacklisted cookies.
-     * If separate cookie in such domain hasn't its own setting blacklist -
+     * We count only whitelisted/blacklisted and cookies which were not blocked.
+     * If separate cookie was blocked and it is not blacklisted -
      *      don't count it, we don't show such cookies in a list.
      * @returns {boolean}
      */
     var isNoDomainCookies = function () {
-        if (isCookieDomainBlacklisted(popupData.pageDomain)) {
-            let cookiesExists = false;
-            if (popupData && popupData.cookies) {
-                cookiesExists = popupData.cookies.some(function (cookie) {
-                    return (!cookie.removed || (cookie.removed && cookie.blacklisted));
-                });
-            }
+        let cookiesExists = false;
+        if (popupData && popupData.cookies) {
+            cookiesExists = popupData.cookies.some(function (cookie) {
+                return (!cookie.removed || (cookie.removed && cookie.blacklisted));
+            });
+        }
 
-            return !cookiesExists;
-        }
-        else {
-            return !popupData.cookies || !popupData.cookies.length;
-        }
+        return !cookiesExists;
+    };
+
+    /***************************************************************************/
+
+    /**
+     * Returns a list of cookies which aren't whitelisted/blacklisted.
+     * Current list used for temporary blacklisting after user clicks "Remove all" in a Cookies tab.
+     * @returns {Cookie[]}
+     */
+    var getDomainRegularCookies = function () {
+        let list = [];
+
+        popupData.cookies.forEach(function (cookie) {
+            if (!isCookieWhitelisted(cookie) && !isCookieBlacklisted(cookie)) {
+                list.push(cookie);
+            }
+        });
+
+        return list;
     };
 
     /***************************************************************************/
@@ -1479,9 +1505,9 @@
         let isDomainBlacklisted = isCookieDomainBlacklisted(popupData.pageDomain);
 
         popupData.cookies.forEach(function (cookieData) {
-            // If domain blacklisted - show in a list only cookies which are whitelisted/blacklisted.
+            // Show in a list only cookies which are whitelisted/blacklisted or were not blocked.
             // Cookie blocked because of domain blacklisting shouldn't be shown.
-            if (isDomainBlacklisted && cookieData.removed && !cookieData.blacklisted)
+            if (cookieData.removed && !cookieData.blacklisted)
                 return;
 
             let cookieItem = new CookieItem(cookieData, CookieItem.type.MAIN_DOMAIN);
