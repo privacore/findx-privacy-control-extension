@@ -498,7 +498,7 @@
         // Clear tmpBlacklist after 5 seconds.
         setTimeout(function () {
             this.rmTmpBlacklistedCookies(cookies);
-        }.bind(this), 5000);
+        }.bind(this), 3500);
     };
 
     CookieHandling.prototype.rmTmpBlacklistedCookies = function (cookies) {

@@ -1346,6 +1346,7 @@ ul.sites-list {
     font-size: 12px;
     color: rgba(0,0,0,.56);
     margin-right: 12px;
+    min-width: 22px;
 }
 .listed-site .listed-site__domain {
     flex: 1;
@@ -1465,7 +1466,7 @@ ul.sites-list {
     height: calc(100% - 56px);
 }
 #domain_cookies_page .listed-site {
-    padding-top: 16px;
+    padding-top: 20px;
 }
 #domain_cookies_page .listed-site__domain {
     font-family: Roboto-medium;

@@ -1301,7 +1301,7 @@
         let list = [];
 
         popupData.cookies.forEach(function (cookie) {
-            if (!isCookieWhitelisted(cookie) && !isCookieBlacklisted(cookie)) {
+            if (!cookie.removed && !isCookieWhitelisted(cookie) && !isCookieBlacklisted(cookie)) {
                 list.push(cookie);
             }
         });
@@ -1317,6 +1317,8 @@
             return;
 
         setDomainWhitelistState(popupData.pageDomain, !state);
+        if (!state)
+            setDomainBlacklistState(popupData.pageDomain, false);
         // showDomainWhitelistState();
         reloadTab();
         vAPI.closePopup();
@@ -1366,6 +1368,8 @@
             return;
 
         setDomainBlacklistState(popupData.pageDomain, !state);
+        if (!state)
+            setDomainWhitelistState(popupData.pageDomain, false);
         reloadTab();
         vAPI.closePopup();
     };
@@ -1502,8 +1506,6 @@
 
         popupData.cookies = sortCookiesList(popupData.cookies);
 
-        let isDomainBlacklisted = isCookieDomainBlacklisted(popupData.pageDomain);
-
         popupData.cookies.forEach(function (cookieData) {
             // Show in a list only cookies which are whitelisted/blacklisted or were not blocked.
             // Cookie blocked because of domain blacklisting shouldn't be shown.
@@ -1527,7 +1529,12 @@
         return cookiesList.sort(function(a, b) {
             let typeA = a.whitelisted ? 1 : (a.blacklisted ? 3 : 2);
             let typeB = b.whitelisted ? 1 : (b.blacklisted ? 3 : 2);
-            return typeA > typeB;
+
+            if (typeA > typeB)
+                return 1;
+            else if (typeA < typeB)
+                return -1;
+            else return 0;
         });
     };
 
@@ -1679,6 +1686,9 @@
                 reloadTab();
                 vAPI.closePopup();
             }
+            else if (this.cookieType === CookieItem.type.DOMAIN) {
+                this.closeDetails();
+            }
         }.bind(this));
     };
 
@@ -1725,6 +1735,9 @@
             if (this.cookieType === CookieItem.type.MAIN_DOMAIN) {
                 reloadTab();
                 vAPI.closePopup();
+            }
+            else if (this.cookieType === CookieItem.type.DOMAIN) {
+                this.closeDetails();
             }
         }.bind(this));
     };
@@ -1798,6 +1811,9 @@
             if (this.cookieType === CookieItem.type.MAIN_DOMAIN) {
                 reloadTab();
                 vAPI.closePopup();
+            }
+            else if (this.cookieType === CookieItem.type.DOMAIN) {
+                this.closeDetails();
             }
         }.bind(this));
     };
