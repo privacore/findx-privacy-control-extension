@@ -1441,7 +1441,7 @@
  * @param {Object} updates -
  *  {
  *      filterPath: string,
- *      exceptions: {
+ *      domains: {
  *          domain: string,
  *          state: boolean
  *      }
