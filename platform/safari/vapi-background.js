@@ -495,7 +495,14 @@ vAPI.openSharePage = function (social) {
     var url = µBlock.shareTo[social].replace(/\{\{url\}\}/, µBlock.shareUrl);
 
     vAPI.tabs.open({url: url, select: true});
-}
+};
+
+vAPI.openGetExtensionPage = function (browserType) {
+    if (!browserType) return;
+
+    var url = µBlock.getExtensionUrl[browserType];
+    vAPI.tabs.open({url: url, select: true});
+};
 
 /******************************************************************************/
 /******************************************************************************/

@@ -223,8 +223,17 @@ var onMessage = function(request, sender, callback) {
     case 'shareTo':
         vAPI.openSharePage(request.social);
         break;
+    case 'openGetExtensionPage':
+        vAPI.openGetExtensionPage(request.type);
+        break;
     case 'saveActiveTabState':
         vAPI.saveActiveTabState(request.tabId);
+        break;
+    case 'cookiesSettings':
+        response = µb.cookieHandling.getSettings();
+        break;
+    case 'changeCookiesSettings':
+        response = µb.cookieHandling.changeSettings(request.name, request.value);
         break;
         /**********************************/
 
@@ -454,7 +463,8 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         tooltipsDisabled: µb.userSettings.tooltipsDisabled,
         usedFilters: [],
         urls: null,
-        activePopupTab: µb.localSettings.activePopupTab
+        activePopupTab: µb.localSettings.activePopupTab,
+        cookiesSettings: µb.cookiesSettings
     };
 
     var pageStore = µb.pageStoreFromTabId(tabId);
@@ -486,6 +496,7 @@ var popupDataFromTabId = function(tabId, tabTitle) {
         r.noRemoteFonts = µb.hnSwitches.evaluateZ('no-remote-fonts', rootHostname);
         r.remoteFontCount = pageStore.remoteFontCount;
         r.filtersGroupsExceptions = getFiltersGroupsExceptions(r.pageDomain);
+        r.cookies = pageStore.cookies || [];
 
         r.usedFilters = getAllFiltersInUse();
         // r.urls = pageStore.netFilteringCache.results;
@@ -508,7 +519,16 @@ var popupDataFromTabId = function(tabId, tabTitle) {
 
 var popupDataFromRequest = function(request, callback) {
     if ( request.tabId ) {
-        callback(popupDataFromTabId(request.tabId, ''));
+        var data = popupDataFromTabId(request.tabId, '');
+        if (µb.isSafari()) {
+            callback(data);
+        }
+        else {
+            vAPI.cookies.getAllCookies(function (allCookies) {
+                data.allCookies = allCookies;
+                callback(data);
+            });
+        }
         return;
     }
 
@@ -520,7 +540,17 @@ var popupDataFromRequest = function(request, callback) {
             tabId = tab.id;
             tabTitle = tab.title || '';
         }
-        callback(popupDataFromTabId(tabId, tabTitle));
+        var data = popupDataFromTabId(tabId, tabTitle);
+
+        if (µb.isSafari()) {
+            callback(data);
+        }
+        else {
+            vAPI.cookies.getAllCookies(function (allCookies) {
+                data.allCookies = allCookies;
+                callback(data);
+            });
+        }
     });
 };
 
@@ -541,6 +571,10 @@ var onMessage = function(request, sender, callback) {
 
     case 'getPopupData':
         popupDataFromRequest(request, callback);
+        return;
+
+    case 'temporaryBlacklistCookies':
+        µb.cookieHandling.temporaryBlacklistCookies(request.cookies, callback);
         return;
 
     default:
@@ -591,10 +625,72 @@ var onMessage = function(request, sender, callback) {
     case 'togglePauseFiltering':
         µb.togglePauseFilteringSwitch(request.state);
         µb.updateBadgeAsync(request.tabId);
+        µb.cookieHandling.toggleStopProtection(request.state);
         break;
 
     case 'setFiltersGroupException':
         setFiltersGroupException(request.data.group, request.data.pageDomain, request.data.state);
+        break;
+
+    case 'thirdPartyBlockingState':
+        setFiltersGroupException(request.data.group, request.data.pageDomain, request.data.state);
+        break;
+
+    case 'toggleCookiesDomainWhitelist':
+        if (request.state)
+            µb.cookieHandling.addToWhitelist(null, request.domain);
+        else
+            µb.cookieHandling.rmFromWhitelist(null, request.domain);
+        break;
+
+    case 'toggleCookiesDomainBlacklist':
+        if (request.state)
+            µb.cookieHandling.addToBlacklist(null, request.domain);
+        else
+            µb.cookieHandling.rmFromBlacklist(null, request.domain);
+        break;
+
+    case 'resetCookiesDomain':
+        µb.cookieHandling.rmFromBlacklist(null, request.domain);
+        µb.cookieHandling.rmFromWhitelist(null, request.domain);
+        break;
+
+    case 'removeDomainCookies':
+        µb.cookieHandling.clearDomainCookies(request.domain, null, false);
+        break;
+
+    case 'setCookieWhitelist':
+        if (request.state) {
+            µb.cookieHandling.addToWhitelist(request.cookie);
+        }
+        else {
+            µb.cookieHandling.rmFromWhitelist(request.cookie);
+        }
+        break;
+
+    case 'setCookieBlacklist':
+        if (request.state) {
+            µb.cookieHandling.addToBlacklist(request.cookie);
+        }
+        else {
+            µb.cookieHandling.rmFromBlacklist(request.cookie);
+        }
+        break;
+
+    case 'removeCookie':
+        µb.cookieHandling.removeCookie(request.cookie);
+        break;
+
+    case 'clearCookiesDomainsWhitelist':
+        µb.cookieHandling.clearDomainsWhitelist();
+        break;
+
+    case 'clearCookiesDomainsBlacklist':
+        µb.cookieHandling.clearDomainsBlacklist();
+        break;
+
+    case 'clearAllCookies':
+        µb.cookieHandling.clearAllUnprotected();
         break;
 
     default:
@@ -901,7 +997,8 @@ var backupUserData = function(callback) {
         dynamicFilteringString: µb.permanentFirewall.toString(),
         urlFilteringString: µb.permanentURLFiltering.toString(),
         hostnameSwitchesString: µb.hnSwitches.toString(),
-        userFilters: ''
+        userFilters: '',
+        cookiesSettings: µb.cookieHandling.backupSettings()
     };
 
     var onUserFiltersReady = function(details) {
@@ -936,6 +1033,9 @@ var restoreUserData = function(request) {
                 userData.hiddenSettingsString || ''
             );
         }
+
+        µBlock.cookieHandling.restoreBackup(userData.cookiesSettings);
+
         vAPI.storage.set({
             hiddenSettings: hiddenSettings,
             netWhitelist: userData.netWhitelist || '',

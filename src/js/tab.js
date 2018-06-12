@@ -469,13 +469,20 @@ housekeep itself.
         return new Context(tabId);
     };
 
+
+    // Igor. 19.04.2018
+    var getAll = function () {
+        return tabContexts;
+    };
+
     return {
         push: push,
         commit: commit,
         lookup: lookup,
         mustLookup: mustLookup,
         exists: exists,
-        createContext: createContext
+        createContext: createContext,
+        getAll: getAll
     };
 })();
 
@@ -505,6 +512,9 @@ vAPI.tabs.onNavigation = function(details) {
     if ( pageStore ) {
         pageStore.journalAddRootFrame('committed', details.url);
     }
+
+    if (!µb.isSafari())
+        µb.cookieHandling.onTabUpdate(details.tabId);
 };
 
 /******************************************************************************/
@@ -522,6 +532,10 @@ vAPI.tabs.onUpdated = function(tabId, changeInfo, tab) {
     }
     µb.tabContextManager.commit(tabId, changeInfo.url);
     µb.bindTabToPageStats(tabId, 'tabUpdated');
+
+    if (!µb.isSafari() && changeInfo.status) {
+        µb.cookieHandling.onTabUpdate(tabId);
+    }
 };
 
 /******************************************************************************/

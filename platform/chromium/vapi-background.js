@@ -622,6 +622,108 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 
 /******************************************************************************/
 /******************************************************************************/
+// Igor. 19.04.2018  vAPI.cookies added for handling and blocking cookies
+
+vAPI.cookies = {};
+
+vAPI.cookies.registerListeners = function () {
+    if (!µBlock.isSafari())
+        chrome.cookies.onChanged.addListener(this.onChanged || noopFunc);
+};
+
+vAPI.cookies.removeListeners = function () {
+    if (!µBlock.isSafari())
+        chrome.cookies.onChanged.removeListener(this.onChanged || noopFunc);
+};
+
+/******************************************************************************/
+
+vAPI.cookies.getCookieStores = function (callback) {
+    try {
+        if (!µBlock.isSafari())
+            chrome.cookies.getAllCookieStores(callback);
+        else {
+            callback();
+        }
+    }
+    catch (exception) {
+        console.error("Exception in 'getCookieStores' (vapi-background.js) :\n\t", exception);
+        if (callback) callback();
+    }
+};
+
+/******************************************************************************/
+
+vAPI.cookies.getDomainCookies = function (rootDomain, callback) {
+    let options = {domain: rootDomain || ""};
+    vAPI.cookies.getAllCookies(callback, options);
+};
+
+/******************************************************************************/
+
+vAPI.cookies.getAllCookies = function (callback, filters) {
+    try {
+        let allCookies = [];
+        let handledStores = 0;
+
+        if (µBlock.isSafari()) {
+            callback(allCookies);
+            return;
+        }
+
+        vAPI.cookies.getCookieStores(function (cookieStores) {
+            cookieStores.forEach(function (cookieStore) {
+                let options = filters ? filters : {};
+                if (typeof cookieStore.id !== null) {
+                    options.storeId = cookieStore.id;
+                }
+                chrome.cookies.getAll(options, function (storeCookies) {
+                    allCookies = allCookies.concat(storeCookies);
+                    handledStores++;
+                    if (handledStores === cookieStores.length) {
+                        if (callback)
+                            callback(allCookies);
+                    }
+                });
+            });
+        });
+    }
+    catch (exception) {
+        console.error("Exception in 'getAllCookies' (vapi-background.js) :" +
+            "\n\tfilters: ", filters,
+            "\n\texception: ", exception);
+        if (callback)
+            callback();
+    }
+};
+
+/******************************************************************************/
+
+vAPI.cookies.removeCookie = function (cookie, url) {
+    try {
+        let cookieOptions = {
+            name: cookie.name,
+            url: url,
+            storeId: cookie.storeId
+        };
+
+        if (typeof vAPI.webextFlavor === 'string' &&
+            vAPI.webextFlavor.startsWith('Mozilla-Firefox-'))
+        {
+            cookieOptions.firstPartyDomain = cookie.firstPartyDomain;
+        }
+        chrome.cookies.remove(cookieOptions);
+    }
+    catch (exception) {
+        console.error("Exception in 'removeCookie' (vapi-background.js) :" +
+            "\n\tcookie: ", cookie,
+            "\n\turl: ", url,
+            "\n\texception:", exception);
+    }
+};
+
+/******************************************************************************/
+/******************************************************************************/
 
 vAPI.openOptionsPage = function () {
     var optionsUrl = vAPI.getURL(µBlock.optionsUrl);
@@ -681,6 +783,13 @@ vAPI.openSharePage = function (social) {
 
     var url = µBlock.shareTo[social].replace(/\{\{url\}\}/, µBlock.shareUrl);
 
+    vAPI.tabs.open({url: url, select: true});
+};
+
+vAPI.openGetExtensionPage = function (browserType) {
+    if (!browserType) return;
+
+    var url = µBlock.getExtensionUrl[browserType];
     vAPI.tabs.open({url: url, select: true});
 };
 
@@ -1130,6 +1239,8 @@ vAPI.onLoadAllCompleted = function() {
                 scriptStart(tab.id);
             }
         }
+
+        µb.cookieHandling.init();
     };
 
     chrome.tabs.query({ url: '<all_urls>' }, bindToTabs);
