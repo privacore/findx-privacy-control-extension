@@ -223,6 +223,9 @@ var onMessage = function(request, sender, callback) {
     case 'shareTo':
         vAPI.openSharePage(request.social);
         break;
+    case 'openGetExtensionPage':
+        vAPI.openGetExtensionPage(request.type);
+        break;
     case 'saveActiveTabState':
         vAPI.saveActiveTabState(request.tabId);
         break;

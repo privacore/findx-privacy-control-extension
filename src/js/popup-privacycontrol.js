@@ -22,6 +22,8 @@
 
     var isFilterChanged = false;
 
+    var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
     /***************************************************************************/
 
     var cachePopupData = function (data) {
@@ -1205,12 +1207,24 @@
                         "\n\t popupData: ", popupData);
 
         showCookiesDomain();
-        showDomainWhitelistState();
-        showDomainBlacklistState();
-        showCookiesQuantity();
-        updateNoCookies();
-        renderCookiesSettings();
-        renderCookiesList();
+
+        if (!isSafari) {
+            showDomainWhitelistState();
+            showDomainBlacklistState();
+            showCookiesQuantity();
+            updateNoCookies();
+            renderCookiesSettings();
+            renderCookiesList();
+        }
+        else {
+            document.querySelector('body').classList.add('platform-safari');
+            $('.safari-cookies-dialog-btn').off('click');
+            $('.safari-cookies-dialog-btn').on('click', function (ev) {
+                let type = ev.currentTarget.getAttribute('data-type') || "";
+                messager.send('popupPanel', {what: 'openGetExtensionPage', type: type});
+                vAPI.closePopup();
+            });
+        }
     };
 
     /***************************************************************************/
@@ -2428,13 +2442,15 @@
 
         // Cookies
         renderCookiesTab();
+        if (!isSafari) {
+            parseAllCookiesBySites();
+        }
+
 
         // ProtectionLists
         renderTrackedUrls();
         displayUsedFilters(isInitial);
         updateFiltersTitleTooltips();
-
-        parseAllCookiesBySites();
 
         var activePage = getActivePage();
         if (activePage.id === PAGES.all_sites && activePage.getAttribute('data-page-type') === 'all') {
@@ -2514,7 +2530,6 @@
             onDataReceived
         );
     };
-
 
 
     uDom.onLoad(function () {

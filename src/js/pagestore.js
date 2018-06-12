@@ -387,9 +387,11 @@ PageStore.prototype.init = function(tabId, context) {
      * List of first party cookies for tab's root domain
      */
     this.cookies = [];
-    this.updatePageCookiesList(function (cookies) {
-        this.cookies = cookies || [];
-    }.bind(this));
+    if (!µb.isSafari()) {
+        this.updatePageCookiesList(function (cookies) {
+            this.cookies = cookies || [];
+        }.bind(this));
+    }
 
     return this;
 };
@@ -956,6 +958,8 @@ PageStore.prototype.updatePageCookiesList = function (callback) {
 };
 
 PageStore.prototype.onDomainClosed = function () {
+    if (µb.isSafari()) return;
+
     let rootDomain = µb.URI.domainFromHostname(this.tabHostname);
     µb.cookieHandling.onDomainClosed(rootDomain, this.rawURL);
 };

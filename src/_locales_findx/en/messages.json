@@ -275,6 +275,18 @@
     "message": "Cookies set on",
     "description": ""
   },
+  "popupCookiesSafariDialogTitle":{
+    "message": "Not available in Safari",
+    "description": "Dialog visible in a Cookies tab only on Safari"
+  },
+  "popupCookiesSafariDialogContent":{
+    "message": "Controlling cookies from Findx Privacy Control is not possible in Safari. You can change cookie settings via the Safari settings.",
+    "description": "Dialog visible in a Cookies tab only on Safari"
+  },
+  "popupCookiesSafariDialogDownload":{
+    "message": "Download Findx for:",
+    "description": "Dialog visible in a Cookies tab only on Safari"
+  },
   "popupPlateBlockedOnSite":{
     "message": "Blocked on this site",
     "description": ""

@@ -23,6 +23,9 @@
      *  and all tabs will be handled.
      */
     CookieHandling.prototype.init = function () {
+        if (ub.isSafari())
+            return;
+
         this.updateTabsDomainsList();
 
         this.handleStatistics();

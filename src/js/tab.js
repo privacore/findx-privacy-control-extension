@@ -501,7 +501,9 @@ vAPI.tabs.onNavigation = function(details) {
     if ( pageStore ) {
         pageStore.journalAddRootFrame('committed', details.url);
     }
-    µb.cookieHandling.onTabUpdate(details.tabId);
+
+    if (!µb.isSafari())
+        µb.cookieHandling.onTabUpdate(details.tabId);
 };
 
 /******************************************************************************/
@@ -520,7 +522,7 @@ vAPI.tabs.onUpdated = function(tabId, changeInfo, tab) {
     µb.tabContextManager.commit(tabId, changeInfo.url);
     µb.bindTabToPageStats(tabId, 'tabUpdated');
 
-    if (changeInfo.status) {
+    if (!µb.isSafari() && changeInfo.status) {
         µb.cookieHandling.onTabUpdate(tabId);
     }
 };

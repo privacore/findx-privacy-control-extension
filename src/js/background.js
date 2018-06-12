@@ -259,6 +259,11 @@ var µBlock = (function() { // jshint ignore:line
             "firefox": 'https://addons.mozilla.org/en-US/firefox/addon/findx-privacy-control/'
         },
 
+        getExtensionUrl: {
+            'chrome': 'https://get.findx.com/desktop/chromeprivacycontrol/',
+            "firefox": 'https://get.findx.com/desktop/privacy-control-extension-for-firefox/'
+        },
+
         searchDomain: {
             default: "https://www.findx.com",
             da: "https://www.findx.dk"

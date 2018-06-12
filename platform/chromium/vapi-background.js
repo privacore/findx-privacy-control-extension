@@ -627,18 +627,24 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 vAPI.cookies = {};
 
 vAPI.cookies.registerListeners = function () {
-    chrome.cookies.onChanged.addListener(this.onChanged || noopFunc);
+    if (!µBlock.isSafari())
+        chrome.cookies.onChanged.addListener(this.onChanged || noopFunc);
 };
 
 vAPI.cookies.removeListeners = function () {
-    chrome.cookies.onChanged.removeListener(this.onChanged || noopFunc);
+    if (!µBlock.isSafari())
+        chrome.cookies.onChanged.removeListener(this.onChanged || noopFunc);
 };
 
 /******************************************************************************/
 
 vAPI.cookies.getCookieStores = function (callback) {
     try {
-        chrome.cookies.getAllCookieStores(callback);
+        if (!µBlock.isSafari())
+            chrome.cookies.getAllCookieStores(callback);
+        else {
+            callback();
+        }
     }
     catch (exception) {
         console.error("Exception in 'getCookieStores' (vapi-background.js) :\n\t", exception);
@@ -659,6 +665,12 @@ vAPI.cookies.getAllCookies = function (callback, filters) {
     try {
         let allCookies = [];
         let handledStores = 0;
+
+        if (µBlock.isSafari()) {
+            callback(allCookies);
+            return;
+        }
+
         vAPI.cookies.getCookieStores(function (cookieStores) {
             cookieStores.forEach(function (cookieStore) {
                 let options = filters ? filters : {};
@@ -771,6 +783,13 @@ vAPI.openSharePage = function (social) {
 
     var url = µBlock.shareTo[social].replace(/\{\{url\}\}/, µBlock.shareUrl);
 
+    vAPI.tabs.open({url: url, select: true});
+};
+
+vAPI.openGetExtensionPage = function (browserType) {
+    if (!browserType) return;
+
+    var url = µBlock.getExtensionUrl[browserType];
     vAPI.tabs.open({url: url, select: true});
 };
 

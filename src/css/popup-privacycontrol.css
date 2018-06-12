@@ -484,7 +484,8 @@ body:not(.protection-off) .protection-status-off {
 
 .protection-stopped-dialog,
 .share-dialog,
-.cookie-details-dialog {
+.cookie-details-dialog,
+.safari-cookies-dialog {
     position: absolute;
     left: 0;
     top: 0;
@@ -507,8 +508,12 @@ body.share-active .main-tabs-slider[data-active-tab="cookies_tab"] .cookie-detai
 body.protection-stopped .main-tabs-slider[data-active-tab="cookies_tab"] .cookie-details-dialog{
     display: none;
 }
+body.platform-safari .main-tabs-slider[data-active-tab="cookies_tab"] .safari-cookies-dialog {
+    display: block;
+}
 .protection-stopped-inner,
-.share-dialog-inner {
+.share-dialog-inner,
+.safari-cookies-inner {
     width: 100%;
     /* height: 100%; */
     border-radius: 2px;
@@ -520,13 +525,15 @@ body.protection-stopped .main-tabs-slider[data-active-tab="cookies_tab"] .cookie
     padding: 16px;
 }
 
-.protection-stopped-title {
+.protection-stopped-title,
+.safari-cookies-title {
     font-family: Roboto-medium;
     font-size: 20px;
     color: rgba(229, 90, 80, 1);
     cursor: default;
 }
-.protection-stopped-content {
+.protection-stopped-content,
+.safari-cookies-content {
     font-size: 16px;
     line-height: 24px;
     color: rgba(0, 0, 0, 0.54);
@@ -548,6 +555,19 @@ body.protection-stopped .main-tabs-slider[data-active-tab="cookies_tab"] .cookie
 #protection_stopped_btn img {
     width: 24px;
     height: 24px;
+}
+
+.safari-cookies-controls {
+    margin-top: -15px;
+    font-size: 16px;
+    line-height: 24px;
+    display: flex;
+    flex-direction: column;
+}
+.safari-cookies-controls > a,
+.safari-cookies-controls > a:focus {
+    cursor: pointer;
+    outline: none;
 }
 
 
