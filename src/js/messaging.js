@@ -520,10 +520,15 @@ var popupDataFromTabId = function(tabId, tabTitle) {
 var popupDataFromRequest = function(request, callback) {
     if ( request.tabId ) {
         var data = popupDataFromTabId(request.tabId, '');
-        vAPI.cookies.getAllCookies(function (allCookies) {
-            data.allCookies = allCookies;
+        if (µb.isSafari()) {
             callback(data);
-        });
+        }
+        else {
+            vAPI.cookies.getAllCookies(function (allCookies) {
+                data.allCookies = allCookies;
+                callback(data);
+            });
+        }
         return;
     }
 
@@ -536,10 +541,16 @@ var popupDataFromRequest = function(request, callback) {
             tabTitle = tab.title || '';
         }
         var data = popupDataFromTabId(tabId, tabTitle);
-        vAPI.cookies.getAllCookies(function (allCookies) {
-            data.allCookies = allCookies;
+
+        if (µb.isSafari()) {
             callback(data);
-        });
+        }
+        else {
+            vAPI.cookies.getAllCookies(function (allCookies) {
+                data.allCookies = allCookies;
+                callback(data);
+            });
+        }
     });
 };
 

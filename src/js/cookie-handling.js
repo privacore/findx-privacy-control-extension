@@ -12,6 +12,9 @@
     var CookieHandling = function () {
         this.tabsDomainsList = new Set();
 
+        if (ub.isSafari())
+            return;
+
         vAPI.cookies.onChanged = this.onCookieChanged.bind(this);
     };
 
