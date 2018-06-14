@@ -14,6 +14,7 @@
 
         if (ub.isSafari())
             return;
+
         vAPI.cookies.onChanged = this.onCookieChanged.bind(this);
     };
 

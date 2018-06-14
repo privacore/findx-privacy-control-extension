@@ -684,13 +684,50 @@ vAPI.tabs.onPopupUpdated = (function() {
                 targetURL,
                 popupType
             );
-            if ( result !== 0 ) {
-                logData = µb.staticNetFilteringEngine.toLogData();
-                return result;
+
+            // Findx. 14.06.2018 Check is filter allowed and is popup must be blocked
+            logData = µb.staticNetFilteringEngine.toLogData();
+            if (result !== 0) {
+                let filter = '';
+                if (µb.staticNetFilteringEngine.fRegister) {
+                    filter = µb.staticNetFilteringEngine.fRegister.f ?
+                        µb.staticNetFilteringEngine.fRegister.f :
+                        µb.staticNetFilteringEngine.fRegister;
+                }
+                if (filter && isFilterAllowed(filter, context)) {
+                    return 0;
+                }
+                else {
+                    return result;
+                }
             }
+
+            // Find. 14.06.2018 Original code changed to our block above
+            // if ( result !== 0 ) {
+            //     logData = µb.staticNetFilteringEngine.toLogData();
+            //     return result;
+            // }
         }
 
         return 0;
+    };
+
+    var isFilterAllowed = function (filterObj, request) {
+        if (!filterObj) return true;
+
+        var µb = µBlock;
+        var url = µb.getUrlWithoutParams(request.requestURL);
+        if(!µb.isInUse(filterObj.filterPath)){
+            return true;
+        }
+        if (µb.isUrlInExceptions(filterObj.filterPath, url, request.rootDomain)){
+            return !µb.isUrlBlockedForDomain(filterObj.filterPath, url, request.rootDomain);
+        }
+
+        if (µb.isDomainInExceptions(filterObj.filterPath, request.rootDomain)){
+            return !µb.isBlockedForDomain(filterObj.filterPath, request.rootDomain);
+        }
+        return µb.isDefaultOff(filterObj.filterPath );
     };
 
     var mapPopunderResult = function(popunderURL, popunderHostname, result) {
