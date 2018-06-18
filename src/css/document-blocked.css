@@ -28,13 +28,13 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    margin: 65px 0 20px 0;
+    margin: 65px 0 0 0;
 }
 
 #main-dialog {
     width: 600px;
     min-width: 600px;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
     background-color: #FFFFFF;
     overflow: hidden;
     box-shadow: 0 19px 38px 0 rgba(0, 0, 0, 0.26);
@@ -135,7 +135,7 @@ html, body {
 .content-item {
     width: 100%;
     box-sizing: border-box;
-    padding: 24px 16px;
+    padding: 24px 32px;
     word-break: break-all;
     word-break: break-word;
     cursor: default;
