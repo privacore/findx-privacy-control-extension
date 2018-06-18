@@ -359,20 +359,20 @@
     "message": "Blocked by Findx privacy protection",
     "description": "Document blocked page"
   },
-  "docBlockedStatusbar":{
-    "message": "Blocked by Findx privacy protection",
-    "description": "Document blocked page"
-  },
-  "docBlockedHeader":{
-    "message": "Protection enabled",
-    "description": "Document blocked page"
-  },
   "docBlockedContentHeaderTitle":{
-    "message": "Website blocked",
+    "message": "Access blocked",
     "description": "Document blocked page"
   },
   "docBlockedContentHeaderText":{
-    "message": "Access to this website is blocked by a filter rule. The rule is found in one or more filterlists. You can allow permanent or temporarily access to the site.",
+    "message": "Access to this website is blocked because of your protection settings. The site can use advanced tracking techniques or contain content that isn’t safe for children.",
+    "description": "Document blocked page"
+  },
+  "docBlockedGoBack":{
+    "message": "GO BACK",
+    "description": "Document blocked page"
+  },
+  "docBlockedDetailedInformation":{
+    "message": "Detailed information",
     "description": "Document blocked page"
   },
   "docBlockedItemTitleUrl":{
