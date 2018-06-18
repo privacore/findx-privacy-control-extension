@@ -381,6 +381,18 @@ PageStore.prototype.init = function(tabId, context) {
         }
     }
 
+
+    // Igor 19.04.2018 CookieHandling
+    /**
+     * List of first party cookies for tab's root domain
+     */
+    this.cookies = [];
+    if (!µb.isSafari()) {
+        this.updatePageCookiesList(function (cookies) {
+            this.cookies = cookies || [];
+        }.bind(this));
+    }
+
     return this;
 };
 
@@ -391,6 +403,11 @@ PageStore.prototype.reuse = function(context) {
     // If the hostname changes, we can't merely just update the context.
     var tabContext = µb.tabContextManager.mustLookup(this.tabId);
     if ( tabContext.rootHostname !== this.tabHostname ) {
+
+        // Igor. 19.04.2018
+        // If another url is loaded in the same tab - we need to clear all cookies of previous url (if this feature is enabled)
+        this.onDomainClosed();
+
         context = '';
     }
 
@@ -422,6 +439,9 @@ PageStore.prototype.reuse = function(context) {
 /******************************************************************************/
 
 PageStore.prototype.dispose = function() {
+    // Igor. 19.04.2018
+    this.onDomainClosed();
+
     this.tabHostname = '';
     this.title = '';
     this.rawURL = '';
@@ -919,6 +939,80 @@ PageStore.prototype.updateBadge = function() {
 PageStore.prototype.getIsPauseFiltering = function() {
     return µb.userSettings.pauseFiltering;
 };
+
+/******************************************************************************/
+
+// Igor 19.04.2018 CookieHandling
+/**
+ * Receive all cookies for this page domain
+ */
+PageStore.prototype.updatePageCookiesList = function (callback) {
+    let rootDomain = µb.URI.domainFromHostname(this.tabHostname) || "";
+
+    if (!rootDomain) {
+        if (callback) callback([]);
+        return;
+    }
+
+    µb.cookieHandling.getDomainInitCookies(rootDomain, callback);
+};
+
+PageStore.prototype.onDomainClosed = function () {
+    if (µb.isSafari()) return;
+
+    let rootDomain = µb.URI.domainFromHostname(this.tabHostname);
+    µb.cookieHandling.onDomainClosed(rootDomain, this.rawURL);
+};
+
+PageStore.prototype.addDomainCookie = function (cookie) {
+    if (this.isCookieExists(cookie)) {
+        this.updateStoredCookie(cookie);
+    }
+    else {
+        this.cookies.push(cookie);
+    }
+};
+
+PageStore.prototype.rmDomainCookie = function (cookie) {
+    if (this.isCookieExists(cookie)) {
+        this.removeStoredCookie(cookie);
+    }
+};
+
+/**
+ * Check is cookie exists in "cookies" list. Cookies compared by its name.
+ * @param {object} cookie
+ * @returns {boolean}
+ */
+PageStore.prototype.isCookieExists = function (cookie) {
+    return this.cookies.some(function (storedCookie) {
+        return cookie.name === storedCookie.name;
+    });
+};
+
+/**
+ * If cookie with this name is already in a cookies list - we need just update it.
+ * @param {object} cookie
+ * @returns {boolean}
+ */
+PageStore.prototype.updateStoredCookie = function (cookie) {
+    let cookieIndex = this.cookies.findIndex(function (storedCookie, index) {
+        return cookie.name === storedCookie.name;
+    });
+    if (cookieIndex !== -1) {
+        this.cookies[cookieIndex] = cookie;
+    }
+};
+
+PageStore.prototype.removeStoredCookie = function (cookie) {
+    let cookieIndex = this.cookies.findIndex(function (storedCookie, index) {
+        return cookie.name === storedCookie.name;
+    });
+    if (cookieIndex !== -1) {
+        this.cookies.splice(cookieIndex, 1);
+    }
+};
+
 
 /******************************************************************************/
 

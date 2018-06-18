@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        opacity: 0.56;
+      }
+
+      .cls-2 {
+        fill: none;
+      }
+    </style>
+  </defs>
+  <g id="cross-site" class="cls-1">
+    <g id="_x36_4px_boxes">
+      <rect id="Rectangle_441" data-name="Rectangle 441" class="cls-2" width="24" height="24"/>
+    </g>
+    <g id="Group_1121" data-name="Group 1121" transform="translate(4.016 2.25)">
+      <g id="Group_1112" data-name="Group 1112">
+        <path id="Path_1161" data-name="Path 1161" d="M13.432,0H0V16.38H1.638V1.638H13.432ZM10.156,13.1h3.276V11.466H8.518V16.38h1.638ZM2.948,2.948v16.38h8.059l5.373-5.405V2.948ZM14.742,13.268,10.319,17.69H4.586V4.586H14.742Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

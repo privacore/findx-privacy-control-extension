@@ -36,7 +36,7 @@
     "description": ""
   },
   "popupSidenavProtectionLists":{
-    "message": "Active protection lists",
+    "message": "Global protection lists",
     "description": ""
   },
   "popupSidenavTracking":{
@@ -79,6 +79,10 @@
     "message": "Protection",
     "description": ""
   },
+  "popupTabCookies":{
+    "message": "Cookies",
+    "description": ""
+  },
   "popupPlateWeather":{
     "message": "Weather forecast",
     "description": ""
@@ -118,6 +122,170 @@
   "popupTipManageLists":{
     "message": "Manage lists",
     "description": ""
+  },
+  "popupTipDelete":{
+    "message": "Delete",
+    "description": ""
+  },
+  "popupTipRemoveAll":{
+    "message": "Remove all",
+    "description": ""
+  },
+  "popupTipRemove":{
+    "message": "Remove",
+    "description": ""
+  },
+  "popupTipReset":{
+    "message": "Reset",
+    "description": ""
+  },
+  "popupTipClearCookies":{
+    "message": "Clear cookies",
+    "description": ""
+  },
+  "popupTipClearAllCookies":{
+    "message": "Clear all cookies",
+    "description": ""
+  },
+  "popupCookiesPlateTitle":{
+    "message": "Cookies from",
+    "description": ""
+  },
+  "popupCookiesListTitle":{
+    "message": "Cookies from this website",
+    "description": ""
+  },
+  "popupCookiesListSubTitle":{
+    "message": "Set by",
+    "description": ""
+  },
+  "popupCookiesBlacklist":{
+    "message": "Blacklist",
+    "description": ""
+  },
+  "popupCookiesWhitelist":{
+    "message": "Whitelist",
+    "description": ""
+  },
+  "popupCookieDetailsName":{
+    "message": "Name",
+    "description": ""
+  },
+  "popupCookieDetailsContent":{
+    "message": "Content",
+    "description": ""
+  },
+  "popupCookieDetailsHost":{
+    "message": "Host",
+    "description": ""
+  },
+  "popupCookieDetailsPath":{
+    "message": "Path",
+    "description": ""
+  },
+  "popupCookieDetailsSendFor":{
+    "message": "Send for",
+    "description": ""
+  },
+  "popupCookieDetailsSendForAny":{
+    "message": "Any kind of connection",
+    "description": ""
+  },
+  "popupCookieDetailsSendForSecure":{
+    "message": "Secure connections only",
+    "description": ""
+  },
+  "popupCookieDetailsExpires":{
+    "message": "Expires",
+    "description": ""
+  },
+  "popupCookieDetailsExpiresSession":{
+    "message": "When the browsing session ends",
+    "description": ""
+  },
+  "popupCookiesThirdPartyTitle":{
+    "message": "Prevent cross-site tracking",
+    "description": "Third party cookies blocking setting title"
+  },
+  "popupCookiesThirdPartySubTitleBlocked":{
+    "message": "Third party cookies blocked",
+    "description": "Third party cookies blocking setting sub title"
+  },
+  "popupCookiesThirdPartySubTitleAllowed":{
+    "message": "Third party cookies allowed",
+    "description": "Third party cookies blocking setting sub title"
+  },
+  "popupCookiesPeriodicalClearingTitle":{
+    "message": "Autodelete unwanted cookies",
+    "description": "Periodical unprotected cookies clearing setting title"
+  },
+  "popupCookiesPeriodicalClearingSubTitleEnabled":{
+    "message": "Do not delete cookies periodically",
+    "description": "Periodical unprotected cookies clearing setting sub title"
+  },
+  "popupCookiesPeriodicalClearingSubTitleDisabled":{
+    "message": "Deletes cookies every 10 minutes",
+    "description": "Periodical unprotected cookies clearing setting sub title"
+  },
+  "popupCookiesControlSettingTitle":{
+    "message": "Cookie control",
+    "description": ""
+  },
+  "popupCookiesControlSettingSubTitle":{
+    "message": "See domains with cookies, and control white- and blacklisted sites",
+    "description": ""
+  },
+  "popupCookiesAdvSettings":{
+    "message": "Advanced settings",
+    "description": ""
+  },
+  "popupCookiesAdvSettingsText":{
+    "message": "You can adjust more advanced settings in the settings page",
+    "description": ""
+  },
+  "popupCookieControlSitesTitle":{
+    "message": "Sites with cookies set",
+    "description": ""
+  },
+  "popupCookieControlSitesSubTitle":{
+    "message": "Clear cookies and add to white- or blacklist",
+    "description": ""
+  },
+  "popupCookieControlWhitelistedSitesTitle":{
+    "message": "Whitelisted sites",
+    "description": ""
+  },
+  "popupCookieControlWhitelistedSitesSubTitle":{
+    "message": "Import, export or clear the list",
+    "description": ""
+  },
+  "popupCookieControlBlacklistedSitesTitle":{
+    "message": "Blacklisted sites",
+    "description": ""
+  },
+  "popupCookieControlBlacklistedSitesSubTitle":{
+    "message": "Import, export or clear the list",
+    "description": ""
+  },
+  "popupCookiesOpenSettings":{
+    "message": "Open settings",
+    "description": ""
+  },
+  "popupCookiesSetOn":{
+    "message": "Cookies set on",
+    "description": ""
+  },
+  "popupCookiesSafariDialogTitle":{
+    "message": "Not available in Safari",
+    "description": "Dialog visible in a Cookies tab only on Safari"
+  },
+  "popupCookiesSafariDialogContent":{
+    "message": "Controlling cookies from Findx Privacy Control is not possible in Safari. You can change cookie settings via the Safari settings.",
+    "description": "Dialog visible in a Cookies tab only on Safari"
+  },
+  "popupCookiesSafariDialogDownload":{
+    "message": "Download Findx for:",
+    "description": "Dialog visible in a Cookies tab only on Safari"
   },
   "popupPlateBlockedOnSite":{
     "message": "Blocked on this site",
@@ -191,20 +359,20 @@
     "message": "Blocked by Findx privacy protection",
     "description": "Document blocked page"
   },
-  "docBlockedStatusbar":{
-    "message": "Blocked by Findx privacy protection",
-    "description": "Document blocked page"
-  },
-  "docBlockedHeader":{
-    "message": "Protection enabled",
-    "description": "Document blocked page"
-  },
   "docBlockedContentHeaderTitle":{
-    "message": "Website blocked",
+    "message": "Access blocked",
     "description": "Document blocked page"
   },
   "docBlockedContentHeaderText":{
-    "message": "Access to this website is blocked by a filter rule. The rule is found in one or more filterlists. You can allow permanent or temporarily access to the site.",
+    "message": "Access to this website is blocked because of your protection settings. The site can use advanced tracking techniques or contain content that isn’t safe for children.",
+    "description": "Document blocked page"
+  },
+  "docBlockedGoBack":{
+    "message": "GO BACK",
+    "description": "Document blocked page"
+  },
+  "docBlockedDetailedInformation":{
+    "message": "Detailed information",
     "description": "Document blocked page"
   },
   "docBlockedItemTitleUrl":{
