@@ -28,7 +28,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    margin: 65px 0;
+    margin: 65px 0 20px 0;
 }
 
 #main-dialog {
