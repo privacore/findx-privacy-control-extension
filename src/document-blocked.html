@@ -15,16 +15,9 @@
     <div id="wrapper">
 
         <div id="main-dialog">
-            <div id="statusbar">
-                <span data-i18n="docBlockedStatusbar"></span>
-            </div>
 
             <div id="header">
                 <div class="header-control logo"><img src="img/popup/shield.svg" alt="Findx"/></div>
-                <div class="header-title" data-i18n="docBlockedHeader"></div>
-                <div class="header-control header-close">
-                    <img src="img/popup/close.svg" alt="Close"/>
-                </div>
             </div>
 
             <div id="dialog_content">
@@ -32,6 +25,13 @@
                 <div class="content-header">
                     <div class="content-header-title" data-i18n="docBlockedContentHeaderTitle"></div>
                     <div class="content-header-text" data-i18n="docBlockedContentHeaderText"></div>
+
+                    <div class="controls-row row-center">
+                        <button class="btn waves-effect waves-light cancel-btn" data-i18n="docBlockedGoBack"></button>
+                    </div>
+                    <div class="controls-row">
+                        <button class="btn-flat waves-effect details-btn" data-i18n="docBlockedDetailedInformation"></button>
+                    </div>
                 </div>
 
                 <div id="content">
@@ -57,13 +57,14 @@
                         </div>
                     </div>
 
-            </div>
-        </div>
 
-        <div id="footer">
-            <div class="footer-btn waves-effect btn-flat always-allow-btn" data-i18n="docBlockedFooterBtnAlways"></div>
-            <div class="footer-btn waves-effect btn-flat allow-once-btn" data-i18n="docBlockedFooterBtnOnce"></div>
-            <div class="footer-btn waves-effect btn-flat cancel-btn" data-i18n="docBlockedFooterBtnCancel"></div>
+                    <div id="footer">
+                        <div class="footer-btn waves-effect btn-flat always-allow-btn" data-i18n="docBlockedFooterBtnAlways"></div>
+                        <div class="footer-btn waves-effect btn-flat allow-once-btn" data-i18n="docBlockedFooterBtnOnce"></div>
+                        <div class="footer-btn waves-effect btn-flat cancel-btn" data-i18n="docBlockedFooterBtnCancel"></div>
+                    </div>
+
+            </div>
         </div>
 
     </div>
