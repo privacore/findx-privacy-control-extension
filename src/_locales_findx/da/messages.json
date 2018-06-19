@@ -83,6 +83,10 @@
     "message": "Beskyttelse",
     "description": ""
   },
+  "popupTabCookies":{
+    "message": "Cookies",
+    "description": ""
+  },
   "popupPlateWeather":{
     "message": "Vejrudsigt",
     "description": ""
@@ -122,6 +126,170 @@
   "popupTipManageLists":{
     "message": "Administrer lister",
     "description": ""
+  },
+  "popupTipDelete":{
+    "message": "Slet",
+    "description": ""
+  },
+  "popupTipRemoveAll":{
+    "message": "Fjern alle",
+    "description": ""
+  },
+  "popupTipRemove":{
+    "message": "Fjern",
+    "description": ""
+  },
+  "popupTipReset":{
+    "message": "Nulstil",
+    "description": ""
+  },
+  "popupTipClearCookies":{
+    "message": "Slet cookies",
+    "description": ""
+  },
+  "popupTipClearAllCookies":{
+    "message": "Slet alle cookies",
+    "description": ""
+  },
+  "popupCookiesPlateTitle":{
+    "message": "Cookies fra",
+    "description": ""
+  },
+  "popupCookiesListTitle":{
+    "message": "Cookies fra dette websted",
+    "description": ""
+  },
+  "popupCookiesListSubTitle":{
+    "message": "Sat af",
+    "description": ""
+  },
+  "popupCookiesBlacklist":{
+    "message": "Blacklist",
+    "description": ""
+  },
+  "popupCookiesWhitelist":{
+    "message": "Whitelist",
+    "description": ""
+  },
+  "popupCookieDetailsName":{
+    "message": "Navn",
+    "description": ""
+  },
+  "popupCookieDetailsContent":{
+    "message": "Indhold",
+    "description": ""
+  },
+  "popupCookieDetailsHost":{
+    "message": "Host",
+    "description": ""
+  },
+  "popupCookieDetailsPath":{
+    "message": "Sti",
+    "description": ""
+  },
+  "popupCookieDetailsSendFor":{
+    "message": "Send for",
+    "description": ""
+  },
+  "popupCookieDetailsSendForAny":{
+    "message": "Alle typer forbindelser",
+    "description": ""
+  },
+  "popupCookieDetailsSendForSecure":{
+    "message": "Kun sikre forbindelser",
+    "description": ""
+  },
+  "popupCookieDetailsExpires":{
+    "message": "Udløber",
+    "description": ""
+  },
+  "popupCookieDetailsExpiresSession":{
+    "message": "Når browsersessionen slutter",
+    "description": ""
+  },
+  "popupCookiesThirdPartyTitle":{
+    "message": "Blokerer sporing på tværs af websteder",
+    "description": "Third party cookies blocking setting title"
+  },
+  "popupCookiesThirdPartySubTitleBlocked":{
+    "message": "Tredjeparts-cookies blokeret",
+    "description": "Third party cookies blocking setting sub title"
+  },
+  "popupCookiesThirdPartySubTitleAllowed":{
+    "message": "Tredjeparts-cookies tilladt",
+    "description": "Third party cookies blocking setting sub title"
+  },
+  "popupCookiesPeriodicalClearingTitle":{
+    "message": "Slet uønskede cookies automatisk",
+    "description": "Periodical unprotected cookies clearing setting title"
+  },
+  "popupCookiesPeriodicalClearingSubTitleEnabled":{
+    "message": "Slet ikke cookies periodisk",
+    "description": "Periodical unprotected cookies clearing setting sub title"
+  },
+  "popupCookiesPeriodicalClearingSubTitleDisabled":{
+    "message": "Slet cookies hver 10. minut",
+    "description": "Periodical unprotected cookies clearing setting sub title"
+  },
+  "popupCookiesControlSettingTitle":{
+    "message": "Cookiekontrol",
+    "description": ""
+  },
+  "popupCookiesControlSettingSubTitle":{
+    "message": "Se domæner med cookies, or styr white- og blacklist af websteder",
+    "description": ""
+  },
+  "popupCookiesAdvSettings":{
+    "message": "Avancerede indstillinger",
+    "description": ""
+  },
+  "popupCookiesAdvSettingsText":{
+    "message": "Du kan ændre flere avancerede muligheder under 'Indstillinger'",
+    "description": ""
+  },
+  "popupCookieControlSitesTitle":{
+    "message": "Websteder med cookies sat",
+    "description": ""
+  },
+  "popupCookieControlSitesSubTitle":{
+    "message": "Slet cookies og tilføj til white- eller blacklist",
+    "description": ""
+  },
+  "popupCookieControlWhitelistedSitesTitle":{
+    "message": "Whitelistede websteder",
+    "description": ""
+  },
+  "popupCookieControlWhitelistedSitesSubTitle":{
+    "message": "Importer, eksporter eller slet listen",
+    "description": ""
+  },
+  "popupCookieControlBlacklistedSitesTitle":{
+    "message": "Blacklistede websteder",
+    "description": ""
+  },
+  "popupCookieControlBlacklistedSitesSubTitle":{
+    "message": "Importer, eksporter eller slet listen",
+    "description": ""
+  },
+  "popupCookiesOpenSettings":{
+    "message": "Vis indstillinger",
+    "description": ""
+  },
+  "popupCookiesSetOn":{
+    "message": "Cookies sat på",
+    "description": ""
+  },
+  "popupCookiesSafariDialogTitle":{
+    "message": "Ikke tilgængelig i Safari",
+    "description": "Dialog visible in a Cookies tab only on Safari"
+  },
+  "popupCookiesSafariDialogContent":{
+    "message": "Styring af cookies via Findx Privatlivskontrol er ikke mulig i Safari. Du kan ændre cookie-indstillinger via Safari indstillinger.",
+    "description": "Dialog visible in a Cookies tab only on Safari"
+  },
+  "popupCookiesSafariDialogDownload":{
+    "message": "Hent Findx til:",
+    "description": "Dialog visible in a Cookies tab only on Safari"
   },
   "popupPlateBlockedOnSite":{
     "message": "Blokeret her",
@@ -209,6 +377,14 @@
   },
   "docBlockedContentHeaderText":{
     "message": "Adgang til dette websted blev blokeret af en kontrolregel. Reglen findes i en eller flere blokeringslister. Du kan tillade permanent eller midlertidig adgang til webstedet.",
+    "description": "Document blocked page"
+  },
+  "docBlockedGoBack":{
+    "message": "TILBAGE",
+    "description": "Document blocked page"
+  },
+  "docBlockedDetailedInformation":{
+    "message": "Udviddet information",
     "description": "Document blocked page"
   },
   "docBlockedItemTitleUrl":{
