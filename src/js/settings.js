@@ -286,6 +286,60 @@ var onUserSettingsReceived = function(details) {
 
 /******************************************************************************/
 
+var onCookiesSettingsReceived = function (details) {
+    uDom('[data-setting-type="bool"]').forEach(function(uNode) {
+        toggleCheckbox(uNode.nodes[0], details[uNode.attr('data-setting-name')] === true);
+        uNode.on('click', function() {
+            changeCookiesSettings(
+                this.getAttribute('data-setting-name'),
+                isChecked(this)
+            );
+        });
+    });
+
+    uDom('input[data-setting-name="clearingPeriod"]').forEach(function(uNode) {
+        var value = details[uNode.attr('data-setting-name')];
+        // Convert milliseconds to minutes
+        value = value / 60000;
+        uNode.val(value)
+            .on('change', onClearIntervalChanged)
+            .on('click', onPreventDefault);
+    });
+};
+
+var changeCookiesSettings = function(name, value) {
+    messaging.send(
+        'dashboard',
+        {
+            what: 'changeCookiesSettings',
+            name: name,
+            value: value
+        }
+    );
+};
+
+var onClearIntervalChanged = function(ev) {
+    var input = ev.target;
+    var name = this.getAttribute('data-setting-name');
+    var value = input.value;
+    value = Math.min(Math.max(Math.floor(parseInt(value, 10) || 0), 0), 1000000);
+    if ( value !== input.value ) {
+        input.value = value;
+    }
+
+    if (value > 1440) { // maximum interval is 24 hours
+        value = 1440;
+        input.value = value;
+    }
+
+    // Convert minutes to milliseconds
+    value = value * 60000;
+
+    changeCookiesSettings(name, value);
+};
+
+/******************************************************************************/
+
 var niceScroll = function () {
     $(".body").niceScroll({cursorcolor:"#49854F", autohidemode: false});
 };
@@ -296,6 +350,7 @@ uDom.onLoad(function() {
     handleCheckboxes();
     messaging.send('dashboard', { what: 'userSettings' }, onUserSettingsReceived);
     messaging.send('dashboard', { what: 'getLocalData' }, onLocalDataReceived);
+    messaging.send('dashboard', { what: 'cookiesSettings' }, onCookiesSettingsReceived);
 
     niceScroll();
 });

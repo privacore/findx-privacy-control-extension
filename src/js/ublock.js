@@ -98,6 +98,7 @@ var matchBucket = function(url, hostname, bucket, start) {
             var url = urlObj.href.replace(urlObj.search, "");
             return url || "";
     };
+
     µBlock.isDomainInExceptions = function (path, domain) {
         var filter = this.availableFilterLists[path];
         if (!filter || !filter.exceptions || !filter.exceptions.domains) return false;
@@ -121,6 +122,7 @@ var matchBucket = function(url, hostname, bucket, start) {
         }
         return false;
     };
+
     µBlock.isInUse = function (path) {
         if (!path) return true;
      
@@ -173,6 +175,7 @@ var matchBucket = function(url, hostname, bucket, start) {
         }
         return false;
     };
+
 /******************************************************************************/
 µBlock.getNetFilteringSwitch = function(url) {
     var targetHostname = this.URI.hostnameFromURI(url),

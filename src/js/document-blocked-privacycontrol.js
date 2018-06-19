@@ -116,6 +116,7 @@
     /******************************************************************************/
 
     var handleControls = function () {
+        handleDetailsBtn();
         handleCloseBtns();
         handleAllowOnceBtn();
         handleAllowAlwaysBtn();
@@ -123,9 +124,22 @@
 
     /******************************************************************************/
 
+    var handleDetailsBtn = function () {
+        $('.details-btn').off("click");
+        $('.details-btn').on("click", function (ev) {
+            toggleDetailedInformation();
+        });
+    };
+
+    var toggleDetailedInformation = function () {
+        document.querySelector('#content').classList.toggle('active');
+    };
+
+    /******************************************************************************/
+
     var handleCloseBtns = function () {
-        $('.cancel-btn, .header-close').off("click");
-        $('.cancel-btn, .header-close').on("click", function (ev) {
+        $('.cancel-btn').off("click");
+        $('.cancel-btn').on("click", function (ev) {
             messaging.send(
                 'documentBlocked',
                 {
@@ -190,7 +204,7 @@
         handleControls();
 
 
-        $("#content").mCustomScrollbar({
+        $("body").mCustomScrollbar({
             autoHideScrollbar: false,
             scrollButtons:{ enable: false },
             advanced:{ updateOnContentResize: true }

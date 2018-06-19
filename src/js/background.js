@@ -197,6 +197,56 @@ var µBlock = (function() { // jshint ignore:line
 
         // so that I don't have to care for last comma
         dummy: 0,
+
+
+
+        cookiesSettings: {
+            clearDomainCookiesOnTabClose: true,
+            clearDomainCookiesAfter: 5 * oneSecond,
+            thirdPartyCookiesBlocking: true,
+            periodicalClearing: false,
+            clearingPeriod: 10 * oneMinute,
+            clearCookiesOnAppStart: false,
+
+            blacklist: {
+                domains: [],
+                cookies: []
+            },
+            whitelist: {
+                domains: [],
+                cookies: []
+            }
+        },
+        cookiesStats: {
+            statistics: {
+                total: {
+                    cleared: {
+                        firstParty: 0,
+                        thirdParty: 0
+                    },
+                    allowed: {
+                        firstParty: 0,
+                        thirdParty: 0
+                    }
+                },
+                today: {
+                    cleared: {
+                        firstParty: 0,
+                        thirdParty: 0
+                    },
+                    allowed: {
+                        firstParty: 0,
+                        thirdParty: 0
+                    }
+                }
+            },
+            statsTodayDate: ''
+        },
+        cookiesStatsLastModified: 0,
+        cookiesStatsLastSaved: 0,
+
+
+
         optionsUrl: "dashboard.html",
         aboutPageUrl: "https://get.findx.com",
         findxMobileUrl: "https://get.findx.com/mobile",
@@ -207,6 +257,11 @@ var µBlock = (function() { // jshint ignore:line
         ratePageUrl: {
             'chrome': 'https://chrome.google.com/webstore/detail/findx-privacy-control/hmindffkcgchnijdapipnaoajajkhjpn',
             "firefox": 'https://addons.mozilla.org/en-US/firefox/addon/findx-privacy-control/'
+        },
+
+        getExtensionUrl: {
+            'chrome': 'https://get.findx.com/desktop/chromeprivacycontrol/',
+            "firefox": 'https://get.findx.com/desktop/privacy-control-extension-for-firefox/'
         },
 
         searchDomain: {

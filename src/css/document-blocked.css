@@ -23,37 +23,26 @@ html, body {
     width: 100%;
     height: 100%;
     min-width: 600px;
-    min-height: 600px;
+    min-height: 510px;
     overflow: auto;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    margin: 65px 0 0 0;
 }
 
 #main-dialog {
     width: 600px;
     min-width: 600px;
-    max-height: 600px;
+    margin-bottom: 60px;
     background-color: #FFFFFF;
     overflow: hidden;
     box-shadow: 0 19px 38px 0 rgba(0, 0, 0, 0.26);
 }
 
-#statusbar {
-    width: 100%;
-    height: 24px;
-    font-size: 13px;
-    line-height: 24px;
-    color: #FFFFFF;
-    padding-left: 16px;
-    box-sizing: border-box;
-    background-color: rgb(145, 57, 51);
-    cursor: default;
-}
-
 #header {
     width: 100%;
-    height: 56px;
+    height: 180px;
     box-sizing: border-box;
     background-color: #e55a50;
     padding: 16px;
@@ -61,24 +50,15 @@ html, body {
     font-size: 20px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 #header .header-control {
-    width: 24px;
-    height: 24px;
+    width: 120px;
+    height: 120px;
 }
 #header  .header-control > img {
     width: 100%;
     height: 100%;
-}
-#header .header-control.logo {
-    margin-right: 32px;
-}
-#header .header-title {
-    flex: 1;
-    cursor: default;
-}
-.header-control.header-close {
-    cursor: pointer;
 }
 
 #dialog_content {
@@ -89,42 +69,73 @@ html, body {
 
 #dialog_content .content-header {
     width: 100%;
-    height: 110px;
+    height: 290px;
     box-sizing: border-box;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    padding: 20px 16px;
+    padding: 26px 16px;
     cursor: default;
 }
 #dialog_content .content-header .content-header-title {
-    font-size: 14px;
-    font-family: Roboto-medium;
-    color: rgba(0, 0, 0, 0.54);
+    font-size: 24px;
+    line-height: 28px;
+    font-family: Roboto-regular;
+    color: rgba(0, 0, 0, 0.37);
     margin-bottom: 18px;
+    padding: 0 16px;
 }
 #dialog_content .content-header .content-header-text {
     font-size: 14px;
     line-height: 20px;
     color: rgba(0, 0, 0, 0.87);
+    padding: 0 16px;
+}
+
+#dialog_content .content-header .controls-row {
+    display: flex;
+    align-items: center;
+    padding-top: 30px;
+}
+#dialog_content .content-header .controls-row:not(:last-child) {
+    padding-bottom: 30px;
+}
+#dialog_content .content-header .controls-row.row-center {
+    justify-content: center;
+}
+#dialog_content .content-header .controls-row .cancel-btn {
+    background-color: #6bad6f;
+    font-family: Roboto-medium;
+    font-size: 14px;
+    line-height: 16px;
+    padding-top: 3px;
+    text-transform: uppercase;
+}
+#dialog_content .content-header .controls-row .details-btn {
+    font-family: Roboto-regular;
+    font-size: 14px;
+    line-height: 20px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,.56);
+}
+#dialog_content .content-header .controls-row .details-btn:focus {
+    background-color: transparent;
 }
 
 #content {
     width: 100%;
-    max-height: 357px;
-    padding: 0 16px;
+    padding: 0;
     box-sizing: border-box;
     overflow: auto;
+    display: none;
 }
-#content.mCustomScrollbar {
-    padding-right: 0;
+#content.active {
+    display: block;
 }
-#content.mCS_no_scrollbar {
-    padding-right: 16px;
-}
+
 
 .content-item {
     width: 100%;
     box-sizing: border-box;
-    padding: 24px 0;
+    padding: 24px 32px;
     word-break: break-all;
     word-break: break-word;
     cursor: default;
@@ -155,14 +166,14 @@ html, body {
 
 .footer-btn {
     height: 36px;
-    padding: 10px;
+    /*padding: 10px;*/
     box-sizing: border-box;
     color: #e55a50;
     font-size: 14px;
     font-family: Roboto-medium;
     text-transform: uppercase;
     -webkit-text-stroke: 1px rgba(230, 137, 137, 0);
-    line-height: 21px;
+    /*line-height: 21px;*/
     letter-spacing: 0.2px;
     cursor: pointer;
     border-radius: 2px;
@@ -177,9 +188,8 @@ html, body {
 
 
 
-
 .mCSB_inside > .mCSB_container {
-    margin-right: 16px;
+    margin-right: 16px!important;
 }
 .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
     background-color: rgba(0, 0, 0, 0.37);

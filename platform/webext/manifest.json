@@ -77,7 +77,8 @@
       "webNavigation",
       "webRequest",
       "webRequestBlocking",
-      "<all_urls>"
+      "<all_urls>",
+      "cookies"
    ],
    "short_name":"Findx Privacy Control",
    "version":"1.9.15.104",

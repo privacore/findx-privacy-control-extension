@@ -35,6 +35,9 @@ a {
 button {
     padding: 0.33em;
     }
+input[type="number"] {
+    width: 5em;
+    }
 div > p:first-child {
     margin-top: 0;
     }

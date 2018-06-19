@@ -298,6 +298,8 @@ var onFirstFetchReady = function(fetched) {
         fromFetch(µb.localSettings, fetched);
         onUserSettingsReady(fetched);
         fromFetch(µb.restoreBackupSettings, fetched);
+        fromFetch(µb.cookiesSettings, fetched);
+        fromFetch(µb.cookiesStats, fetched);
         onNetWhitelistReady(fetched.netWhitelist);
         onVersionReady(fetched.version);
 
@@ -359,6 +361,8 @@ var onSelectedFilterListsLoaded = function() {
     toFetch(µb.localSettings, fetchableProps);
     toFetch(µb.userSettings, fetchableProps);
     toFetch(µb.restoreBackupSettings, fetchableProps);
+    toFetch(µb.cookiesSettings, fetchableProps);
+    toFetch(µb.cookiesStats, fetchableProps);
 
     vAPI.storage.get(fetchableProps, onFirstFetchReady);
 };
