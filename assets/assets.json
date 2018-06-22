@@ -794,5 +794,15 @@
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fprivacore%2Ffilter-lists",
         "defaultOff": false,
         "inUse": true
+    },
+    "findx-adult": {
+        "content": "filters",
+        "group": "adult",
+        "off": false,
+        "title": "Findx Adult Sites List",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.privacore.filter.lists.master.adult.findx.adult.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fprivacore%2Ffilter-lists",
+        "defaultOff": false,
+        "inUse": true
     }
 }
