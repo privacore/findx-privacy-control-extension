@@ -253,6 +253,7 @@ var µBlock = (function() { // jshint ignore:line
         trackingMonitorUrl: "logger-ui.html#tab_",
         helpPageUrl: "https://help.privacontrol.com",
         feedbackEmail: "privacycontrol@privacore.com",
+        onboardingUrl: "onboarding.html",
 
         ratePageUrl: {
             'chrome': 'https://chrome.google.com/webstore/detail/findx-privacy-control/hmindffkcgchnijdapipnaoajajkhjpn',

@@ -446,5 +446,153 @@
   "subscriberConfirm":{
     "message":"Findx Privacy Control: Add the following URL to your custom filter lists?\n\nTitle: \"{{title}}\"\nURL: {{url}}",
     "description":"English: The message seen by the user to confirm subscription to a ABP filter list"
+  },
+  "onbMainHeaderWelcome":{
+    "message":"Welcome - and thank you for installing Findx!",
+    "description":"Onboarding start page header"
+  },
+  "onbMainHeaderStart":{
+    "message":"Get started!",
+    "description":"Onboarding start page header"
+  },
+  "onbMainHeaderTitle":{
+    "message":"Select the level of protection you want",
+    "description":"Onboarding start page header"
+  },
+  "onbCardChildrenTitle":{
+    "message":"For children",
+    "description":"Onboarding start page 'For children' card"
+  },
+  "onbCardChildrenContentTitle":{
+    "message":"Recommended for schools and devices used by children.",
+    "description":"Onboarding start page 'For children' card"
+  },
+  "onbCardChildrenContentText":{
+    "message":"- No personalised advertisments<br/>- Default private search.<br/>- Warning before accessing adult content<br/>- Auto delete unused cookies",
+    "description":"Onboarding start page 'For children' card"
+  },
+  "onbCardChildrenContentFooter":{
+    "message":"Child safety protection",
+    "description":"Onboarding start page 'For children' card"
+  },
+  "onbCardStandardTitle":{
+    "message":"Standard",
+    "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardStandardContentTitle":{
+    "message":"Don’t want to miss a great deal",
+    "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardStandardContentText":{
+    "message":"To get you started you can allow some Acceptable ads - but also risk collection of your browsing information on the website.<br/><br/>Minimal risk of broken sites ",
+    "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardStandardContentFooter":{
+    "message":"Standard protection",
+    "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardCustomTitle":{
+    "message":"Custom",
+    "description":"Onboarding start page 'Custom' card"
+  },
+  "onbCardCustomContentText":{
+    "message":"Access to this website is blocked by a filter rule. The rule is found in one or more filterlists. You can allow permanet or temporaily access to the site.",
+    "description":"Onboarding start page 'Custom' card"
+  },
+  "onbCardCustomContentFooter":{
+    "message":"Customize",
+    "description":"Onboarding start page 'Custom' card"
+  },
+  "onbStandardHeaderTitle":{
+    "message":"Would you like more privacy?",
+    "description":"Onboarding 'Standard' page"
+  },
+  "onbStandardHeaderSubtitle":{
+    "message":"In addition to standard protection, you can get private search and improved cookie control",
+    "description":"Onboarding 'Standard' page"
+  },
+  "onbCustomHeaderTitle":{
+    "message":"Customize your settings",
+    "description":"Onboarding 'Standard' page"
+  },
+  "onbCustomHeaderSubtitle":{
+    "message":"Select the default settings for protecting your privacy. ",
+    "description":"Onboarding 'Standard' page"
+  },
+  "onbItemCrossSiteTitle":{
+    "message":"Prevent cross site tracking",
+    "description":"Onboarding page"
+  },
+  "onbItemCrossSiteSubTitle":{
+    "message":"Blocks third-party cookies used to identy behaviour across websites.",
+    "description":"Onboarding page"
+  },
+  "onbItemAutoDelTitle":{
+    "message":"Auto delete unwanted cookies",
+    "description":"Onboarding page"
+  },
+  "onbItemAutoDelSubTitle":{
+    "message":"Do not delete cookies periodically",
+    "description":"Onboarding page"
+  },
+  "onbItemPersonalAdvTitle":{
+    "message":"Prevent personalised advertising",
+    "description":"Onboarding page"
+  },
+  "onbItemPersonalAdvSubTitle":{
+    "message":"Less clutter, and better focus. Almost all personalised advertisment is removed.",
+    "description":"Onboarding page"
+  },
+  "onbItemPrivacyProtectionTitle":{
+    "message":"Privacy protection and malware blocking",
+    "description":"Onboarding page"
+  },
+  "onbItemPrivacyProtectionSubTitle":{
+    "message":"Collection off datapoints for profiling  blocked",
+    "description":"Onboarding page"
+  },
+  "onbItemFbGoogleTrackingTitle":{
+    "message":"Block tracking from Facebook and Google",
+    "description":"Onboarding page"
+  },
+  "onbItemFbGoogleTrackingSubTitle":{
+    "message":"The services can still be used, but they can’t collect the browsing behaviour on other sites.",
+    "description":"Onboarding page"
+  },
+  "onbItemAdultContentTitle":{
+    "message":"Block adult content",
+    "description":"Onboarding page"
+  },
+  "onbItemAdultContentSubTitle":{
+    "message":"Use Findx adult block list, containing porno sites.",
+    "description":"Onboarding page"
+  },
+  "onbBackBtn":{
+    "message":"Back",
+    "description":"Onboarding page"
+  },
+  "onbContinueBtn":{
+    "message":"Continue",
+    "description":"Onboarding page"
+  },
+  "onbFooterMainTop":{
+    "message":"Set the default settings for protection on this computer.",
+    "description":"Onboarding page footer. First line in a footer of the Main page"
+  },
+  "onbFooterTop":{
+    "message":"All choices can be changed later.",
+    "description":"Onboarding page footer. Top line in a footer (all pages)"
+  },
+  "onbFooterBeforeSettings":{
+    "message":"You can alwas set your custom level of protection in the",
+    "description":"Onboarding page footer. Text before 'settings menu' row"
+  },
+  "onbFooterSettings":{
+    "message":"settings menu",
+    "description":"Onboarding page footer. 'settings menu' row"
+  },
+  "onbFooterAfterSettings":{
+    "message":"in the Findx Privacy Controller.",
+    "description":"Onboarding page footer. Text after 'settings menu' row"
   }
 }

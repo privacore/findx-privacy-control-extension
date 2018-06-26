@@ -300,12 +300,23 @@ var onFirstFetchReady = function(fetched) {
         fromFetch(µb.restoreBackupSettings, fetched);
         fromFetch(µb.cookiesSettings, fetched);
         fromFetch(µb.cookiesStats, fetched);
+
+        showOnboardingPage();
+
         onNetWhitelistReady(fetched.netWhitelist);
         onVersionReady(fetched.version);
 
         µb.loadPublicSuffixList(onPSLReady);
         µb.loadRedirectResources();
     });
+};
+
+/******************************************************************************/
+
+var showOnboardingPage = function () {
+    if (µb.firstInstall) {
+        µb.openNewTab({url: µb.onboardingUrl, select: true});
+    }
 };
 
 /******************************************************************************/
