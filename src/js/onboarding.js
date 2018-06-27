@@ -10,15 +10,7 @@
 (function () {
 
 
-var standartPresets = {
-    'cookiesSettings.thirdPartyCookiesBlocking': true,
-    'cookiesSettings.periodicalClearing': false
-};
 
-var customPresets = {
-    'cookiesSettings.thirdPartyCookiesBlocking': true,
-    'cookiesSettings.periodicalClearing': false
-};
 
 /******************************************************************************/
 
@@ -35,6 +27,11 @@ var handleMainCards = function () {
 };
 
 var onCardClick = function (ev) {
+    if (ev.target.nodeName === 'A') {
+        // Don't open card page if link in a card content was clicked.
+        return;
+    }
+
     var cardName = ev.currentTarget.getAttribute('data-card-name');
     switch (cardName) {
         case 'children':
@@ -54,7 +51,8 @@ var onCardClick = function (ev) {
  * @param {string} plan - plan name
  */
 var selectPlan = function (plan) {
-
+    //TODO: send settings values to bg
+    window.location.href = 'newTab.html';
 };
 
 /******************************************************************************/
@@ -87,7 +85,7 @@ var onBackBtnClick = function (ev) {
 };
 
 var onContinueBtnClick = function (ev) {
-
+    selectPlan(window.location.hash.slice(1));
 };
 
 /******************************************************************************/
@@ -108,9 +106,6 @@ uDom.onLoad(function() {
 
     handleMainCards();
     handlePageControls();
-
-    // uDom('.tabButton').on('click', onTabClickHandler);
-
 
     // var cards = document.querySelectorAll('.card-selection');
     // cards.forEach(function (card) {

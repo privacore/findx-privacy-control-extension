@@ -1,0 +1,68 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" sizes="16x16"/>
+    <title data-i18n="extName"></title>
+
+
+    <link rel="stylesheet" href="css/material-icons.css"/>
+    <link rel="stylesheet" href="css/default-newTab.css"/>
+    <link rel="stylesheet" href="css/newTab.css"/>
+
+</head>
+<body>
+
+<div id="app">
+    <div class="mdl-layout__container">
+        <div class="mdl-layout">
+            <div class="wrapper">
+                <a class="logo transitioned" href="https://www.findx.com/">
+                    <img src="img/newTab-logo.svg">
+                </a>
+                <form class="form is-same-route--no-animation" action="https://www.findx.com/search">
+                    <div class="is-same-route--no-animation searchBar">
+                        <div class="autosuggest autosuggest--rounded">
+                            <div class="react-autosuggest">
+                                <div class="ms-ie9--positionRelative">
+                                    <div class="autosuggest__input-container">
+                                        <input id="search_input" value="" autocomplete="off" role="combobox" aria-autocomplete="list" aria-owns="react-autowhatever-1" aria-expanded="true" aria-haspopup="true" name="q" placeholder="" autocapitalize="none">
+                                        <a href="/" class="autosuggest__clearBtn zmdi no-js--hidden  hidden-btn">
+                                            <i class="material-icons">close</i>
+                                        </a>
+                                        <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect searchBar__btn" data-upgraded=",MaterialButton,MaterialRipple">
+                                            <i class="icon-fdx icon-fdx__medium icon-fdx__loop--success"></i>
+                                            <span class="mdl-button__ripple-container">
+                                                <span class="mdl-ripple is-animating" style="width: 137.765px; height: 137.765px; transform: translate(-50%, -50%) translate(26px, 26px);"></span>
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+
+                                <ul id="auto_suggestions_wrap" role="listbox" class="react-autosuggest__suggestions"></ul>
+                            </div>
+                            <span></span>
+                        </div>
+                    </div>
+                </form>
+                <div class="desc">
+                    <span data-i18n="newTabSubTitle"></span>
+                    <a href="https://www.privacore.com/2017/03/30/basic-features-of-findx-a-private-search-engine/" target="_blank" data-i18n="newTabReadMore" class="theme--ft-primary"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="lib/jquery-3.3.1.min.js"></script>
+<script src="lib/validator.js"></script>
+<script src="js/vapi.js"></script>
+<script src="js/vapi-common.js"></script>
+<script src="js/udom.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/newTab.js"></script>
+
+</body>
+</html>

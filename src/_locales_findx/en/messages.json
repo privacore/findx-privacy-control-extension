@@ -447,6 +447,10 @@
     "message":"Findx Privacy Control: Add the following URL to your custom filter lists?\n\nTitle: \"{{title}}\"\nURL: {{url}}",
     "description":"English: The message seen by the user to confirm subscription to a ABP filter list"
   },
+  "onbPageHeaderTitle":{
+    "message":"Privacy Control",
+    "description":"Text row below logo image in Onboarding page"
+  },
   "onbMainHeaderWelcome":{
     "message":"Welcome - and thank you for installing Findx!",
     "description":"Onboarding start page header"
@@ -483,9 +487,17 @@
     "message":"Don’t want to miss a great deal",
     "description":"Onboarding start page 'Standard' card"
   },
-  "onbCardStandardContentText":{
-    "message":"To get you started you can allow some Acceptable ads - but also risk collection of your browsing information on the website.<br/><br/>Minimal risk of broken sites ",
+  "onbCardStandardContentTextBeforeAcceptableAds":{
+    "message":"To get you started you can allow some",
+    "description":"Onboarding start page 'Standard' card. Text before link 'Acceptable ads'"
+  },
+  "onbCardStandardContentTextAcceptableAds":{
+    "message":"Acceptable ads",
     "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardStandardContentTextAfterAcceptableAds":{
+    "message":" - but also risk collection of your browsing information on the website.<br/><br/>Minimal risk of broken sites",
+    "description":"Onboarding start page 'Standard' card. Text after link 'Acceptable ads'"
   },
   "onbCardStandardContentFooter":{
     "message":"Standard protection",
@@ -594,5 +606,13 @@
   "onbFooterAfterSettings":{
     "message":"in the Findx Privacy Controller.",
     "description":"Onboarding page footer. Text after 'settings menu' row"
+  },
+  "newTabSubTitle":{
+    "message":"No tracking. Transparent algorithms. Independent. EU-based.",
+    "description":""
+  },
+  "newTabReadMore":{
+    "message":"Read More.",
+    "description":""
   }
 }

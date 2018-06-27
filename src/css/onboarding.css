@@ -145,7 +145,7 @@ html, body {
     margin-bottom: 20px;
     box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
     border-radius: 2px;
-    cursor: pointer;
+    cursor: default;
 }
 .card_shadow-bold {
     box-shadow: 0 19px 38px 0 rgba(0, 0, 0, 0.16);
@@ -198,6 +198,10 @@ html, body {
     font-size: 14px;
     line-height: 20px;
 }
+.card--content-text a {
+    color: #2191d0;
+    text-decoration: none;
+}
 .card--content-footer {
     border-top: solid 1px rgba(0, 0, 0, 0.12);
     height: 53px;
@@ -208,6 +212,7 @@ html, body {
     text-transform: uppercase;
     -webkit-text-stroke: 1px rgba(230, 137, 137, 0);
     font-size: 14px;
+    cursor: pointer;
 }
 
 
