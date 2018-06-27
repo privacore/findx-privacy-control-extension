@@ -10,7 +10,107 @@
 (function () {
 
 
+var presets = {
+    children: {
+        filters: {
+            ads: false,
+            privacy: false,
+            malware: false,
+            facebook: false,
+            google: false,
+            adult: false
+        },
+        cookiesSettings: {
+            'thirdPartyCookiesBlocking': true,
+            'periodicalClearing': false
+        }
+    },
+    standard: {
+        cookiesSettings: {
+            'thirdPartyCookiesBlocking': true,
+            'periodicalClearing': false
+        }
+    },
+    custom: {
+        filters: {
+            ads: true,
+            privacy: false,
+            malware: false,
+            facebook: false,
+            google: false,
+            adult: true
+        },
+        cookiesSettings: {
+            'thirdPartyCookiesBlocking': true,
+            'periodicalClearing': false
+        }
+    }
+};
 
+/******************************************************************************/
+
+/**
+ * Fill default settings values on page load.
+ */
+var fillPresets = function () {
+    for (var plan in presets) {
+        if (plan === 'children')
+            continue;
+
+        for (var group in presets[plan]) {
+            for (var setting in presets[plan][group]) {
+                setDefaultSettingValue(plan, group, setting, presets[plan][group][setting]);
+            }
+        }
+    }
+};
+
+var setDefaultSettingValue = function (plan, group, setting, value) {
+    var elSetting = document.querySelector('.page-tab[data-page="' + plan + '"] ' +
+        '.switchers-block__group[data-group="' + group + '"] ' +
+        '.switcher-item[data-setting="' + setting + '"]');
+
+    // Some switchers can have few values in a 'data-setting' attribute (facebook/google, privacy/malware)
+    if (!elSetting) {
+        var elGroup = document.querySelector('.page-tab[data-page="' + plan + '"] ' +
+            '.switchers-block__group[data-group="' + group + '"] ');
+        if (!elGroup)
+            return;
+
+        var groupSwitchers = elGroup.querySelectorAll('.switcher-item');
+        for (var i = 0; i < groupSwitchers.length; i++) {
+            var elSwitcher = groupSwitchers[i];
+            var settingAttr = elSwitcher.getAttribute('data-setting');
+            if (settingAttr.indexOf('/') !== -1) // If one switcher used for multiple groups (facebook/google)
+                settingAttr = settingAttr.split('/');
+            else {
+                // If it is not a list of settings - continue searching.
+                continue;
+            }
+
+            // Correct switcher found
+            if (settingAttr.indexOf(setting) !== -1) {
+                elSetting = elSwitcher;
+                break;
+            }
+        }
+
+        if (!elSwitcher)
+            return;
+    }
+
+    // Settings in 'Filters' group used for setting 'defaultOff' property for filters.
+    // So when switcher is enabled - we need to set 'defaultOff' property to false.
+    // It means that we need to revert value before using it
+    if (group === 'filters') {
+        value = !value;
+    }
+
+    if (value)
+        elSetting.querySelector('input[type="checkbox"]').setAttribute('checked', value);
+    else
+        elSetting.querySelector('input[type="checkbox"]').removeAttribute('checked');
+};
 
 /******************************************************************************/
 
@@ -51,7 +151,17 @@ var onCardClick = function (ev) {
  * @param {string} plan - plan name
  */
 var selectPlan = function (plan) {
-    //TODO: send settings values to bg
+    var planData = presets[plan];
+    if (plan === 'main' || !plan) {
+        // Set "For children" by default
+        planData = presets.children;
+    }
+
+    vAPI.messaging.send('onboarding', {
+        what: 'setPresetSettings',
+        data: planData
+    });
+
     window.location.href = 'newTab.html';
 };
 
@@ -90,6 +200,60 @@ var onContinueBtnClick = function (ev) {
 
 /******************************************************************************/
 
+var handleSettingsItems = function () {
+    var elItems = document.querySelectorAll('.switcher-item input[type="checkbox"]');
+    if (!elItems) return;
+
+    elItems.forEach(function (input) {
+        input.removeEventListener('change', onSettingSwitcherChanged);
+        input.addEventListener('change', onSettingSwitcherChanged);
+    });
+};
+
+var onSettingSwitcherChanged = function (ev) {
+    var value = ev.currentTarget.checked;
+    var setting = ev.currentTarget.closest('.switcher-item').getAttribute('data-setting');
+    if (setting.indexOf('/') !== -1) // If one switcher used for multiple groups (facebook/google)
+        setting = setting.split('/');
+    var group = ev.currentTarget.closest('.switchers-block__group').getAttribute('data-group');
+    var plan = window.location.hash.slice(1);
+    if (!presets[plan])
+        return;
+
+    // Settings in 'Filters' group used for setting 'defaultOff' property for filters.
+    // So when switcher is enabled - we need to set 'defaultOff' property to false.
+    // It means that we need to revert value before setting it to presets object
+    if (group === 'filters') {
+        value = !value;
+    }
+
+    if (typeof setting === 'string')
+        presets[plan][group][setting] = value;
+    else {
+        setting.forEach(function (settingName) {
+            presets[plan][group][settingName] = value;
+        });
+    }
+};
+
+// Element.closest('selector') polyfill
+(function() {
+    if (!Element.prototype.closest) {
+        Element.prototype.closest = function(css) {
+            var node = this;
+
+            while (node) {
+                if (node.matches(css)) return node;
+                else node = node.parentElement;
+            }
+            return null;
+        };
+    }
+
+})();
+
+/******************************************************************************/
+
 var onHashChanged = function () {
     var page = window.location.hash.slice(1);
     if ( !page ) {
@@ -106,6 +270,9 @@ uDom.onLoad(function() {
 
     handleMainCards();
     handlePageControls();
+
+    fillPresets();
+    handleSettingsItems();
 
     // var cards = document.querySelectorAll('.card-selection');
     // cards.forEach(function (card) {
