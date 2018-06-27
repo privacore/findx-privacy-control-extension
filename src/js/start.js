@@ -314,9 +314,9 @@ var onFirstFetchReady = function(fetched) {
 /******************************************************************************/
 
 var showOnboardingPage = function () {
-    // if (µb.firstInstall) {
+    if (µb.firstInstall) {
         µb.openNewTab({url: µb.onboardingUrl, select: true});
-    // }
+    }
 };
 
 /******************************************************************************/

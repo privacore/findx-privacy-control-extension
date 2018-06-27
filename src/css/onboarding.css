@@ -129,6 +129,22 @@ html, body {
     cursor: default;
 }
 
+
+.page-tab-footer {
+    margin-top: 75px;
+    color: rgba(0,0,0,.54);
+    max-width: 325px;
+    line-height: 1.43;
+    font-size: 14px;
+    cursor: default;
+}
+.page-tab-footer > p {
+    margin-bottom: 20px;
+}
+.page-tab-footer a {
+    text-decoration: none;
+}
+
 /************** Main page ***************/
 .cards-wrapper {
     width: 100%;
@@ -267,20 +283,4 @@ html, body {
 .controls-block button {
     min-width: 100px;
     text-transform: uppercase;
-}
-
-
-
-
-
-.page-tab-footer {
-    margin-top: 75px;
-    color: rgba(0,0,0,.54);
-    max-width: 325px;
-    line-height: 1.43;
-    font-size: 14px;
-    cursor: default;
-}
-.page-tab-footer > p {
-    margin-bottom: 20px;
 }
