@@ -22,7 +22,7 @@ var presets = {
         },
         cookiesSettings: {
             'thirdPartyCookiesBlocking': true,
-            'periodicalClearing': false
+            'periodicalClearing': true
         }
     },
     standard: {

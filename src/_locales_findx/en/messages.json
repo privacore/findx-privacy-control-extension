@@ -606,13 +606,5 @@
   "onbFooterAfterSettings":{
     "message":"in the Findx Privacy Controller.",
     "description":"Onboarding page footer. Text after 'settings menu' row"
-  },
-  "newTabSubTitle":{
-    "message":"No tracking. Transparent algorithms. Independent. EU-based.",
-    "description":""
-  },
-  "newTabReadMore":{
-    "message":"Read More.",
-    "description":""
   }
 }
