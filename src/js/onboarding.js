@@ -162,7 +162,7 @@ var selectPlan = function (plan) {
         data: planData
     });
 
-    window.location.href = 'newTab.html';
+    window.location.href = 'https://get.findx.com/privacycontrol/thankyou';
 };
 
 /******************************************************************************/
