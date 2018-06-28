@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title data-i18n="extName"></title>
+    <link rel="shortcut icon" type="image/png" href="img/icon_16.png">
+
+    <!--<link href="css/font-awesome.min.css" rel="stylesheet"  type="text/css">-->
+    <link href="lib/material-components-web.min.css" rel="stylesheet"  type="text/css">
+    <link href="css/onboarding.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="theme--bg-primary page-header">
+    <div class="page-header--block">
+        <img src="img/popup/findx_logo.svg" alt=""/>
+    </div>
+    <div class="page-header--block">
+        <div class="page-header--title" data-i18n="onbPageHeaderTitle"></div>
+    </div>
+</div>
+
+<div class="page-content">
+
+    <div class="page-tab" data-page="main">
+
+        <div class="page-tab-header">
+            <span class="page-tab-header--mid" data-i18n="onbMainHeaderWelcome"></span>
+            <span class="page-tab-header--bold" data-i18n="onbMainHeaderStart"></span>
+            <span class="page-tab-header--title" data-i18n="onbMainHeaderTitle"></span>
+        </div>
+
+        <div class="page-tab-content">
+            <div class="cards-wrapper">
+
+                <div class="card theme--hov-bg-primary" data-card-name="children">
+                    <div class="card--header theme--bg-primary_darker">
+                        <div class="card--header-img card--header-img__overlapped">
+                            <img src="img/child-protection.svg" alt=""/>
+                        </div>
+                        <div class="card--header-title" data-i18n="onbCardChildrenTitle"></div>
+                    </div>
+                    <div class="card--content">
+                        <div class="card--content-text">
+                            <div class="font-bold" data-i18n="onbCardChildrenContentTitle"></div>
+                            <br/>
+                            <div data-i18n="onbCardChildrenContentText"></div>
+                        </div>
+                        <div class="card--content-footer theme--ft-primary font-bold" data-i18n="onbCardChildrenContentFooter"></div>
+                    </div>
+                </div>
+
+                <div class="card card_shadow-bold theme--hov-bg-green" data-card-name="standard">
+                    <div class="card--header theme--bg-green">
+                        <div class="card--header-img">
+                            <img src="img/popup/shield.svg" alt=""/>
+                        </div>
+                        <div class="card--header-title" data-i18n="onbCardStandardTitle"></div>
+                    </div>
+                    <div class="card--content">
+                        <div class="card--content-text">
+                            <div class="font-bold" data-i18n="onbCardStandardContentTitle"></div>
+                            <div>
+                                <span data-i18n="onbCardStandardContentTextBeforeAcceptableAds"></span>
+                                <a href="https://get.findx.com/privacycontrol/acceptableads" data-i18n="onbCardStandardContentTextAcceptableAds" target="_blank"></a>
+                                <span data-i18n="onbCardStandardContentTextAfterAcceptableAds"></span>
+                            </div>
+                        </div>
+                        <div class="card--content-footer theme--ft-primary font-bold" data-i18n="onbCardStandardContentFooter"></div>
+                    </div>
+                </div>
+
+                <div class="card theme--hov-bg-primary" data-card-name="custom">
+                    <div class="card--header theme--bg-primary">
+                        <div class="card--header-img">
+                            <img src="img/popup/settings-icon.svg" alt=""/>
+                        </div>
+                        <div class="card--header-title" data-i18n="onbCardCustomTitle"></div>
+                    </div>
+                    <div class="card--content">
+                        <div class="card--content-text">
+                            <div data-i18n="onbCardCustomContentText"></div>
+                        </div>
+                        <div class="card--content-footer theme--ft-primary font-bold" data-i18n="onbCardCustomContentFooter"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="page-tab-footer">
+            <p data-i18n="onbFooterMainTop"></p>
+            <p data-i18n="onbFooterTop"></p>
+            <p>
+                <span data-i18n="onbFooterBeforeSettings"></span>
+                <a href="dashboard.html" target="_blank" class="theme--ft-primary" data-i18n="onbFooterSettings"></a>
+                <span data-i18n="onbFooterAfterSettings"></span>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="page-tab" data-page="standard">
+        <div class="page-tab-header">
+            <span class="page-tab-header--title" data-i18n="onbStandardHeaderTitle"></span>
+            <span class="page-tab-header--subtitle" data-i18n="onbStandardHeaderSubtitle"></span>
+        </div>
+
+        <div class="page-tab-content">
+            <div class="switchers-block">
+                <div class="switchers-block__group" data-group="cookiesSettings">
+
+                    <div class="switcher-item" data-setting="thirdPartyCookiesBlocking">
+                        <div class="mdc-switch switcher-item_control">
+                            <input type="checkbox" class="mdc-switch__native-control" role="switch">
+                            <div class="mdc-switch__background">
+                                <div class="mdc-switch__knob"></div>
+                            </div>
+                        </div>
+                        <div class="switcher-item_content">
+                            <div class="switcher-item_content-title" data-i18n="onbItemCrossSiteTitle"></div>
+                            <div class="switcher-item_content-subtitle"  data-i18n="onbItemCrossSiteSubTitle"></div>
+                        </div>
+                    </div>
+
+                    <div class="switcher-item" data-setting="periodicalClearing">
+                        <div class="mdc-switch switcher-item_control">
+                            <input type="checkbox" class="mdc-switch__native-control" role="switch">
+                            <div class="mdc-switch__background">
+                                <div class="mdc-switch__knob"></div>
+                            </div>
+                        </div>
+                        <div class="switcher-item_content">
+                            <div class="switcher-item_content-title" data-i18n="onbItemAutoDelTitle"></div>
+                            <div class="switcher-item_content-subtitle" data-i18n="onbItemCrossSiteSubTitle"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="controls-block">
+                <button class="mdc-button mdc-button--outlined back-button" data-i18n="onbBackBtn"></button>
+                <button class="mdc-button mdc-button--unelevated continue-button" data-i18n="onbContinueBtn"></button>
+            </div>
+
+        </div>
+
+        <div class="page-tab-footer">
+            <p data-i18n="onbFooterTop"></p>
+            <p>
+                <span data-i18n="onbFooterBeforeSettings"></span>
+                <a href="dashboard.html" target="_blank" class="theme--ft-primary" data-i18n="onbFooterSettings"></a>
+                <span data-i18n="onbFooterAfterSettings"></span>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="page-tab" data-page="custom">
+
+        <div class="page-tab-header">
+            <span class="page-tab-header--title" data-i18n="onbCustomHeaderTitle"></span>
+            <span class="page-tab-header--subtitle" data-i18n="onbCustomHeaderSubtitle"></span>
+        </div>
+
+        <div class="page-tab-content">
+            <div class="switchers-block">
+
+                <div class="switchers-block__group" data-group="filters">
+
+                    <div class="switcher-item" data-setting="ads">
+                        <div class="mdc-switch switcher-item_control">
+                            <input type="checkbox" class="mdc-switch__native-control" role="switch">
+                            <div class="mdc-switch__background">
+                                <div class="mdc-switch__knob"></div>
+                            </div>
+                        </div>
+                        <div class="switcher-item_content">
+                            <div class="switcher-item_content-title" data-i18n="onbItemPersonalAdvTitle"></div>
+                            <div class="switcher-item_content-subtitle"  data-i18n="onbItemPersonalAdvSubTitle"></div>
+                        </div>
+                    </div>
+
+                    <div class="switcher-item" data-setting="privacy/malware">
+                        <div class="mdc-switch switcher-item_control">
+                            <input type="checkbox" class="mdc-switch__native-control" role="switch">
+                            <div class="mdc-switch__background">
+                                <div class="mdc-switch__knob"></div>
+                            </div>
+                        </div>
+                        <div class="switcher-item_content">
+                            <div class="switcher-item_content-title" data-i18n="onbItemPrivacyProtectionTitle"></div>
+                            <div class="switcher-item_content-subtitle" data-i18n="onbItemPrivacyProtectionSubTitle"></div>
+                        </div>
+                    </div>
+
+                    <div class="switcher-item" data-setting="facebook/google">
+                        <div class="mdc-switch switcher-item_control">
+                            <input type="checkbox" class="mdc-switch__native-control" role="switch">
+                            <div class="mdc-switch__background">
+                                <div class="mdc-switch__knob"></div>
+                            </div>
+                        </div>
+                        <div class="switcher-item_content">
+                            <div class="switcher-item_content-title" data-i18n="onbItemFbGoogleTrackingTitle"></div>
+                            <div class="switcher-item_content-subtitle"  data-i18n="onbItemFbGoogleTrackingSubTitle"></div>
+                        </div>
+                    </div>
+
+                    <div class="switcher-item" data-setting="adult">
+                        <div class="mdc-switch switcher-item_control">
+                            <input type="checkbox" class="mdc-switch__native-control" role="switch">
+                            <div class="mdc-switch__background">
+                                <div class="mdc-switch__knob"></div>
+                            </div>
+                        </div>
+                        <div class="switcher-item_content">
+                            <div class="switcher-item_content-title" data-i18n="onbItemAdultContentTitle"></div>
+                            <div class="switcher-item_content-subtitle" data-i18n="onbItemAdultContentSubTitle"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="switchers-block__group" data-group="cookiesSettings">
+
+                    <div class="switcher-item" data-setting="thirdPartyCookiesBlocking">
+                        <div class="mdc-switch switcher-item_control">
+                            <input type="checkbox" class="mdc-switch__native-control" role="switch">
+                            <div class="mdc-switch__background">
+                                <div class="mdc-switch__knob"></div>
+                            </div>
+                        </div>
+                        <div class="switcher-item_content">
+                            <div class="switcher-item_content-title" data-i18n="onbItemCrossSiteTitle"></div>
+                            <div class="switcher-item_content-subtitle"  data-i18n="onbItemCrossSiteSubTitle"></div>
+                        </div>
+                    </div>
+
+                    <div class="switcher-item" data-setting="periodicalClearing">
+                        <div class="mdc-switch switcher-item_control">
+                            <input type="checkbox" class="mdc-switch__native-control" role="switch">
+                            <div class="mdc-switch__background">
+                                <div class="mdc-switch__knob"></div>
+                            </div>
+                        </div>
+                        <div class="switcher-item_content">
+                            <div class="switcher-item_content-title" data-i18n="onbItemAutoDelTitle"></div>
+                            <div class="switcher-item_content-subtitle" data-i18n="onbItemCrossSiteSubTitle"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="controls-block">
+                <button class="mdc-button mdc-button--outlined back-button" data-i18n="onbBackBtn"></button>
+                <button class="mdc-button mdc-button--unelevated continue-button" data-i18n="onbContinueBtn"></button>
+            </div>
+
+        </div>
+
+        <div class="page-tab-footer">
+            <p data-i18n="onbFooterTop"></p>
+            <p>
+                <span data-i18n="onbFooterBeforeSettings"></span>
+                <a href="dashboard.html" target="_blank" class="theme--ft-primary" data-i18n="onbFooterSettings"></a>
+                <span data-i18n="onbFooterAfterSettings"></span>
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="lib/material-components-web.min.js"></script>
+
+<script src="js/vapi.js"></script>
+<script src="js/vapi-common.js"></script>
+<script src="js/vapi-client.js"></script>
+<script src="js/udom.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/onboarding.js"></script>
+
+</body>
+</html>
