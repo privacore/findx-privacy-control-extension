@@ -166,15 +166,13 @@ html, body {
 
 .footer-btn {
     height: 36px;
-    /*padding: 10px;*/
     box-sizing: border-box;
     color: #e55a50;
     font-size: 14px;
     font-family: Roboto-medium;
     text-transform: uppercase;
     -webkit-text-stroke: 1px rgba(230, 137, 137, 0);
-    /*line-height: 21px;*/
-    letter-spacing: 0.2px;
+    letter-spacing: -0.4px;
     cursor: pointer;
     border-radius: 2px;
 }
@@ -182,6 +180,8 @@ html, body {
     margin-right: 8px;
 }
 .footer-btn.cancel-btn {
+    color: #ffffff;
+    background-color: #e55a50;
     margin-left: auto;
 }
 
