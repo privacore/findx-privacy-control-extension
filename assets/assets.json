@@ -7,7 +7,8 @@
             "assets/assets.json"
         ],
         "defaultOff": true,
-        "off": true
+        "off": true,
+        "inUse": true
     },
     "public_suffix_list.dat": {
         "content": "internal",
@@ -17,7 +18,8 @@
             "assets/thirdparties/publicsuffix.org/list/effective_tld_names.dat"
         ],
         "defaultOff": true,
-        "off": true
+        "off": true,
+        "inUse": true
     },
     "ublock-resources": {
         "content": "internal",
@@ -27,7 +29,8 @@
             "assets/ublock/resources.txt"
         ],
         "defaultOff": true,
-        "off": true
+        "off": true,
+        "inUse": true
     },
     "ublock-filters": {
         "content": "filters",
@@ -215,7 +218,11 @@
         "group": "malware",
         "title": "Malware Domain List",
         "contentURL": [
+            "http://download.privacontrol.com/filters/https.cdn.rawgit.com.nanomeow.mdlmirror.master.hosts.txt",
+            "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.nanomeow.mdlmirror.master.hosts.txt",
             "http://download.privacontrol.com/filters/https.www.malwaredomainlist.com.hostslist.hosts.txt",
+            "http://download.privacontrol.com/filters/https.cdn.rawgit.com.nanomeow.mdlmirror.master.filter.txt",
+            "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.nanomeow.mdlmirror.master.filter.txt",
             "assets/thirdparties/www.malwaredomainlist.com/hostslist/hosts.txt"
         ],
         "defaultOff": false,
@@ -645,7 +652,7 @@
         "off": true,
         "title": "NOR: Dandelion Sprouts norske filtre",
         "lang": "nb",
-        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dandelionsprout.adfilt.master.experimentalnorwegianlist.txt",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dandelionsprout.adfilt.master.norwegianlist.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FDandelionSprout%2Fadfilt",
         "defaultOff": true,
         "inUse": true
@@ -786,6 +793,16 @@
         "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.privacore.filter.lists.master.google.antigoogle.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fprivacore%2Ffilter-lists",
         "defaultOff": false,
+        "inUse": true
+    },
+    "findx-adult": {
+        "content": "filters",
+        "group": "adult",
+        "off": false,
+        "title": "Findx Adult Sites List",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.privacore.filter.lists.master.adult.findx.adult.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Fprivacore%2Ffilter-lists",
+        "defaultOff": true,
         "inUse": true
     }
 }

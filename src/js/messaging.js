@@ -632,10 +632,6 @@ var onMessage = function(request, sender, callback) {
         setFiltersGroupException(request.data.group, request.data.pageDomain, request.data.state);
         break;
 
-    case 'thirdPartyBlockingState':
-        setFiltersGroupException(request.data.group, request.data.pageDomain, request.data.state);
-        break;
-
     case 'toggleCookiesDomainWhitelist':
         if (request.state)
             µb.cookieHandling.addToWhitelist(null, request.domain);
@@ -1430,6 +1426,101 @@ var onMessage = function(request, sender, callback) {
 };
 
 vAPI.messaging.listen('documentBlocked', onMessage);
+
+/******************************************************************************/
+
+})();
+
+/******************************************************************************/
+/******************************************************************************/
+
+// channel: onboarding
+
+(function() {
+
+    var µb = µBlock;
+
+/******************************************************************************/
+
+/**
+ * Set default settings choosed by user in a On-boarding page on firstInstall
+ * @param {{cookiesSettings: object, filters: object}} settingsData
+ */
+var setPresetSettings = function (settingsData) {
+    if (!settingsData)
+        return;
+
+    if (settingsData.cookiesSettings) {
+        µb.cookieHandling.changeSettings('thirdPartyCookiesBlocking', settingsData.cookiesSettings.thirdPartyCookiesBlocking);
+        µb.cookieHandling.changeSettings('periodicalClearing', settingsData.cookiesSettings.periodicalClearing)
+    }
+
+    if (settingsData.filters) {
+
+        var updates = [];
+
+        for (var filtersGroup in settingsData.filters) {
+            var groupFilters = getFiltersFromGroup(filtersGroup);
+            groupFilters.forEach(function (filterName) {
+                updates.push({
+                    assetKey: filterName,
+                    defaultOff: settingsData.filters[filtersGroup]
+                });
+            });
+        }
+
+        if (updates)
+            µb.updateFilterState(updates, true);
+    }
+};
+
+/******************************************************************************/
+
+/**
+ * Return a list of filters names (keys).
+ * @param {string} groupName
+ * @returns {string[]}
+ */
+var getFiltersFromGroup = function (groupName) {
+    let filters = [];
+
+    let allFiltersNames = Object.keys(µb.availableFilterLists);
+    allFiltersNames.forEach(function (filterName) {
+        if (µb.availableFilterLists.hasOwnProperty(filterName) && !µb.availableFilterLists[filterName].off
+            && µb.availableFilterLists[filterName].group === groupName)
+        {
+            filters.push(filterName);
+        }
+    });
+
+    return filters;
+};
+
+/******************************************************************************/
+
+var onMessage = function(request, sender, callback) {
+    // Async
+    switch ( request.what ) {
+    default:
+        break;
+    }
+
+    // Sync
+    var response;
+
+    switch ( request.what ) {
+    case 'setPresetSettings':
+        setPresetSettings(request.data);
+        break;
+
+    default:
+        return vAPI.messaging.UNHANDLED;
+    }
+
+    callback(response);
+};
+
+vAPI.messaging.listen('onboarding', onMessage);
 
 /******************************************************************************/
 

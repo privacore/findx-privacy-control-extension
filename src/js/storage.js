@@ -1361,6 +1361,12 @@
 /******************************************************************************/
 
 /*Custom Findx Privacy Control methods*/
+
+/**
+ * Updated states of set filters (off, defaultOff, inUse).
+ * @param {{assetKey: string, off: boolean, defultOf: boolean, inUse: boolean}[]} switches
+ * @param {boolean} update
+ */
 µBlock.updateFilterState = function (switches, update) {
     var µb = µBlock;
     var onFilterListsReady = function () {
@@ -1374,9 +1380,12 @@
             if (filterLists.hasOwnProperty(switches[i].assetKey) === false) {
                 continue;
             }
-            filterLists[switches[i].assetKey].off = !!switches[i].off;
-            filterLists[switches[i].assetKey].defaultOff = !!switches[i].defaultOff;
-            filterLists[switches[i].assetKey].inUse = !!switches[i].inUse;
+            if (switches[i].hasOwnProperty('off'))
+                filterLists[switches[i].assetKey].off = !!switches[i].off;
+            if (switches[i].hasOwnProperty('defaultOff'))
+                filterLists[switches[i].assetKey].defaultOff = !!switches[i].defaultOff;
+            if (switches[i].hasOwnProperty('inUse'))
+                filterLists[switches[i].assetKey].inUse = !!switches[i].inUse;
         }
         // Save switch states
         vAPI.storage.set({'availableFilterLists': filterLists}, onFilterListsReady);
