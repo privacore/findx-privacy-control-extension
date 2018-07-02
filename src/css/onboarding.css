@@ -252,6 +252,10 @@ html, body {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
+body.safari-browser .switchers-block__group[data-group="cookiesSettings"] {
+    display: none;
+}
+
 .switcher-item {
     width: 390px;
     min-height: 72px;

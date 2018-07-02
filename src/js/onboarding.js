@@ -138,6 +138,8 @@ var onCardClick = function (ev) {
             selectPlan(cardName);
             break;
         case 'standard':
+            isSafari() ? selectPlan(cardName) : window.location.hash = cardName;
+            break;
         case 'custom':
             window.location.hash = cardName;
             break;
@@ -163,16 +165,6 @@ var selectPlan = function (plan) {
     });
 
     window.location.href = 'https://get.findx.com/privacycontrol/thankyou';
-};
-
-/******************************************************************************/
-
-var showActivePage = function (pageName) {
-    if (pageName !== 'main' && pageName !== 'standard' && pageName !== 'custom')
-        pageName = 'main';
-    document.querySelectorAll('.page-tab').forEach(function (page) {
-        page.classList.toggle('active', (page.getAttribute('data-page') === pageName));
-    });
 };
 
 /******************************************************************************/
@@ -262,11 +254,31 @@ var onHashChanged = function () {
     showActivePage(page);
 };
 
+var showActivePage = function (pageName) {
+    if (pageName !== 'main' && pageName !== 'standard' && pageName !== 'custom')
+        pageName = 'main';
+    if (isSafari() && pageName === 'standard')
+        pageName = 'main';
+
+    document.querySelectorAll('.page-tab').forEach(function (page) {
+        page.classList.toggle('active', (page.getAttribute('data-page') === pageName));
+    });
+};
+
+/******************************************************************************/
+
+var isSafari = function() {
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+};
+
+
 uDom.onLoad(function() {
     onHashChanged();
     if (("onhashchange" in window)) {
         window.onhashchange = onHashChanged;
     }
+
+    document.querySelector('body').classList.toggle('safari-browser', isSafari());
 
     handleMainCards();
     handlePageControls();
