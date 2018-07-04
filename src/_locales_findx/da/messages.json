@@ -458,5 +458,185 @@
   "subscriberConfirm": {
     "message": "Findx Privatlivskontrol: Tilføj det følgende URL til din personlige filterliste?\n\nTitel: \"{{title}}\"\nURL: {{url}}",
     "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
+  },
+  "onbPageHeaderTitle":{
+    "message":"Privatlivskontrol",
+    "description":"Text row below logo image in Onboarding page"
+  },
+  "onbMainHeaderWelcome":{
+    "message":"Velkommen - og tak fordi du installerede Findx!",
+    "description":"Onboarding start page header"
+  },
+  "onbMainHeaderStart":{
+    "message":"Kom igang!",
+    "description":"Onboarding start page header"
+  },
+  "onbMainHeaderTitle":{
+    "message":"Vælg dit ønskede beskyttelsesniveau:",
+    "description":"Onboarding start page header"
+  },
+  "onbCardChildrenTitle":{
+    "message":"For børn",
+    "description":"Onboarding start page 'For children' card"
+  },
+  "onbCardChildrenContentTitle":{
+    "message":"Anbefalet til skoler og devices brugt af børn.",
+    "description":"Onboarding start page 'For children' card"
+  },
+  "onbCardChildrenContentText":{
+    "message":"- Bloker personlige reklamer<br/>- Vis advarsel før voksenindhold kan tilgås<br/>- Slet ubrugte cookies automatisk",
+    "description":"Onboarding start page 'For children' card"
+  },
+  "onbCardChildrenContentFooter":{
+    "message":"Børnebeskyttelse",
+    "description":"Onboarding start page 'For children' card"
+  },
+  "onbCardStandardTitle":{
+    "message":"Standard",
+    "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardStandardContentTitle":{
+    "message":"Afvægtet funktionalitet og beskyttelse - se stadig de gode tilbud.",
+    "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardStandardContentTextBeforeAcceptableAds":{
+    "message":"- Tillad",
+    "description":"Onboarding start page 'Standard' card. Text before link 'Acceptable ads'"
+  },
+  "onbCardStandardContentTextAcceptableAds":{
+    "message":"acceptable reklamer",
+    "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardStandardContentTextAfterAcceptableAds":{
+    "message":"<br/>- Brug kendte beskyttelseslister<br/>- Bloker sociale skyggeprofiler<br/>- Lav risiko for defekte sider",
+    "description":"Onboarding start page 'Standard' card. Text after link 'Acceptable ads'"
+  },
+  "onbCardStandardContentFooter":{
+    "message":"Standard beskyttelse",
+    "description":"Onboarding start page 'Standard' card"
+  },
+  "onbCardCustomTitle":{
+    "message":"Brugerdefineret",
+    "description":"Onboarding start page 'Custom' card"
+  },
+  "onbCardCustomContentTitle":{
+    "message":"Når du kender til bloklister og ønsker mere kontrol",
+    "description":"Onboarding start page 'Custom' card"
+  },
+  "onbCardCustomContentText":{
+    "message":"- Personligt beskyttelsesniveau<br/>- Slå sporing på tværs af websteder fra<br/>- Detaljeret kontrol med cookies<br/>- Udforsk privat søgning",
+    "description":"Onboarding start page 'Custom' card"
+  },
+  "onbCardCustomContentFooter":{
+    "message":"Tilret",
+    "description":"Onboarding start page 'Custom' card"
+  },
+  "onbStandardHeaderTitle":{
+    "message":"Ønsker du højere niveau af beskyttelse?",
+    "description":"Onboarding 'Standard' page"
+  },
+  "onbStandardHeaderSubtitle":{
+    "message":"Ud over standard beskyttelse, kan du vælge indstillinger for behandling af cookies.",
+    "description":"Onboarding 'Standard' page"
+  },
+  "onbCustomHeaderTitle":{
+    "message":"Tilret dine indstillinger",
+    "description":"Onboarding 'Custom' page"
+  },
+  "onbCustomHeaderSubtitle":{
+    "message":"Vælg standard-indstillingerne til beskyttelse af dit privatliv.",
+    "description":"Onboarding 'Custom' page"
+  },
+  "onbItemCrossSiteTitle":{
+    "message":"Undgå sporing på tværs af websteder",
+    "description":"Onboarding page"
+  },
+  "onbItemCrossSiteSubTitle":{
+    "message":"Bloker tredjeparts cookies som bruges til at spore dig og dine forbrugsmønstre på tværs af websteder.",
+    "description":"Onboarding page"
+  },
+  "onbItemAutoDelTitle":{
+    "message":"Slet uønskede cookies automatisk",
+    "description":"Onboarding page"
+  },
+  "onbItemAutoDelSubTitle":{
+    "message":"Sletter cookies periodisk.",
+    "description":"Onboarding page"
+  },
+  "onbItemPersonalAdvTitle":{
+    "message":"Personlige reklamer",
+    "description":"Onboarding page"
+  },
+  "onbItemPersonalAdvSubTitle":{
+    "message":"Mindre rod og mere fokus. Næsten alle reklamer fjernes.",
+    "description":"Onboarding page"
+  },
+  "onbItemPrivacyProtectionTitle":{
+    "message":"Beskyttelse af privatliv og blokering af malware.",
+    "description":"Onboarding page"
+  },
+  "onbItemPrivacyProtectionSubTitle":{
+    "message":"Brug kendte lister til at undgå indsamling af adfærsmæssige oplysninger og bloker malware",
+    "description":"Onboarding page"
+  },
+  "onbItemFbGoogleTrackingTitle":{
+    "message":"Bloker sporing af Facebook og Google",
+    "description":"Onboarding page"
+  },
+  "onbItemFbGoogleTrackingSubTitle":{
+    "message":"Du kan stadig bruge deres services, men de kan ikke spore din adfærd på nettet.",
+    "description":"Onboarding page"
+  },
+  "onbItemAdultContentTitle":{
+    "message":"Bloker voksenindhold",
+    "description":"Onboarding page"
+  },
+  "onbItemAdultContentSubTitle":{
+    "message":"Bloker adgang til websteder med voksenindhold.",
+    "description":"Onboarding page"
+  },
+  "onbBackBtn":{
+    "message":"Tilbage",
+    "description":"Onboarding page"
+  },
+  "onbContinueBtn":{
+    "message":"Fortsæt",
+    "description":"Onboarding page"
+  },
+  "onbFooterMainBeforeSettings":{
+    "message":"Vælg standard indstillinger for beskyttelse på denne computer.<br/><br/>Du kan til hver en tid ændre dine valg.<br/><br/>Du kan sætte et personligt niveau for beskyttelse i Findx Privatlivskontrols",
+    "description":"Onboarding Main page footer. Text before 'settings menu' row"
+  },
+  "onbFooterMainSettings":{
+    "message":"indstillinger",
+    "description":"Onboarding Main page footer. 'settings menu' row"
+  },
+  "onbFooterMainAfterSettings":{
+    "message":".",
+    "description":"Onboarding Main page footer. Text after 'settings menu' row"
+  },
+  "onbFooterStandardBeforeSettings":{
+    "message":"Alle valg kan ændres senere.<br/><br/>Du kan altid sætte dit personlige niveau af beskyttelse via ",
+    "description":"Onboarding Standard page footer. Text before 'settings menu' row"
+  },
+  "onbFooterStandardSettings":{
+    "message":"menuen Indstillinger",
+    "description":"Onboarding Standard page footer. 'settings menu' row"
+  },
+  "onbFooterStandardAfterSettings":{
+    "message":"i Findx Privatlivskontrol.",
+    "description":"Onboarding Standard page footer. Text after 'settings menu' row"
+  },
+  "onbFooterCustomBeforeSettings":{
+    "message":"Dine indstillinger kan altid ændres ved at gå til Findx Privatlivskontrols",
+    "description":"Onboarding Custom page footer. Text before 'settings menu' row"
+  },
+  "onbFooterCustomSettings":{
+    "message":"Indstillinger",
+    "description":"Onboarding Custom page footer. 'settings menu' row"
+  },
+  "onbFooterCustomAfterSettings":{
+    "message":".",
+    "description":"Onboarding Custom page footer. Text after 'settings menu' row"
   }
 }
