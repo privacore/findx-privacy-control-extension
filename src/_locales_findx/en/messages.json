@@ -472,7 +472,7 @@
     "description":"Onboarding start page 'For children' card"
   },
   "onbCardChildrenContentText":{
-    "message":"- Block personalised advertisments<br/>- Display a warning before accessing adult content<br/>- Autodelete unused cookies",
+    "message":"- Block personalised advertisements<br/>- Display a warning before accessing adult content<br/>- Autodelete unused cookies",
     "description":"Onboarding start page 'For children' card"
   },
   "onbCardChildrenContentFooter":{
@@ -512,7 +512,7 @@
     "description":"Onboarding start page 'Custom' card"
   },
   "onbCardCustomContentText":{
-    "message":"- Set custom protection levels<br/>- Disable cross-site tracking<br/>- Detatiled Cookie control<br/>- Explore private search",
+    "message":"- Set custom protection levels<br/>- Disable cross-site tracking<br/>- Detailed Cookie control<br/>- Explore private search",
     "description":"Onboarding start page 'Custom' card"
   },
   "onbCardCustomContentFooter":{
@@ -524,7 +524,7 @@
     "description":"Onboarding 'Standard' page"
   },
   "onbStandardHeaderSubtitle":{
-    "message":"In addition to standard protection select the defaults for better cookie control.",
+    "message":"In addition to standard protection, you can select defaults for better cookie control.",
     "description":"Onboarding 'Standard' page"
   },
   "onbCustomHeaderTitle":{
@@ -548,7 +548,7 @@
     "description":"Onboarding page"
   },
   "onbItemAutoDelSubTitle":{
-    "message":"Deletes cookies periodically",
+    "message":"Deletes cookies periodically.",
     "description":"Onboarding page"
   },
   "onbItemPersonalAdvTitle":{
@@ -556,7 +556,7 @@
     "description":"Onboarding page"
   },
   "onbItemPersonalAdvSubTitle":{
-    "message":"Less clutter and better focus. Almost all  advertisments are removed.",
+    "message":"Less clutter and better focus. Almost all  advertisements are removed.",
     "description":"Onboarding page"
   },
   "onbItemPrivacyProtectionTitle":{
@@ -572,7 +572,7 @@
     "description":"Onboarding page"
   },
   "onbItemFbGoogleTrackingSubTitle":{
-    "message":"You can use still use the services, but they won’t track your behaviour across the web.",
+    "message":"You can use still use their services, but they can’t track your behaviour across the web.",
     "description":"Onboarding page"
   },
   "onbItemAdultContentTitle":{
@@ -580,7 +580,7 @@
     "description":"Onboarding page"
   },
   "onbItemAdultContentSubTitle":{
-    "message":"Use the Findx Adult content list based on the on the Findx search engine crawling.",
+    "message":"Block access to websites with adult content.",
     "description":"Onboarding page"
   },
   "onbBackBtn":{
