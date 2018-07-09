@@ -346,7 +346,17 @@ var niceScroll = function () {
 
 /******************************************************************************/
 
+var isSafari = function() {
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+};
+
+/******************************************************************************/
+
 uDom.onLoad(function() {
+    if (isSafari()) {
+        $('.cookies-settings').hide();
+    }
+
     handleCheckboxes();
     messaging.send('dashboard', { what: 'userSettings' }, onUserSettingsReceived);
     messaging.send('dashboard', { what: 'getLocalData' }, onLocalDataReceived);
