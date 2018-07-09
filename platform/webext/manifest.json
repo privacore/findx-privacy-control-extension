@@ -83,6 +83,8 @@
    "short_name":"Findx Privacy Control",
    "version":"1.9.15.104",
    "web_accessible_resources": [
-      "/web_accessible_resources/*"
+      "/web_accessible_resources/*",
+      "/img/popup/*.svg",
+      "/css/fonts/*.ttf"
    ]
 }

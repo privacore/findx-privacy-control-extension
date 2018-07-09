@@ -215,7 +215,10 @@ var µBlock = (function() { // jshint ignore:line
             whitelist: {
                 domains: [],
                 cookies: []
-            }
+            },
+
+            rememberLoginServices: [],
+            rememberLoginStatuses: {}
         },
         cookiesStats: {
             statistics: {

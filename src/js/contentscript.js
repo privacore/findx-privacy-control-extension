@@ -1408,6 +1408,17 @@ vAPI.domSurveyor = (function() {
         },
         bootstrapPhase1
     );
+
+    // Show "Remember domain cookies" popup if it is need
+    vAPI.messaging.send(
+        'contentscript',
+        {
+            what: 'showRememberLoginPopup',
+            url: window.location.href,
+            hostname: window.location.hostname,
+            isRootFrame: window === window.top
+        }
+    );
 })();
 
 /******************************************************************************/

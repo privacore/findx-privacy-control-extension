@@ -626,5 +626,25 @@
   "onbFooterCustomAfterSettings":{
     "message":".",
     "description":"Onboarding Custom page footer. Text after 'settings menu' row"
+  },
+  "remLoginTitle":{
+    "message":"Remember login",
+    "description":"Remember login popup inserted to a page"
+  },
+  "remLoginText":{
+    "message":"Protect domain cookies to avoid deleting login information from this service.",
+    "description":"Remember login popup inserted to a page"
+  },
+  "remLoginFloatingBtnTip":{
+    "message":"Whitelist domains",
+    "description":"Remember login popup inserted to a page"
+  },
+  "remLoginNotNowBtn":{
+    "message":"Not now",
+    "description":"Remember login popup inserted to a page"
+  },
+  "remLoginDontAskBtn":{
+    "message":"Don't ask again",
+    "description":"Remember login popup inserted to a page"
   }
 }
