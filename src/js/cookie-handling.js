@@ -16,6 +16,8 @@
             return;
 
         vAPI.cookies.onChanged = this.onCookieChanged.bind(this);
+
+        this.rememberLoginServices = {services: []};
     };
 
     CookieHandling.prototype.tabsDomainsList = null;
@@ -38,6 +40,8 @@
 
         vAPI.cookies.registerListeners();
 
+        this.updateRememberLoginServices();
+
         if (ub.cookiesSettings.periodicalClearing) {
             this.startPeriodicalClearing();
         }
@@ -45,8 +49,6 @@
         if (ub.cookiesSettings.clearCookiesOnAppStart) {
             this.clearAllUnprotected();
         }
-
-
     };
 
     CookieHandling.prototype.reset = function () {
@@ -138,11 +140,11 @@
             }
         }, this);
 
-        console.groupCollapsed("TABS UPDATING");
-        console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(this.tabsDomainsList))));
-        console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(ub.pageStores))));
-        console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(ub.tabContextManager.getAll()))));
-        console.groupEnd();
+        // console.groupCollapsed("TABS UPDATING");
+        // console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(this.tabsDomainsList))));
+        // console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(ub.pageStores))));
+        // console.log("\ttabsDomainsList: ", JSON.parse(JSON.stringify(Array.from(ub.tabContextManager.getAll()))));
+        // console.groupEnd();
     };
 
     /**
@@ -221,17 +223,17 @@
         }
 
 
-        if (isRemoved)
-            console.groupCollapsed("%c1p", 'color: purple');
-        else
-            console.groupCollapsed("%c1p", 'color: green');
-        console.log("\tcookie: ", cookie);
-        console.log("\tisRemoved: ", isRemoved);
-        console.log("\tisBlacklisted: ", cookie.removed);
-        console.log("\tdomainPageStores: ", JSON.parse(JSON.stringify(domainPageStores)));
-        console.log("\tpageStores: ", JSON.parse(JSON.stringify(Array.from(ub.pageStores))));
-        console.log("\ttabsDomainsList: ", this.tabsDomainsList);
-        console.groupEnd();
+        // if (isRemoved)
+        //     console.groupCollapsed("%c1p", 'color: purple');
+        // else
+        //     console.groupCollapsed("%c1p", 'color: green');
+        // console.log("\tcookie: ", cookie);
+        // console.log("\tisRemoved: ", isRemoved);
+        // console.log("\tisBlacklisted: ", cookie.removed);
+        // console.log("\tdomainPageStores: ", JSON.parse(JSON.stringify(domainPageStores)));
+        // console.log("\tpageStores: ", JSON.parse(JSON.stringify(Array.from(ub.pageStores))));
+        // console.log("\ttabsDomainsList: ", this.tabsDomainsList);
+        // console.groupEnd();
     };
 
     /****************************************************************************/
@@ -242,36 +244,36 @@
      * @param {boolean} isRemoved
      */
     CookieHandling.prototype.handleThirdPartyCookie = function (cookie, isRemoved) {
-        if (isRemoved)
-            console.groupCollapsed("%c3p", 'color:purple');
-        else
-            console.group("%c3p", 'color:orange');
+        // if (isRemoved)
+        //     console.groupCollapsed("%c3p", 'color:purple');
+        // else
+        //     console.group("%c3p", 'color:orange');
 
         if (!isRemoved && ub.cookiesSettings.thirdPartyCookiesBlocking) {
             if (this.isCookieWhitelisted(cookie)) {
-                console.log("%cALLOW whitelisted cookie", 'color:green');
+                // console.log("%cALLOW whitelisted cookie", 'color:green');
                 this.increaseStats(false, false);
             }
             else if (this.isDomainWhitelisted(cookie.domain) && !this.isCookieBlacklisted(cookie)) {
                 /** Cookie protection/un-protection has more priority then domain
                  *          so if domain is protected but separate cookie in it is blacklisted we don't remove it **/
-                console.log("%cALLOW whitelisted domain", 'color:green');
+                // console.log("%cALLOW whitelisted domain", 'color:green');
                 this.increaseStats(false, false);
             }
             else {
                 this.removeCookie(cookie);
                 this.increaseStats(true, false); // Add to statistics as blocked 3p cookie
-                console.log("%cBLOCK", 'color:red');
+                // console.log("%cBLOCK", 'color:red');
             }
         }
         else if (!isRemoved) {
             this.increaseStats(false, false); // Add to statistics as allowed 3p cookie
         }
 
-        console.log("\tcookie: ", cookie);
-        console.log("\tisRemoved: ", isRemoved);
-        console.log("\ttabsDomainsList: ", this.tabsDomainsList);
-        console.groupEnd();
+        // console.log("\tcookie: ", cookie);
+        // console.log("\tisRemoved: ", isRemoved);
+        // console.log("\ttabsDomainsList: ", this.tabsDomainsList);
+        // console.groupEnd();
     };
 
 
@@ -567,6 +569,9 @@
         }
     };
 
+    /**
+     * Save cookiesSettings to storage.
+     */
     CookieHandling.prototype.saveSettings = function () {
         var settings = JSON.parse(JSON.stringify(ub.cookiesSettings));
         vAPI.storage.set(settings);
@@ -744,6 +749,306 @@
     };
 
 
+
+    /****************************************************************************/
+    /***************************** REMEMBER LOGIN ********************************/
+
+    CookieHandling.prototype.updateRememberLoginServices = function () {
+        this.receiveRememberLoginServices(function (services) {
+            if (services) {
+                ub.cookiesSettings.rememberLoginServices = services;
+                this.buildRemLoginServiceHostnames(ub.cookiesSettings.rememberLoginServices);
+                this.saveSettings();
+            }
+        }.bind(this));
+    };
+
+    CookieHandling.prototype.receiveRememberLoginServices = function (callback) {
+        // var data = {
+        //     "services":[
+        //         {
+        //             "name":"Github",
+        //             "domains":[
+        //                 {
+        //                     "name":"github.com",
+        //                     "cookies":[
+        //                         "abc",
+        //                         "def",
+        //                         "ghi"
+        //                     ]
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             "name":"BT",
+        //             "domains":[
+        //                 {
+        //                     "name":".bt.dk",
+        //                     "cookies":[
+        //                         "_ga"
+        //                     ]
+        //                 },
+        //                 {
+        //                     "name":"www.bt.dk",
+        //                     "cookies":[
+        //                         "CookieConsent"
+        //                     ]
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             "name":"Microsoft Office",
+        //             "domains":[
+        //                 {
+        //                     "name":".microsoftonline.com",
+        //                     "cookies":[
+        //                         "*"
+        //                     ]
+        //                 },
+        //                 {
+        //                     "name":"www.office.com",
+        //                     "cookies":[
+        //                         "*"
+        //                     ]
+        //                 },
+        //                 {
+        //                     "name":"outlook.office.com",
+        //                     "cookies":[
+        //                         "*"
+        //                     ]
+        //                 }
+        //             ]
+        //         }
+        //     ]
+        // };
+
+        // callback(data.services);
+        callback([]);
+    };
+
+    /**
+     * Method for receiving services list from the server.
+     * @param {function} callback
+     * [
+     *     {
+     *         name: <string>,
+     *         domains: [
+     *             {
+     *                 name: <string>,
+     *                 cookies: <string[]>
+     *             }
+     *         ]
+     *     }
+     * ]
+     */
+    CookieHandling.prototype.receiveRememberLoginServices_API = function (callback) {
+        var xhr = new XMLHttpRequest();
+
+        var onLoadEvent = function() {
+            cleanup();
+
+            if ( this.status < 200 || this.status >= 300 ) {
+                return callback([]);
+            }
+            // consider an empty result to be an error
+            if ( (typeof this.responseText === 'string' && this.responseText !== '') === false ) {
+                return callback([]);
+            }
+            // we never download anything else than plain text: discard if response
+            // appears to be a HTML document: could happen when server serves
+            // some kind of error page I suppose
+            var text = this.responseText.trim();
+            if ( text.startsWith('<') && text.endsWith('>') ) {
+                return callback([]);
+            }
+
+            callback((JSON.parse(this.responseText).services) || []);
+        };
+
+        var cleanup = function() {
+            xhr.removeEventListener('load', onLoadEvent);
+            xhr.removeEventListener('error', onErrorEvent);
+            xhr.removeEventListener('abort', onErrorEvent);
+        };
+
+        var onErrorEvent = function() {
+            cleanup();
+            callback([]);
+        };
+
+
+        try {
+            xhr.open('get', actualUrl, true);
+            xhr.addEventListener('load', onLoadEvent);
+            xhr.addEventListener('error', onErrorEvent);
+            xhr.addEventListener('abort', onErrorEvent);
+            xhr.responseType = 'text';
+            xhr.send();
+        } catch (e) {
+            onErrorEvent.call(xhr);
+        }
+    };
+
+
+    /**
+     * Build a list of hostnames for each service according to a list of cookies domains.
+     * Domain can start from '.' or can be not a root domain
+     *      but hostname must be a root domain for comparing it with a page opened in a tab
+     *      and for inserting it to a domains whitelist.
+     * @param {Object[]} services
+     */
+    CookieHandling.prototype.buildRemLoginServiceHostnames = function (services) {
+        services.forEach(function (service) {
+            let hostnames = [];
+            service.domains.map(function (domainData) {
+                let domain = trimDots(domainData.name);
+                hostnames.push(domain);
+                let root = prepareRootDomain(domain);
+                if (root !== domain && hostnames.indexOf(root) === -1)
+                    hostnames.push(root);
+            });
+            service.hostnames = hostnames;
+        });
+    };
+
+
+    /**
+     * Find and returns a service with all its domains and their cookies
+     * @param {string} hostname
+     * @returns {{name: <string>, domains: <object[]>, hostnames: <string[]>}}
+     */
+    CookieHandling.prototype.getRemLoginServiceByHost = function (hostname) {
+        var services = ub.cookiesSettings.rememberLoginServices,
+            foundService = null;
+
+        for (var i = 0; (i < services.length && !foundService); i++) {
+            var service = services[i];
+
+            if (service.hostnames.indexOf(hostname) !== -1 ||
+                service.hostnames.indexOf(prepareRootDomain(hostname)) !== -1)
+            {
+                foundService = service;
+                break;
+            }
+        }
+
+        return foundService;
+    };
+
+    CookieHandling.prototype.getRemLoginServiceByName = function (name) {
+        var services = ub.cookiesSettings.rememberLoginServices,
+            foundService = null;
+
+        for (var i = 0; (i < services.length && !foundService); i++) {
+            if (services[i].name === name) {
+                foundService = services[i];
+                break;
+            }
+        }
+
+        return foundService;
+    };
+
+
+    /**
+     * Check if we need to show a "Remember login" window in a page.
+     * Find a service in a cookiesSettings.rememberLoginServices.
+     * Check service status in a cookiesSettings.rememberLoginStatuses
+     * @param {string} hostname
+     */
+    CookieHandling.prototype.mustRemLoginShow = function (hostname) {
+        if (ub.isSafari())
+            return false;
+
+        var service = this.getRemLoginServiceByHost(hostname);
+        if (!service)
+            return false;
+
+        var status = this.getRemLoginServiceStatus(service.name);
+        if (status === 0 || status === 1) // Already handled
+            return false;
+
+        return true;
+    };
+
+    /**
+     * Returns a status of remember login handling of set service.
+     * Is current service already handled or not.
+     * @param {string} serviceName
+     * @returns {number}
+     *      -1 : not handled yet,
+     *      0: handled and marked as don't ask again
+     *      1: handled and marked as whitelisted
+     */
+    CookieHandling.prototype.getRemLoginServiceStatus = function (serviceName) {
+        return ub.cookiesSettings.rememberLoginStatuses.hasOwnProperty(serviceName) ?
+            ub.cookiesSettings.rememberLoginStatuses[serviceName] :
+            -1;
+    };
+
+    /**
+     * Set status of remember login handling of set service.
+     * @param {string} serviceName
+     * @param {number} status -
+     *          0 : don't ask again
+     *          1 : whitelisted
+     */
+    CookieHandling.prototype.setRemLoginServiceStatus = function (serviceName, status) {
+        if ((status !== 0 && status !== 1) || !serviceName)
+            return;
+
+        ub.cookiesSettings.rememberLoginStatuses[serviceName] = status;
+        this.saveSettings();
+    };
+
+
+    /**
+     * Whitelist all domains\cookies of current service.
+     * If domain has separate cookies in iit's list - whitelist only those cookies.
+     * If domain has a placeholder "*" - whitelist all domain (root domain)
+     * @param {string} serviceName
+     */
+    CookieHandling.prototype.whitelistRemLoginService = function (serviceName) {
+        var service = this.getRemLoginServiceByName(serviceName);
+        if (!service) return;
+
+        service.domains.forEach(function (domainData) {
+            let domain = domainData.name;
+            if (domainData.cookies.length === 1 && domainData.cookies[0] === "*") {
+                this.addToWhitelist(null, prepareRootDomain(domain));
+            }
+            else {
+                domainData.cookies.forEach(function (cookieName) {
+                    this.addToWhitelist({name: cookieName, domain: domain});
+                }.bind(this));
+            }
+        }.bind(this));
+
+        this.setRemLoginServiceStatus(serviceName, 1);
+    };
+
+
+    /**
+     * Inject "Remember login" popup to a page (tab)
+     * 1) Script injected to a page.
+     * 2) Script insert iframe to a page.
+     * 3) Script send message to the background.
+     * 4) Background receives popup html via XMLHttpRequest and returns it to inserted script
+     * 5) Script sets received html content to iframe
+     * @param {number} tabId
+     */
+    CookieHandling.prototype.showRemLoginPopup = function (tabId) {
+        if ( vAPI.isBehindTheSceneTabId(tabId) ) {
+            return;
+        }
+        ub.scriptlets.inject(tabId, 'remember-login');
+        if ( typeof vAPI.tabs.select === 'function' ) {
+            vAPI.tabs.select(tabId);
+        }
+    }
+
+
+    /****************************************************************************/
     /****************************************************************************/
 
 
@@ -783,6 +1088,19 @@
         return ub.URI.domainFromHostname(domain);
     };
 
+    var trimDots = function (str) {
+        if (str.charAt(0) === '.') {
+            str = str.slice(1);
+        }
+        if (str.charAt(str.length -1) === '.') {
+            str = str.slice(str.length - 1);
+        }
+        return str;
+    };
+
+
+
+    /****************************************************************************/
 
 
 

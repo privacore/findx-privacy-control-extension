@@ -797,6 +797,15 @@ var onMessage = function(request, sender, callback) {
         }
         break;
 
+    case 'showRememberLoginPopup':
+        if (!µb.isSafari() && request.isRootFrame) {
+            var mustBeShown = µb.cookieHandling.mustRemLoginShow(request.hostname);
+            if (mustBeShown) {
+                µb.cookieHandling.showRemLoginPopup(tabId);
+            }
+        }
+        break;
+
     default:
         return vAPI.messaging.UNHANDLED;
     }
@@ -1523,6 +1532,82 @@ var onMessage = function(request, sender, callback) {
 vAPI.messaging.listen('onboarding', onMessage);
 
 /******************************************************************************/
+
+})();
+
+/******************************************************************************/
+/******************************************************************************/
+
+// channel: rememberLogin
+
+(function() {
+
+    /******************************************************************************/
+
+    var µb = µBlock;
+
+    /******************************************************************************/
+
+    var onMessage = function(request, sender, callback) {
+        // Async
+        switch ( request.what ) {
+            case 'rememberLoginArguments':
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'remember-login.html', true);
+                xhr.overrideMimeType('text/html;charset=utf-8');
+                xhr.responseType = 'text';
+                xhr.onload = function() {
+                    this.onload = null;
+                    var i18n = {
+                        headerTitle: vAPI.i18n('remLoginTitle'),
+                        contentText: vAPI.i18n('remLoginText'),
+                        floatingBtnTip: vAPI.i18n('remLoginFloatingBtnTip'),
+                        notNow: vAPI.i18n('remLoginNotNowBtn'),
+                        dont_ask: vAPI.i18n('remLoginDontAskBtn'),
+                        logo_url: chrome.extension.getURL("img/popup/findx_logo.svg"),
+                        roboto_url: chrome.extension.getURL("css/fonts/Roboto-Regular.ttf"),
+                        roboto_medium_url: chrome.extension.getURL("css/fonts/Roboto-Medium.ttf"),
+                    };
+                    var reStrings = /\{\{(\w+)\}\}/g;
+                    var replacer = function(a0, string) {
+                        return i18n[string];
+                    };
+
+                    callback({
+                        frameContent: this.responseText.replace(reStrings, replacer),
+                        target: request.url,
+                        serviceName: µb.cookieHandling.getRemLoginServiceByHost(request.hostname).name
+                    });
+                };
+                xhr.send();
+                return;
+
+            default:
+                break;
+        }
+
+        // Sync
+        var response;
+
+        switch ( request.what ) {
+            case 'dontAskAgain':
+                µb.cookieHandling.setRemLoginServiceStatus(request.service, 0);
+                break;
+
+            case 'whitelistService':
+                µb.cookieHandling.whitelistRemLoginService(request.service);
+                break;
+
+            default:
+                return vAPI.messaging.UNHANDLED;
+        }
+
+        callback(response);
+    };
+
+    vAPI.messaging.listen('rememberLogin', onMessage);
+
+    /******************************************************************************/
 
 })();
 

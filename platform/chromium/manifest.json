@@ -74,6 +74,8 @@
         "managed_schema": "managed_storage.json"
     },
     "web_accessible_resources": [
-        "/web_accessible_resources/*"
+        "/web_accessible_resources/*",
+        "/img/popup/*.svg",
+        "/css/fonts/*.ttf"
     ]
 }
