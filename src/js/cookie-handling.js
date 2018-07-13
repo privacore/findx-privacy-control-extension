@@ -764,66 +764,41 @@
     };
 
     CookieHandling.prototype.receiveRememberLoginServices = function (callback) {
-        // var data = {
-        //     "services":[
-        //         {
-        //             "name":"Github",
-        //             "domains":[
-        //                 {
-        //                     "name":"github.com",
-        //                     "cookies":[
-        //                         "abc",
-        //                         "def",
-        //                         "ghi"
-        //                     ]
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             "name":"BT",
-        //             "domains":[
-        //                 {
-        //                     "name":".bt.dk",
-        //                     "cookies":[
-        //                         "_ga"
-        //                     ]
-        //                 },
-        //                 {
-        //                     "name":"www.bt.dk",
-        //                     "cookies":[
-        //                         "CookieConsent"
-        //                     ]
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             "name":"Microsoft Office",
-        //             "domains":[
-        //                 {
-        //                     "name":".microsoftonline.com",
-        //                     "cookies":[
-        //                         "*"
-        //                     ]
-        //                 },
-        //                 {
-        //                     "name":"www.office.com",
-        //                     "cookies":[
-        //                         "*"
-        //                     ]
-        //                 },
-        //                 {
-        //                     "name":"outlook.office.com",
-        //                     "cookies":[
-        //                         "*"
-        //                     ]
-        //                 }
-        //             ]
-        //         }
-        //     ]
-        // };
+        var data = {
+            "services":[
+                {
+                    "name":"Microsoft Office",
+                    "domains":[
+                        {
+                            "name":"microsoftonline.com",
+                            "cookies":[
+                                "*"
+                            ]
+                        },
+                        {
+                            "name":"office.com",
+                            "cookies":[
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name":"Facebook",
+                    "domains":[
+                        {
+                            "name":".facebook.com",
+                            "cookies":[
+                                "c_user",
+                                "xs"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
 
-        // callback(data.services);
-        callback([]);
+        callback(data.services);
     };
 
     /**
