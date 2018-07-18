@@ -834,6 +834,9 @@ body.platform-safari .main-tabs-slider[data-active-tab="cookies_tab"] .safari-co
 /*.collapsible-item.empty-filter .collapsible-item-chevron-icon {*/
     /*opacity: 0.4;*/
 /*}*/
+.collapsible-item.user-filter .collapsible-item-chevron-icon > img {
+    transform: rotate( -90deg );
+}
 
 .collapsible-item .collapsible-body {
     max-height: 200px;
@@ -846,6 +849,9 @@ body.platform-safari .main-tabs-slider[data-active-tab="cookies_tab"] .safari-co
 .collapsible-item.empty-filter .collapsible-body {
     /*padding: 0;*/
     /*border: none;*/
+}
+.collapsible-item.user-filter .collapsible-body {
+    display: none!important;
 }
 
 .collapsible-item-body-row {
@@ -948,6 +954,85 @@ body.system-page #protection_lists_page .fixed-action-btn .btn-floating i.materi
 body.system-page #protection_lists_page .fixed-action-btn .btn-floating i.material-icons.add-filter-icon {
     display: inline-block;
 }
+
+
+/******* User filters page  *******/
+
+.user-filters-page-content {
+    overflow: auto;
+    width: 100%;
+    height: calc(100% - 56px);
+}
+.user-filters-content {
+    padding: 16px 13px;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: default;
+    margin-bottom: 20px;
+}
+.user-filters-content_title {
+    font-family: Roboto-medium;
+    color: rgba(0,0,0,.37);
+    margin-bottom: 18px;
+}
+
+#user_filters_page .fixed-action-btn .btn-floating {
+    background-color: #6bad6f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#user_filters_page .fixed-action-btn svg {
+    width: 24px;
+    height: 24px;
+}
+#user_filters_page .fixed-action-btn i {
+    display: inline-block;
+}
+#user_filters_page.content-changed .fixed-action-btn .btn-floating svg,
+#user_filters_page:not(.content-changed) .fixed-action-btn .btn-floating i {
+    display: none;
+}
+
+.cosmetic-rule {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 2px 13px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    font-size: 13px;
+    line-height: 24px;
+    color: rgba(0,0,0,.56);
+    cursor: default;
+}
+.cosmetic-rule:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+.cosmetic-rule:hover {
+    background-color: rgba(0,0,0,.08);
+}
+.cosmetic-rule_raw {
+    flex: 1;
+    margin-right: 5px;
+}
+.cosmetic-rule__whitelisted .cosmetic-rule_raw {
+    text-decoration: line-through;
+}
+.cosmetic-rule_btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 3px;
+}
+.cosmetic-rule_btn > img {
+    width: 24px;
+    height: 24px;
+}
+
+
 
 
 /******* Cookies tab *******/

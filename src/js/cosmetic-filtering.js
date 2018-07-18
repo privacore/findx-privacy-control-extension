@@ -116,7 +116,7 @@ FilterHostname.prototype.retrieve = function(hostname, out) {
         if (µb.isBlockedForDomain(this.filterPath, this.hostname) === false)
             return;
     }
-    // When some element added to "Me filters" list - page hostname used but not root domain
+    // When some element added to "My filters" list - page hostname used but not root domain
     // But if user adds domain to exceptions - root domain used. In this case if domain is in exceptions
     //      or filter is in exceptions for this domain we need to check a ful hostname and a root domain.
     // Example: on hostname www.bt.dk used element picker. When "My filters" disabled for this domain -
@@ -126,6 +126,12 @@ FilterHostname.prototype.retrieve = function(hostname, out) {
             return;
     }
     else if (µb.isDefaultOff(this.filterPath))
+        return;
+
+    // User Filter rules can be enabled/disabled from a popup. So if rule is disabled (whitelisted)
+    //      we don't need to hide it on a page.
+    if (this.filterPath === µb.userFiltersPath &&
+            µb.isUserCosmeticRuleWhitelisted(this.s, µb.URI.domainFromHostname(this.hostname)))
         return;
 
     var i = hostname.length - this.hostname.length;

@@ -688,6 +688,9 @@
             return true;
         }
 
+        if (filterPath === µb.userFiltersPath)
+            µb.userCosmeticFilters.addRule(raw, parsed.hostnames, suffix);
+
         // Cosmetic filtering engine.
         µb.cosmeticFilteringEngine.compile(parsed, writer, filterPath);
         return true;

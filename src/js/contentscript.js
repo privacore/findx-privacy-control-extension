@@ -1363,6 +1363,7 @@ vAPI.domSurveyor = (function() {
                 { injected: true }
             );
             domFilterer.addProceduralSelectors(cfeDetails.proceduralFilters);
+            domFilterer.userFilterCosmeticRules = response.userCosmeticFilters;
         }
 
         if ( cfeDetails.networkFilters.length !== 0 ) {

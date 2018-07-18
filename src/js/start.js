@@ -43,6 +43,7 @@ vAPI.app.onShutdown = function() {
     µb.sessionURLFiltering.reset();
     µb.permanentURLFiltering.reset();
     µb.hnSwitches.reset();
+    µb.userCosmeticFilters.reset();
 };
 
 /******************************************************************************/

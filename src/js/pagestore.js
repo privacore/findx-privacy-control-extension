@@ -333,7 +333,11 @@ PageStore.prototype.init = function(tabId, context) {
     this.largeMediaTimer = null;
     this.netFilteringCache = NetFilteringResultCache.factory();
     this.internalRedirectionCount = 0;
-    
+
+    // Findx. Rules from UserFilters used in a page (only used, but not all possible)
+    // Current list used for displaying blocked cosmetic in a popup.
+    this.userFiltersCosmeticRules = [];
+
     this.noCosmeticFiltering = (µb.hnSwitches.evaluateZ(
                 'no-cosmetic-filtering',
                 tabContext.rootHostname

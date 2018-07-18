@@ -67,6 +67,7 @@ vAPI.DOMFilterer = function() {
     this.filterset = new Set();
     this.excludedNodeSet = new WeakSet();
     this.addedCSSRules = new Set();
+    this.userFilterCosmeticRules = [];
 
     if ( this.domIsReady !== true ) {
         document.addEventListener('DOMContentLoaded', () => {
@@ -235,7 +236,27 @@ vAPI.DOMFilterer.prototype = {
 
     getAllSelectors: function() {
         return this.getAllSelectors_(false);
+    },
+
+    /**
+     * Returns all cosmetic rules from "User filters" used on current page.
+     * @returns {{raw: string, rule: string, hostname: string}[]}
+     */
+    getUserFiltersCosmeticRules: function () {
+        let rules = [];
+
+        this.userFilterCosmeticRules.forEach(function (ruleData) {
+            let selector = ruleData.rule;
+            let qty = document.querySelectorAll(selector).length;
+            if (qty) {
+                ruleData.qty = qty;
+                rules.push(ruleData);
+            }
+        });
+
+        return rules;
     }
+
 };
 
 /******************************************************************************/

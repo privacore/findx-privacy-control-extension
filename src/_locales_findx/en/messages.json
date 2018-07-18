@@ -119,6 +119,10 @@
     "message": "Select element",
     "description": ""
   },
+  "popupTipUserFilters":{
+    "message": "My filters",
+    "description": ""
+  },
   "popupTipManageLists":{
     "message": "Manage lists",
     "description": ""
@@ -354,6 +358,18 @@
   "popupTipFooterRateAddon":{
     "message": "Rate this add-on",
     "description": ""
+  },
+  "popupUserFiltersPageTitle":{
+    "message": "My filters on this site",
+    "description": "'My filters' page in a popup"
+  },
+  "popupUserFiltersContentTitle":{
+    "message": "Filter rules created on this site",
+    "description": "'My filters' page in a popup"
+  },
+  "popupUserFiltersContentSubTitle":{
+    "message": "You can add your own rules by using the lightning icon and select the elements you want to hide.",
+    "description": "'My filters' page in a popup"
   },
   "docBlockedTabTitle":{
     "message": "Blocked by Findx privacy protection",

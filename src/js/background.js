@@ -45,8 +45,8 @@ var µBlock = (function() { // jshint ignore:line
 
     var hiddenSettingsDefault = {
         assetFetchTimeout: 30,
-        autoUpdateAssetFetchPeriod: 120,
-        autoUpdatePeriod: 7,
+        autoUpdateAssetFetchPeriod: 120, // sec
+        autoUpdatePeriod: 7, // hours
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
         streamScriptInjectFilters: false,

@@ -698,6 +698,8 @@
         µb.selfieManager.destroy();
         µb.staticFilteringReverseLookup.resetLists();
 
+        µb.userCosmeticFilters.reset();
+
         // We need to build a complete list of assets to pull first: this is
         // because it *may* happens that some load operations are synchronous:
         // This happens for assets which do not exist, ot assets with no
@@ -730,7 +732,7 @@
         rawContent;
 
     var onCompiledListLoaded2 = function(details) {
-        if ( details.content === '' ) {
+        if ( details.content === '' || assetKey === µb.userFiltersPath ) {
             details.content = µb.compileFilters(rawContent, assetKey);
             µb.assets.put(compiledPath, details.content);
         }
@@ -755,6 +757,14 @@
 
     var onCompiledListLoaded1 = function(details) {
         if ( details.content === '' ) {
+            µb.assets.get(assetKey, onRawListLoaded);
+            return;
+        }
+        // Findx.
+        // For displaying userFilters rules in a popup we always need to load them from file
+        //     and not from compiled. Because compiled data hasn't raws but already parsed/compiled data.
+        else if (assetKey === µb.userFiltersPath) {
+            details.content = '';
             µb.assets.get(assetKey, onRawListLoaded);
             return;
         }
@@ -894,6 +904,95 @@
         skipCosmetic: !firstparty && !this.userSettings.parseAllABPHideFilters
     }, filterPath);
 };
+
+/******************************************************************************/
+
+/**
+ * Cosmetic rules of "User filters" filter.
+ * Used for displaying cosmetic rules of "User filters" in a popup.
+ * Also used for adding/removing separate rules to a whitelist
+ *      (rules added to exceptions of 'User filters' for a domain)
+ * @type {{rules, addRule, reset, toSelfie, fromSelfie}}
+ */
+µBlock.userCosmeticFilters = (function () {
+
+    /**
+     * List of rules data.
+     * @type {{raw: string, rule: string, hostname: string}}
+     */
+    var rules = {};
+
+    var addRule = function (raw, hostnames, rule) {
+        var data = {
+            raw: raw,             // full raw from filter: domain.com##.header
+            rule: rule,             // only rule: ##.header
+            hostname: ""       // only domain: domain.com
+        };
+
+        if(typeof hostnames === 'string') {
+            var hostname = this.URI.domainFromHostnameNoCache(hostnames);
+            data.hostname = hostname;
+            if (!rules.hasOwnProperty(hostname))
+                rules[hostname] = [];
+            rules[hostname].push(data);
+        }
+        else if (typeof hostnames === 'object' && hostnames.length) { // string[]
+            // If rule contains multiple hostnames
+            hostnames.forEach(function (name) {
+                var hostname = this.URI.domainFromHostnameNoCache(name);
+                data.hostname = hostname;
+                if (!rules.hasOwnProperty(hostname))
+                    rules[hostname] = [];
+                rules[hostname].push(data);
+            }.bind(this));
+        }
+        else { // Global
+            if (!rules.hasOwnProperty(""))
+                rules[""] = [];
+            rules[""].push(data);
+        }
+    }.bind(µBlock);
+
+    var clear = function () {
+        rules = {};
+    };
+
+    var toSelfie = function () {
+        try {
+            return JSON.stringify(rules);
+        }
+        catch (exception) {
+            console.error("Exception in 'userCosmeticFilters -> toSelfie' (storage.js) :" +
+                "\n\trules: ", rules,
+                "\n\texception: ", exception);
+            return "";
+        }
+    };
+
+    var fromSelfie = function (data) {
+        try {
+            rules = JSON.parse(data) || {};
+        }
+        catch (exception) {
+            console.error("Exception in 'userCosmeticFilters -> fromSelfie' (storage.js) :" +
+                "\n\tdata: ", data,
+                "\n\texception: ", exception);
+            rules = {};
+        }
+    };
+
+
+    return {
+        get rules() {
+            return rules;
+        },
+        addRule: addRule,
+        reset: clear,
+        toSelfie: toSelfie,
+        fromSelfie: fromSelfie
+    };
+})();
+
 
 /******************************************************************************/
 
@@ -1050,7 +1149,8 @@
             availableFilterLists: this.availableFilterLists,
             staticNetFilteringEngine: this.staticNetFilteringEngine.toSelfie(),
             redirectEngine: this.redirectEngine.toSelfie(),
-            staticExtFilteringEngine: this.staticExtFilteringEngine.toSelfie()
+            staticExtFilteringEngine: this.staticExtFilteringEngine.toSelfie(),
+            userCosmeticFilters: this.userCosmeticFilters.toSelfie()
         };
         vAPI.cacheStorage.set({ selfie: selfie });
     }.bind(µBlock);
@@ -1062,7 +1162,8 @@
                 bin instanceof Object === false ||
                 bin.selfie instanceof Object === false ||
                 bin.selfie.magic !== µb.systemSettings.selfieMagic ||
-                bin.selfie.redirectEngine === undefined
+                bin.selfie.redirectEngine === undefined ||
+                bin.selfie.userCosmeticFilters === undefined
             ) {
                 return callback(false);
             }
@@ -1070,6 +1171,7 @@
             µb.staticNetFilteringEngine.fromSelfie(bin.selfie.staticNetFilteringEngine);
             µb.redirectEngine.fromSelfie(bin.selfie.redirectEngine);
             µb.staticExtFilteringEngine.fromSelfie(bin.selfie.staticExtFilteringEngine);
+            µb.userCosmeticFilters.fromSelfie(bin.selfie.userCosmeticFilters);
             callback(true);
         });
     };
@@ -1330,7 +1432,7 @@
         }
         if ( this.userSettings.autoUpdate ) {
             //this.scheduleAssetUpdater(this.hiddenSettings.autoUpdatePeriod * 3600000 || 25200000);
-            this.scheduleAssetUpdater(25200000); // 7 min. Set by igor. 25.01.17
+            this.scheduleAssetUpdater(25200000); // 7 hours. Set by igor. 25.01.17
             //this.scheduleAssetUpdater(this.updateAssetsEvery);
         } else {
             this.scheduleAssetUpdater(0);
@@ -1495,5 +1597,152 @@
     // Save changed state
     vAPI.storage.set({ 'availableFilterLists': filterLists }, onFilterListsReady);
 };
+
+
+/**
+ * Add/remove separate rule of User Filters (My filters) to a whitelist.
+ * Used for enabling/disabling blocking some rule from popup.
+ * @param {{raw: string, rule: string, hostname: string, fullData: string}} rule
+ * @param {string} domain
+ * @param {boolean} newState
+ */
+µBlock.setUserCosmeticRuleWhitelistState = function (rule, domain, newState) {
+    var filter = this.availableFilterLists[this.userFiltersPath];
+    var isChanged = false;
+
+    if (!filter.hasOwnProperty('exceptions')) {
+        filter.exceptions = {rules: {}};
+    }
+    if (!filter.exceptions.hasOwnProperty('rules')) {
+        filter.exceptions.rules = {};
+    }
+
+    var isWhitelisted = this.isUserCosmeticRuleWhitelisted(rule.rule, domain);
+
+    if (isWhitelisted && !newState) { // Remove from whitelist
+        filter.exceptions.rules[rule.rule].splice(filter.exceptions.rules[rule.rule].indexOf(domain), 1);
+        if (!filter.exceptions.rules[rule.rule].length) { // if current rule not whitelisted at any domain
+            delete filter.exceptions.rules[rule.rule];
+        }
+        isChanged = true;
+    }
+    else if (newState && !isWhitelisted) { // Add to whitelist
+        if (!filter.exceptions.rules[rule.rule]) {
+            filter.exceptions.rules[rule.rule] = [];
+        }
+
+        filter.exceptions.rules[rule.rule].push(domain);
+
+        isChanged = true;
+    }
+
+
+    var onFilterListsReady = function() {
+        µBlock.selfieManager.destroy(0);
+    };
+    // Save changed state
+    if (isChanged) {
+        vAPI.storage.set({ 'availableFilterLists': this.availableFilterLists }, onFilterListsReady);
+    }
+};
+
+/**
+ * Check is cosmetic rule from User Filters is whitelisted.
+ * @param {string} rule - element id/selector
+ * @param {string} domain
+ * @returns {boolean}
+ */
+µBlock.isUserCosmeticRuleWhitelisted = function (rule, domain) {
+    var filter = this.availableFilterLists[µBlock.userFiltersPath];
+
+    if (!filter.hasOwnProperty('exceptions') || !filter.exceptions.hasOwnProperty('rules')) {
+        filter.exceptions = {rules: {}};
+        return false;
+    }
+
+    return filter.exceptions.rules.hasOwnProperty(rule) && filter.exceptions.rules[rule].indexOf(domain) !== -1
+};
+
+
+µBlock.rmUserCosmeticRule = function (rule, domain) {
+    this.rmFromUserFilters(rule.raw, function () {});
+
+    domain = this.URI.domainFromHostname(domain);
+    // Remove rule from filter whitelist
+    if (this.isUserCosmeticRuleWhitelisted(rule.rule, domain)) {
+        var filter = this.availableFilterLists[this.userFiltersPath];
+        filter.exceptions.rules[rule.rule].splice(filter.exceptions.rules[rule.rule].indexOf(domain), 1);
+        if (!filter.exceptions.rules[rule.rule].length) { // if current rule not whitelisted at any domain
+            delete filter.exceptions.rules[rule.rule];
+        }
+        vAPI.storage.set({ 'availableFilterLists': this.availableFilterLists }, function() {
+            µBlock.selfieManager.destroy(0);
+        });
+    }
+};
+
+
+/**
+ * Remove rule from "User filters". Remove from variables and file.
+ * After removing filter will be reloaded.
+ * @param {string} rule
+ * @param {Function} callback
+ */
+µBlock.rmFromUserFilters = function(rule, callback) {
+    if ( !rule ) {
+        if (callback) callback();
+        return;
+    }
+
+    var µb = this;
+    var onSaved = function(details) {
+        µb.loadFilterLists(callback);
+    };
+
+    var findAndRemove = function (content) {
+        var lines = content.split('\n');
+        for (var i = 0; i < lines.length;) {
+            var line = lines[i];
+            if (line === rule) {
+                lines.splice(i, 1);
+                // remove comment lines before current rule line
+                for (var j = i-1; j >= 0; j--) {
+                    var commLine = lines[j];
+                    if (commLine.indexOf("!") === 0 || commLine === "") {
+                        lines.splice(j, 1);
+                        i--;
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else
+                i++;
+        }
+        return lines.join('\n');
+    };
+
+    var onLoaded = function(details) {
+        if ( details.error ) {
+            if (callback) callback();
+            return;
+        }
+
+        details.content = findAndRemove(details.content);
+
+        // https://github.com/chrisaljoudi/uBlock/issues/976
+        // If we reached this point, the filter quite probably needs to be
+        // added for sure: do not try to be too smart, trying to avoid
+        // duplicates at this point may lead to more issues.
+        µb.saveUserFilters(details.content.trim(), onSaved.bind(this, details));
+    };
+
+    this.loadUserFilters(onLoaded);
+};
+
+
+
+
 
 /******************************************************************************/

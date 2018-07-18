@@ -565,7 +565,8 @@ var onMessage = function(request, sender, callback) {
         pageStore = µb.pageStoreFromTabId(request.tabId);
         if ( pageStore !== null ) {
             pageStore.hiddenElementCount = 0;
-            µb.scriptlets.injectDeep(request.tabId, 'cosmetic-survey');
+            pageStore.userFiltersCosmeticRules = [];
+            µb.scriptlets.inject(request.tabId, 'cosmetic-survey');
         }
         return;
 
@@ -689,6 +690,14 @@ var onMessage = function(request, sender, callback) {
         µb.cookieHandling.clearAllUnprotected();
         break;
 
+    case 'setUserCosmeticRuleWhitelistState':
+        µb.setUserCosmeticRuleWhitelistState(request.rule, request.domain, request.whitelist);
+        break;
+
+    case 'rmUserCosmeticRule':
+        µb.rmUserCosmeticRule(request.rule, request.domain, request.whitelist);
+        break;
+
     default:
         return vAPI.messaging.UNHANDLED;
     }
@@ -784,6 +793,10 @@ var onMessage = function(request, sender, callback) {
         if ( request.isRootFrame && µb.logger.isEnabled() ) {
             µb.logCosmeticFilters(tabId);
         }
+
+
+        response.userCosmeticFilters = (µb.userCosmeticFilters.rules[request.domain] || [])
+            .concat((µb.userCosmeticFilters.rules[""] || []));
         break;
 
     case 'retrieveGenericCosmeticSelectors':
@@ -1633,10 +1646,16 @@ var cosmeticallyFilteredElementCountChanged = function(tabId) {
         return;
     }
 
+    var pageCosmeticRules = pageStore.userFiltersCosmeticRules;
+    pageCosmeticRules.forEach(function (pageRule) {
+        pageRule.whitelisted = µb.isUserCosmeticRuleWhitelisted(pageRule.rule, µb.URI.domainFromHostnameNoCache(pageStore.tabHostname));
+    });
+
     vAPI.messaging.broadcast({
         what: 'cosmeticallyFilteredElementCountChanged',
         tabId: tabId,
-        count: pageStore.hiddenElementCount
+        count: pageStore.hiddenElementCount,
+        userFiltersCosmeticRules: pageCosmeticRules
     });
 };
 
@@ -1681,8 +1700,14 @@ var onMessage = function(request, sender, callback) {
 
     switch ( request.what ) {
     case 'cosmeticallyFilteredElementCount':
-        if ( pageStore !== null && request.filteredElementCount ) {
-            pageStore.hiddenElementCount += request.filteredElementCount;
+        if ( pageStore !== null && request.userFiltersCosmeticRules ) {
+            pageStore.hiddenElementCount += (request.filteredElementCount || 0);
+
+            // Write to pagestore only rules for root frame
+            if (pageStore.rawURL === request.pageURL) {
+                pageStore.userFiltersCosmeticRules = request.userFiltersCosmeticRules;
+            }
+
             var broadcastKey = tabId + '-cosmeticallyFilteredElementCountChanged';
             if ( broadcastTimers[broadcastKey] === undefined ) {
                 broadcastTimers[broadcastKey] = vAPI.setTimeout(
