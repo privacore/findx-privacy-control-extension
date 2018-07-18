@@ -31,7 +31,8 @@
         {
             what: 'cosmeticallyFilteredElementCount',
             pageURL: window.location.href,
-            filteredElementCount: vAPI.domFilterer.getFilteredElementCount()
+            filteredElementCount: vAPI.domFilterer.getFilteredElementCount(),
+            userFiltersCosmeticRules: vAPI.domFilterer.getUserFiltersCosmeticRules()
         }
     );
 })();

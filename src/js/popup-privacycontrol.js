@@ -136,6 +136,7 @@
         M.Tooltip.init(document.querySelector("#protection_status_btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector("#pause_site_btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".element-picker-btn"), {enterDelay: 300});
+        M.Tooltip.init(document.querySelector(".user-filters-btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".open-protection-lists-btn"), {enterDelay: 300});
 
         M.Tooltip.init(document.querySelector(".domain-cookies-reset-btn"), {enterDelay: 300});
@@ -194,6 +195,7 @@
         handleWhitelistBtn();
         handleProtectionListsBtn();
         handleElementPickerBtn();
+        handleMyFiltersBtn();
 
         handleStartProtectionBtn();
 
@@ -210,6 +212,8 @@
         handleDomainCookiesPage();
 
         handleSocialBlocking();
+
+        handleUserFiltersPage();
 
         handleCloseProtectionListsBtn();
         handleOpenSearchTabBtn();
@@ -279,6 +283,7 @@
     var PAGES = {
         'main': 'main_page',
         'protection_lists': 'protection_lists_page',
+        'user_filters': 'user_filters_page',
         'cookie_control': 'cookie_control_page',
         'whitelisted_sites': 'listed_sites_page',
         'blacklisted_sites': 'listed_sites_page',
@@ -502,6 +507,22 @@
         );
 
         vAPI.closePopup();
+    };
+
+    /***************************************************************************/
+
+    /**
+     * "My filters" button in a Protection tab.
+     * Used to open "User filters" page.
+     */
+    var handleMyFiltersBtn = function () {
+        $(".user-filters-btn").off("click");
+        $(".user-filters-btn").on("click", function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            openPage(PAGES.user_filters);
+        });
     };
 
     /***************************************************************************/
@@ -935,7 +956,11 @@
             if (!filterItemTmplt)
                 return;
 
-            elFilter = $(Mustache.render(filterItemTmplt, filterData));
+            if (filterData.id === 'user-filters') {
+                elFilter = $(Mustache.render($('#user_filter_template').text(), filterData));
+            }
+            else
+                elFilter = $(Mustache.render(filterItemTmplt, filterData));
             handleFilterElement();
         };
 
@@ -957,6 +982,11 @@
                         $(elFilter).find(".collapsible-body").mCustomScrollbar("destroy");
                     }
                 }, 400);
+
+                // Open User filters page if "My filters" item was clicked
+                if (filterData.id === 'user-filters') {
+                    openPage(PAGES.user_filters);
+                }
             });
             elFilter.find(".collapsible-header .switch").on('click', function (ev) {
                 ev.stopPropagation();
@@ -1109,11 +1139,168 @@
 
 
 
+    /**************************** User filters page *********************************/
+
+    var cosmeticRulesData = [];
+
+    var renderUserFiltersCosmetic = function (rules) {
+        console.log ("renderUserFiltersCosmetic ()            popup-privacycontrol.js" +
+            "\n\t rules: ", rules);
+
+        cosmeticRulesData = [];
+        var userFilter = popupData.usedFilters['user-filters'];
+
+        if (isFilterEnabled(userFilter)) {
+            cosmeticRulesData = rules;
+        }
+
+        setUserFiltersQty();
+
+        clearUserCosmeticRulesList();
+        renderUserCosmeticRules()
+    };
+
+    var handleUserFiltersPage = function () {
+        $('#user_filters_page .header .back-btn').off("click");
+        $('#user_filters_page .header .back-btn').on("click", function (ev) {
+            openPage(PAGES.protection_lists);
+        });
+
+        var floatingBtn = $('#user_filters_page .btn-floating');
+        M.Tooltip.init(floatingBtn, {enterDelay: 500});
+        floatingBtn.off("click");
+        floatingBtn.on("click", function (ev) {
+            if (ev.currentTarget.classList.contains('btn-floating__refresh')) {
+                // If some changes was made on a page.
+                reloadTab();
+                vAPI.closePopup();
+            }
+            else {
+                if (popupData.canElementPicker === true)
+                    gotoPick();
+            }
+        });
+    };
+
+    var setUserFiltersQty = function () {
+        var blockedQty = cosmeticRulesData.filter(function (rule) {
+            return !rule.whitelisted;
+        }).length;
+        $('.user-filter .filter-counts .rules-blocked-count').html(blockedQty);
+        $('.user-filter .filter-counts .rules-total-count').html(cosmeticRulesData.length);
+    };
+
+    var clearUserCosmeticRulesList = function () {
+        cosmeticRules.forEach(function (cosmeticRule) {
+            cosmeticRule.destroy();
+        });
+        cosmeticRules = [];
+        $('.user-filters-lists').html('');
+    };
+
+    var cosmeticRules = [];
+
+    var CosmeticRule = function (ruleData, filterName) {
+        this.elItem = null;
+        this.elParent = null;
+        this.ruleData = ruleData || {};
+        this.ruleData.fullData = JSON.stringify(this.ruleData);
+        this.filterName = filterName || "";
+        this.template = $('#cosmetic_rule_template').text();
+
+        this.btnHide = null;
+        this.btnRemove = null;
+    };
+
+    CosmeticRule.prototype.createElement = function () {
+        this.elItem = $(Mustache.render(this.template, this.ruleData));
+    };
+
+    CosmeticRule.prototype.appendTo = function (elParent) {
+        if (!this.elParent) {
+            this.elParent = $(elParent);
+        }
+        if (!this.elItem)
+            this.createElement();
+
+        $(elParent).append(this.elItem);
+        setTimeout(function () {
+            this.elItem = $(this.elParent).find(".cosmetic-rule[data-rule='" + this.ruleData.raw + "']");
+            this.btnHide = this.elItem.find('.cosmetic-rule_whitelist_btn');
+            this.btnRemove = this.elItem.find('.cosmetic-rule_remove_btn');
+            this.setControlsHandlers();
+        }.bind(this), 300);
+    };
+
+    CosmeticRule.prototype.setControlsHandlers = function () {
+        $(this.btnHide).off('click');
+        $(this.btnHide).on('click', this.onHideClick.bind(this));
+
+        $(this.btnRemove).off('click');
+        $(this.btnRemove).on('click', this.onRemoveClick.bind(this));
+    };
+
+    CosmeticRule.prototype.onHideClick = function (ev) {
+        messager.send('popupPanel', {
+            what:  'setUserCosmeticRuleWhitelistState',
+            filterPath: this.filterName,
+            domain: popupData.pageDomain,
+            rule: this.ruleData,
+            whitelist: !this.ruleData.whitelisted
+        });
+
+        $(this.elItem).toggleClass('cosmetic-rule__whitelisted');
+        onUserCosmeticRuleUpdated();
+    };
+
+    CosmeticRule.prototype.onRemoveClick = function (ev) {
+        messager.send('popupPanel', {
+            what:  'rmUserCosmeticRule',
+            filterPath: this.filterName,
+            domain: popupData.pageDomain,
+            rule: this.ruleData,
+            whitelist: this.ruleData.whitelisted
+        });
+
+        onUserCosmeticRuleUpdated();
+        this.destroy();
+    };
+
+    CosmeticRule.prototype.destroy = function () {
+        this.elParent = null;
+        $(this.btnHide).off('click');
+        this.btnHide = null;
+        $(this.btnRemove).off('click');
+        this.btnRemove = null;
+        this.filterName = null;
+
+        this.elItem.remove();
+        this.elItem = null;
+    };
 
 
 
+    var renderUserCosmeticRules = function () {
+        var elRulesList = $('.user-filters-lists');
 
+        cosmeticRulesData.forEach(function (ruleData) {
+            var rule = new CosmeticRule(ruleData, 'user-filters');
+            rule.appendTo(elRulesList);
 
+            cosmeticRules.push(rule);
+        });
+    };
+
+    var onUserCosmeticRuleUpdated = function () {
+        $('#user_filters_page').toggleClass('content-changed', true);
+
+        var floatingBtn = $('#user_filters_page .btn-floating');
+        floatingBtn.toggleClass('btn-floating__refresh', true);
+        if (floatingBtn[0].hasAttribute('data-tooltip')) {
+            $(floatingBtn).attr('data-tooltip', vAPI.i18n('popupTipRefreshBtn'));
+            M.Tooltip.init(floatingBtn, {enterDelay: 500});
+        }
+    };
 
 
 
@@ -1210,9 +1397,6 @@
     /***************************************************************************/
 
     var renderCookiesTab = function () {
-        console.log ("renderCookiesTab ()            popup-privacycontrol.js" +
-                        "\n\t popupData: ", popupData);
-
         showCookiesDomain();
 
         if (!isSafari) {
@@ -2499,6 +2683,16 @@
             }
         });
 
+        $(".user-filters-page-content").mCustomScrollbar({
+            // scrollInertia: 0,
+            autoHideScrollbar: false,
+            scrollButtons:{ enable: false },
+            advanced:{ updateOnContentResize: true },
+            mouseWheel:{
+                scrollAmount: 150
+            }
+        });
+
         $(".listed-sites-page-content").mCustomScrollbar({
             // scrollInertia: 0,
             autoHideScrollbar: false,
@@ -2509,6 +2703,29 @@
             }
         });
     };
+
+
+    /******************************************************************************/
+
+    var renderPopupLazy = function() {
+        messager.send(
+            'popupPanel',
+            { what: 'getPopupLazyData', tabId: popupData.tabId }
+        );
+    };
+
+    var onPopupMessage = function(data) {
+        if ( !data ) { return; }
+        if ( data.tabId !== popupData.tabId ) { return; }
+
+        switch ( data.what ) {
+            case 'cosmeticallyFilteredElementCountChanged':
+                renderUserFiltersCosmetic(data.userFiltersCosmeticRules);
+                break;
+        }
+    };
+
+    messager.addChannelListener('popup', onPopupMessage);
 
     /***************************************************************************/
 
@@ -2530,6 +2747,7 @@
         var onDataReceived = function (response) {
             cachePopupData(response);
             renderPopup(isInitial);
+            renderPopupLazy(); // UserFilters cosmetics rules receiving
             pollForContentChange();
         };
         messager.send('popupPanel',
