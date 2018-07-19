@@ -1241,6 +1241,8 @@
     };
 
     CosmeticRule.prototype.onHideClick = function (ev) {
+        this.ruleData.whitelisted = !this.ruleData.whitelisted;
+        
         messager.send('popupPanel', {
             what:  'setUserCosmeticRuleWhitelistState',
             filterPath: this.filterName,
