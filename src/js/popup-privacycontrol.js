@@ -2708,10 +2708,19 @@
     /******************************************************************************/
 
     var renderPopupLazy = function() {
-        messager.send(
-            'popupPanel',
-            { what: 'getPopupLazyData', tabId: popupData.tabId }
-        );
+        if (isSafari) {
+            messager.send(
+                'popupPanel',
+                { what: 'getPopupLazyData', tabId: popupData.tabId },
+                renderUserFiltersCosmetic
+            );
+        }
+        else {
+            messager.send(
+                'popupPanel',
+                { what: 'getPopupLazyData', tabId: popupData.tabId }
+            );
+        }
     };
 
     var onPopupMessage = function(data) {

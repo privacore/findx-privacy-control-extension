@@ -382,8 +382,8 @@ var getBlockedTodayCount = function () {
  * @param {string} pageDomain
  */
 var getFiltersGroupsExceptions = function (pageDomain) {
-    let exceptions = {};
-    let groups = Object.keys(µb.filterGroupsExceptions);
+    var exceptions = {};
+    var groups = Object.keys(µb.filterGroupsExceptions);
 
     groups.forEach(function (group) {
         if (µb.filterGroupsExceptions.hasOwnProperty(group)
@@ -404,9 +404,9 @@ var setFiltersGroupException = function (groupName, pageDomain, state) {
 
     µb.filterGroupsExceptions[groupName][pageDomain] = state;
 
-    let groupFilters = getFiltersFromGroup(groupName);
+    var groupFilters = getFiltersFromGroup(groupName);
     Object.keys(groupFilters).forEach(function (filterName) {
-        let updates = {
+        var updates = {
             filterPath: filterName,
             domains: {
                 domain: pageDomain,
@@ -418,9 +418,9 @@ var setFiltersGroupException = function (groupName, pageDomain, state) {
 };
 
 var getFiltersFromGroup = function (groupName) {
-    let filters = {};
+    var filters = {};
 
-    let filterNames = Object.keys(µb.availableFilterLists);
+    var filterNames = Object.keys(µb.availableFilterLists);
     filterNames.forEach(function (filterName) {
         if (µb.availableFilterLists.hasOwnProperty(filterName) && !µb.availableFilterLists[filterName].off
                 && µb.availableFilterLists[filterName].group === groupName)
@@ -567,6 +567,10 @@ var onMessage = function(request, sender, callback) {
             pageStore.hiddenElementCount = 0;
             pageStore.userFiltersCosmeticRules = [];
             µb.scriptlets.inject(request.tabId, 'cosmetic-survey');
+        }
+
+        if (µb.isSafari()) {
+            µb.safariUserFilterRulesReceivingCb = callback;
         }
         return;
 
@@ -1504,9 +1508,9 @@ var setPresetSettings = function (settingsData) {
  * @returns {string[]}
  */
 var getFiltersFromGroup = function (groupName) {
-    let filters = [];
+    var filters = [];
 
-    let allFiltersNames = Object.keys(µb.availableFilterLists);
+    var allFiltersNames = Object.keys(µb.availableFilterLists);
     allFiltersNames.forEach(function (filterName) {
         if (µb.availableFilterLists.hasOwnProperty(filterName) && !µb.availableFilterLists[filterName].off
             && µb.availableFilterLists[filterName].group === groupName)
@@ -1651,12 +1655,17 @@ var cosmeticallyFilteredElementCountChanged = function(tabId) {
         pageRule.whitelisted = µb.isUserCosmeticRuleWhitelisted(pageRule.rule, µb.URI.domainFromHostnameNoCache(pageStore.tabHostname));
     });
 
-    vAPI.messaging.broadcast({
-        what: 'cosmeticallyFilteredElementCountChanged',
-        tabId: tabId,
-        count: pageStore.hiddenElementCount,
-        userFiltersCosmeticRules: pageCosmeticRules
-    });
+    if (µb.isSafari() && µb.safariUserFilterRulesReceivingCb) {
+        µb.safariUserFilterRulesReceivingCb(pageCosmeticRules);
+    }
+    else {
+        vAPI.messaging.broadcast({
+            what: 'cosmeticallyFilteredElementCountChanged',
+            tabId: tabId,
+            count: pageStore.hiddenElementCount,
+            userFiltersCosmeticRules: pageCosmeticRules
+        });
+    }
 };
 
 /******************************************************************************/
@@ -1702,6 +1711,11 @@ var onMessage = function(request, sender, callback) {
     case 'cosmeticallyFilteredElementCount':
         if ( pageStore !== null && request.userFiltersCosmeticRules ) {
             pageStore.hiddenElementCount += (request.filteredElementCount || 0);
+
+            if (µb.isSafari() &&
+                (pageStore.rawURL !== request.pageURL || !request.userFiltersCosmeticRules.length)) {
+                return;
+            }
 
             // Write to pagestore only rules for root frame
             if (pageStore.rawURL === request.pageURL) {
