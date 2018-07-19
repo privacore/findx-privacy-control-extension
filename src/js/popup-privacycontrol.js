@@ -1242,13 +1242,13 @@
 
     CosmeticRule.prototype.onHideClick = function (ev) {
         this.ruleData.whitelisted = !this.ruleData.whitelisted;
-        
+
         messager.send('popupPanel', {
             what:  'setUserCosmeticRuleWhitelistState',
             filterPath: this.filterName,
             domain: popupData.pageDomain,
             rule: this.ruleData,
-            whitelist: !this.ruleData.whitelisted
+            whitelist: this.ruleData.whitelisted
         });
 
         $(this.elItem).toggleClass('cosmetic-rule__whitelisted');
