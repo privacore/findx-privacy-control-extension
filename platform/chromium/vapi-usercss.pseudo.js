@@ -545,6 +545,25 @@ vAPI.DOMFilterer.prototype = {
 
     getAllSelectors: function() {
         return this.getAllSelectors_(false);
+    },
+
+    /**
+     * Returns all cosmetic rules from "User filters" used on current page.
+     * @returns {{raw: string, rule: string, hostname: string}[]}
+     */
+    getUserFiltersCosmeticRules: function () {
+        var rules = [];
+
+        this.userFilterCosmeticRules.forEach(function (ruleData) {
+            var selector = ruleData.rule;
+            var qty = document.querySelectorAll(selector).length;
+            if (qty) {
+                ruleData.qty = qty;
+                rules.push(ruleData);
+            }
+        });
+
+        return rules;
     }
 };
 
