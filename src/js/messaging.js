@@ -292,7 +292,7 @@ var getHostnameDict = function(hostnameToCountMap) {
             domainEntry = r[domain];
         }
         counts = entry[1];
-        if (typeof counts == "object" && typeof counts.count == "number")
+        if (typeof counts === "object" && typeof counts.count === "number")
             counts = counts.count;
         countObj = hostnameToCountMap.get(hostname);
         filterPath = countObj ? countObj.filterPath || "" : "";
@@ -382,8 +382,8 @@ var getBlockedTodayCount = function () {
  * @param {string} pageDomain
  */
 var getFiltersGroupsExceptions = function (pageDomain) {
-    let exceptions = {};
-    let groups = Object.keys(µb.filterGroupsExceptions);
+    var exceptions = {};
+    var groups = Object.keys(µb.filterGroupsExceptions);
 
     groups.forEach(function (group) {
         if (µb.filterGroupsExceptions.hasOwnProperty(group)
@@ -404,9 +404,9 @@ var setFiltersGroupException = function (groupName, pageDomain, state) {
 
     µb.filterGroupsExceptions[groupName][pageDomain] = state;
 
-    let groupFilters = getFiltersFromGroup(groupName);
+    var groupFilters = getFiltersFromGroup(groupName);
     Object.keys(groupFilters).forEach(function (filterName) {
-        let updates = {
+        var updates = {
             filterPath: filterName,
             domains: {
                 domain: pageDomain,
@@ -418,9 +418,9 @@ var setFiltersGroupException = function (groupName, pageDomain, state) {
 };
 
 var getFiltersFromGroup = function (groupName) {
-    let filters = {};
+    var filters = {};
 
-    let filterNames = Object.keys(µb.availableFilterLists);
+    var filterNames = Object.keys(µb.availableFilterLists);
     filterNames.forEach(function (filterName) {
         if (µb.availableFilterLists.hasOwnProperty(filterName) && !µb.availableFilterLists[filterName].off
                 && µb.availableFilterLists[filterName].group === groupName)
@@ -816,6 +816,12 @@ var onMessage = function(request, sender, callback) {
             if (mustBeShown) {
                 µb.cookieHandling.showRemLoginPopup(tabId);
             }
+        }
+        break;
+
+    case 'startNudgingPopup':
+        if (request.isRootFrame && request.service) {
+            µBlock.nudging.insert(tabId);
         }
         break;
 
@@ -1504,9 +1510,9 @@ var setPresetSettings = function (settingsData) {
  * @returns {string[]}
  */
 var getFiltersFromGroup = function (groupName) {
-    let filters = [];
+    var filters = [];
 
-    let allFiltersNames = Object.keys(µb.availableFilterLists);
+    var allFiltersNames = Object.keys(µb.availableFilterLists);
     allFiltersNames.forEach(function (filterName) {
         if (µb.availableFilterLists.hasOwnProperty(filterName) && !µb.availableFilterLists[filterName].off
             && µb.availableFilterLists[filterName].group === groupName)
@@ -1619,6 +1625,73 @@ vAPI.messaging.listen('onboarding', onMessage);
     };
 
     vAPI.messaging.listen('rememberLogin', onMessage);
+
+    /******************************************************************************/
+
+})();
+
+/******************************************************************************/
+/******************************************************************************/
+
+// channel: nudging
+
+(function() {
+
+    /******************************************************************************/
+
+    var µb = µBlock;
+
+    /******************************************************************************/
+
+    var onMessage = function(request, sender, callback) {
+        // Async
+        switch ( request.what ) {
+            case 'getNudgingPopupData':
+                if (!request.service) {
+                    callback();
+                    return;
+                }
+
+                µb.nudging.getPopupData(request.service, request.query, function (html) {
+                    var data = {
+                        frameContent: html,
+                        target: request.url
+                    };
+                    callback(data);
+                });
+
+                return;
+
+            default:
+                break;
+        }
+
+        // Sync
+        var response;
+
+        switch ( request.what ) {
+            case 'searchQuery':
+                // vAPI.openSearch(request.query, request.searchType);
+                vAPI.openSearch(request.query, 'text');
+                break;
+
+            case 'openPage':
+                if (request.action === 'about')
+                    vAPI.openHelpPage();
+                else if (request.action === 'settings')
+                    vAPI.openOptionsPage();
+                else if (request.action === 'google_activity')
+                    vAPI.openGoogleActivity();
+                break;
+
+            default:
+                return vAPI.messaging.UNHANDLED;
+        }
+
+        callback(response);
+    };
+
+    vAPI.messaging.listen('nudging', onMessage);
 
     /******************************************************************************/
 

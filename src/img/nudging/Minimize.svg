@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="Mimimize_-_White" data-name="Mimimize - White" transform="translate(-19938 -6625)">
+    <g id="Group_1970" data-name="Group 1970" transform="translate(-70 -41)">
+      <rect id="Rectangle_1127" data-name="Rectangle 1127" class="cls-1" width="24" height="24" transform="translate(20008 6666)"/>
+    </g>
+    <g id="Group_1969" data-name="Group 1969" transform="translate(19939.783 6627.715)">
+      <g id="Group_1968" data-name="Group 1968">
+        <path id="Path_4107" data-name="Path 4107" class="cls-2" d="M14.787,14.031H5.209v1.819h9.578ZM0,0V19.65H20V0ZM18.181,17.83H1.819V1.819H18.181Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

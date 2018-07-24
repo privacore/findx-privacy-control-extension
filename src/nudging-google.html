@@ -1,0 +1,320 @@
+<head>
+<meta charset="utf-8">
+<style>
+
+@font-face {
+    font-family: "Roboto-regular";
+    src: url({{roboto_url}}) format("truetype");
+}
+@font-face {
+    font-family: "Roboto-medium";
+    src: url({{roboto_medium_url}}) format("truetype");
+}
+:focus {
+    outline: none;
+}
+html, body {
+    background: transparent !important;
+    color: rgba(0, 0, 0, 0.87);
+    font: 14px Roboto-regular;
+    line-height: 20px;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    width: 100%;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    cursor: default;
+    margin: 0 auto;
+}
+.section.section__hidden {
+    display: none;
+}
+.section[data-section="expanded"] {
+    width: 340px;
+}
+
+.section-inner {
+    margin-top: 34px;
+}
+.section[data-section="expanded"] .section-inner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+.section[data-section="minimized"] .section-inner {
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+}
+
+.header {
+    width: 100%;
+    height: 32px;
+    background-color: #2191d0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    padding: 0 8px;
+    box-sizing: border-box;
+    font-size: 20px;
+    position: relative;
+}
+
+.header_btn {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+.header_btn:not(:first-child) {
+    margin-left: 5px;
+}
+.header_btn > img {
+    /*width: 100%;*/
+    height: 100%;
+}
+.header_btn.header_btn__minimize {
+    flex: 1;
+}
+.header_dynamic-img {
+    width: 96px;
+    height: 96px;
+    position: absolute;
+    left: calc(50% - 48px);
+    z-index: 1;
+}
+.header_logo {
+    width: 40px;
+}
+
+
+.menu {
+    position: absolute;
+    top: 8px;
+    right: 32px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    padding: 12px 0;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.26);
+    display: none;
+}
+.menu.menu__active {
+    display: flex;
+}
+.menu-item {
+    color: rgba(0,0,0,.56);
+    font-size: 14px;
+    padding: 16px 20px;
+}
+.menu-item:hover {
+    background-color: rgba(0,0,0,.08);
+}
+
+
+.content {
+    width: 100%;
+    /*min-height: 110px;*/
+    flex: 1;
+    position: relative;
+    padding: 40px 16px 6px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: #2191d0;
+    color: #fff;
+}
+.dynamic-text {
+    font-size: 24px;
+    line-height: 28px;
+    text-align: center;
+    font-family: Roboto-medium;
+}
+.search-sub-title {
+    text-align: center;
+    font-size: 10px;
+    /*font-family: Roboto-medium;*/
+}
+
+.search-input {
+    height: 48px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+    border-radius: 3px;
+    position: relative;
+}
+.search-input:hover {
+    box-shadow: 0 6px 9px 0 rgba(0, 0, 0, 0.36);
+}
+.search-input > input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    padding: 12px;
+    font-size: 16px;
+    color: rgba(0,0,0,.56);
+    font-family: Roboto-medium;
+    border-radius: 2px;
+    padding-right: 60px;
+}
+.search-input:hover > input {
+    color: rgba(0,0,0,.82);
+}
+.search-input_search-btn {
+    height: 48px;
+    width: 48px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.search-input_search-btn > svg {
+    width: 24px;
+    height: 24px;
+}
+
+.footer {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+.footer button {
+     height: 100%;
+    border: none;
+    outline: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    overflow: hidden;
+    vertical-align: middle;
+    border-radius: 2px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 64px;
+    -webkit-font-smoothing: antialiased;
+    font-family: Roboto-medium;
+    font-size: 14px;
+    line-height: 40px;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 0 8px;
+    background-color: #f2f5f7;
+    color: #2191d0;
+    cursor: pointer;
+    flex: 1;
+}
+.footer button:active {
+    background-color: rgba(153, 153, 153, 0.2);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="section" data-section="expanded">
+    <div class="section-inner">
+        <div class="header">
+            <div class="header_btn header_btn__minimize">
+                <img src="{{minimize_btn_url}}" alt=""/>
+            </div>
+            <div class="header_dynamic-img">
+                <img src="{{dynamicImg}}" alt=""/>
+            </div>
+            <div class="header_logo">
+                <img src="{{logo_url}}" alt=""/>
+            </div>
+            <div class="header_btn header_btn__menu">
+                <img src="{{menu_btn_url}}" alt=""/>
+            </div>
+            <div class="menu">
+                <div class="menu-item" data-action="minimize">{{nudgingMenuMinimize}}</div>
+                <div class="menu-item" data-action="google_activity">{{nudgingMenuGActivity}}</div>
+                <div class="menu-item" data-action="settings">{{nudgingMenuSettings}}</div>
+                <div class="menu-item" data-action="about">{{nudgingMenuAbout}}</div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="dynamic-text">{{dynamicText}}</div>
+
+            <div class="search-input">
+                <input type="text" value="{{searchQuery}}">
+                <div class="search-input_search-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="9108 -5593 24 24">
+                        <g transform="translate(8828 -5633)">
+                            <path d="M0 0h24v24H0z" style="fill:none" transform="translate(280 40)"/>
+                            <path style="fill:#2191d0" d="M46.9 61.7h-.8l-.3-.3a6.259 6.259 0 0 0 1.6-4.2 6.5 6.5 0 1 0-6.5 6.5 6.259 6.259 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5zm-6 0a4.5 4.5 0 1 1 4.5-4.5 4.481 4.481 0 0 1-4.5 4.5z" transform="translate(248.6 -7.7)"/>
+                        </g>
+                    </svg>
+
+                </div>
+            </div>
+
+            <div class="search-sub-title">{{searchSubTitle}}</div>
+
+        </div>
+
+        <div class="footer">
+            <button id="check_google_activity" type="button">{{googleActivityBtn}}</button>
+        </div>
+    </div>
+</div>
+
+<div class="section section__hidden" data-section="minimized">
+    <div class="section-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="7008 -4275 24 24">
+            <defs>
+                <style>
+                    .cls-1{clip-path:url(#clip-path)}.cls-2{fill:#2191d0}.cls-3{clip-path:url(#clip-path-4)}.cls-4{fill:#fff}
+                </style>
+                <clipPath id="clip-path">
+                    <path id="Rectangle_757" d="M0 0h24v24H0z" data-name="Rectangle 757"/>
+                </clipPath>
+                <clipPath id="clip-path-4">
+                    <path id="Rectangle_758" d="M0 0h15.117v15.173H0z" data-name="Rectangle 758"/>
+                </clipPath>
+            </defs>
+            <g id="Findx_app_icon" transform="translate(6988 -4424)">
+                <g id="Group_828" class="cls-1" data-name="Group 828" transform="translate(20 149)">
+                    <g id="Group_827" class="cls-1" data-name="Group 827">
+                        <path id="Path_608" d="M22.5 24h-21A1.5 1.5 0 0 1 0 22.5v-21A1.5 1.5 0 0 1 1.5 0h21A1.5 1.5 0 0 1 24 1.5v21a1.5 1.5 0 0 1-1.5 1.5" class="cls-2" data-name="Path 608"/>
+                    </g>
+                </g>
+                <g id="Group_830" class="cls-1" data-name="Group 830" transform="translate(20 149)">
+                    <g id="Group_829" class="cls-3" data-name="Group 829" transform="translate(4.842 4.012)">
+                        <path id="Path_609" d="M116.871 86.4a12.834 12.834 0 0 0-8.034 3.436 4.916 4.916 0 0 1 .963-3.436 1.5 1.5 0 0 0-1.261-.8c-1.884 0-2.231 2.822-1.4 5.873-3.422 3.708-5.053 8.264-2.644 9.3 0-2.142 1.214-4.983 3.3-7.416 1.266 2.967 3.577 5.658 6.6 5.658.609 0 .6-.216.6-.216-2.311-.722-4.828-3.788-5.78-6.909a13.029 13.029 0 0 1 8.728-3.609c1.05-.886.4-1.88-1.078-1.88" class="cls-4" data-name="Path 609" transform="translate(-103.347 -85.6)"/>
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </div>
+</div>
+
+</body>

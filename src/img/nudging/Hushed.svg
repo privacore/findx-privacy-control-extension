@@ -1,0 +1,23 @@
+<svg id="Hushed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ffdd67;
+      }
+
+      .cls-2 {
+        fill: #664e27;
+      }
+
+      .cls-3 {
+        fill: #917524;
+      }
+    </style>
+  </defs>
+  <circle id="Ellipse_78" data-name="Ellipse 78" class="cls-1" cx="48" cy="48" r="48" transform="translate(0)"/>
+  <circle id="Ellipse_79" data-name="Ellipse 79" class="cls-2" cx="7.837" cy="7.837" r="7.837" transform="translate(21.061 32.327)"/>
+  <circle id="Ellipse_80" data-name="Ellipse 80" class="cls-2" cx="7.837" cy="7.837" r="7.837" transform="matrix(0.998, -0.055, 0.055, 0.998, 58.85, 32.812)"/>
+  <path id="Path_4221" data-name="Path 4221" class="cls-3" d="M31.6,187.864c-5.388-4.408-12.245-6.367-18.612-4.9-.98,0-1.959-3.429-.49-3.429a26.227,26.227,0,0,1,21.551,5.878C34.537,185.9,32.088,188.843,31.6,187.864Z" transform="translate(45.789 -163.864)"/>
+  <path id="Path_4222" data-name="Path 4222" class="cls-3" d="M24.512,182.966c-6.857-.98-13.714.49-18.612,4.9-.49.49-2.939-1.959-2.449-2.449A26.227,26.227,0,0,1,25,179.537C25.982,179.537,25.492,182.966,24.512,182.966Z" transform="translate(13.202 -163.864)"/>
+  <circle id="Ellipse_81" data-name="Ellipse 81" class="cls-2" cx="7.837" cy="7.837" r="7.837" transform="matrix(0.998, -0.055, 0.055, 0.998, 39.755, 66.601)"/>
+</svg>

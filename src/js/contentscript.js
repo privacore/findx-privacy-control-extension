@@ -1261,6 +1261,64 @@ vAPI.domSurveyor = (function() {
 /******************************************************************************/
 /******************************************************************************/
 
+vAPI.nudging = (function () {
+    var hostname = window.location.hostname;
+    var services = [
+        {
+            name: 'google',
+            wildcarts: ['^www[/.]google[/.].*', '^google[/.].*']
+        }
+    ];
+    var actualService = null;
+
+    /**
+     * Check do we need to show a nudging window on this page.
+     * @returns {boolean}
+     */
+    var isNudgingNeed = function () {
+        for (var i = 0; i < services.length; i++) {
+            var wildcarts = services[i].wildcarts;
+            for (var j = 0; j < wildcarts.length; j++) {
+                var wildcart = wildcarts[j];
+                if (hostname.match(wildcart) && hostname.match(wildcart).length) {
+                    actualService = services[i];
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    var start = function () {
+        // Show "Nudging" popup if it is need
+        vAPI.messaging.send(
+            'contentscript',
+            {
+                what: 'startNudgingPopup',
+                hostname: hostname,
+                isRootFrame: window === window.top,
+                service: actualService.name
+            }
+        );
+    };
+
+
+
+    var getServiceName = function () {
+        return actualService ? actualService.name : "";
+    };
+
+    return {
+        serviceName: getServiceName,
+        check: isNudgingNeed,
+        start: start
+    };
+})();
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+
 // Bootstrapping allows all components of the content script to be launched
 // if/when needed.
 
@@ -1420,6 +1478,11 @@ vAPI.domSurveyor = (function() {
             isRootFrame: window === window.top
         }
     );
+
+
+    if (vAPI.nudging.check()) {
+        vAPI.nudging.start();
+    }
 })();
 
 /******************************************************************************/
