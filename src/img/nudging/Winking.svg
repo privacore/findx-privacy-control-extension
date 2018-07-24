@@ -1,0 +1,32 @@
+<svg id="Winking" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ffdd67;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        fill: #664e27;
+      }
+
+      .cls-4 {
+        fill: #ff717f;
+      }
+
+      .cls-5 {
+        fill: #e2596c;
+      }
+    </style>
+  </defs>
+  <circle id="Ellipse_40" data-name="Ellipse 40" class="cls-1" cx="48" cy="48" r="48" transform="translate(0 0)"/>
+  <circle id="Ellipse_41" data-name="Ellipse 41" class="cls-2" cx="15.887" cy="15.887" r="15.887" transform="translate(14.873 20.282)"/>
+  <circle id="Ellipse_42" data-name="Ellipse 42" class="cls-3" cx="7.099" cy="7.099" r="7.099" transform="translate(23.662 29.07)"/>
+  <path id="Path_4151" data-name="Path 4151" class="cls-3" d="M39.793,19.7c-3.042-6.423-7.437-9.8-11.831-9.8s-8.789,3.38-11.831,9.8c-.338.676,1.352,1.69,2.028,1.352a15.7,15.7,0,0,1,9.8-3.38,14.438,14.438,0,0,1,9.8,3.38C38.441,21.731,40.131,20.379,39.793,19.7Z" transform="translate(38.291 23.565)"/>
+  <path id="Path_4152" data-name="Path 4152" class="cls-3" d="M58.594,17H7.89A1.6,1.6,0,0,0,6.2,18.69c0,11.493,9.465,24,27.042,24s27.042-12.169,27.042-24A1.6,1.6,0,0,0,58.594,17Z" transform="translate(14.758 40.465)"/>
+  <path id="Path_4153" data-name="Path 4153" class="cls-4" d="M39.923,19.8H10.852c-1.014,0-1.352.338-1.352,1.352v6.423c0,13.859,7.1,20.958,15.887,20.958s15.887-7.1,15.887-20.958V21.152A1.238,1.238,0,0,0,39.923,19.8Z" transform="translate(22.613 47.13)"/>
+  <path id="Path_4154" data-name="Path 4154" class="cls-5" d="M18.232,19.8,15.866,41.772,13.5,19.8Z" transform="translate(32.134 47.13)"/>
+</svg>

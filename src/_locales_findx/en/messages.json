@@ -662,5 +662,33 @@
   "remLoginDontAskBtn":{
     "message":"Don't ask again",
     "description":"Remember login popup inserted to a page"
+  },
+  "nudgingSearchPrivately":{
+    "message":"Search privately with Findx",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingGoogleActivityCheck":{
+    "message":"CHECK WHAT GOOGLE KNOWS ABOUT YOU",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuMinimize":{
+    "message":"Minimize",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuGActivity":{
+    "message":"Your Google Activity",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuSettings":{
+    "message":"Advanced settings",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuAbout":{
+    "message":"About Findx",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingDynamicText1":{
+    "message":"Nothing to hide - at all?",
+    "description":"Nudging popup displays randomly one of these texts"
   }
 }

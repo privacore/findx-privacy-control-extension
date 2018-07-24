@@ -76,6 +76,7 @@
     "web_accessible_resources": [
         "/web_accessible_resources/*",
         "/img/popup/*.svg",
+        "/img/nudging/*.svg",
         "/css/fonts/*.ttf"
     ]
 }

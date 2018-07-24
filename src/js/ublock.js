@@ -680,3 +680,131 @@ var matchBucket = function(url, hostname, bucket, start) {
         report: report
     };
 })();
+
+/******************************************************************************/
+
+// FINDX custom methods
+
+/******** Nudging ********/
+
+µBlock.nudging = (function () {
+    var ub = µBlock;
+
+    var injectScriptlet = function (tabId) {
+        if ( vAPI.isBehindTheSceneTabId(tabId) ) {
+            return;
+        }
+        ub.scriptlets.inject(tabId, 'nudging');
+        if ( typeof vAPI.tabs.select === 'function' ) {
+            vAPI.tabs.select(tabId);
+        }
+    };
+
+
+    /******************************************************************************/
+
+    /**
+     * Return html content of nudging popup for selected service
+     * @param {string} service - each service has their own html
+     * @param {string} query - query string scraped from url
+     * @param {Function} callback - <string>
+     */
+    var getNudgingPopupHtml = function (service, query, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'nudging-' + service + '.html', true);
+        xhr.overrideMimeType('text/html;charset=utf-8');
+        xhr.responseType = 'text';
+        xhr.onload = function() {
+            this.onload = null;
+
+            var html = replaceNudgingContent(service, query, this.responseText);
+
+            callback(html);
+        };
+        xhr.send();
+    };
+
+    /******************************************************************************/
+
+    var replaceNudgingContent = function (service, query, html) {
+
+        var i18n = {
+            logo_url: chrome.extension.getURL("img/nudging/findx-logo-nudging.svg"),
+            menu_btn_url: chrome.extension.getURL("img/nudging/More.svg"),
+            minimize_btn_url: chrome.extension.getURL("img/nudging/Minimize.svg"),
+            roboto_url: chrome.extension.getURL("css/fonts/Roboto-Regular.ttf"),
+            roboto_medium_url: chrome.extension.getURL("css/fonts/Roboto-Medium.ttf"),
+            searchQuery: query || '',
+            nudgingMenuMinimize: vAPI.i18n('nudgingMenuMinimize'),
+            nudgingMenuSettings: vAPI.i18n('nudgingMenuSettings'),
+            nudgingMenuAbout: vAPI.i18n('nudgingMenuAbout')
+        };
+
+        var specific = getServiceSpecificData(service);
+        for (var key in specific) {
+            if (specific.hasOwnProperty(key)) {
+                i18n[key] = specific[key];
+            }
+        }
+
+
+        var reStrings = /\{\{(\w+)\}\}/g;
+        var replacer = function(a0, string) {
+            return i18n[string];
+        };
+
+        return html.replace(reStrings, replacer);
+    };
+
+    /******************************************************************************/
+
+    var nudgingServiceData = {
+        'google': {
+            searchSubTitle: 'nudgingSearchPrivately',
+            googleActivityBtn: 'nudgingGoogleActivityCheck',
+            nudgingMenuGActivity: 'nudgingMenuGActivity'
+        }
+    };
+
+    var nudgingDynamicTexts = [
+        'nudgingDynamicText1'
+    ];
+    var nudgingDynamicImages = [
+        'img/nudging/Hushed.svg',
+        'img/nudging/Rolling-eyes.svg',
+        'img/nudging/Smirking.svg',
+        'img/nudging/Thinking.svg',
+        'img/nudging/Winking.svg',
+        'img/nudging/Zipper-Mouth.svg'
+    ];
+
+    var getServiceSpecificData = function (service) {
+        var data = {};
+
+        var serviceSpecific = nudgingServiceData[service];
+        for (var key in serviceSpecific) {
+            if (serviceSpecific.hasOwnProperty(key)) {
+                data[key] = vAPI.i18n(serviceSpecific[key]);
+            }
+        }
+
+        var dynamicText = nudgingDynamicTexts[Math.floor(Math.random()*nudgingDynamicTexts.length)]
+        data.dynamicText = vAPI.i18n(dynamicText);
+
+        var dynamicImg = nudgingDynamicImages[Math.floor(Math.random()*nudgingDynamicImages.length)]
+        data.dynamicImg = chrome.extension.getURL(dynamicImg);
+
+        return data;
+    };
+
+    /******************************************************************************/
+
+    return {
+        insert: injectScriptlet,
+        getPopupData: getNudgingPopupHtml
+    };
+})();
+
+
+
+/******************************************************************************/

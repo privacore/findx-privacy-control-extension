@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 40.158 14.778">
+  <defs>
+    <style>
+      .cls-1 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+    </style>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_1145" data-name="Rectangle 1145" width="40.159" height="14.778"/>
+    </clipPath>
+  </defs>
+  <g id="findx-logo-nudging" class="cls-1">
+    <g id="Group_2001" data-name="Group 2001" class="cls-1">
+      <path id="Path_4144" data-name="Path 4144" class="cls-2" d="M189.836,61.913l-.421-.853H188.3v8.485h1.541V63.263a3.959,3.959,0,0,1,2.336-1c1.68,0,1.824,1.093,1.824,2.405v4.874h1.536V64.671c0-2.437-.715-3.771-2.843-3.771a6.034,6.034,0,0,0-2.859,1.013" transform="translate(-178.258 -57.652)"/>
+    </g>
+    <g id="Group_2002" data-name="Group 2002" class="cls-1">
+      <path id="Path_4145" data-name="Path 4145" class="cls-2" d="M360.418.2V4.451a4.094,4.094,0,0,0-2.635-1.013c-1.275,0-3.584.917-3.584,4.469,0,2.907,1.7,4.363,3.68,4.363a5.4,5.4,0,0,0,2.533-.864l.373.667h1.168V.2Zm0,10.032a4.923,4.923,0,0,1-2.336.811c-1.627,0-2.336-1.392-2.336-3.141,0-1.909.784-3.1,2.336-3.1a3.3,3.3,0,0,1,2.336,1Z" transform="translate(-335.31 -0.189)"/>
+    </g>
+    <g id="Group_2003" data-name="Group 2003" class="cls-1">
+      <path id="Path_4146" data-name="Path 4146" class="cls-2" d="M124.8,63.8v8.485h1.541V63.8Z" transform="translate(-118.144 -60.397)"/>
+    </g>
+    <g id="Group_2004" data-name="Group 2004" class="cls-1">
+      <path id="Path_4147" data-name="Path 4147" class="cls-2" d="M1.648,3.412H0V4.8H1.643v7.1H3.184V4.8H5.1V3.412H3.189c0-1.888.805-2.341,1.936-2.021V.111C3.376-.3,1.648.495,1.648,3.412" transform="translate(0 -0.01)"/>
+    </g>
+    <g id="Group_2005" data-name="Group 2005" class="cls-1">
+      <path id="Path_4148" data-name="Path 4148" class="cls-2" d="M124.8,2.1V3.487l1.541-.005V2.1Z" transform="translate(-118.144 -1.988)"/>
+    </g>
+    <g id="Group_2006" data-name="Group 2006" class="cls-1">
+      <path id="Path_4149" data-name="Path 4149" class="cls-2" d="M545.25,69.7c-6.512,0-12.768,9.669-9.525,11.061,0-3.552,4.346-9.616,10.352-9.616.811-.677.309-1.445-.827-1.445" transform="translate(-506.318 -65.983)"/>
+    </g>
+    <g id="Group_2007" data-name="Group 2007" class="cls-1">
+      <path id="Path_4150" data-name="Path 4150" class="cls-2" d="M585.842,58.719c-2.277,2.848,1.083,8.624,4,9.536,0,0,.005.165-.464.165-5.2,0-7.669-10.32-4.506-10.32a1.166,1.166,0,0,1,.971.619" transform="translate(-552.35 -55.001)"/>
+    </g>
+  </g>
+</svg>

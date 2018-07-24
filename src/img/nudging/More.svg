@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-1, .cls-2 {
+        fill-rule: evenodd;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="More_-_white" data-name="More - white" transform="translate(0.113 24) rotate(-90)">
+    <path id="path" class="cls-1" d="M24-23.887H0v-24H24Z" transform="translate(0 47.775)"/>
+    <path id="path-2" data-name="path" class="cls-2" d="M10-27.887a2.006,2.006,0,0,0-2,2,2.006,2.006,0,0,0,2,2,2.006,2.006,0,0,0,2-2,2.006,2.006,0,0,0-2-2Zm12,0a2.006,2.006,0,0,0-2,2,2.006,2.006,0,0,0,2,2,2.006,2.006,0,0,0,2-2,2.006,2.006,0,0,0-2-2Zm-6,0a2.006,2.006,0,0,0-2,2,2.006,2.006,0,0,0,2,2,2.006,2.006,0,0,0,2-2,2.006,2.006,0,0,0-2-2Z" transform="translate(-4 37.775)"/>
+  </g>
+</svg>

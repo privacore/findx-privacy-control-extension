@@ -257,6 +257,7 @@ var µBlock = (function() { // jshint ignore:line
         helpPageUrl: "https://help.privacontrol.com",
         feedbackEmail: "privacycontrol@privacore.com",
         onboardingUrl: "onboarding.html",
+        googleActivityUrl: "https://myactivity.google.com",
 
         ratePageUrl: {
             'chrome': 'https://chrome.google.com/webstore/detail/findx-privacy-control/hmindffkcgchnijdapipnaoajajkhjpn',
