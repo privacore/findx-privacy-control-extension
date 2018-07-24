@@ -402,14 +402,9 @@
      * Size must be updated after each changes on a page (menu open/close, minimize/expand, ...)
      */
     var updatePopupSize = function () {
-        // First we need to set width/height to 0 because if we don't do it -
-        //      scrollWidth/scrollHeight will not change.
-        // For example when popup minimized - width/height will be the same as we set their previously.
-        elPopup.width = 0;
-        elPopup.height = 0;
-
-        elPopup.width  = popupBody.scrollWidth + 10;
-        elPopup.height = popupBody.scrollHeight + 10;
+        var activeSection = popupBody.querySelector('.section:not(.section__hidden)');
+        elPopup.width  = activeSection.scrollWidth + 10;
+        elPopup.height = activeSection.scrollHeight + 10;
     };
 
     /******************************************************************************/
