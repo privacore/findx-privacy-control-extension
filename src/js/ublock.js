@@ -729,11 +729,11 @@ var matchBucket = function(url, hostname, bucket, start) {
     var replaceNudgingContent = function (service, query, html) {
 
         var i18n = {
-            logo_url: chrome.extension.getURL("img/nudging/findx-logo-nudging.svg"),
-            menu_btn_url: chrome.extension.getURL("img/nudging/More.svg"),
-            minimize_btn_url: chrome.extension.getURL("img/nudging/Minimize.svg"),
-            roboto_url: chrome.extension.getURL("css/fonts/Roboto-Regular.ttf"),
-            roboto_medium_url: chrome.extension.getURL("css/fonts/Roboto-Medium.ttf"),
+            logo_url: vAPI.getURL("img/nudging/findx-logo-nudging.svg"),
+            menu_btn_url: vAPI.getURL("img/nudging/More.svg"),
+            minimize_btn_url: vAPI.getURL("img/nudging/Minimize.svg"),
+            roboto_url: vAPI.getURL("css/fonts/Roboto-Regular.ttf"),
+            roboto_medium_url: vAPI.getURL("css/fonts/Roboto-Medium.ttf"),
             searchQuery: query || '',
             nudgingMenuMinimize: vAPI.i18n('nudgingMenuMinimize'),
             nudgingMenuSettings: vAPI.i18n('nudgingMenuSettings'),
@@ -792,7 +792,7 @@ var matchBucket = function(url, hostname, bucket, start) {
         data.dynamicText = vAPI.i18n(dynamicText);
 
         var dynamicImg = nudgingDynamicImages[Math.floor(Math.random()*nudgingDynamicImages.length)]
-        data.dynamicImg = chrome.extension.getURL(dynamicImg);
+        data.dynamicImg = vAPI.getURL(dynamicImg);
 
         return data;
     };

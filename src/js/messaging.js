@@ -1583,9 +1583,9 @@ vAPI.messaging.listen('onboarding', onMessage);
                         floatingBtnTip: vAPI.i18n('remLoginFloatingBtnTip'),
                         notNow: vAPI.i18n('remLoginNotNowBtn'),
                         dont_ask: vAPI.i18n('remLoginDontAskBtn'),
-                        logo_url: chrome.extension.getURL("img/popup/findx_logo.svg"),
-                        roboto_url: chrome.extension.getURL("css/fonts/Roboto-Regular.ttf"),
-                        roboto_medium_url: chrome.extension.getURL("css/fonts/Roboto-Medium.ttf"),
+                        logo_url: vAPI.getURL("img/popup/findx_logo.svg"),
+                        roboto_url: vAPI.getURL("css/fonts/Roboto-Regular.ttf"),
+                        roboto_medium_url: vAPI.getURL("css/fonts/Roboto-Medium.ttf"),
                     };
                     var reStrings = /\{\{(\w+)\}\}/g;
                     var replacer = function(a0, string) {
