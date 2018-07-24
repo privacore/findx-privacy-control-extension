@@ -461,6 +461,11 @@ vAPI.openFindxMobile = function () {
     vAPI.tabs.open({url: findxMobileUrl, select: true});
 };
 
+vAPI.openGoogleActivity = function () {
+    var googleActivityUrl = µBlock.googleActivityUrl;
+    vAPI.tabs.open({url: googleActivityUrl, select: true});
+};
+
 vAPI.openTrackingMonitor = function (tabId) {
     var trackingMonitorUrl = µBlock.trackingMonitorUrl + tabId;
     vAPI.tabs.open({url: trackingMonitorUrl, select: true});
