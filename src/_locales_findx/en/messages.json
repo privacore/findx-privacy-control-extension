@@ -207,6 +207,10 @@
     "message": "When the browsing session ends",
     "description": ""
   },
+  "popupCookiesSettingsListTitle":{
+    "message": "Settings that will protect you on all sites",
+    "description": ""
+  },
   "popupCookiesThirdPartyTitle":{
     "message": "Prevent cross-site tracking",
     "description": "Third party cookies blocking setting title"
@@ -236,7 +240,7 @@
     "description": ""
   },
   "popupCookiesControlSettingSubTitle":{
-    "message": "See domains with cookies, and control white- and blacklisted sites",
+    "message": "White- and blacklisted sites",
     "description": ""
   },
   "popupCookiesAdvSettings":{
@@ -247,12 +251,16 @@
     "message": "You can adjust more advanced settings in the settings page",
     "description": ""
   },
-  "popupCookieControlSitesTitle":{
+  "popupCookiesAllSitesPageTitle":{
     "message": "Sites with cookies set",
     "description": ""
   },
+  "popupCookieControlSitesTitle":{
+    "message": "All sites with cookies set",
+    "description": ""
+  },
   "popupCookieControlSitesSubTitle":{
-    "message": "Clear cookies and add to white- or blacklist",
+    "message": "See all domains registered in your browser",
     "description": ""
   },
   "popupCookieControlWhitelistedSitesTitle":{
