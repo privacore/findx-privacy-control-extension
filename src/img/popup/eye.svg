@@ -1,4 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path style="opacity:.56" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        opacity: 0.56;
+      }
+
+      .cls-2 {
+        fill: none;
+      }
+    </style>
+  </defs>
+  <g id="Eye-grey" transform="translate(-259 -234)">
+    <g id="gzm0071-lock-file" class="cls-1" transform="translate(259 234)">
+      <g id="_x36_4px_boxes">
+        <rect id="Rectangle_71" data-name="Rectangle 71" class="cls-2" width="24" height="24"/>
+      </g>
+      <g id="Group_1369" data-name="Group 1369" transform="translate(2.083 4.149)">
+        <g id="Group_1369-2" data-name="Group 1369">
+          <path id="Path_1233" data-name="Path 1233" d="M10.567,0C4.906,0,0,5.321,0,7.926s4.906,7.926,10.567,7.926S21.135,10.53,21.135,7.926,16.228,0,10.567,0Zm0,13.964c-4.869,0-8.68-4.831-8.68-6.039S5.7,1.887,10.567,1.887s8.68,4.831,8.68,6.039S15.436,13.964,10.567,13.964Zm2.378-7.208a2.645,2.645,0,1,1-5.02,1.17,2.6,2.6,0,0,1,2.642-2.642V3.4A4.448,4.448,0,0,0,6.039,7.926a4.529,4.529,0,0,0,9.058,0,4.765,4.765,0,0,0-.491-2.038Z"/>
+        </g>
+      </g>
+    </g>
+  </g>
 </svg>

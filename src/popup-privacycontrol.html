@@ -859,10 +859,11 @@
 <script id="cosmetic_rule_template" type="text/html">
     <li class="cosmetic-rule {{#whitelisted}}cosmetic-rule__whitelisted{{/whitelisted}}" data-rule="{{raw}}">
         <div class="cosmetic-rule_raw truncate" title="{{raw}}">{{raw}}</div>
-        <div class="waves-effect waves-custom-grey cosmetic-rule_btn cosmetic-rule_whitelist_btn" data-position="left">
-            <img src="img/popup/eye.svg"/>
+        <div class="waves-effect waves-custom-grey cosmetic-rule_btn cosmetic-rule_whitelist_btn">
+            <img class="cosmetic-rule_hidden-icon" src="img/popup/eye.svg" data-tooltip="popupTipViewEl" data-position="bottom" data-delay="50"/>
+            <img class="cosmetic-rule_visible-icon" src="img/popup/crossed_eye.svg" data-tooltip="popupTipHideEl" data-position="bottom" data-delay="50"/>
         </div>
-        <div class="waves-effect waves-custom-grey cosmetic-rule_btn cosmetic-rule_remove_btn" data-position="left">
+        <div class="waves-effect waves-custom-grey cosmetic-rule_btn cosmetic-rule_remove_btn" data-tooltip="popupTipDelRule" data-position="bottom" data-delay="50">
             <img src="img/popup/trash_grey.svg"/>
         </div>
     </li>
