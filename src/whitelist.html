@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Findx Privacy Control — Whitelist</title>
+<title>Findx Privacy Control</title>
 
 <link rel="stylesheet" href="lib/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="lib/codemirror/addon/search/matchesonscrollbar.css">
@@ -23,16 +23,16 @@
 
     <div data-i18n="whitelistPrompt"></div>
     <div class="marg-top marg-bot">
-        <div id="whitelistApply" class="button btn-green" DISABLED>apply changes</div>
-        <div id="whitelistRevert" class="button btn-green" DISABLED>revert</div>
+        <div id="whitelistApply" class="button btn-green" DISABLED data-i18n="whitelistApply"></div>
+        <div id="whitelistRevert" class="button btn-green" DISABLED data-i18n="genericRevert"></div>
     </div>
 
     <div id="whitelist" class="codeMirrorContainer codeMirrorFillVertical"></div>
 
     <br/>
 
-    <div id="importWhitelistFromFile" class="button btn-green">import and append</div>
-    <div id="exportWhitelistToFile" class="button btn-green">export</div>
+    <div id="importWhitelistFromFile" class="button btn-green" data-i18n="whitelistImport"></div>
+    <div id="exportWhitelistToFile" class="button btn-green" data-i18n="whitelistExport"></div>
 
     <input id="importFilePicker" type="file" accept="text/plain" class="hidden">
 
@@ -40,16 +40,16 @@
 
 
 <div class="community-teaser">
-    <div class="f14">Do you find it hard to protect your self?</div>
+    <div class="f14" data-i18n="dashbTeaserTitle"></div>
 
     <ul class="dash-list">
-        <li>Do you feel in control?</li>
-        <li>Do you find it hard to control tracking?</li>
-        <li>Have you found tools to prevent tracking?</li>
+        <li data-i18n="dashbTeaserLine1"></li>
+        <li data-i18n="dashbTeaserLine2"></li>
+        <li data-i18n="dashbTeaserLine3"></li>
     </ul>
 
     <div class="green marg-top">
-        <a href="https://forum.privacore.com/categories/stories" target="_blank">Find out what people do to control behavourial tracking</a>
+        <a href="https://forum.privacore.com/categories/stories" target="_blank" data-i18n="dashbTeaserLinkFindOut"></a>
     </div>
 </div>
 
