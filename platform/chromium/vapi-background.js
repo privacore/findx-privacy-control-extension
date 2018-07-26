@@ -765,7 +765,9 @@ vAPI.openFeedback = function (tabId) {
     vAPI.tabs.open({url: feedbackEmail, select: true});
 };
 
-vAPI.openSearch = function (query, type) {
+vAPI.openSearch = function (query, type, tabId) {
+    tabId = tabId || null;
+
     var locale = "default";
     if (chrome.i18n.getUILanguage() === "da") {
         locale = "da";
@@ -780,7 +782,11 @@ vAPI.openSearch = function (query, type) {
 
     searchUrl = searchUrl.replace(/\{\{query\}\}/, query || '');
 
-    vAPI.tabs.open({url: searchUrl, select: true});
+    var details = {url: searchUrl, select: true};
+    if (tabId)
+        details.tabId = tabId;
+
+    vAPI.tabs.open(details);
 };
 
 vAPI.openSharePage = function (social) {
