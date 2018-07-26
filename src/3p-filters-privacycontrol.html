@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Findx Privacy Control - Protection lists</title>
+        <title>Findx Privacy Control</title>
 
         <link rel="stylesheet" type="text/css" href="css/common-privacycontrol.css">
         <link rel="stylesheet" type="text/css" href="css/dashboard-common-privacycontrol.css">
@@ -13,13 +13,13 @@
 
         <div>
 
-            <div class="f25">Protection lists</div>
+            <div class="f25" data-i18n="3pHeaderTitle"></div>
             <p>
-                <label>Enable only the filter lists you need. Too many can make your browser unresponsive.</label>
+                <label data-i18n="3pHeaderText"></label>
             </p>
 
             <!--<p>-->
-            <label>Out-of-date lists are updated periodically.</label>
+            <label data-i18n="3pHeaderTextUpdatedPeriodically"></label>
             <ul id="options">
                 <li>
 
@@ -30,8 +30,8 @@
                     &ensp;
                     <!--<button class="important disabled" id="buttonUpdate" data-i18n="3pUpdateNow"></button>-->
 
-                    <div id="buttonUpdate" class="button btn-green">update now</div>
-                    <div id="buttonPurgeAll" class="button btn-green">purge all caches</div>
+                    <div id="buttonUpdate" class="button btn-green" data-i18n="3pUpdateNow"></div>
+                    <div id="buttonPurgeAll" class="button btn-green" data-i18n="3pPurgeAll"></div>
                 </li>
                 <li>
                     <!--<input type="checkbox" id="parseCosmeticFilters">-->
@@ -45,12 +45,12 @@
 
             <!-- Titles of list columns -->
             <div id="filterListsHeader">
-                <div class="deleteColumn listColumn bold">Delete</div>
-                <div class="inUseColumn listColumn bold">In Use</div>
-                <div class="onOffColumn listColumn bold">Default on/off</div>
-                <div class="nameColumn listColumn bold">Name</div>
-                <div class="groupColumn listColumn bold">Group</div>
-                <div class="updateColumn listColumn bold">Latest update</div>
+                <div class="deleteColumn listColumn bold" data-i18n="3pFiltersListColDelete">Delete</div>
+                <div class="inUseColumn listColumn bold" data-i18n="3pFiltersListColInUse"></div>
+                <div class="onOffColumn listColumn bold" data-i18n="3pFiltersListColDefault"></div>
+                <div class="nameColumn listColumn bold" data-i18n="3pFiltersListColName"></div>
+                <div class="groupColumn listColumn bold" data-i18n="3pFiltersListColGroup"></div>
+                <div class="updateColumn listColumn bold" data-i18n="3pFiltersListColUpdate"></div>
             </div>
 
             <div id="filterLists"></div>
@@ -63,30 +63,30 @@
 
 
             <div id="addSubscriptionButton">
-                <div id="startSubscriptionSelection" class="button btn-green">Add filter subscription</div>
+                <div id="startSubscriptionSelection" class="button btn-green" data-i18n="3pAddSubscriptionBtn"></div>
             </div>
 
             <div id="addSubscriptionContainer">
-                <span>Please choose a filter subscription from the list:</span><br/>
+                <span data-i18n="3pAddSubscriptionTitle"></span><br/>
 
                 <select id="subscriptionSelector" style="width:500px"></select>
 
-                <div id="addSubscription" class="button btn-green">Add</div>
+                <div id="addSubscription" class="button btn-green" data-i18n="3pAddBtn"></div>
             </div>
 
             <div id="customSubscriptionContainer">
                 <p>
-                    <span>Title:</span><br/>
+                    <span data-i18n="3pCustomSubscrTitle"></span>:<br/>
                     <input type="text" id="customSubscriptionTitle" style="width:500px"/>
                 </p>
 
                 <p>
-                    <span>Group:</span><br/>
+                    <span data-i18n="3pCustomSubscrGroup"></span>:<br/>
                     <input type="text" id="customSubscriptionGroup" style="width:500px"/>
                 </p>
 
                 <p>
-                    <span>Location:</span><br/>
+                    <span data-i18n="3pCustomSubscrLocation"></span>:<br/>
                     <input type="text" id="customSubscriptionLocation" style="width:500px"/>
                 </p>
             </div>
@@ -94,16 +94,16 @@
 
 
         <div class="community-teaser">
-            <div class="f14">Do you find it hard to protect your self?</div>
+            <div class="f14" data-i18n="dashbTeaserTitle"></div>
 
             <ul class="dash-list">
-                <li>Do you feel in control?</li>
-                <li>Do you find it hard to control tracking?</li>
-                <li>Have you found tools to prevent tracking?</li>
+                <li data-i18n="dashbTeaserLine1"></li>
+                <li data-i18n="dashbTeaserLine2"></li>
+                <li data-i18n="dashbTeaserLine3"></li>
             </ul>
 
             <div class="green marg-top">
-                <a href="https://forum.privacore.com/categories/stories" target="_blank">Find out what people do to control behavourial tracking</a>
+                <a href="https://forum.privacore.com/categories/stories" target="_blank" data-i18n="dashbTeaserLinkFindOut"></a>
             </div>
         </div>
 

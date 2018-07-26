@@ -1320,6 +1320,8 @@
 
         handleNoCookiesListOpening();
 
+        handleAllSitesCookiesBtn();
+
         handleAdvancedSettingsBtn();
         handleCookiesSettings();
 
@@ -1395,6 +1397,14 @@
         });
     };
 
+    var handleAllSitesCookiesBtn = function () {
+        $("#cookies_tab .all-sites-cookies-btn").off('click');
+        $("#cookies_tab .all-sites-cookies-btn").on('click', function (ev) {
+            renderListedSitesPage('all');
+            openPage(PAGES.all_sites);
+        });
+    };
+
 
     /***************************************************************************/
 
@@ -1413,7 +1423,7 @@
             document.querySelector('body').classList.add('platform-safari');
             $('.safari-cookies-dialog-btn').off('click');
             $('.safari-cookies-dialog-btn').on('click', function (ev) {
-                let type = ev.currentTarget.getAttribute('data-type') || "";
+                var type = ev.currentTarget.getAttribute('data-type') || "";
                 messager.send('popupPanel', {what: 'openGetExtensionPage', type: type});
                 vAPI.closePopup();
             });
@@ -2111,7 +2121,12 @@
     var handleListedSitesPage = function () {
         $('#listed_sites_page .header .back-btn').off("click");
         $('#listed_sites_page .header .back-btn').on("click", function (ev) {
-            openPage(PAGES.cookie_control);
+            if (isAllSitesPageType()) {
+                openPage(PAGES.main);
+            }
+            else {
+                openPage(PAGES.cookie_control);
+            }
         });
 
         handleListedSitesPageFloatingBtn();
@@ -2149,8 +2164,8 @@
 
 
     var renderListedSitesPage = function (type) {
-        let headerTitle = type === 'whitelist' ? 'popupCookieControlWhitelistedSitesTitle'
-            : (type === 'all' ? 'popupCookieControlSitesTitle' : 'popupCookieControlBlacklistedSitesTitle');
+        var headerTitle = type === 'whitelist' ? 'popupCookieControlWhitelistedSitesTitle'
+            : (type === 'all' ? 'popupCookiesAllSitesPageTitle' : 'popupCookieControlBlacklistedSitesTitle');
 
         setListedSitesPageHeader(vAPI.i18n(headerTitle));
         setListedSitesPageType(type);

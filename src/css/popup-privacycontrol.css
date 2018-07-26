@@ -1195,7 +1195,17 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 .items-list.no-top-border {
     border-top: none;
 }
-.items-list .list-item {
+.items-list.items-list__no-padding {
+    padding: 0;
+}
+.items-list_title {
+    padding: 8px 6px 3px;
+    color: rgba(0,0,0,0.54);
+    font-family: Roboto-medium;
+    line-height: 16px;
+    cursor: default;
+}
+.list-item {
     width: 100%;
     height: 72px;
     padding: 6px;
@@ -1206,36 +1216,39 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     -moz-border-radius: 2px;
     border-radius: 2px;
 }
-.items-list .list-item.clickable-item {
+.items-list.items-list__no-padding .list-item {
+    padding: 0 16px;
+}
+.list-item.clickable-item {
     cursor: pointer;
 }
-.items-list .list-item.clickable-item:hover {
+.list-item.clickable-item:hover {
     /*background-color: rgba(0,0,0,0.06);*/
 }
-.items-list .list-item .list-item-icon {
+.list-item .list-item-icon {
     width: 24px;
     height: 24px;
     margin-right: 16px;
 }
-.items-list .list-item .list-item-content {
+.list-item .list-item-content {
     flex: 1;
 }
-.items-list .list-item .list-item-content .list-item-title {
+.list-item .list-item-content .list-item-title {
     font-size: 16px;
     line-height: 24px;
 }
-.items-list .list-item .list-item-content .list-item-subtitle {
+.list-item .list-item-content .list-item-subtitle {
     color: rgba(0,0,0,0.54);
     line-height: 16px;
 }
-.items-list .list-item .list-item-control {
+.list-item .list-item-control {
     width: 45px;
     height: 100%;
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
-.items-list .list-item .list-item-control > img {
+.list-item .list-item-control > img {
     width: 24px;
     height: 24px;
     transform: rotate(-90deg); /** Current line must be removed after chevron icon added **/

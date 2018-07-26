@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Findx Privacy Control - Settings</title>
+    <title>Findx Privacy Control</title>
     <link rel="stylesheet" type="text/css" href="css/common-privacycontrol.css">
     <link rel="stylesheet" type="text/css" href="css/dashboard-common-privacycontrol.css">
     <link rel="stylesheet" type="text/css" href="css/settings.css">
@@ -31,24 +31,25 @@
                 <a class="fa info important" href="https://github.com/gorhill/uBlock/wiki/Prevent-WebRTC-from-leaking-local-IP-address" target="_blank">&#xf05a;</a>
             </li>
         </ul>
-        <li class="subgroup cookies-settings"><span>Cookies</span><ul>
+        <li class="subgroup cookies-settings"><span data-i18n="settingsCookies"></span><ul>
             <li>
                 <div id="tab-close-clearing" type="checkbox" data-setting-name="clearDomainCookiesOnTabClose" data-setting-type="bool"></div>
-                <label for="tab-close-clearing">Clear domain cookies on tab close</label>
+                <label for="tab-close-clearing" data-i18n="settingsCookiesClearOnTabClose"></label>
             </li>
             <li>
                 <div id="third-party-blocking" type="checkbox" data-setting-name="thirdPartyCookiesBlocking" data-setting-type="bool"></div>
-                <label for="third-party-blocking">Third party cookies blocking</label>
+                <label for="third-party-blocking" data-i18n="settingsCookiesThirdParty"></label>
             </li>
             <li>
                 <div id="periodical-clearing" type="checkbox" data-setting-name="periodicalClearing" data-setting-type="bool"></div>
-                <label for="periodical-clearing">Periodical cookies clearing every
-                    <input type="number" data-setting-name="clearingPeriod" min="1" max="1440"> min
+                <label for="periodical-clearing"><span data-i18n="settingsCookiesPeriodical"></span>
+                    <input type="number" data-setting-name="clearingPeriod" min="1" max="1440">
+                    <span data-i18n="settingsCookiesPeriodicalTime"></span>
                 </label>
             </li>
             <li>
                 <div id="clear-on-start" type="checkbox" data-setting-name="clearCookiesOnAppStart" data-setting-type="bool"></div>
-                <label for="clear-on-start">Clear cookies on browser start</label>
+                <label for="clear-on-start" data-i18n="settingsCookiesBrowserStart"></label>
             </li>
         </ul>
     </ul>
@@ -69,25 +70,25 @@
 
     <div style="margin: 2.5em 1em 0;">
         <p>
-        <div id="export" class="button btn-green">backup to file</div>
-        <div id="import" class="button btn-green">restore from file</div>
+        <div id="export" class="button btn-green" data-i18n="settingsBackupToFile"></div>
+        <div id="import" class="button btn-green" data-i18n="settingsRestoreFromFile"></div>
 
         <input id="restoreFilePicker" type="file" accept="text/plain" class="hiddenFileInput">
         <br/>
-        <div id="reset" class="button btn-green">reset to default settings</div>
+        <div id="reset" class="button btn-green" data-i18n="settingsResetDefault"></div>
     </div>
 
     <div class="community-teaser">
-        <div class="f14">Do you find it hard to protect your self?</div>
+        <div class="f14" data-i18n="dashbTeaserTitle"></div>
 
         <ul class="dash-list">
-            <li>Do you feel in control?</li>
-            <li>Do you find it hard to control tracking?</li>
-            <li>Have you found tools to prevent tracking?</li>
+            <li data-i18n="dashbTeaserLine1"></li>
+            <li data-i18n="dashbTeaserLine2"></li>
+            <li data-i18n="dashbTeaserLine3"></li>
         </ul>
 
         <div class="green marg-top">
-            <a href="https://forum.privacore.com/categories/stories" target="_blank">Find out what people do to control behavourial tracking</a>
+            <a href="https://forum.privacore.com/categories/stories" target="_blank" data-i18n="dashbTeaserLinkFindOut"></a>
         </div>
     </div>
 </div>
