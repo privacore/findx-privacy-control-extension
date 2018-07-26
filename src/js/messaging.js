@@ -1648,6 +1648,11 @@ vAPI.messaging.listen('onboarding', onMessage);
     /******************************************************************************/
 
     var onMessage = function(request, sender, callback) {
+        var tabId = null;
+        if ( sender && sender.tab ) {
+            tabId = sender.tab.id;
+        }
+
         // Async
         switch ( request.what ) {
             case 'getNudgingPopupData':
@@ -1675,8 +1680,7 @@ vAPI.messaging.listen('onboarding', onMessage);
 
         switch ( request.what ) {
             case 'searchQuery':
-                // vAPI.openSearch(request.query, request.searchType);
-                vAPI.openSearch(request.query, 'text');
+                vAPI.openSearch(request.query, 'text', tabId);
                 break;
 
             case 'openPage':
