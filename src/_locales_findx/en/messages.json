@@ -151,6 +151,18 @@
     "message": "Clear all cookies",
     "description": ""
   },
+  "popupTipDelRule":{
+    "message": "Delete rule",
+    "description": ""
+  },
+  "popupTipViewEl":{
+    "message": "View element",
+    "description": ""
+  },
+  "popupTipHideEl":{
+    "message": "Hide element",
+    "description": ""
+  },
   "popupCookiesPlateTitle":{
     "message": "Cookies from",
     "description": ""

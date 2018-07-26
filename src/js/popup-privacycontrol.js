@@ -1229,7 +1229,19 @@
             this.btnHide = this.elItem.find('.cosmetic-rule_whitelist_btn');
             this.btnRemove = this.elItem.find('.cosmetic-rule_remove_btn');
             this.setControlsHandlers();
+            this.setTooltips();
         }.bind(this), 300);
+    };
+
+    CosmeticRule.prototype.setTooltips = function () {
+        this.elItem.find('[data-tooltip]').each(function(index, elem) {
+            var tooltip = vAPI.i18n.prepareTemplateText(vAPI.i18n($(elem).attr('data-tooltip')));
+            if ( tooltip ) {
+                $(elem).attr('data-tooltip', tooltip);
+            }
+
+            M.Tooltip.init(elem, {enterDelay: 300});
+        });
     };
 
     CosmeticRule.prototype.setControlsHandlers = function () {

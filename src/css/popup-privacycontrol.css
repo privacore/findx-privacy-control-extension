@@ -1016,8 +1016,9 @@ body.system-page #protection_lists_page .fixed-action-btn .btn-floating i.materi
     flex: 1;
     margin-right: 5px;
 }
-.cosmetic-rule__whitelisted .cosmetic-rule_raw {
-    text-decoration: line-through;
+.cosmetic-rule.cosmetic-rule__whitelisted .cosmetic-rule_hidden-icon,
+.cosmetic-rule:not(.cosmetic-rule__whitelisted) .cosmetic-rule_visible-icon {
+    display: none;
 }
 .cosmetic-rule_btn {
     width: 36px;
