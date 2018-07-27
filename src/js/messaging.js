@@ -582,6 +582,10 @@ var onMessage = function(request, sender, callback) {
         µb.cookieHandling.temporaryBlacklistCookies(request.cookies, callback);
         return;
 
+    case 'strictBlocking':
+        µb.strictBlockingHostname(request.hostname, callback);
+        return;
+
     default:
         break;
     }

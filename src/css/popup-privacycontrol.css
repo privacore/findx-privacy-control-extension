@@ -444,7 +444,9 @@ body:not(.protection-off) .protection-status-off {
 .plate .btn-floating {
     position: absolute;
     top: 60px;
-    left: 144px;
+    left: auto;
+    right: 32px;
+    /*left: 144px;*/
     display: flex;
     justify-content: center;
     align-items: center;

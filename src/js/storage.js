@@ -1741,7 +1741,57 @@
     this.loadUserFilters(onLoaded);
 };
 
+/**
+ * Make hostname as "strict blocked".
+ * Add "||example.com^" rule to the "My filters"
+ * @param {string} hostname
+ * @param {Function} [callback]
+ */
+µBlock.strictBlockingHostname = function (hostname, callback) {
 
+    var onSaved = function() {
+        µBlock.loadFilterLists(callback);
+    };
+
+    var addHostnameBlocking = function (content) {
+        var rule = '||' + hostname + '^';
+        var lines = content.split('\n');
+        var isAlreadyExists = false;
+
+        // Check if current rule is already exists in a list.
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            if (line === rule) {
+                isAlreadyExists = true;
+                break;
+            }
+        }
+
+        if (!isAlreadyExists) {
+            lines.push(rule);
+            content = lines.join('\n');
+        }
+
+        return content;
+    };
+
+    var onLoaded = function(details) {
+        if ( details.error ) {
+            if (callback) callback();
+            return;
+        }
+
+        details.content = addHostnameBlocking(details.content);
+
+        // https://github.com/chrisaljoudi/uBlock/issues/976
+        // If we reached this point, the filter quite probably needs to be
+        // added for sure: do not try to be too smart, trying to avoid
+        // duplicates at this point may lead to more issues.
+        µBlock.saveUserFilters(details.content.trim(), onSaved.bind(this, details));
+    };
+
+    this.loadUserFilters(onLoaded);
+};
 
 
 
