@@ -745,7 +745,7 @@
 <script id="cookie_item_template" type="text/html">
     <div class="collapsible-item-body-row cookie-item {{#whitelisted}}whitelisted-cookie{{/whitelisted}} {{#blacklisted}}blacklisted-cookie{{/blacklisted}}">
         <div class="truncate cookie-name" title="{{name}}">{{name}}</div>
-        <div class="waves-effect waves-custom-grey cookie-control cookie-details-btn">
+        <div class="cookie-control cookie-details-btn">
             <img src="img/popup/dots-vertical.svg" alt="Details"/>
         </div>
     </div>
@@ -833,28 +833,17 @@
         <div class="listed-site__quantity">(<span>{{quantity}}</span>)</div>
         <div class="listed-site__domain truncate">{{domain}}</div>
         <div class="waves-effect waves-custom-grey listed-site__btn listed-site__clear_btn" data-position="bottom">
-            <img src="img/popup/trash_grey.svg"/>
+            <img src="img/popup/trash_black.svg"/>
         </div>
         <div class="listed-site__btn listed-site__more_btn">
             <img src="img/popup/dots-vertical.svg"/>
         </div>
         <div class="listed-site__menu">
-            <div class="listed-site__menu__header">
-                <div class="listed-site__menu__header__close_btn">
-                    <img src="img/popup/close_black.svg"/>
-                </div>
-            </div>
             <div class="waves-effect waves-custom-grey listed-site__menu_item" data-action="blacklisted" data-domain="{{domain}}">
-                <div class="listed-site__menu_item_icon">
-                    <img src="img/popup/block.svg"/>
-                </div>
-                <div class="listed-site__menu_item_title" data-i18n="popupCookiesBlacklist"></div>
+                <div class="listed-site__menu_item_title" data-i18n="popupCookiesBlacklistDomain"></div>
             </div>
             <div class="waves-effect waves-custom-grey listed-site__menu_item" data-action="whitelisted" data-domain="{{domain}}">
-                <div class="listed-site__menu_item_icon">
-                    <img src="img/popup/done.svg"/>
-                </div>
-                <div class="listed-site__menu_item_title" data-i18n="popupCookiesWhitelist"></div>
+                <div class="listed-site__menu_item_title" data-i18n="popupCookiesWhitelistDomain"></div>
             </div>
         </div>
     </li>

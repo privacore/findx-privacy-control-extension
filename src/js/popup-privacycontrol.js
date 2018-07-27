@@ -1826,7 +1826,7 @@
     };
 
     CookieItem.prototype.handleDetailsBtn = function () {
-        var btnDetails = $(this.divElement).find('.cookie-control.cookie-details-btn');
+        var btnDetails = $(this.divElement);
         btnDetails.off('click');
         btnDetails.on('click', function (ev) {
             this.createDetailsWnd();
@@ -2290,12 +2290,6 @@
         // Set list item popup menu texts
         divSitesList.find('.listed-site__menu [data-i18n]').each(function(index, elem) {
             $(elem).html(vAPI.i18n.prepareTemplateText(vAPI.i18n($(elem).attr('data-i18n'))));
-        });
-
-        // Handle menu popup "close" buttons
-        divSitesList.find('.listed-site__menu .listed-site__menu__header__close_btn').off('click');
-        divSitesList.find('.listed-site__menu .listed-site__menu__header__close_btn').on('click', function (ev) {
-            closeListedSitePopupMenu();
         });
 
         // Close menu popup if user clicks outside popup

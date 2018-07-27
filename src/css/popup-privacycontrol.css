@@ -1146,17 +1146,32 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     cursor: default;
 }
 #cookies_tab .domain-cookies-list .collapsible-item .collapsible-body {
-    padding-left: 16px;
+    /*padding-left: 16px;*/
     border: none;
     max-height: none;
     background-color: #fff;
+    padding-left: 0;
+    padding-right: 0;
 }
-#cookies_tab .domain-cookies-list .collapsible-item-body-row {
-    margin-right: 10px;
+.domain-cookies-list .cookie-item {
+    color: rgba(0,0,0,.56);
+    margin-bottom: 0;
+    margin-right: 0;
+    padding-left: 16px;
+    padding-right: 22px;
+    height: 36px;
+    cursor: pointer;
+}
+.domain-cookies-list .cookie-item:hover {
+    background-color: rgba(0,0,0,.08);
+    color: rgba(0,0,0,.87);
 }
 .domain-cookies-list .cookie-name {
     flex: 1;
     padding-right: 15px;
+}
+.domain-cookies-list .cookie-item:hover .cookie-name {
+    text-decoration: underline;
 }
 .domain-cookies-list .cookie-item.whitelisted-cookie .cookie-name {
     color: #6bad6f;
@@ -1169,7 +1184,6 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     width: 24px;
     height: 24px;
     opacity: 0.8;
-    cursor: pointer;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
@@ -1177,9 +1191,8 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     justify-content: center;
     align-items: center;
 }
-.domain-cookies-list .cookie-control:hover {
+.domain-cookies-list .cookie-item:hover .cookie-control {
     opacity: 1;
-    background-color: rgba(153, 153, 153, 0.2);
 }
 /* TODO: Current selector must be removed after correct icon will be received */
 .domain-cookies-list .cookie-control.cookie-details-btn img {
@@ -1458,10 +1471,13 @@ ul.sites-list {
 .listed-site {
     display: flex;
     padding: 0 16px;
-    margin-bottom: 6px;
     cursor: default;
     align-items: center;
     position: relative;
+    height: 36px;
+}
+.listed-site:hover {
+    background-color: rgba(0,0,0,.08);
 }
 .listed-site .listed-site__quantity {
     font-size: 12px;
@@ -1472,6 +1488,11 @@ ul.sites-list {
 .listed-site .listed-site__domain {
     flex: 1;
     font-size: 13px;
+    color: rgba(0,0,0,.56);
+}
+.listed-site:hover .listed-site__domain {
+    text-decoration: underline;
+    color: rgba(0,0,0,.87);
 }
 #listed_sites_page[data-page-type="whitelist"] .listed-site .listed-site__domain,
 .listed-site[whitelisted] .listed-site__domain {
@@ -1499,7 +1520,8 @@ ul.sites-list {
     width: 24px;
     height: 24px;
 }
-.listed-site  .listed-site__btn.listed-site__remove_btn img {
+.listed-site  .listed-site__btn.listed-site__remove_btn img,
+.listed-site  .listed-site__btn.listed-site__clear_btn img {
     opacity: .56;
 }
 .listed-site .listed-site__btn:hover img {
@@ -1513,8 +1535,8 @@ ul.sites-list {
 .listed-site .listed-site__menu {
     display: none;
     position: absolute;
-    top: 0;
-    right: 20px;
+    top: 8px;
+    right: 45px;
     z-index: 999;
     min-width: 150px;
     border-radius: 2px;
@@ -1524,28 +1546,23 @@ ul.sites-list {
 .listed-site .listed-site__menu.active {
     display: block;
 }
-.listed-site .listed-site__menu__header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 8px;
-    padding-bottom: 0;
-}
-.listed-site .listed-site__menu__header__close_btn {
-    width: 20px;
-    height: 20px;
-    opacity: .56;
-    cursor: pointer;
-}
 .listed-site .listed-site__menu_item {
     display: flex;
     align-items: center;
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 24px;
+    color: rgba(0,0,0,.56);
     padding: 8px 16px;
     border-radius: 2px;
 }
+.listed-site .listed-site__menu_item:hover {
+    background-color: rgba(0,0,0,.08);
+}
+.listed-site__menu_item:first-child {
+    margin-top: 15px;
+}
 .listed-site__menu_item:last-child {
-    margin-bottom: 8px;
+    margin-bottom: 15px;
 }
 .listed-site[blacklisted] .listed-site__menu_item[data-action="blacklisted"],
 .listed-site[whitelisted] .listed-site__menu_item[data-action="whitelisted"] {
@@ -1594,7 +1611,10 @@ ul.sites-list {
 }
 
 #domain_cookies_page .domain-cookies-list {
-    padding: 16px 0 100px 16px;
+    padding: 16px 0 100px 0;
+}
+#domain_cookies_page .domain-cookies-list .cookie-item {
+    padding-right: 18px;
 }
 
 
