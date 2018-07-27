@@ -163,6 +163,10 @@
     "message": "Hide element",
     "description": ""
   },
+  "popupTipStrictBlocking":{
+    "message": "Block access to site",
+    "description": ""
+  },
   "popupCookiesPlateTitle":{
     "message": "Cookies from",
     "description": ""

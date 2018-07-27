@@ -137,6 +137,7 @@
         M.Tooltip.init(document.querySelector("#pause_site_btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".element-picker-btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".user-filters-btn"), {enterDelay: 300});
+        M.Tooltip.init(document.querySelector(".strict-blocking-btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".open-protection-lists-btn"), {enterDelay: 300});
 
         M.Tooltip.init(document.querySelector(".domain-cookies-reset-btn"), {enterDelay: 300});
@@ -196,6 +197,7 @@
         handleProtectionListsBtn();
         handleElementPickerBtn();
         handleMyFiltersBtn();
+        handleStrictBlockingBtn();
 
         handleStartProtectionBtn();
 
@@ -515,6 +517,31 @@
             ev.preventDefault();
 
             openPage(PAGES.user_filters);
+        });
+    };
+
+    /****************************** Strict blocking *********************************/
+
+    var handleStrictBlockingBtn = function () {
+        $(".strict-blocking-btn").off("click");
+        $(".strict-blocking-btn").on("click", function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            if (popupData.canElementPicker === true) {// if not a system page
+                messager.send(
+                    'popupPanel',
+                    {
+                        what: 'strictBlocking',
+                        tabId: popupData.tabId,
+                        hostname: popupData.pageHostname
+                    },
+                    function () {
+                        reloadTab();
+                        vAPI.closePopup();
+                    }
+                );
+            }
         });
     };
 
@@ -1137,9 +1164,6 @@
     var cosmeticRulesData = [];
 
     var renderUserFiltersCosmetic = function (rules) {
-        console.log ("renderUserFiltersCosmetic ()            popup-privacycontrol.js" +
-            "\n\t rules: ", rules);
-
         cosmeticRulesData = [];
         var userFilter = popupData.usedFilters['user-filters'];
 
