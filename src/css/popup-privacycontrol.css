@@ -1181,9 +1181,9 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 }
 
 .domain-cookies-list .cookie-control {
-    width: 24px;
-    height: 24px;
-    opacity: 0.8;
+    width: 36px;
+    height: 36px;
+    opacity: 0.56;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
@@ -1195,9 +1195,9 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     opacity: 1;
 }
 /* TODO: Current selector must be removed after correct icon will be received */
-.domain-cookies-list .cookie-control.cookie-details-btn img {
-    width: 18px;
-    height: 18px;
+.domain-cookies-list .cookie-control.cookie-details-btn svg {
+    width: 24px;
+    height: 24px;
 }
 
 
