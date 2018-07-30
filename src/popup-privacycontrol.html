@@ -701,9 +701,9 @@
         <div class="mCustomScrollbar collapsible-body">
             {{#trackedUrls}}
                 <div class="collapsible-item-body-row filter-rule">
-                    <div class="rule-radio" data-url="{{url}}">
+                    <div class="rule-checkbox" data-url="{{url}}">
                         <label>
-                            <input class="with-gap" type="radio"  {{#isBlocked}}checked{{/isBlocked}}/>
+                            <input class="filled-in" type="checkbox"  {{#isBlocked}}checked{{/isBlocked}}/>
                             <span></span>
                         </label>
                     </div>

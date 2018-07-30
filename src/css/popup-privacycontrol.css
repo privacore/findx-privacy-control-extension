@@ -869,31 +869,33 @@ body.platform-safari .main-tabs-slider[data-active-tab="cookies_tab"] .safari-co
 .collapsible-item-body-row:not(:last-child) {
     margin-bottom: 13px;
 }
-.collapsible-item-body-row .rule-radio {
+.collapsible-item-body-row .rule-checkbox {
     height: 100%;
     width: 24px;
     margin-right: 26px;
     position: relative;
 }
-.rule-radio > label {
+.rule-checkbox > label {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
 }
-.collapsible-item-body-row .rule-radio [type="radio"]:not(:checked)+span:before,
-.collapsible-item-body-row .rule-radio [type="radio"]:not(:checked)+span:after {
-    border: 2px solid rgba(1, 1, 1, .54);
+.collapsible-item-body-row .rule-checkbox input[type="checkbox"].filled-in+span:before {
+    left: 3px;
+    height: 15px;
 }
-.collapsible-item-body-row .rule-radio [type="radio"]:checked+span:after,
-.collapsible-item-body-row .rule-radio [type="radio"].with-gap:checked+span:before,
-.collapsible-item-body-row .rule-radio [type="radio"].with-gap:checked+span:after {
-    border: 2px solid rgba(107, 173, 111, 1);
+.collapsible-item-body-row .rule-checkbox input[type="checkbox"].filled-in+span:after {
+    width: 24px;
+    height: 24px;
 }
-.collapsible-item-body-row .rule-radio [type="radio"]:checked+span:after,
-.collapsible-item-body-row .rule-radio [type="radio"].with-gap:checked+span:after {
-    background-color: rgba(107, 173, 111, 1);
+.collapsible-item-body-row .rule-checkbox [type="checkbox"]:not(:checked)+span:after {
+    border-color: rgba(0,0,0,.56);
+}
+.collapsible-item-body-row .rule-checkbox [type="checkbox"]:checked+span:after {
+    border-color: #6bad6f;
+    background-color: #6bad6f;
 }
 
 

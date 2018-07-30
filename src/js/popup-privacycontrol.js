@@ -1013,17 +1013,18 @@
             });
             elFilter.find(".collapsible-header .switch input").on('change', onFilterStateChange);
 
-            elFilter.find(".collapsible-body .filter-rule .rule-radio").on('click', function (ev) {
-                ev.preventDefault();
-                ev.stopPropagation();
+            elFilter.find(".collapsible-body .filter-rule .rule-checkbox").on('click', function (ev) {
+                if (ev.target.nodeName === 'INPUT') {
+                    var isChecked = ev.target.checked;
+                    var url = $(ev.currentTarget).attr("data-url");
 
-                var isChecked = $(ev.currentTarget).find('input.with-gap').attr('checked');
-                $(ev.currentTarget).find('input.with-gap').attr('checked', !isChecked);
+                    onFilterUpdated();
 
-                var url = $(ev.currentTarget).attr("data-url");
-                switchUrlBlocking(url, !isChecked);
-
-                onFilterUpdated();
+                    // Timeout is set here because checkbox animation (realized by Materialize) looks delayed
+                    setTimeout(function () {
+                        switchUrlBlocking(url, isChecked);
+                    }, 300);
+                }
             });
         };
 
@@ -1068,14 +1069,10 @@
                 }
             };
 
-            function response (result) {
-
-            }
-
             messager.send('popupPanel', {
                 what:  'updateFilter',
                 updates: updates
-            }, response);
+            });
         };
 
 
@@ -1096,7 +1093,7 @@
         var removeFilter = function () {
             elFilter.find(".collapsible-header .switch").off('click')
             elFilter.find(".collapsible-header .switch input").off('change', onFilterStateChange);
-            elFilter.find(".collapsible-body .filter-rule .rule-radio").off('click');
+            elFilter.find(".collapsible-body .filter-rule .rule-checkbox").off('click');
         };
 
 
