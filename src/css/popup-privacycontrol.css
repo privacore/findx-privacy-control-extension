@@ -870,31 +870,33 @@ body.platform-safari .main-tabs-slider[data-active-tab="cookies_tab"] .safari-co
 .collapsible-item-body-row:not(:last-child) {
     margin-bottom: 13px;
 }
-.collapsible-item-body-row .rule-radio {
+.collapsible-item-body-row .rule-checkbox {
     height: 100%;
     width: 24px;
     margin-right: 26px;
     position: relative;
 }
-.rule-radio > label {
+.rule-checkbox > label {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
 }
-.collapsible-item-body-row .rule-radio [type="radio"]:not(:checked)+span:before,
-.collapsible-item-body-row .rule-radio [type="radio"]:not(:checked)+span:after {
-    border: 2px solid rgba(1, 1, 1, .54);
+.collapsible-item-body-row .rule-checkbox input[type="checkbox"].filled-in+span:before {
+    left: 3px;
+    height: 15px;
 }
-.collapsible-item-body-row .rule-radio [type="radio"]:checked+span:after,
-.collapsible-item-body-row .rule-radio [type="radio"].with-gap:checked+span:before,
-.collapsible-item-body-row .rule-radio [type="radio"].with-gap:checked+span:after {
-    border: 2px solid rgba(107, 173, 111, 1);
+.collapsible-item-body-row .rule-checkbox input[type="checkbox"].filled-in+span:after {
+    width: 24px;
+    height: 24px;
 }
-.collapsible-item-body-row .rule-radio [type="radio"]:checked+span:after,
-.collapsible-item-body-row .rule-radio [type="radio"].with-gap:checked+span:after {
-    background-color: rgba(107, 173, 111, 1);
+.collapsible-item-body-row .rule-checkbox [type="checkbox"]:not(:checked)+span:after {
+    border-color: rgba(0,0,0,.56);
+}
+.collapsible-item-body-row .rule-checkbox [type="checkbox"]:checked+span:after {
+    border-color: #6bad6f;
+    background-color: #6bad6f;
 }
 
 
@@ -905,9 +907,9 @@ body.platform-safari .main-tabs-slider[data-active-tab="cookies_tab"] .safari-co
 
 
 .adding-more-lists-block {
-    margin-top: 32px;
+    /*margin-top: 32px;*/
     width: 100%;
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    /*border-top: 1px solid rgba(0, 0, 0, 0.12);*/
     padding: 20px 15px 100px 15px;
     cursor: default;
 }
@@ -1182,9 +1184,9 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
 }
 
 .domain-cookies-list .cookie-control {
-    width: 24px;
-    height: 24px;
-    opacity: 0.8;
+    width: 36px;
+    height: 36px;
+    opacity: 0.56;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
@@ -1196,9 +1198,9 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     opacity: 1;
 }
 /* TODO: Current selector must be removed after correct icon will be received */
-.domain-cookies-list .cookie-control.cookie-details-btn img {
-    width: 18px;
-    height: 18px;
+.domain-cookies-list .cookie-control.cookie-details-btn svg {
+    width: 24px;
+    height: 24px;
 }
 
 
@@ -1269,6 +1271,25 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     height: 24px;
     transform: rotate(-90deg); /** Current line must be removed after chevron icon added **/
     margin-right: 5px;
+}
+
+/*"Reset protection lists on this site" block on Protection lists page*/
+.list-item .list-item-control.reset-protection-lists_btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    justify-content: center;
+}
+.list-item .list-item-control.reset-protection-lists_btn:hover {
+    background-color: rgba(0,0,0,0.06);
+}
+.list-item .list-item-control.reset-protection-lists_btn > img {
+    -webkit-transform: none;
+    -moz-transform: none;
+    -ms-transform: none;
+    -o-transform: none;
+    transform: none;
+    margin-right: 0;
 }
 
 

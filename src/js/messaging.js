@@ -586,6 +586,10 @@ var onMessage = function(request, sender, callback) {
         µb.strictBlockingHostname(request.hostname, callback);
         return;
 
+    case 'resetFiltersListsForSite':
+        µb.resetFiltersListsForSite(request.domain, callback);
+        return;
+
     default:
         break;
     }
