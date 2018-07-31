@@ -217,9 +217,11 @@
 
         handleUserFiltersPage();
 
-        handleCloseProtectionListsBtn();
         handleOpenSearchTabBtn();
 
+        // Protection lists page
+        handleCloseProtectionListsBtn();
+        handleResetFiltersListsForSite();
         handleFloatingActionBtn();
 
         handleShareDialog();
@@ -731,7 +733,9 @@
         return filters;
     };
 
-    /***************************************************************************/
+
+
+    /**************************** Protection lists page *****************************/
 
     var renderTrackedUrls = function () {
         popupData.trackedUrls = {};
@@ -1152,6 +1156,25 @@
 
     var reloadTab = function () {
         messager.send('popupPanel', {what: 'reloadTab', tabId: popupData.tabId});
+    };
+
+    /**************** Reset lists for this site *****************/
+
+    var handleResetFiltersListsForSite = function () {
+        $('#protection_lists_page .protection-lists-page-content .reset-protection-lists_btn').off('click');
+        $('#protection_lists_page .protection-lists-page-content .reset-protection-lists_btn').on('click', function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            messager.send('popupPanel', {
+                what: 'resetFiltersListsForSite',
+                tabId: popupData.tabId,
+                domain: popupData.pageHostname
+            }, function () {
+                reloadTab();
+                vAPI.closePopup();
+            });
+        });
     };
 
 

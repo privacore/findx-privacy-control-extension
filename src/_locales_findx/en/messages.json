@@ -403,6 +403,14 @@
     "message": "You can add your own rules by using the lightning icon and select the elements you want to hide.",
     "description": "'My filters' page in a popup"
   },
+  "popupResetProtectionListsTitle":{
+    "message": "Reset protection lists for this site",
+    "description": "'"
+  },
+  "popupResetProtectionListsSubTitle":{
+    "message": "Click to go back to default values",
+    "description": "'"
+  },
   "docBlockedTabTitle":{
     "message": "Blocked by Findx privacy protection",
     "description": "Document blocked page"

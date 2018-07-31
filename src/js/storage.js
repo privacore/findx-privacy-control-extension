@@ -1598,6 +1598,78 @@
     vAPI.storage.set({ 'availableFilterLists': filterLists }, onFilterListsReady);
 };
 
+/**
+ * Reset all filters lists to default state for domain.
+ * Filters white/black listing.
+ * Separate urls white/black listing.
+ * My filters cosmetic whitelisted rules.
+ * My filters cosmetic rules removing (only rules for this domain).
+ * @param {string} domain - here must be a full host name (www.example.com) but not a root domain (example.com)
+ * @param {Function} callback
+ */
+µBlock.resetFiltersListsForSite = function (domain, callback) {
+    var filterLists = this.availableFilterLists;
+    var rootDomain = this.URI.domainFromHostnameNoCache(domain);
+
+    for (var filterName in filterLists) {
+        if (!filterLists.hasOwnProperty(filterName))
+            break;
+
+        if (filterLists[filterName].hasOwnProperty('exceptions')) {
+
+            // Remove whitelist/blacklist status of filter on this domain
+            if (filterLists[filterName].exceptions.hasOwnProperty('domains')
+                && filterLists[filterName].exceptions.domains.hasOwnProperty(rootDomain))
+            {
+                delete filterLists[filterName].exceptions.domains[rootDomain];
+            }
+
+            // Remove whitelist/blacklist status of separate urls on this domain
+            if (filterLists[filterName].exceptions.hasOwnProperty('links')) {
+                for (var link in filterLists[filterName].exceptions.links) {
+                    // If url whitelisted/blacklisted on this domain
+                    if (filterLists[filterName].exceptions.links[link].hasOwnProperty(rootDomain)) {
+                        // If url has exceptions only for one domain - remove url from list
+                        if (Object.keys(filterLists[filterName].exceptions.links[link]).length === 1) {
+                            delete filterLists[filterName].exceptions.links[link];
+                        }
+                        // Otherwise just remove domain
+                        else {
+                            delete filterLists[filterName].exceptions.links[link][rootDomain];
+                        }
+                    }
+                }
+            }
+
+            // Remove whitelisted cosmetic rules from "My filters" filter
+            if (filterLists[filterName].exceptions.hasOwnProperty('rules')) {
+                for (var rule in filterLists[filterName].exceptions.rules) {
+                    if (filterLists[filterName].exceptions.rules[rule].indexOf(rootDomain) !== -1) {
+                        // If current rule has only one domain in a list - remove this rule from exceptions
+                        if (filterLists[filterName].exceptions.rules[rule].length === 1) {
+                            delete filterLists[filterName].exceptions.rules[rule];
+                        }
+                        // Otherwise just remove domain from the list of domains for current rule
+                        else {
+                            filterLists[filterName].exceptions.rules[rule].splice(filterLists[filterName].exceptions.rules[rule].indexOf(rootDomain), 1);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    // Remove all cosmetic rules for this domain from "My filters" filter
+    this.rmFromUserFilters(null, domain, function () {
+        if (callback) callback();
+    });
+
+    vAPI.storage.set({ 'availableFilterLists': this.availableFilterLists }, function() {
+        µBlock.selfieManager.destroy(0);
+    });
+};
+
 
 /**
  * Add/remove separate rule of User Filters (My filters) to a whitelist.
@@ -1665,7 +1737,7 @@
 
 
 µBlock.rmUserCosmeticRule = function (rule, domain) {
-    this.rmFromUserFilters(rule.raw, function () {});
+    this.rmFromUserFilters(rule.raw, null, function () {});
 
     domain = this.URI.domainFromHostname(domain);
     // Remove rule from filter whitelist
@@ -1685,11 +1757,12 @@
 /**
  * Remove rule from "User filters". Remove from variables and file.
  * After removing filter will be reloaded.
- * @param {string} rule
+ * @param {string} [rule] - rule can be found by full rule raw (all line)
+ * @param {string} [domain] - rule can be found by domain (domain.com## at the beginning of line)
  * @param {Function} callback
  */
-µBlock.rmFromUserFilters = function(rule, callback) {
-    if ( !rule ) {
+µBlock.rmFromUserFilters = function(rule, domain, callback) {
+    if ( !rule && !domain) {
         if (callback) callback();
         return;
     }
@@ -1703,7 +1776,11 @@
         var lines = content.split('\n');
         for (var i = 0; i < lines.length;) {
             var line = lines[i];
-            if (line === rule) {
+            if ((rule && line === rule) // found by rule
+                || (domain &&
+                    (line.indexOf(domain + "##") === 0 // found by domain (full hostname)
+                    || line.indexOf(µBlock.URI.domainFromHostnameNoCache(domain) + "##") === 0))) // found by domain (root domain)
+            {
                 lines.splice(i, 1);
                 // remove comment lines before current rule line
                 for (var j = i-1; j >= 0; j--) {
@@ -1740,6 +1817,7 @@
 
     this.loadUserFilters(onLoaded);
 };
+
 
 /**
  * Make hostname as "strict blocked".

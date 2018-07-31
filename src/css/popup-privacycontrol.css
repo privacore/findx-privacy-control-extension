@@ -906,9 +906,9 @@ body.platform-safari .main-tabs-slider[data-active-tab="cookies_tab"] .safari-co
 
 
 .adding-more-lists-block {
-    margin-top: 32px;
+    /*margin-top: 32px;*/
     width: 100%;
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    /*border-top: 1px solid rgba(0, 0, 0, 0.12);*/
     padding: 20px 15px 100px 15px;
     cursor: default;
 }
@@ -1270,6 +1270,25 @@ body.no-cookies #cookies_tab .collapsible-item-chevron-icon {
     height: 24px;
     transform: rotate(-90deg); /** Current line must be removed after chevron icon added **/
     margin-right: 5px;
+}
+
+/*"Reset protection lists on this site" block on Protection lists page*/
+.list-item .list-item-control.reset-protection-lists_btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    justify-content: center;
+}
+.list-item .list-item-control.reset-protection-lists_btn:hover {
+    background-color: rgba(0,0,0,0.06);
+}
+.list-item .list-item-control.reset-protection-lists_btn > img {
+    -webkit-transform: none;
+    -moz-transform: none;
+    -ms-transform: none;
+    -o-transform: none;
+    transform: none;
+    margin-right: 0;
 }
 
 
