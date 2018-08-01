@@ -466,6 +466,15 @@ body:not(.protection-off) .protection-status-off {
 .protection-off #protection_status_btn {
     background-color: rgba(107, 173, 111, 1);
 }
+#protection_status_btn .protection-icon-off {
+    display: none;
+}
+.protection-off #protection_status_btn .protection-icon-on {
+    display: none;
+}
+.protection-off #protection_status_btn .protection-icon-off {
+    display: block;
+}
 
 
 
@@ -1024,6 +1033,9 @@ body.system-page #protection_lists_page .fixed-action-btn .btn-floating i.materi
 .cosmetic-rule:not(.cosmetic-rule__whitelisted) .cosmetic-rule_visible-icon {
     display: none;
 }
+.cosmetic-rule .cosmetic-rule_visible-icon {
+    margin-left: 1px;
+}
 .cosmetic-rule_btn {
     width: 36px;
     height: 36px;
@@ -1033,9 +1045,19 @@ body.system-page #protection_lists_page .fixed-action-btn .btn-floating i.materi
     align-items: center;
     margin: 0 3px;
 }
-.cosmetic-rule_btn > img {
+.cosmetic-rule_btn > div {
     width: 24px;
     height: 24px;
+}
+.cosmetic-rule_btn svg {
+    opacity: .56;
+}
+.cosmetic-rule:hover .cosmetic-rule_raw {
+    color: #1b79ae;
+}
+.cosmetic-rule:hover .cosmetic-rule_btn svg {
+    fill: #1b79ae;
+    opacity: 1;
 }
 
 

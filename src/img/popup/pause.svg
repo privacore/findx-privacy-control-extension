@@ -1,0 +1,27 @@
+<svg id="gzm0216-skip-back" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #565d64;
+      }
+
+      .cls-3 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="_x36_4px_boxes">
+    <rect id="Rectangle_216" data-name="Rectangle 216" class="cls-1" width="24" height="24"/>
+  </g>
+  <g id="Production" transform="translate(5.875 4.125)">
+    <g id="Group_216" data-name="Group 216">
+      <path id="Path_216" data-name="Path 216" class="cls-2" d="M13,26h5.625V11H13Zm1.875-13.125H16.75v11.25H14.875Z" transform="translate(-13 -11)"/>
+      <path id="Path_600" data-name="Path 600" class="cls-3" d="M13,26h5.625V11H13Zm1.875-13.125H16.75v11.25H14.875Z" transform="translate(-13 -11)"/>
+      <path id="Path_601" data-name="Path 601" class="cls-3" d="M13,26h5.625V11H13Zm1.875-13.125H16.75v11.25H14.875Z" transform="translate(-6.25 -11)"/>
+    </g>
+  </g>
+</svg>
