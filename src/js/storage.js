@@ -1660,13 +1660,13 @@
         }
     }
 
-    // Remove all cosmetic rules for this domain from "My filters" filter
-    this.rmFromUserFilters(null, domain, function () {
-        if (callback) callback();
-    });
-
     vAPI.storage.set({ 'availableFilterLists': this.availableFilterLists }, function() {
         µBlock.selfieManager.destroy(0);
+
+        // Remove all cosmetic rules for this domain from "My filters" filter
+        µBlock.rmFromUserFilters(null, domain, function () {
+            if (callback) callback();
+        });
     });
 };
 
