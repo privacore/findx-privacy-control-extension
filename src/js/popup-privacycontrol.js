@@ -133,7 +133,8 @@
 
     var initializeTooltips = function () {
         // Whitelist buttons (shield icon and floating button in Protection tab)
-        M.Tooltip.init(document.querySelector("#protection_status_btn"), {enterDelay: 300});
+        M.Tooltip.init(document.querySelector("#protection_status_btn .protection-icon-on"), {enterDelay: 300});
+        M.Tooltip.init(document.querySelector("#protection_status_btn .protection-icon-off"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector("#pause_site_btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".element-picker-btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".user-filters-btn"), {enterDelay: 300});
@@ -298,6 +299,9 @@
     var openPage = function (pageId) {
         $(".page").removeClass('active');
         $("#" + pageId).addClass('active');
+
+        // Hide all tooltips
+        $('.material-tooltip').css('opacity', 0);
     };
 
     /***************************************************************************/
@@ -550,12 +554,11 @@
     /***************************************************************************/
 
     var showWhitelistStatus = function () {
-        let status = (popupData.pageURL === '' || !popupData.netFilteringSwitch);
+        var status = (popupData.pageURL === '' || !popupData.netFilteringSwitch);
         $('body').toggleClass('protection-off', status);
 
-        $("#protection_status_btn, #pause_site_btn").attr('data-tooltip', status ?
+        $("#pause_site_btn").attr('data-tooltip', status ?
             vAPI.i18n('popupTipStartOnSite') : vAPI.i18n('popupTipPauseOnSite'));
-        M.Tooltip.init($("#protection_status_btn")[0], {enterDelay: 300});
         M.Tooltip.init($("#pause_site_btn")[0], {enterDelay: 300});
     };
 
@@ -1314,6 +1317,8 @@
         });
 
         onUserCosmeticRuleUpdated();
+        // Hide tooltip
+        $('.material-tooltip').css('opacity', 0);
         this.destroy();
     };
 
