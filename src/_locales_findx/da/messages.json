@@ -404,7 +404,7 @@
     "description": "'My filters' page in a popup"
   },
   "popupResetProtectionListsTitle":{
-    "message": "Nulstil beskyttelseslister for dette websted",
+    "message": "Brug standardindstillinger for dette websted",
     "description": "'"
   },
   "popupResetProtectionListsSubTitle":{
@@ -548,7 +548,7 @@
     "description":"Settings Protection tab page"
   },
   "3pFiltersListColDefault":{
-    "message":"Standard til/fra",
+    "message":"Std. til/fra",
     "description":"Settings Protection tab page"
   },
   "3pFiltersListColName":{
@@ -564,7 +564,7 @@
     "description":"Settings Protection tab page"
   },
   "3pAddSubscriptionBtn":{
-    "message":"Tilføj filter abonnement",
+    "message":"Tilføj filter-abonnement",
     "description":"Settings Protection tab page"
   },
   "3pAddSubscriptionTitle":{
@@ -588,11 +588,11 @@
     "description":"Settings Protection tab page"
   },
   "dashbTeaserTitle":{
-    "message":"Synes du det er svært at beskytte dig selv?",
+    "message":"Synes du det er svært at beskytte dit privatliv online?",
     "description":"Settings Protection tab page"
   },
   "dashbTeaserLine1":{
-    "message":"Føler du dig i kontrol?",
+    "message":"Føler du at du har fuld kontrol?",
     "description":"Settings Protection tab page"
   },
   "dashbTeaserLine2":{
@@ -604,7 +604,7 @@
     "description":"Settings Protection tab page"
   },
   "dashbTeaserLinkFindOut":{
-    "message":"Se hvad folk gør for at undgå adfærdsmæssing sporing",
+    "message":"Se hvad folk gør for at undgå adfærdsmæssig sporing på nettet.",
     "description":"Settings Protection tab page"
   },
   "1pFormatHint": {
