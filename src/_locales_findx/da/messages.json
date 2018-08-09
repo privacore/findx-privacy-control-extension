@@ -67,10 +67,6 @@
     "message": "Findx Privatlivskontrol",
     "description": ""
   },
-  "searchInputPlaceholder":{
-    "message": "Søg her... helt privat.",
-    "description": ""
-  },
   "popupSearchInputPlaceholder":{
     "message": "Søg her... helt privat.",
     "description": ""
@@ -123,6 +119,10 @@
     "message": "Vælg element",
     "description": ""
   },
+  "popupTipUserFilters":{
+    "message": "Mine filtre",
+    "description": ""
+  },
   "popupTipManageLists":{
     "message": "Administrer lister",
     "description": ""
@@ -151,6 +151,22 @@
     "message": "Slet alle cookies",
     "description": ""
   },
+  "popupTipDelRule":{
+    "message": "Slet regel",
+    "description": ""
+  },
+  "popupTipViewEl":{
+    "message": "Vis element",
+    "description": ""
+  },
+  "popupTipHideEl":{
+    "message": "Skjul element",
+    "description": ""
+  },
+  "popupTipStrictBlocking":{
+    "message": "Bloker adgang til websted",
+    "description": ""
+  },
   "popupCookiesPlateTitle":{
     "message": "Cookies fra",
     "description": ""
@@ -169,6 +185,14 @@
   },
   "popupCookiesWhitelist":{
     "message": "Whitelist",
+    "description": ""
+  },
+  "popupCookiesBlacklistDomain":{
+    "message": "Blacklist domæne",
+    "description": ""
+  },
+  "popupCookiesWhitelistDomain":{
+    "message": "Whitelist domæne",
     "description": ""
   },
   "popupCookieDetailsName":{
@@ -205,6 +229,10 @@
   },
   "popupCookieDetailsExpiresSession":{
     "message": "Når browsersessionen slutter",
+    "description": ""
+  },
+  "popupCookiesSettingsListTitle":{
+    "message": "Indstillinger der beskytter dig på alle websteder",
     "description": ""
   },
   "popupCookiesThirdPartyTitle":{
@@ -247,8 +275,12 @@
     "message": "Du kan ændre flere avancerede muligheder under 'Indstillinger'",
     "description": ""
   },
-  "popupCookieControlSitesTitle":{
+  "popupCookiesAllSitesPageTitle":{
     "message": "Websteder med cookies sat",
+    "description": ""
+  },
+  "popupCookieControlSitesTitle":{
+    "message": "Alle websteder med cookies sat",
     "description": ""
   },
   "popupCookieControlSitesSubTitle":{
@@ -359,16 +391,28 @@
     "message": "Bedøm denne browserudviddelse",
     "description": ""
   },
+  "popupUserFiltersPageTitle":{
+    "message": "Mine filtre på dette websted",
+    "description": "'My filters' page in a popup"
+  },
+  "popupUserFiltersContentTitle":{
+    "message": "Filter-regler oprettet på dette websted",
+    "description": "'My filters' page in a popup"
+  },
+  "popupUserFiltersContentSubTitle":{
+    "message": "Du kan tilføje dine egne regler ved at bruge ikonet med lynet, og vælge de elementer du vil skjule.",
+    "description": "'My filters' page in a popup"
+  },
+  "popupResetProtectionListsTitle":{
+    "message": "Nulstil beskyttelseslister for dette websted",
+    "description": "'"
+  },
+  "popupResetProtectionListsSubTitle":{
+    "message": "Klik her for at bruge standardindstillingerne",
+    "description": "'"
+  },
   "docBlockedTabTitle":{
     "message": "Blokeret af Findx privatlivskontrol",
-    "description": "Document blocked page"
-  },
-  "docBlockedStatusbar":{
-    "message": "Blokeret af Findx privatlivskontrol",
-    "description": "Document blocked page"
-  },
-  "docBlockedHeader":{
-    "message": "Beskyttelse er aktiveret",
     "description": "Document blocked page"
   },
   "docBlockedContentHeaderTitle":{
@@ -411,6 +455,78 @@
     "message": "afbryd",
     "description": "Document blocked page"
   },
+  "dashbPageTitle":{
+    "message": "Findx privatlivskontrol valg",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbHeader":{
+    "message": "Privatlivskontrol",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabProtection":{
+    "message": "Beskyttelseslister",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabMyFilter":{
+    "message": "Mine beskyttelseslister",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabMyRules":{
+    "message": "Mine detaljerede regler",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabWhitelist":{
+    "message": "Min whitelist",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabSettings":{
+    "message": "Indstillinger",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbFooterTitle":{
+    "message": "Indhold på denne side",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterBy":{
+    "message": "af",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterPrivacore":{
+    "message": "Privacore",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterLicensedUnder":{
+    "message": "er licenseret under en ",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterLicenseName":{
+    "message": "Creative Commons Attribution-ShareAlike 4.0 International Licens",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterBasedOn":{
+    "message": "Baseret på arbejde af",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterPermissions":{
+    "message": "Tilladelser ud over anvendelsesområdet for denne licens kan være tilgængelige på",
+    "description": "Dashboard (settings) page footer"
+  },
+  "3pPageTitle":{
+    "message": "Findx privatlivskontrol - Beskyttelseslister",
+    "description": "Settings Protection tab page"
+  },
+  "3pHeaderTitle":{
+    "message": "Beskyttelseslister",
+    "description": "Settings Protection tab page"
+  },
+  "3pHeaderText":{
+    "message": "Vælg kun de lister du behøver. For mange kan gøre din browser langsom.",
+    "description": "Settings Protection tab page"
+  },
+  "3pHeaderTextUpdatedPeriodically":{
+    "message": "Forældede lister opdateres periodisk.",
+    "description": "Settings Protection tab page"
+  },
   "3pParseAllABPHideFiltersInfo": {
     "message": "<p>Denne indstilling gør det muligt at analysere og anvende <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Ablock Plus kompatible &ldquo;element skjuldende&rdquo; filtre<\/a>. Disse filtre er essentielt set kosmetiske og har til formål at skjule irriterende visuelle elementer på diverse websider, som det ikke er muligt at blokere på andre måder. <\/p><p>Denne indstilling øger Findx Privatlivskontrols hukommelsesforbrug.<\/p>",
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
@@ -422,6 +538,74 @@
   "3pExternalListsHint": {
     "message": "En URL pr. linje. Linjer der starter med &lsquo;!&rsquo; bliver ignoreret. Ugyldige URL'er bliver lydløst ignoreret.",
     "description": "English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+  },
+  "3pFiltersListColDelete":{
+    "message":"Slet",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColInUse":{
+    "message":"I brug",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColDefault":{
+    "message":"Standard til/fra",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColName":{
+    "message":"Navn",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColGroup":{
+    "message":"Gruppe",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColUpdate":{
+    "message":"Seneste opdatering",
+    "description":"Settings Protection tab page"
+  },
+  "3pAddSubscriptionBtn":{
+    "message":"Tilføj filter abonnement",
+    "description":"Settings Protection tab page"
+  },
+  "3pAddSubscriptionTitle":{
+    "message":"Vælg filteret der skal abonneres på fra listen:",
+    "description":"Settings Protection tab page"
+  },
+  "3pAddBtn":{
+    "message":"Tilføj",
+    "description":"Settings Protection tab page"
+  },
+  "3pCustomSubscrTitle":{
+    "message":"Navn",
+    "description":"Settings Protection tab page"
+  },
+  "3pCustomSubscrGroup":{
+    "message":"Gruppe",
+    "description":"Settings Protection tab page"
+  },
+  "3pCustomSubscrLocation":{
+    "message":"Placering",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserTitle":{
+    "message":"Synes du det er svært at beskytte dig selv?",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserLine1":{
+    "message":"Føler du dig i kontrol?",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserLine2":{
+    "message":"Er det svært for dig at undgå online sporing?",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserLine3":{
+    "message":"Har du værktøjer til at undgå sporing online?",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserLinkFindOut":{
+    "message":"Se hvad folk gør for at undgå adfærdsmæssing sporing",
+    "description":"Settings Protection tab page"
   },
   "1pFormatHint": {
     "message": "Ét filter pr. linje. Et filter kan være et almindeligt værtsnavn, eller et Adblock Plus-kompatibelt filter. Linjer der starter med &lsquo;!&rsquo; vil blive ignoreret.",
@@ -442,6 +626,42 @@
   "whitelistExportFilename": {
     "message": "min-privatlivskontrol-whitelist_{{datetime}}.txt",
     "description": "English: my-ublock-whitelist_{{datetime}}.txt"
+  },
+  "settingsCookies" : {
+    "message": "Cookies",
+    "description": ""
+  },
+  "settingsCookiesClearOnTabClose" : {
+    "message": "Slet domæincookies når tab lukkes",
+    "description": ""
+  },
+  "settingsCookiesThirdParty" : {
+    "message": "Blokering af tredjeparts-cookies",
+    "description": ""
+  },
+  "settingsCookiesPeriodical" : {
+    "message": "Slet cookies periodisk hver",
+    "description": ""
+  },
+  "settingsCookiesPeriodicalTime" : {
+    "message": "min",
+    "description": ""
+  },
+  "settingsCookiesBrowserStart" : {
+    "message": "Slet cookies når browser startes",
+    "description": ""
+  },
+  "settingsBackupToFile" : {
+    "message": "backup til fil",
+    "description": ""
+  },
+  "settingsRestoreFromFile" : {
+    "message": "gendan fra fil",
+    "description": ""
+  },
+  "settingsResetDefault" : {
+    "message": "brug standard indstillingerne",
+    "description": ""
   },
   "aboutBackupFilename": {
     "message": "min-privatlivskontrol-sikkerhedskopi_{{datetime}}.txt",
@@ -638,5 +858,53 @@
   "onbFooterCustomAfterSettings":{
     "message":".",
     "description":"Onboarding Custom page footer. Text after 'settings menu' row"
+  },
+  "remLoginTitle":{
+    "message":"Husk login",
+    "description":"Remember login popup inserted to a page"
+  },
+  "remLoginText":{
+    "message":"Beskyt domænecookies for at undgå at login information slettes for denne service.",
+    "description":"Remember login popup inserted to a page"
+  },
+  "remLoginFloatingBtnTip":{
+    "message":"Whitelist domæner",
+    "description":"Remember login popup inserted to a page"
+  },
+  "remLoginNotNowBtn":{
+    "message":"Ikke nu",
+    "description":"Remember login popup inserted to a page"
+  },
+  "remLoginDontAskBtn":{
+    "message":"Spørg ikke igen",
+    "description":"Remember login popup inserted to a page"
+  },
+  "nudgingSearchPrivately":{
+    "message":"Søg helt privat via Findx",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingGoogleActivityCheck":{
+    "message":"SE HVAD GOOGLE VED OM DIG",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuMinimize":{
+    "message":"Minimer",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuGActivity":{
+    "message":"Din Google aktivitet",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuSettings":{
+    "message":"Avancerede indstillinger",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuAbout":{
+    "message":"Om Findx",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingDynamicText1":{
+    "message":"Intet at skjule - overhovedet?",
+    "description":"Nudging popup displays randomly one of these texts"
   }
 }
