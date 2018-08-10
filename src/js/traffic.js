@@ -1362,6 +1362,14 @@ exports.temporarilyWhitelistDocument = function(hostname) {
 
 /******************************************************************************/
 
+exports.rmTemporarilyWhitelistDocument = function (hostname) {
+    if (documentWhitelists[hostname]) {
+        delete documentWhitelists[hostname];
+    }
+};
+
+/******************************************************************************/
+
 return exports;
 
 /******************************************************************************/
