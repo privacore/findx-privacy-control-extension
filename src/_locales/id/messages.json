@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "uBlock₀",
+    "message": "uBlock Origin",
     "description": "extension name."
   },
   "extShortDesc": {
@@ -29,6 +29,10 @@
   },
   "whitelistPageName": {
     "message": "Daftar Putih",
+    "description": "appears as tab name in dashboard"
+  },
+  "shortcutsPageName": {
+    "message": "Pintasan",
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
@@ -352,7 +356,7 @@
     "description": "English: Apply changes"
   },
   "3pGroupDefault": {
-    "message": "Lokal",
+    "message": "Bawaan",
     "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
@@ -584,8 +588,12 @@
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringFinderSentence1": {
-    "message": "Filter statis {{filter}} ditemukan di dalam:",
-    "description": "Below this sentence, the filter lists in which the filter was found"
+    "message": "Filter statis <code>{{filter}}<\/code> ditemukan di dalam:",
+    "description": "Below this sentence, the filter list(s) in which the filter was found"
+  },
+  "loggerStaticFilteringFinderSentence2": {
+    "message": "Static filter <code>{{filter}}<\/code> could not be found in any of the currently enabled filter lists",
+    "description": "Message to show when a filter cannot be found in any filter lists"
   },
   "aboutChangelog": {
     "message": "Catatan perubahan",
@@ -598,6 +606,10 @@
   "aboutSupport": {
     "message": "Dukungan",
     "description": "A link for where to get support"
+  },
+  "aboutIssues": {
+    "message": "Pelacak masalah",
+    "description": "Text for a link to official issue tracker"
   },
   "aboutCode": {
     "message": "Kode sumber (GPLv3)",
@@ -758,6 +770,10 @@
   "contextMenuTemporarilyAllowLargeMediaElements": {
     "message": "Sementara izinkan elemen media besar",
     "description": "A context menu entry, present when large media elements have been blocked on the current site"
+  },
+  "shortcutCapturePlaceholder": {
+    "message": "Ketik pintasan",
+    "description": "Placeholder string for input field used to capture a keyboard shortcut"
   },
   "dummy": {
     "message": "Entri ini harus menjadi yang terakhir",

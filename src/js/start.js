@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2018 Raymond Hill
+    Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -104,6 +104,17 @@ var onPSLReady = function() {
 
 /******************************************************************************/
 
+var onCommandShortcutsReady = function(commandShortcuts) {
+    if ( Array.isArray(commandShortcuts) === false ) { return; }
+    µb.commandShortcuts = new Map(commandShortcuts);
+    if ( µb.canUpdateShortcuts === false ) { return; }
+    for ( let entry of commandShortcuts ) {
+        vAPI.commands.update({ name: entry[0], shortcut: entry[1] });
+    }
+};
+
+/******************************************************************************/
+
 // To bring older versions up to date
 
 var onVersionReady = function(lastVersion) {
@@ -201,7 +212,7 @@ var onUserSettingsReady = function(fetched) {
     // https://github.com/gorhill/uBlock/issues/1892
     // For first installation on a battery-powered device, disable generic
     // cosmetic filtering.
-    if ( µb.firstInstall && vAPI.battery ) {
+    if ( µb.firstInstall && vAPI.webextFlavor.soup.has('mobile') ) {
         userSettings.ignoreGenericCosmeticFilters = true;
     }
 };
@@ -229,7 +240,7 @@ var onSystemSettingsReady = function(fetched) {
 /******************************************************************************/
 
     /**
-     * Igor. Current method used for updating data if some large changes made from previous version.
+     * Findx. Current method used for updating data if some large changes made from previous version.
      */
     var checkFiltersListsSources = function (callback) {
         try {
@@ -292,7 +303,6 @@ var onSystemSettingsReady = function(fetched) {
 var onFirstFetchReady = function(fetched) {
     // https://github.com/gorhill/uBlock/issues/747
     µb.firstInstall = fetched.version === '0.0.0.0';
-
     checkFiltersListsSources(function () {
         // Order is important -- do not change:
         onSystemSettingsReady(fetched);
@@ -306,6 +316,7 @@ var onFirstFetchReady = function(fetched) {
 
         onNetWhitelistReady(fetched.netWhitelist);
         onVersionReady(fetched.version);
+        onCommandShortcutsReady(fetched.commandShortcuts);
 
         µb.loadPublicSuffixList(onPSLReady);
         µb.loadRedirectResources();
@@ -347,6 +358,7 @@ var fromFetch = function(to, fetched) {
 
 var onSelectedFilterListsLoaded = function() {
     var fetchableProps = {
+        'commandShortcuts': [],
         'compiledMagic': '',
         'dynamicFilteringString': [
             'behind-the-scene * * noop',

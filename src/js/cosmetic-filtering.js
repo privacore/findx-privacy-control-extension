@@ -27,47 +27,16 @@
 
 /******************************************************************************/
 
-var µb = µBlock;
-var cosmeticSurveyingMissCountMax = parseInt(vAPI.localStorage.getItem('cosmeticSurveyingMissCountMax'), 10) || 15;
+let µb = µBlock;
+let cosmeticSurveyingMissCountMax =
+    parseInt(vAPI.localStorage.getItem('cosmeticSurveyingMissCountMax'), 10) ||
+    15;
 
-/******************************************************************************/
-/*
-var histogram = function(label, buckets) {
-    var h = [],
-        bucket;
-    for ( var k in buckets ) {
-        if ( buckets.hasOwnProperty(k) === false ) {
-            continue;
-        }
-        bucket = buckets[k];
-        h.push({
-            k: k,
-            n: bucket instanceof FilterBucket ? bucket.filters.length : 1
-        });
-    }
-
-    console.log('Histogram %s', label);
-
-    var total = h.length;
-    h.sort(function(a, b) { return b.n - a.n; });
-
-    // Find indices of entries of interest
-    var target = 3;
-    for ( var i = 0; i < total; i++ ) {
-        if ( h[i].n === target ) {
-            console.log('\tEntries with only %d filter(s) start at index %s (key = "%s")', target, i, h[i].k);
-            target -= 1;
-        }
-    }
-
-    h = h.slice(0, 50);
-
-    h.forEach(function(v) {
-        console.log('\tkey="%s" count=%d', v.k, v.n);
-    });
-    console.log('\tTotal buckets count: %d', total);
-};
-*/
+let supportsUserStylesheets = vAPI.webextFlavor.soup.has('user_stylesheet');
+// https://www.reddit.com/r/uBlockOrigin/comments/8dkvqn/116_broken_loading_custom_filters_from_my_filters/
+window.addEventListener('webextFlavor', function() {
+    supportsUserStylesheets = vAPI.webextFlavor.soup.has('user_stylesheet');
+}, { once: true });
 
 /*******************************************************************************
 
@@ -78,127 +47,297 @@ var histogram = function(label, buckets) {
 
 **/
 
-var filterClasses = [];
+let filterClasses = [];
 
-var registerFilterClass = function(ctor) {
+let registerFilterClass = function(ctor) {
     filterClasses[ctor.prototype.fid] = ctor;
 };
 
-var filterFromCompiledData = function(args) {
+let filterFromCompiledData = function(args) {
     return filterClasses[args[0]].load(args);
 };
 
 /******************************************************************************/
 
-// Any selector specific to a hostname
-// Examples:
-//   search.snapdo.com###ABottomD
-//   facebook.com##.-cx-PRIVATE-fbAdUnit__root
-//   sltrib.com###BLContainer + div[style="height:90px;"]
-//   myps3.com.au##.Boxer[style="height: 250px;"]
-//   lindaikeji.blogspot.com##a > img[height="600"]
-//   japantimes.co.jp##table[align="right"][width="250"]
-//   mobilephonetalk.com##[align="center"] > b > a[href^="http://tinyurl.com/"]
+// One hostname => one selector
 
-var FilterHostname = function (s, hostname, filters, filterPath) {
-    this.s = s;
+let FilterOneOne = function(hostname, selector, filterName) {
     this.hostname = hostname;
-    this.filterPath = filterPath || "";
-    this.filters = filters || {};
+    this.selector = selector;
+    this.filterName = filterName;
 };
 
-FilterHostname.prototype.fid = 8;
+FilterOneOne.prototype = {
+    fid: 8,
 
-FilterHostname.prototype.retrieve = function(hostname, out) {
-    if ( hostname.endsWith(this.hostname) === false ) { return; }
+    // Since this class can hold only one single selector, adding a new
+    // hostname-selector requires to morph the filter instance into a
+    // better-suited class.
+    add: function(hostname, selector, filterName) {
+        if ( hostname === this.hostname ) {
+            return new FilterOneMany(
+                this.hostname,
+                [ this.selector, selector ],
+                [[this.selector, this.filterName], [selector, filterName]]
+            );
+        }
+        return new FilterManyAny([
+                [ this.hostname, this.selector ],
+                [ hostname, selector ]
+            ],
+            [
+                [this.hostname, {[this.selector]: [this.filterName]}],
+                [hostname, {[selector]: [filterName]}]
+            ]
+        );
+    },
 
-    if (µb.isDomainInExceptions(this.filterPath, this.hostname)) {
-        if (µb.isBlockedForDomain(this.filterPath, this.hostname) === false)
+    retrieve: function(target, out) {
+        if ( target.endsWith(this.hostname) === false ) { return; }
+
+        if (isFilterBlockedOnHost(this.hostname, this.filterName))
             return;
+
+        // User Filter rules can be enabled/disabled from a popup. So if rule is disabled (whitelisted)
+        //      we don't need to hide it on a page.
+        if (this.filterName === µb.userFiltersPath &&
+            µb.isUserCosmeticRuleWhitelisted(this.selector, µb.URI.domainFromHostname(this.hostname)))
+            return;
+
+        let i = target.length - this.hostname.length;
+        if ( i !== 0 && target.charCodeAt(i-1) !== 0x2E /* '.' */ ) { return; }
+        out.add(this.selector);
+    },
+
+    compile: function() {
+        return [ this.fid, this.hostname, this.selector, this.filterName ];
     }
-    // When some element added to "My filters" list - page hostname used but not root domain
-    // But if user adds domain to exceptions - root domain used. In this case if domain is in exceptions
-    //      or filter is in exceptions for this domain we need to check a ful hostname and a root domain.
-    // Example: on hostname www.bt.dk used element picker. When "My filters" disabled for this domain -
+};
+
+FilterOneOne.load = function(data) {
+    return new FilterOneOne(data[1], data[2], data[3]);
+};
+
+registerFilterClass(FilterOneOne);
+
+/******************************************************************************/
+
+// One hostname => many selectors
+
+let FilterOneMany = function(hostname, selectors, filters) {
+    this.hostname = hostname;
+    this.selectors = selectors;
+
+    // Findx. Map( selector => filterName )
+    this.filters = new Map(filters);
+};
+
+FilterOneMany.prototype = {
+    fid: 9,
+
+    // Since this class can hold selectors for only one specific hostname,
+    // adding a new hostname will require to morph the filter instance into a
+    // better-suited class.
+    add: function(hostname, selector, filterName) {
+        if ( hostname === this.hostname ) {
+            this.selectors.push(selector);
+
+            // Findx
+            this.filters.set(selector, filterName);
+            return this;
+        }
+
+        // Construct array of data for creating a Map object in a FilterManyAny
+        // Map ( hostname => { selector: [filterName...] } )
+        let filters = [];
+        let selectors = {};
+        for( let entry of this.filters.entries()) {
+            if (selectors.hasOwnProperty(entry[0])) {
+                selectors[entry[0]].push(entry[1]);
+            }
+            else {
+                selectors[entry[0]] = [entry[1]];
+            }
+        }
+        filters.push([this.hostname, selectors]);
+        filters.push([hostname, {[selector]: [filterName]}]);
+
+        return new FilterManyAny([
+                [ this.hostname, this.selectors ],
+                [ hostname, selector ]
+            ],
+            filters
+        );
+    },
+
+    retrieve: function(target, out) {
+        if ( target.endsWith(this.hostname) === false ) { return; }
+        let i = target.length - this.hostname.length;
+        if ( i !== 0 && target.charCodeAt(i-1) !== 0x2E /* '.' */ ) { return; }
+
+        for ( let selector of this.selectors ) {
+            let filterName = this.filters.get(selector);
+            if (isFilterBlockedOnHost(this.hostname, filterName)) { continue; }
+            // Findx. User Filter rules can be enabled/disabled from a popup. So if rule is disabled (whitelisted)
+            //      we don't need to hide it on a page.
+            if (filterName === µb.userFiltersPath &&
+                µb.isUserCosmeticRuleWhitelisted(selector, µb.URI.domainFromHostname(this.hostname)))
+            {
+                continue;
+            }
+
+            out.add(selector);
+        }
+    },
+
+    compile: function() {
+        return [ this.fid, this.hostname, this.selectors, Array.from(this.filters) ];
+    }
+};
+
+FilterOneMany.load = function(data) {
+    return new FilterOneMany(data[1], data[2], data[3]);
+};
+
+registerFilterClass(FilterOneMany);
+
+/******************************************************************************/
+
+// Many hostnames => one or many selectors
+
+let FilterManyAny = function(entries, filters) {
+    this.entries = new Map(entries);
+    //Findx. hostname => { selector : [filterName...] }
+    this.filters = new Map(filters);
+};
+
+FilterManyAny.prototype = {
+    fid: 10,
+
+    add: function(hostname, selector, filterName) {
+        let selectors = this.entries.get(hostname);
+        if ( selectors === undefined ) {
+            this.entries.set(hostname, selector);
+            this.filters.set(hostname, {[selector]: [filterName]});
+        } else {
+            let hostFilters = this.filters.get(hostname);
+            if (hostFilters.hasOwnProperty(selector)) {
+                hostFilters[selector].push(filterName);
+            }
+            else {
+                hostFilters[selector] = [filterName];
+            }
+
+            if ( typeof selectors === 'string' ) {
+                this.entries.set(hostname, [ selectors, selector ]);
+            } else {
+                selectors.push(selector);
+            }
+        }
+    },
+
+    retrieve: function(target, out) {
+        for ( let entry of this.entries ) {
+            let hostname = entry[0];
+            if ( target.endsWith(hostname) === false ) { continue; }
+            let i = target.length - hostname.length;
+            if ( i !== 0 && target.charCodeAt(i-1) !== 0x2E /* '.' */ ) {
+                continue;
+            }
+            let selectors = entry[1];
+            if ( typeof selectors === 'string' ) {
+                if (!this.isSelectorBlocked(hostname, selectors)) {
+                    out.add(selectors);
+                }
+                continue;
+            }
+            for ( let selector of selectors ) {
+                if (!this.isSelectorBlocked(hostname, selector))
+                    out.add(selector);
+            }
+        }
+    },
+
+    compile: function() {
+        return [ this.fid, Array.from(this.entries), Array.from(this.filters) ];
+    }
+};
+
+/**
+ * Findx.
+ * If several filters contain this selector, we check if at least one of the filters is enabled for the domain.
+ * If at least one of them is enabled, the selector must be used (block element on a page).
+ * If none of them are enabled for a domain (default off, or is in whitelist), then we skip this selector
+ *      and do not use it on the page.
+ * @param {string} hostname
+ * @param {string} selector
+ * @returns {boolean} - true: whole filter or only this selector is in exceptions (default off/whitelisted) for this hostname,
+ *                                              so we don't use it on a page and don't hide elements with such selector
+ *                                    false: filter and rule is in normal state, element with this selector must be hdden on a page
+ */
+FilterManyAny.prototype.isSelectorBlocked = function (hostname, selector) {
+    let filterNames = this.filters.get(hostname)[selector];
+    let isBlocked = true;
+    for (let filterName of filterNames) {
+        if (!isFilterBlockedOnHost(hostname, filterName)) {
+            if (filterName === µb.userFiltersPath) {
+                if (!µb.isUserCosmeticRuleWhitelisted(selector, µb.URI.domainFromHostname(hostname))) {
+                    isBlocked = false;
+                    break;
+                }
+            }
+            else {
+                isBlocked = false;
+                break;
+            }
+        }
+    }
+
+    return isBlocked;
+};
+
+FilterManyAny.load = function(data) {
+    return new FilterManyAny(data[1], data[2]);
+};
+
+registerFilterClass(FilterManyAny);
+
+/******************************************************************************/
+/******************************************************************************/
+
+/**
+ * Findx.
+ * We check whether this filter works on this domain, or it is blocked.
+ * Both the case when filter stops working for a certain domain, and general blocking of a filter are checked (default off)
+ * @param hostname - hostname of rule (FilterOneOne, FilterOneMany, FilterManyAny)
+ * @param filterName - filter name of checked rule (selector)
+ * @returns {boolean} - true: blocked (don't used on this domain)
+ *                                    false: not blocked (used on this domain)
+ */
+let isFilterBlockedOnHost = function (hostname, filterName) {
+    if (µb.isDomainInExceptions(filterName, hostname)) {
+        if (µb.isBlockedForDomain(filterName, hostname) === false)
+            return true;
+    }
+    // Whenever a DOM Element is added to "My filters", full hostname is used, not root domain.
+    // However, when a user adds a domain (pause) or a filter (whitelist/blacklist) to exceptions, then root domain is used.
+    // Due to this, we check both full hostname and root domain here.
+    // Example: on hostname www.bt.dk was used element picker. When "My filters" disabled for this domain -
     //      bt.dk domain will be used.
-    else if (µb.isDomainInExceptions(this.filterPath, µb.URI.domainFromHostname(this.hostname))) {
-        if (µb.isBlockedForDomain(this.filterPath, µb.URI.domainFromHostname(this.hostname)) === false)
-            return;
+    else if (µb.isDomainInExceptions(filterName, µb.URI.domainFromHostname(hostname))) {
+        if (µb.isBlockedForDomain(filterName, µb.URI.domainFromHostname(hostname)) === false)
+            return true;
     }
-    else if (µb.isDefaultOff(this.filterPath))
-        return;
+    else if (µb.isDefaultOff(filterName))
+        return true;
 
-    // User Filter rules can be enabled/disabled from a popup. So if rule is disabled (whitelisted)
-    //      we don't need to hide it on a page.
-    if (this.filterPath === µb.userFiltersPath &&
-            µb.isUserCosmeticRuleWhitelisted(this.s, µb.URI.domainFromHostname(this.hostname)))
-        return;
-
-    var i = hostname.length - this.hostname.length;
-    if ( i === 0 || hostname.charCodeAt(i-1) === 0x2E /* '.' */ ) {
-        out.add(this.s);
-    }
+    return false;
 };
-
-FilterHostname.prototype.compile = function() {
-    return [ this.fid, this.s, this.hostname, this.filterPath ];
-};
-
-FilterHostname.load = function(data) {
-    return new FilterHostname(data[1], data[2], null, data[3]);
-};
-
-registerFilterClass(FilterHostname);
-
-/******************************************************************************/
-
-var FilterBucket = function(a, b, filterPath) {
-    this.f = null;
-    this.filters = [];
-    if ( a !== undefined ) {
-        this.filters[0] = a;
-        this.filters[1] = b;
-    }
-    this.filterPath = filterPath || "";
-};
-
-FilterBucket.prototype.fid = 10;
-
-FilterBucket.prototype.add = function(a) {
-    this.filters.push(a);
-};
-
-FilterBucket.prototype.retrieve = function (s, out, domain) {
-    var i = this.filters.length;
-    while (i--) {
-        this.filters[i].retrieve(s, out, domain);
-    }
-};
-
-FilterBucket.prototype.compile = function() {
-    var out = [],
-        filters = this.filters;
-    for ( var i = 0, n = filters.length; i < n; i++ ) {
-        out[i] = filters[i].compile();
-    }
-    return [ this.fid, out, this.filterPath ];
-};
-
-FilterBucket.load = function(data) {
-    var bucket = new FilterBucket(null, null, data[2]),
-        entries = data[1];
-    for ( var i = 0, n = entries.length; i < n; i++ ) {
-        bucket.filters[i] = filterFromCompiledData(entries[i]);
-    }
-    return bucket;
-};
-
-registerFilterClass(FilterBucket);
 
 /******************************************************************************/
 /******************************************************************************/
 
-var SelectorCacheEntry = function() {
+let SelectorCacheEntry = function() {
     this.reset();
 };
 
@@ -206,9 +345,9 @@ var SelectorCacheEntry = function() {
 
 SelectorCacheEntry.junkyard = [];
 
-SelectorCacheEntry.factory = function () {
-    var entry = SelectorCacheEntry.junkyard.pop();
-    if (entry) {
+SelectorCacheEntry.factory = function() {
+    let entry = SelectorCacheEntry.junkyard.pop();
+    if ( entry ) {
         return entry.reset();
     }
     return new SelectorCacheEntry();
@@ -216,152 +355,138 @@ SelectorCacheEntry.factory = function () {
 
 /******************************************************************************/
 
-var netSelectorCacheLowWaterMark = 20;
-var netSelectorCacheHighWaterMark = 30;
+let netSelectorCacheLowWaterMark = 20;
+let netSelectorCacheHighWaterMark = 30;
 
 /******************************************************************************/
 
-SelectorCacheEntry.prototype.reset = function() {
-    this.cosmetic = new Set();
-    this.cosmeticSurveyingMissCount = 0;
-    this.net = new Map();
-    this.lastAccessTime = Date.now();
-    return this;
-};
-
-/******************************************************************************/
-
-SelectorCacheEntry.prototype.dispose = function () {
-    this.cosmetic = this.net = null;
-    if (SelectorCacheEntry.junkyard.length < 25) {
-        SelectorCacheEntry.junkyard.push(this);
-    }
-};
-
-/******************************************************************************/
-
-SelectorCacheEntry.prototype.addCosmetic = function(details) {
-    var selectors = details.selectors,
-        i = selectors.length || 0;
-    // https://github.com/gorhill/uBlock/issues/2011
-    //   Avoiding seemingly pointless surveys only if they appear costly.
-    if ( details.first && i === 0 ) {
-        if ( (details.cost || 0) >= 80 ) {
-            this.cosmeticSurveyingMissCount += 1;
-        }
-        return;
-    }
-    this.cosmeticSurveyingMissCount = 0;
-    while ( i-- ) {
-        this.cosmetic.add(selectors[i]);
-    }
-};
-
-/******************************************************************************/
-
-SelectorCacheEntry.prototype.addNet = function (selectors) {
-    if (typeof selectors === 'string') {
-        this.addNetOne(selectors, Date.now());
-    } else {
-        this.addNetMany(selectors, Date.now());
-    }
-    // Net request-derived selectors: I limit the number of cached selectors,
-    // as I expect cases where the blocked net-requests are never the
-    // exact same URL.
-    if ( this.net.size < netSelectorCacheHighWaterMark ) { return; }
-    var dict = this.net;
-    var keys = µb.arrayFrom(dict.keys()).sort(function(a, b) {
-        return dict.get(b) - dict.get(a);
-    }).slice(netSelectorCacheLowWaterMark);
-    var i = keys.length;
-    while ( i-- ) {
-        dict.delete(keys[i]);
-    }
-};
-
-/******************************************************************************/
-
-SelectorCacheEntry.prototype.addNetOne = function(selector, now) {
-    this.net.set(selector, now);
-};
-
-/******************************************************************************/
-
-SelectorCacheEntry.prototype.addNetMany = function(selectors, now) {
-    var i = selectors.length || 0;
-    while ( i-- ) {
-        this.net.set(selectors[i], now);
-    }
-};
-
-/******************************************************************************/
-
-SelectorCacheEntry.prototype.add = function(details) {
-    this.lastAccessTime = Date.now();
-    if ( details.type === 'cosmetic' ) {
-        this.addCosmetic(details);
-    } else {
-        this.addNet(details.selectors);
-    }
-};
-
-/******************************************************************************/
-
-// https://github.com/chrisaljoudi/uBlock/issues/420
-SelectorCacheEntry.prototype.remove = function (type) {
-    this.lastAccessTime = Date.now();
-    if ( type === undefined || type === 'cosmetic' ) {
-        this.cosmetic.clear();
+SelectorCacheEntry.prototype = {
+    reset: function() {
+        this.cosmetic = new Set();
         this.cosmeticSurveyingMissCount = 0;
-    }
-    if ( type === undefined || type === 'net' ) {
-        this.net.clear();
+        this.net = new Map();
+        this.lastAccessTime = Date.now();
+        return this;
+    },
+
+    dispose: function() {
+        this.cosmetic = this.net = null;
+        if ( SelectorCacheEntry.junkyard.length < 25 ) {
+            SelectorCacheEntry.junkyard.push(this);
+        }
+    },
+
+    addCosmetic: function(details) {
+        let selectors = details.selectors,
+            i = selectors.length || 0;
+        // https://github.com/gorhill/uBlock/issues/2011
+        //   Avoiding seemingly pointless surveys only if they appear costly.
+        if ( details.first && i === 0 ) {
+            if ( (details.cost || 0) >= 80 ) {
+                this.cosmeticSurveyingMissCount += 1;
+            }
+            return;
+        }
+        this.cosmeticSurveyingMissCount = 0;
+        while ( i-- ) {
+            this.cosmetic.add(selectors[i]);
+        }
+    },
+
+    addNet: function(selectors) {
+        if ( typeof selectors === 'string' ) {
+            this.addNetOne(selectors, Date.now());
+        } else {
+            this.addNetMany(selectors, Date.now());
+        }
+        // Net request-derived selectors: I limit the number of cached selectors,
+        // as I expect cases where the blocked net-requests are never the
+        // exact same URL.
+        if ( this.net.size < netSelectorCacheHighWaterMark ) { return; }
+        let dict = this.net;
+        let keys = Array.from(dict.keys()).sort(function(a, b) {
+            return dict.get(b) - dict.get(a);
+        }).slice(netSelectorCacheLowWaterMark);
+        let i = keys.length;
+        while ( i-- ) {
+            dict.delete(keys[i]);
+        }
+    },
+
+    addNetOne: function(selector, now) {
+        this.net.set(selector, now);
+    },
+
+    addNetMany: function(selectors, now) {
+        let i = selectors.length || 0;
+        while ( i-- ) {
+            this.net.set(selectors[i], now);
+        }
+    },
+
+    add: function(details) {
+        this.lastAccessTime = Date.now();
+        if ( details.type === 'cosmetic' ) {
+            this.addCosmetic(details);
+        } else {
+            this.addNet(details.selectors);
+        }
+    },
+
+    // https://github.com/chrisaljoudi/uBlock/issues/420
+    remove: function(type) {
+        this.lastAccessTime = Date.now();
+        if ( type === undefined || type === 'cosmetic' ) {
+            this.cosmetic.clear();
+            this.cosmeticSurveyingMissCount = 0;
+        }
+        if ( type === undefined || type === 'net' ) {
+            this.net.clear();
+        }
+    },
+
+    retrieveToArray: function(iterator, out) {
+        for ( let selector of iterator ) {
+            out.push(selector);
+        }
+    },
+
+    retrieveToSet: function(iterator, out) {
+        for ( let selector of iterator ) {
+            out.add(selector);
+        }
+    },
+
+    retrieve: function(type, out) {
+        this.lastAccessTime = Date.now();
+        let iterator = type === 'cosmetic' ? this.cosmetic : this.net.keys();
+        if ( Array.isArray(out) ) {
+            this.retrieveToArray(iterator, out);
+        } else {
+            this.retrieveToSet(iterator, out);
+        }
     }
 };
 
 /******************************************************************************/
-
-SelectorCacheEntry.prototype.retrieveToArray = function(iterator, out) {
-    for ( var selector of iterator ) {
-        out.push(selector);
-    }
-};
-
-SelectorCacheEntry.prototype.retrieveToSet = function(iterator, out) {
-    for ( var selector of iterator ) {
-        out.add(selector);
-    }
-};
-
-SelectorCacheEntry.prototype.retrieve = function(type, out) {
-    this.lastAccessTime = Date.now();
-    var iterator = type === 'cosmetic' ? this.cosmetic : this.net.keys();
-    if ( Array.isArray(out) ) {
-        this.retrieveToArray(iterator, out);
-    } else {
-        this.retrieveToSet(iterator, out);
-    }
-};
-
-/******************************************************************************/
 /******************************************************************************/
 
-// 0000HHHHHHHHHHHH
-//                |
-//                |
-//                |
-//                +-- bit 11-0 of FNV
+// HHHHHHHHHHHH0000
+//            |   |
+//            |   |
+//            |   +-- bit  3-0: reserved: 0=exception
+//            |                           1=procedural
+//            +------ bit 15-4: FNV
 
-var makeHash = function(token) {
-    // Ref: Given a URL, returns a unique 4-character long hash string
+let makeHash = function(token) {
     // Based on: FNV32a
     // http://www.isthe.com/chongo/tech/comp/fnv/index.html#FNV-reference-source
     // The rest is custom, suited for uBlock.
-    var i1 = token.length;
-    var i2 = i1 >> 1;
-    var i4 = i1 >> 2;
-    var i8 = i1 >> 3;
-    var hval = (0x811c9dc5 ^ token.charCodeAt(0)) >>> 0;
+    let i1 = token.length;
+    let i2 = i1 >> 1;
+    let i4 = i1 >> 2;
+    let i8 = i1 >> 3;
+    let hval = (0x811c9dc5 ^ token.charCodeAt(0)) >>> 0;
         hval += (hval<<1) + (hval<<4) + (hval<<7) + (hval<<8) + (hval<<24);
         hval >>>= 0;
         hval ^= token.charCodeAt(i8);
@@ -385,8 +510,7 @@ var makeHash = function(token) {
         hval ^= token.charCodeAt(i1-1);
         hval += (hval<<1) + (hval<<4) + (hval<<7) + (hval<<8) + (hval<<24);
         hval >>>= 0;
-        hval &= 0x0FFF; // 12 bits
-    return hval.toString(36);
+    return hval & 0xFFF0;
 };
 
 /******************************************************************************/
@@ -407,8 +531,7 @@ var makeHash = function(token) {
 // Generic filters can only be enforced once the main document is loaded.
 // Specific filers can be enforced before the main document is loaded.
 
-var FilterContainer = function() {
-    this.noDomainHash = '-';
+let FilterContainer = function() {
     this.reHasUnicode = /[^\x00-\x7F]/;
     this.rePlainSelector = /^[#.][\w\\-]+/;
     this.rePlainSelectorEscaped = /^[#.](?:\\[0-9A-Fa-f]+ |\\.|\w|-)+/;
@@ -443,8 +566,6 @@ var FilterContainer = function() {
     this.netSelectorCacheCountMax = netSelectorCacheHighWaterMark;
     this.selectorCacheTimer = null;
 
-    this.supportsUserStylesheets = vAPI.supportsUserStylesheets;
-
     // generic exception filters
     this.genericDonthideSet = new Set();
 
@@ -453,7 +574,6 @@ var FilterContainer = function() {
     //       refactoring.
     // hostname, entity-based filters
     this.specificFilters = new Map();
-    this.proceduralFilters = new Map();
 
     // low generic cosmetic filters, organized by id/class then simple/complex.
     this.lowlyGeneric = Object.create(null);
@@ -522,7 +642,6 @@ FilterContainer.prototype.reset = function() {
 
     // hostname, entity-based filters
     this.specificFilters.clear();
-    this.proceduralFilters.clear();
 
     // low generic cosmetic filters, organized by id/class then simple/complex.
     this.lowlyGeneric.id.simple.clear();
@@ -537,12 +656,6 @@ FilterContainer.prototype.reset = function() {
     this.highlyGeneric.complex.dict.clear();
     this.highlyGeneric.complex.str = '';
     this.highlyGeneric.complex.mru.reset();
-
-    // TODO: Igor 16.02.18 Current code was removed. Check if we need it.
-    // this.scriptTagFilters = {};
-    // this.scriptTagFilterCount = 0;
-    // this.userScripts.clear();
-    // this.userScriptCount = 0;
 };
 
     /******************************************************************************/
@@ -559,8 +672,8 @@ FilterContainer.prototype.freeze = function() {
         this.highlyGeneric.complex.dict.size !== 0;
 
     if ( this.genericDonthideSet.size !== 0 ) {
-        for ( var selector of this.genericDonthideSet ) {
-            var type = selector.charCodeAt(0);
+        for ( let selector of this.genericDonthideSet ) {
+            let type = selector.charCodeAt(0);
             if ( type === 0x23 /* '#' */ ) {
                 this.lowlyGeneric.id.simple.delete(selector.slice(1));
             } else if ( type === 0x2E /* '.' */ ) {
@@ -573,8 +686,10 @@ FilterContainer.prototype.freeze = function() {
             this.highlyGeneric.complex.dict.delete(selector);
         }
     }
-    this.highlyGeneric.simple.str = µb.arrayFrom(this.highlyGeneric.simple.dict).join(',\n');
-    this.highlyGeneric.complex.str = µb.arrayFrom(this.highlyGeneric.complex.dict).join(',\n');
+    this.highlyGeneric.simple.str = Array.from(this.highlyGeneric.simple.dict).join(',\n');
+    this.highlyGeneric.simple.mru.reset();
+    this.highlyGeneric.complex.str = Array.from(this.highlyGeneric.complex.dict).join(',\n');
+    this.highlyGeneric.complex.mru.reset();
 
     this.frozen = true;
 };
@@ -587,16 +702,16 @@ FilterContainer.prototype.freeze = function() {
 //   It's an uncommon case, so it's best to unescape only when needed.
 
 FilterContainer.prototype.keyFromSelector = function(selector) {
-    var matches = this.rePlainSelector.exec(selector);
+    let matches = this.rePlainSelector.exec(selector);
     if ( matches === null ) { return; }
-    var key = matches[0];
+    let key = matches[0];
     if ( key.indexOf('\\') === -1 ) {
         return key;
     }
-    key = '';
     matches = this.rePlainSelectorEscaped.exec(selector);
     if ( matches === null ) { return; }
-    var escaped = matches[0],
+    key = '';
+    let escaped = matches[0],
         beg = 0;
     this.reEscapeSequence.lastIndex = 0;
     for (;;) {
@@ -623,7 +738,7 @@ FilterContainer.prototype.compile = function(parsed, writer, filterPath) {
     // 1000 = cosmetic filtering
     writer.select(1000);
 
-    var hostnames = parsed.hostnames,
+    let hostnames = parsed.hostnames,
         i = hostnames.length;
     if ( i === 0 ) {
         this.compileGenericSelector(parsed, writer, filterPath);
@@ -633,13 +748,13 @@ FilterContainer.prototype.compile = function(parsed, writer, filterPath) {
     // https://github.com/chrisaljoudi/uBlock/issues/151
     // Negated hostname means the filter applies to all non-negated hostnames
     // of same filter OR globally if there is no non-negated hostnames.
-    var applyGlobally = true;
+    let applyGlobally = true;
     while ( i-- ) {
-        var hostname = hostnames[i];
+        let hostname = hostnames[i];
         if ( hostname.startsWith('~') === false ) {
             applyGlobally = false;
         }
-        this.compileHostnameSelector(hostname, parsed, writer, filterPath);
+        this.compileSpecificSelector(hostname, parsed, writer, filterPath);
     }
     if (applyGlobally) {
         this.compileGenericSelector(parsed, writer, filterPath);
@@ -663,7 +778,7 @@ FilterContainer.prototype.compileGenericSelector = function(parsed, writer, filt
 /******************************************************************************/
 
 FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) {
-    var selector = parsed.suffix;
+    let selector = parsed.suffix;
 
     // For some selectors, it is mandatory to have a hostname or entity:
     //   ##.foo:-abp-contains(...)
@@ -687,11 +802,10 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
         return;
     }
 
-    var type = selector.charCodeAt(0),
-        key;
+    let type = selector.charCodeAt(0);
 
     if ( type === 0x23 /* '#' */ ) {
-        key = this.keyFromSelector(selector);
+        let key = this.keyFromSelector(selector);
         if ( key === undefined ) { return; }
         // Simple selector-based CSS rule: no need to test for whether the
         // selector is valid, the regex took care of this. Most generic
@@ -708,7 +822,7 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
     }
 
     if ( type === 0x2E /* '.' */ ) {
-        key = this.keyFromSelector(selector);
+        let key = this.keyFromSelector(selector);
         if ( key === undefined ) { return; }
         // Simple selector-based CSS rule: no need to test for whether the
         // selector is valid, the regex took care of this. Most generic
@@ -724,16 +838,16 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
         return;
     }
 
-    var compiled = µb.staticExtFilteringEngine.compileSelector(selector);
+    let compiled = µb.staticExtFilteringEngine.compileSelector(selector);
     if ( compiled === undefined ) { return; }
     // TODO: Detect and error on procedural cosmetic filters.
 
     // https://github.com/gorhill/uBlock/issues/909
     //   Anything which contains a plain id/class selector can be classified
     //   as a low generic cosmetic filter.
-    var matches = this.rePlainSelectorEx.exec(selector);
+    let matches = this.rePlainSelectorEx.exec(selector);
     if ( matches !== null ) {
-        key = matches[1] || matches[2];
+        let key = matches[1] || matches[2];
         type = key.charCodeAt(0);
         writer.push([
             type === 0x23 ? 1 : 3 /* lg+ */,
@@ -767,7 +881,7 @@ FilterContainer.prototype.compileGenericUnhideSelector = function(
     writer
 ) {
     // Procedural cosmetic filters are acceptable as generic exception filters.
-    var compiled = µb.staticExtFilteringEngine.compileSelector(parsed.suffix);
+    let compiled = µb.staticExtFilteringEngine.compileSelector(parsed.suffix);
     if ( compiled === undefined ) { return; }
 
     // https://github.com/chrisaljoudi/uBlock/issues/497
@@ -778,7 +892,7 @@ FilterContainer.prototype.compileGenericUnhideSelector = function(
 
 /******************************************************************************/
 
-FilterContainer.prototype.compileHostnameSelector = function(
+FilterContainer.prototype.compileSpecificSelector = function(
     hostname,
     parsed,
     writer,
@@ -788,42 +902,38 @@ FilterContainer.prototype.compileHostnameSelector = function(
         return;
 
     // https://github.com/chrisaljoudi/uBlock/issues/145
-    var unhide = parsed.exception ? 1 : 0;
+    let unhide = parsed.exception ? 1 : 0;
     if ( hostname.startsWith('~') ) {
         hostname = hostname.slice(1);
         unhide ^= 1;
     }
 
-    var compiled = µb.staticExtFilteringEngine.compileSelector(parsed.suffix);
+    let compiled = µb.staticExtFilteringEngine.compileSelector(parsed.suffix);
     if ( compiled === undefined ) { return; }
-
-    var domain = this.µburi.domainFromHostnameNoCache(hostname),
-        hash;
 
     // https://github.com/chrisaljoudi/uBlock/issues/188
     // If not a real domain as per PSL, assign a synthetic one
+    let hash;
     if ( hostname.endsWith('.*') === false ) {
-        hash = domain !== '' ? makeHash(domain) : this.noDomainHash;
+        let domain = this.µburi.domainFromHostnameNoCache(hostname);
+        hash = domain !== '' ? makeHash(domain) : 0;
     } else {
         hash = makeHash(hostname);
     }
     if ( unhide === 1 ) {
-        hash = '!' + hash;
+        hash |= 0b01;
     }
 
-    // h,  hash,  example.com, .promoted-tweet
-    // h,  hash,  example.*, .promoted-tweet
-    // 8 = declarative, 9 = procedural
     writer.push([
-        compiled.charCodeAt(0) !== 0x7B /* '{' */ ? 8 : 9,
-        hash,
+        8,
+        compiled.charCodeAt(0) !== 0x7B ? hash : hash | 0b10,
         hostname,
         compiled
     ]);
 };
 
 /******************************************************************************/
-//TODO: Igor 16.02.18 Check all calls of this method for correct "path" parameter
+
 FilterContainer.prototype.fromCompiledContent = function(reader, options, path) {
     if ( options.skipCosmetic ) {
         this.skipCompiledContent(reader);
@@ -834,14 +944,14 @@ FilterContainer.prototype.fromCompiledContent = function(reader, options, path) 
         return;
     }
 
-    var fingerprint, args, db, filter, bucket;
-
     // 1000 = cosmetic filtering
     reader.select(1000);
 
+    let db, bucket;
+
     while ( reader.next() ) {
         this.acceptedCount += 1;
-        fingerprint = reader.fingerprint();
+        let fingerprint = reader.fingerprint();
         if ( this.duplicateBuster.has(fingerprint) ) {
             this.discardedCount += 1;
             continue;
@@ -849,7 +959,7 @@ FilterContainer.prototype.fromCompiledContent = function(reader, options, path) 
 
         this.duplicateBuster.add(fingerprint);
 
-        args = reader.args();
+        let args = reader.args();
 
         switch ( args[0] ) {
         
@@ -905,19 +1015,22 @@ FilterContainer.prototype.fromCompiledContent = function(reader, options, path) 
             this.genericDonthideSet.add(args[1]);
             break;
 
-        // h,  hash,  example.com, .promoted-tweet
-        // h,  hash,  example.*, .promoted-tweet
+        // hash,  example.com, .promoted-tweet
+        // hash,  example.*, .promoted-tweet
         case 8:
-        case 9:
-            db = args[0] === 8 ? this.specificFilters : this.proceduralFilters;
-            filter = new FilterHostname(args[3], args[2], null, path);
-            bucket = db.get(args[1]);
+            bucket = this.specificFilters.get(args[1]);
             if ( bucket === undefined ) {
-                db.set(args[1], filter);
-            } else if ( bucket instanceof FilterBucket ) {
-                bucket.add(filter);
-            } else {
-                db.set(args[1], new FilterBucket(bucket, filter, path));
+                this.specificFilters.set(
+                    args[1],
+                    new FilterOneOne(args[2], args[3], path)
+                );
+            } else if ( bucket instanceof FilterManyAny ) {
+                bucket.add(args[2], args[3], path);
+            } else /* can morph, so we need to replace entry in map */ {
+                this.specificFilters.set(
+                    args[1],
+                    bucket.add(args[2], args[3], path)
+                );
             }
             break;
 
@@ -931,20 +1044,20 @@ FilterContainer.prototype.fromCompiledContent = function(reader, options, path) 
 /******************************************************************************/
 
 FilterContainer.prototype.skipGenericCompiledContent = function(reader, filterPath) {
-    var fingerprint, args, db, filter, bucket;
-
     // 1000 = cosmetic filtering
     reader.select(1000);
 
+    let bucket;
+
     while ( reader.next() ) {
         this.acceptedCount += 1;
-        fingerprint = reader.fingerprint();
+        let fingerprint = reader.fingerprint();
         if ( this.duplicateBuster.has(fingerprint) ) {
             this.discardedCount += 1;
             continue;
         }
 
-        args = reader.args();
+        let args = reader.args();
 
         switch ( args[0] ) {
 
@@ -955,20 +1068,22 @@ FilterContainer.prototype.skipGenericCompiledContent = function(reader, filterPa
             this.genericDonthideSet.add(args[1]);
             break;
 
-        // h,  hash,  example.com, .promoted-tweet
-        // h,  hash,  example.*, .promoted-tweet
+        // hash,  example.com, .promoted-tweet
+        // hash,  example.*, .promoted-tweet
         case 8:
-        case 9:
-            db = args[0] === 8 ? this.specificFilters : this.proceduralFilters;
-            this.duplicateBuster.add(fingerprint);
-            filter = new FilterHostname(args[3], args[2], null, filterPath);
-            bucket = db.get(args[1]);
+            bucket = this.specificFilters.get(args[1]);
             if ( bucket === undefined ) {
-                db.set(args[1], filter);
-            } else if ( bucket instanceof FilterBucket ) {
-                bucket.add(filter);
-            } else {
-                db.set(args[1], new FilterBucket(bucket, filter, filterPath));
+                this.specificFilters.set(
+                    args[1],
+                    new FilterOneOne(args[2], args[3], filterPath)
+                );
+            } else if ( bucket instanceof FilterManyAny ) {
+                bucket.add(args[2], args[3], filterPath);
+            } else /* can morph, so we need to replace entry in map */ {
+                this.specificFilters.set(
+                    args[1],
+                    bucket.add(args[2], args[3], filterPath)
+                );
             }
             break;
 
@@ -994,28 +1109,26 @@ FilterContainer.prototype.skipCompiledContent = function(reader) {
 /******************************************************************************/
 
 FilterContainer.prototype.toSelfie = function() {
-    var selfieFromMap = function(map) {
-        var selfie = [];
-        // Note: destructuring assignment not supported before Chromium 49. 
-        for ( var entry of map ) {
-            selfie.push([ entry[0], entry[1].compile() ]);
+    let selfieFromMap = function(map) {
+        let entries = [];
+        for ( let entry of map ) {
+            entries.push([ entry[0], entry[1].compile() ]);
         }
-        return JSON.stringify(selfie);
+        return entries;
     };
 
     return {
         acceptedCount: this.acceptedCount,
         discardedCount: this.discardedCount,
         specificFilters: selfieFromMap(this.specificFilters),
-        proceduralFilters: selfieFromMap(this.proceduralFilters),
         hasGenericHide: this.hasGenericHide,
-        lowlyGenericSID: µb.arrayFrom(this.lowlyGeneric.id.simple),
-        lowlyGenericCID: µb.arrayFrom(this.lowlyGeneric.id.complex),
-        lowlyGenericSCL: µb.arrayFrom(this.lowlyGeneric.cl.simple),
-        lowlyGenericCCL: µb.arrayFrom(this.lowlyGeneric.cl.complex),
-        highSimpleGenericHideArray: µb.arrayFrom(this.highlyGeneric.simple.dict),
-        highComplexGenericHideArray: µb.arrayFrom(this.highlyGeneric.complex.dict),
-        genericDonthideArray: µb.arrayFrom(this.genericDonthideSet)
+        lowlyGenericSID: Array.from(this.lowlyGeneric.id.simple),
+        lowlyGenericCID: Array.from(this.lowlyGeneric.id.complex),
+        lowlyGenericSCL: Array.from(this.lowlyGeneric.cl.simple),
+        lowlyGenericCCL: Array.from(this.lowlyGeneric.cl.complex),
+        highSimpleGenericHideArray: Array.from(this.highlyGeneric.simple.dict),
+        highComplexGenericHideArray: Array.from(this.highlyGeneric.complex.dict),
+        genericDonthideArray: Array.from(this.genericDonthideSet)
     };
 };
 
@@ -1023,12 +1136,9 @@ FilterContainer.prototype.toSelfie = function() {
     /******************************************************************************/
 
 FilterContainer.prototype.fromSelfie = function(selfie) {
-    var mapFromSelfie = function(selfie) {
-        var entries = JSON.parse(selfie),
-            out = new Map(),
-            entry;
-        for ( var i = 0, n = entries.length; i < n; i++ ) {
-            entry = entries[i];
+    let mapFromSelfie = function(entries) {
+        let out = new Map();
+        for ( let entry of entries ) {
             out.set(entry[0], filterFromCompiledData(entry[1]));
         }
         return out;
@@ -1037,7 +1147,6 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
     this.acceptedCount = selfie.acceptedCount;
     this.discardedCount = selfie.discardedCount;
     this.specificFilters = mapFromSelfie(selfie.specificFilters);
-    this.proceduralFilters = mapFromSelfie(selfie.proceduralFilters);
     this.hasGenericHide = selfie.hasGenericHide;
     this.lowlyGeneric.id.simple = new Set(selfie.lowlyGenericSID);
     this.lowlyGeneric.id.complex = new Map(selfie.lowlyGenericCID);
@@ -1067,11 +1176,11 @@ FilterContainer.prototype.triggerSelectorCachePruner = function() {
 /******************************************************************************/
 
 FilterContainer.prototype.addToSelectorCache = function(details) {
-    var hostname = details.hostname;
+    let hostname = details.hostname;
     if ( typeof hostname !== 'string' || hostname === '' ) { return; }
-    var selectors = details.selectors;
+    let selectors = details.selectors;
     if ( Array.isArray(selectors) === false ) { return; }
-    var entry = this.selectorCache.get(hostname);
+    let entry = this.selectorCache.get(hostname);
     if ( entry === undefined ) {
         entry = SelectorCacheEntry.factory();
         this.selectorCache.set(hostname, entry);
@@ -1088,11 +1197,10 @@ FilterContainer.prototype.removeFromSelectorCache = function(
     targetHostname,
     type
 ) {
-    var targetHostnameLength = targetHostname.length,
-        hostname, item;
-    for ( var entry of this.selectorCache ) {
-        hostname = entry[0];
-        item = entry[1];
+    let targetHostnameLength = targetHostname.length;
+    for ( let entry of this.selectorCache ) {
+        let hostname = entry[0];
+        let item = entry[1];
         if ( targetHostname !== '*' ) {
             if ( hostname.endsWith(targetHostname) === false ) { continue; }
             if (
@@ -1113,7 +1221,7 @@ FilterContainer.prototype.retrieveFromSelectorCache = function(
     type,
     out
 ) {
-    var entry = this.selectorCache.get(hostname);
+    let entry = this.selectorCache.get(hostname);
     if ( entry !== undefined ) {
         entry.retrieve(type, out);
     }
@@ -1124,23 +1232,22 @@ FilterContainer.prototype.retrieveFromSelectorCache = function(
 FilterContainer.prototype.pruneSelectorCacheAsync = function () {
     this.selectorCacheTimer = null;
     if ( this.selectorCache.size <= this.selectorCacheCountMin ) { return; }
-    var cache = this.selectorCache;
+    let cache = this.selectorCache;
     // Sorted from most-recently-used to least-recently-used, because
     //   we loop beginning at the end below.
     // We can't avoid sorting because we have to keep a minimum number of
     //   entries, and these entries should always be the most-recently-used.
-    var hostnames = µb.arrayFrom(cache.keys())
+    let hostnames = Array.from(cache.keys())
             .sort(function(a, b) {
                 return cache.get(b).lastAccessTime -
                        cache.get(a).lastAccessTime;
                 })
             .slice(this.selectorCacheCountMin);
-    var obsolete = Date.now() - this.selectorCacheAgeMax,
-        hostname, entry,
+    let obsolete = Date.now() - this.selectorCacheAgeMax,
         i = hostnames.length;
     while ( i-- ) {
-        hostname = hostnames[i];
-        entry = cache.get(hostname);
+        let hostname = hostnames[i];
+        let entry = cache.get(hostname);
         if ( entry.lastAccessTime > obsolete ) { break; }
         // console.debug('pruneSelectorCacheAsync: flushing "%s"', hostname);
         entry.dispose();
@@ -1166,28 +1273,26 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
 
     //console.time('cosmeticFilteringEngine.retrieveGenericSelectors');
 
-    var simpleSelectors = this.setRegister0,
+    let simpleSelectors = this.setRegister0,
         complexSelectors = this.setRegister1;
-    var entry, selectors,
-        strEnd, sliceBeg, sliceEnd,
-        selector, bucket;
 
-    var cacheEntry = this.selectorCache.get(request.hostname),
+    let cacheEntry = this.selectorCache.get(request.hostname),
         previousHits = cacheEntry && cacheEntry.cosmetic || this.setRegister2;
 
-    for ( var type in this.lowlyGeneric ) {
-        entry = this.lowlyGeneric[type];
-        selectors = request[entry.canonical];
+    for ( let type in this.lowlyGeneric ) {
+        let entry = this.lowlyGeneric[type];
+        let selectors = request[entry.canonical];
         if ( typeof selectors !== 'string' ) { continue; }
-        strEnd = selectors.length;
-        sliceBeg = 0;
+        let strEnd = selectors.length;
+        let sliceBeg = 0;
         do {
-            sliceEnd = selectors.indexOf('\n', sliceBeg);
+            let sliceEnd = selectors.indexOf('\n', sliceBeg);
             if ( sliceEnd === -1 ) { sliceEnd = strEnd; }
-            selector = selectors.slice(sliceBeg, sliceEnd);
+            let selector = selectors.slice(sliceBeg, sliceEnd);
             sliceBeg = sliceEnd + 1;
             if ( entry.simple.has(selector) === false ) { continue; }
-            if ( (bucket = entry.complex.get(selector)) !== undefined ) {
+            let bucket = entry.complex.get(selector);
+            if ( bucket !== undefined ) {
                 if ( Array.isArray(bucket) ) {
                     for ( selector of bucket ) {
                         if ( previousHits.has(selector) === false ) {
@@ -1209,7 +1314,7 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
     // Apply exceptions: it is the responsibility of the caller to provide
     // the exceptions to be applied.
     if ( Array.isArray(request.exceptions) ) {
-        for ( var exception of request.exceptions ) {
+        for ( let exception of request.exceptions ) {
             simpleSelectors.delete(exception);
             complexSelectors.delete(exception);
         }
@@ -1219,9 +1324,9 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
         return;
     }
 
-    var out = {
-        simple: µb.arrayFrom(simpleSelectors),
-        complex: µb.arrayFrom(complexSelectors),
+    let out = {
+        simple: Array.from(simpleSelectors),
+        complex: Array.from(complexSelectors),
         injected: ''
     };
 
@@ -1240,11 +1345,11 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
     // If user stylesheets are supported in the current process, inject the
     // cosmetic filters now.
     if (
-        this.supportsUserStylesheets &&
+        supportsUserStylesheets &&
         request.tabId !== undefined &&
         request.frameId !== undefined
     ) {
-        var injected = [];
+        let injected = [];
         if ( out.simple.length !== 0 ) {
             injected.push(out.simple.join(',\n'));
             out.simple = [];
@@ -1273,16 +1378,14 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
 
 /******************************************************************************/
 
-FilterContainer.prototype.retrieveDomainSelectors = function(
+FilterContainer.prototype.retrieveSpecificSelectors = function(
     request,
     options
 ) {
-    //console.time('cosmeticFilteringEngine.retrieveDomainSelectors');
+    //console.time('cosmeticFilteringEngine.retrieveSpecificSelectors');
 
-    var hostname = request.hostname,
-        entity = request.entity,
-        cacheEntry = this.selectorCache.get(hostname),
-        entry;
+    let hostname = request.hostname,
+        cacheEntry = this.selectorCache.get(hostname);
 
     // https://github.com/chrisaljoudi/uBlock/issues/587
     // out.ready will tell the content script the cosmetic filtering engine is
@@ -1291,7 +1394,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     // https://github.com/chrisaljoudi/uBlock/issues/497
     // Generic exception filters are to be applied on all pages.
 
-    var out = {
+    let out = {
         ready: this.frozen,
         hostname: hostname,
         domain: request.domain,
@@ -1308,62 +1411,71 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     };
 
     if ( options.noCosmeticFiltering !== true ) {
-        var domainHash = makeHash(request.domain),
-            entityHash = entity !== '' ? makeHash(entity) : undefined,
-            exception, bucket;
+        let entity = request.entity,
+            domainHash = makeHash(request.domain),
+            entityHash = entity !== '' ? makeHash(entity) : undefined;
 
         // Exception cosmetic filters: prime with generic exception filters.
-        var exceptionSet = this.setRegister0;
+        let exceptionSet = this.setRegister0;
         // Genetic exceptions (should be extremely rare).
-        for ( exception of this.genericDonthideSet ) {
+        for ( let exception of this.genericDonthideSet ) {
             exceptionSet.add(exception);
         }
         // Specific exception cosmetic filters.
-        if ( (bucket = this.specificFilters.get('!' + domainHash)) ) {
+        let bucket = this.specificFilters.get(domainHash | 0b01);
+        if ( bucket !== undefined ) {
             bucket.retrieve(hostname, exceptionSet);
         }
-        if ( (bucket = this.proceduralFilters.get('!' + domainHash)) ) {
+        bucket = this.specificFilters.get(domainHash | 0b11);
+        if ( bucket !== undefined ) {
             bucket.retrieve(hostname, exceptionSet);
         }
         // Specific entity-based exception cosmetic filters.
         if ( entityHash !== undefined ) {
-            if ( (bucket = this.specificFilters.get('!' + entityHash)) ) {
+            bucket = this.specificFilters.get(entityHash | 0b01);
+            if ( bucket !== undefined ) {
                 bucket.retrieve(entity, exceptionSet);
             }
-            if ( (bucket = this.proceduralFilters.get('!' + entityHash)) ) {
+            bucket = this.specificFilters.get(entityHash | 0b11);
+            if ( bucket !== undefined ) {
                 bucket.retrieve(entity, exceptionSet);
             }
         }
         // Special bucket for those filters without a valid
         // domain name as per PSL.
-        if ( (bucket = this.specificFilters.get('!' + this.noDomainHash)) ) {
+        bucket = this.specificFilters.get(0b01);
+        if ( bucket !== undefined ) {
             bucket.retrieve(hostname, exceptionSet);
         }
-        if ( (bucket = this.proceduralFilters.get('!' + this.noDomainHash)) ) {
+        bucket = this.specificFilters.get(0b11);
+        if ( bucket !== undefined ) {
             bucket.retrieve(hostname, exceptionSet);
         }
         if ( exceptionSet.size !== 0 ) {
-            out.exceptionFilters = µb.arrayFrom(exceptionSet);
+            out.exceptionFilters = Array.from(exceptionSet);
         }
 
         // Declarative cosmetic filters.
         // TODO: Should I go one step further and store specific simple and
         //       specific complex in different collections? This could simplify
         //       slightly content script code.
-        var specificSet = this.setRegister1;
+        let specificSet = this.setRegister1;
         // Specific cosmetic filters.
-        if ( (bucket = this.specificFilters.get(domainHash)) ) {
+        bucket = this.specificFilters.get(domainHash | 0b00);
+        if ( bucket !== undefined ) {
             bucket.retrieve(hostname, specificSet);
         }
         // Specific entity-based cosmetic filters.
         if ( entityHash !== undefined ) {
-            if ( (bucket = this.specificFilters.get(entityHash)) ) {
+            bucket = this.specificFilters.get(entityHash | 0b00);
+            if ( bucket !== undefined ) {
                 bucket.retrieve(entity, specificSet);
             }
         }
         // https://github.com/chrisaljoudi/uBlock/issues/188
         // Special bucket for those filters without a valid domain name as per PSL
-        if ( (bucket = this.specificFilters.get(this.noDomainHash)) ) {
+        bucket = this.specificFilters.get(0b00);
+        if ( bucket !== undefined ) {
             bucket.retrieve(hostname, specificSet);
         }
         // Cached cosmetic filters: these are always declarative.
@@ -1376,33 +1488,36 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         }
 
         // Procedural cosmetic filters.
-        var proceduralSet = this.setRegister2;
+        let proceduralSet = this.setRegister2;
         // Specific cosmetic filters.
-        if ( (bucket = this.proceduralFilters.get(domainHash)) ) {
+        bucket = this.specificFilters.get(domainHash | 0b10);
+        if ( bucket !== undefined ) {
             bucket.retrieve(hostname, proceduralSet);
         }
         // Specific entity-based cosmetic filters.
         if ( entityHash !== undefined ) {
-            if ( (bucket = this.proceduralFilters.get(entityHash)) ) {
+            bucket = this.specificFilters.get(entityHash | 0b10);
+            if ( bucket !== undefined ) {
                 bucket.retrieve(entity, proceduralSet);
             }
         }
         // https://github.com/chrisaljoudi/uBlock/issues/188
         // Special bucket for those filters without a valid domain name as per PSL
-        if ( (bucket = this.proceduralFilters.get(this.noDomainHash)) ) {
+        bucket = this.specificFilters.get(0b10);
+        if ( bucket !== undefined ) {
             bucket.retrieve(hostname, proceduralSet);
         }
 
         // Apply exceptions.
-        for ( exception of exceptionSet ) {
+        for ( let exception of exceptionSet ) {
             specificSet.delete(exception);
             proceduralSet.delete(exception);
         }
         if ( specificSet.size !== 0 ) {
-            out.declarativeFilters = µb.arrayFrom(specificSet);
+            out.declarativeFilters = Array.from(specificSet);
         }
         if ( proceduralSet.size !== 0 ) {
-            out.proceduralFilters = µb.arrayFrom(proceduralSet);
+            out.proceduralFilters = Array.from(proceduralSet);
         }
 
         // Highly generic cosmetic filters: sent once along with specific ones.
@@ -1414,23 +1529,23 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         //   string in memory, which I have observed occurs when the string is
         //   stored directly as a value in a Map.
         if ( options.noGenericCosmeticFiltering !== true ) {
-            var exceptionHash = out.exceptionFilters.join();
-            for ( var type in this.highlyGeneric ) {
-                entry = this.highlyGeneric[type];
-                var str = entry.mru.lookup(exceptionHash);
+            let exceptionHash = out.exceptionFilters.join();
+            for ( let type in this.highlyGeneric ) {
+                let entry = this.highlyGeneric[type];
+                let str = entry.mru.lookup(exceptionHash);
                 if ( str === undefined ) {
                     str = { s: entry.str };
-                    var genericSet = entry.dict;
-                    var hit = false;
-                    for ( exception of exceptionSet ) {
+                    let genericSet = entry.dict;
+                    let hit = false;
+                    for ( let exception of exceptionSet ) {
                         if ( (hit = genericSet.has(exception)) ) { break; }
                     }
                     if ( hit ) {
                         genericSet = new Set(entry.dict);
-                        for ( exception of exceptionSet ) {
+                        for ( let exception of exceptionSet ) {
                             genericSet.delete(exception);
                         }
-                        str.s = µb.arrayFrom(genericSet).join(',\n');
+                        str.s = Array.from(genericSet).join(',\n');
                     }
                     entry.mru.add(exceptionHash, str);
                 }
@@ -1446,7 +1561,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
 
     // CSS selectors for collapsible blocked elements
     if ( cacheEntry ) {
-        var networkFilters = [];
+        let networkFilters = [];
         cacheEntry.retrieve('net', networkFilters);
         out.networkFilters = networkFilters.join(',\n');
     }
@@ -1455,11 +1570,11 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     //   If user stylesheets are supported in the current process, inject the
     //   cosmetic filters now.
     if (
-        this.supportsUserStylesheets &&
+        supportsUserStylesheets &&
         request.tabId !== undefined &&
         request.frameId !== undefined
     ) {
-        var injectedHideFilters = [];
+        let injectedHideFilters = [];
         if ( out.declarativeFilters.length !== 0 ) {
             injectedHideFilters.push(out.declarativeFilters.join(',\n'));
             out.declarativeFilters = [];
@@ -1477,7 +1592,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
             out.highGenericHideComplex = '';
         }
         out.injectedHideFilters = injectedHideFilters.join(',\n');
-        var details = {
+        let details = {
             code: '',
             cssOrigin: 'user',
             frameId: request.frameId,
@@ -1494,7 +1609,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         }
     }
 
-    //console.timeEnd('cosmeticFilteringEngine.retrieveDomainSelectors');
+    //console.timeEnd('cosmeticFilteringEngine.retrieveSpecificSelectors');
 
     return out;
 };

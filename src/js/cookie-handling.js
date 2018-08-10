@@ -631,12 +631,12 @@
 
                     if (this.isDomainWhitelisted(cookie.domain) || this.isCookieWhitelisted(cookie)) {
                         // TODO: Test logs. Current block of if else statements used only for tests. Must be removed in a release version.
-                        if (this.isDomainWhitelisted(cookie.domain)) {
-                            console.log('\t  %cprotected %ccookie domain %c"%s"', 'color: green', 'color: black', 'color: green', cookie.domain);
-                        }
-                        else if (this.isCookieWhitelisted(cookie)) {
-                            console.log('\t  %cprotected', 'color: green');
-                        }
+                        // if (this.isDomainWhitelisted(cookie.domain)) {
+                        //     console.log('\t  %cprotected %ccookie domain %c"%s"', 'color: green', 'color: black', 'color: green', cookie.domain);
+                        // }
+                        // else if (this.isCookieWhitelisted(cookie)) {
+                        //     console.log('\t  %cprotected', 'color: green');
+                        // }
                         /////////////////////////////////////// end of test logs
 
                         return; // Cookie or domain is protected so we don't need to remove it

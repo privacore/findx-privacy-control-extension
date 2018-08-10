@@ -16,7 +16,7 @@
     "description": "appears as tab name in dashboard"
   },
   "3pPageName": {
-    "message": "فلاتر خارجية",
+    "message": "قوائم الفلاتر",
     "description": "appears as tab name in dashboard"
   },
   "1pPageName": {
@@ -29,6 +29,10 @@
   },
   "whitelistPageName": {
     "message": "القائمة البيضاء",
+    "description": "appears as tab name in dashboard"
+  },
+  "shortcutsPageName": {
+    "message": "الإختصارات",
     "description": "appears as tab name in dashboard"
   },
   "statsPageName": {
@@ -292,7 +296,7 @@
     "description": ""
   },
   "settingsNoCSPReportsPrompt": {
-    "message": "منع تقارير الـ CSP",
+    "message": "حظر تقارير الـ CSP",
     "description": "background information: https:\/\/github.com\/gorhill\/uBlock\/issues\/3150"
   },
   "settingsStorageUsed": {
@@ -352,7 +356,7 @@
     "description": "English: Apply changes"
   },
   "3pGroupDefault": {
-    "message": "محلية",
+    "message": "مدمج",
     "description": "Header for the uBlock filters section in 'Filter lists pane'"
   },
   "3pGroupAds": {
@@ -384,11 +388,11 @@
     "description": "English: Custom"
   },
   "3pImport": {
-    "message": "إستعادة …",
+    "message": "إسترجاع...",
     "description": "The label for the checkbox used to import external filter lists"
   },
   "3pExternalListsHint": {
-    "message": "رابط واحد في كل سطر. الروابط التي تحتوي على &lsquo;!&rsquo; سوف يتم تجاهلها. الروابط غير الصحيحة سوف يتم تجاهلها بصمت.",
+    "message": "رابط واحد في كل سطر. الروابط الغير الصحيحة سوف يتم تجاهلها بصمت.",
     "description": "Short information about how to use the textarea to import external filter lists by URL"
   },
   "3pExternalListObsolete": {
@@ -408,7 +412,7 @@
     "description": "used as a tooltip for error icon beside a list"
   },
   "1pFormatHint": {
-    "message": "كل سطر يمكن ان يتحمل على فلتر واحد. يمكن ان يكون الفلتر رابط موقع او فلتر متعارف مع نظام AdBlock Plus. روابط التي تحتوي على &lsquo;!&rsquo;  سوف يتم تجاهلها.",
+    "message": "فلتر واحد في كل سطر. يمكن ان يكون الفلتر رابط موقع او فلتر متوافق مع نظام AdBlock Plus. السطور المسبوقة بـ <code>!<\/code> سوف يتم تجاهلها.",
     "description": "Short information about how to create custom filters"
   },
   "1pImport": {
@@ -584,8 +588,12 @@
     "description": "Used in the static filtering wizard"
   },
   "loggerStaticFilteringFinderSentence1": {
-    "message": "فلتر ثابت {{filter}} موجود على:",
-    "description": "Below this sentence, the filter lists in which the filter was found"
+    "message": "فلتر ثابت <code>{{filter}}<\/code> موجود على:",
+    "description": "Below this sentence, the filter list(s) in which the filter was found"
+  },
+  "loggerStaticFilteringFinderSentence2": {
+    "message": "Static filter <code>{{filter}}<\/code> could not be found in any of the currently enabled filter lists",
+    "description": "Message to show when a filter cannot be found in any filter lists"
   },
   "aboutChangelog": {
     "message": "سجل التغيير",
@@ -598,6 +606,10 @@
   "aboutSupport": {
     "message": "الدعم",
     "description": "A link for where to get support"
+  },
+  "aboutIssues": {
+    "message": "متعقب المشاكل",
+    "description": "Text for a link to official issue tracker"
   },
   "aboutCode": {
     "message": "اكواد البرنامج (GPLv3)",
@@ -758,6 +770,10 @@
   "contextMenuTemporarilyAllowLargeMediaElements": {
     "message": "السماح مؤقتا لعناصر الوسائط كبيرة",
     "description": "A context menu entry, present when large media elements have been blocked on the current site"
+  },
+  "shortcutCapturePlaceholder": {
+    "message": "تحرير اختصار",
+    "description": "Placeholder string for input field used to capture a keyboard shortcut"
   },
   "dummy": {
     "message": "يجب أن يكون هذا الإدخال آخر واحد",

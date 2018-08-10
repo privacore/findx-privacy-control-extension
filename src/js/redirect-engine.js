@@ -70,6 +70,14 @@ var warResolve = (function() {
     };
 })();
 
+// https://github.com/gorhill/uBlock/issues/3639
+// https://github.com/EFForg/https-everywhere/issues/14961
+// https://bugs.chromium.org/p/chromium/issues/detail?id=111700
+//   Do not redirect to a WAR if the platform suffers from spurious redirect
+//   conflicts, and the request to redirect is not `https:`.
+//   This special handling code can removed once the Chromium issue is fixed.
+var suffersSpuriousRedirectConflicts = vAPI.webextFlavor.soup.has('chromium');
+
 /******************************************************************************/
 /******************************************************************************/
 
@@ -91,7 +99,11 @@ RedirectEntry.prototype.toURL = function(details) {
     if (
         this.warURL !== undefined &&
         details instanceof Object &&
-        details.requestType !== 'xmlhttprequest'
+        details.requestType !== 'xmlhttprequest' &&
+        (
+            suffersSpuriousRedirectConflicts === false ||
+            details.requestURL.startsWith('https:')
+        )
     ) {
         return this.warURL + '?secret=' + vAPI.warSecret;
     }
@@ -295,7 +307,7 @@ RedirectEngine.prototype.compileRuleFromStaticFilter = function(line) {
     var µburi = µBlock.URI,
         des = matches[1] || '',
         pattern = (des + matches[2]).replace(/[.+?{}()|[\]\/\\]/g, '\\$&')
-                                    .replace(/\^/g, '[^\\w\\d%-]')
+                                    .replace(/\^/g, '[^\\w.%-]')
                                     .replace(/\*/g, '.*?'),
         type,
         redirect = '',
@@ -396,12 +408,11 @@ RedirectEngine.prototype.toSelfie = function() {
         }
         rules.push(rule);
     }
-    var µb = µBlock;
     return {
         rules: rules,
-        ruleTypes: µb.arrayFrom(this.ruleTypes),
-        ruleSources: µb.arrayFrom(this.ruleSources),
-        ruleDestinations: µb.arrayFrom(this.ruleDestinations)
+        ruleTypes: Array.from(this.ruleTypes),
+        ruleSources: Array.from(this.ruleSources),
+        ruleDestinations: Array.from(this.ruleDestinations)
     };
 };
 
@@ -496,7 +507,7 @@ RedirectEngine.prototype.selfieFromResources = function() {
     vAPI.cacheStorage.set({
         resourcesSelfie: {
             version: resourcesSelfieVersion,
-            resources: µBlock.arrayFrom(this.resources)
+            resources: Array.from(this.resources)
         }
     });
 };

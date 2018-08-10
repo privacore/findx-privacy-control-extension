@@ -69,7 +69,9 @@ vAPI.webextFlavor = {
             flavor.major = parseInt(info.version, 10) || 0;
             soup.add(info.vendor.toLowerCase())
                 .add(info.name.toLowerCase());
+            soup.delete('user_stylesheet');
             if ( flavor.major >= 53 ) { soup.add('user_stylesheet'); }
+            soup.delete('html_filtering');
             if ( flavor.major >= 57 ) { soup.add('html_filtering'); }
             dispatch();
         });
@@ -216,4 +218,22 @@ vAPI.localStorage = {
 
 })(this);
 
-/******************************************************************************/
+
+
+
+
+
+
+
+/*******************************************************************************
+
+    DO NOT:
+    - Remove the following code
+    - Add code beyond the following code
+    Reason:
+    - https://github.com/gorhill/uBlock/pull/3721
+    - uBO never uses the return value from injected content scripts
+
+**/
+
+void 0;

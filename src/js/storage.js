@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2018 Raymond Hill
+    Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global objectAssign, punycode, publicSuffixList */
+/* global punycode, publicSuffixList */
 
 'use strict';
 
@@ -52,24 +52,22 @@
 /******************************************************************************/
 
 µBlock.saveLocalSettings = (function() {
-    var saveAfter = 4 * 60 * 1000;
+    let saveAfter = 4 * 60 * 1000;
 
-    var save = function() {
-        this.localSettingsLastSaved = Date.now();
-        vAPI.storage.set(this.localSettings);
-    };
-
-    var onTimeout = function() {
-        var µb = µBlock;
+    let onTimeout = ( ) => {
+        let µb = µBlock;
         if ( µb.localSettingsLastModified > µb.localSettingsLastSaved ) {
-            save.call(µb);
+            µb.saveLocalSettings();
         }
         vAPI.setTimeout(onTimeout, saveAfter);
     };
 
     vAPI.setTimeout(onTimeout, saveAfter);
 
-    return save;
+    return function(callback) {
+        this.localSettingsLastSaved = Date.now();
+        vAPI.storage.set(this.localSettings, callback);
+    };
 })();
 
 /******************************************************************************/
@@ -146,7 +144,7 @@
 /******************************************************************************/
 
 µBlock.hiddenSettingsFromString = function(raw) {
-    var out = objectAssign({}, this.hiddenSettingsDefault),
+    var out = Object.assign({}, this.hiddenSettingsDefault),
         lineIter = new this.LineIterator(raw),
         line, matches, name, value;
     while ( lineIter.eot() === false ) {
@@ -278,7 +276,7 @@
             this.removeFilterList(oldKeys[i]);
         }
     }
-    newKeys = this.arrayFrom(newSet);
+    newKeys = Array.from(newSet);
     var bin = {
         selectedFilterLists: newKeys
     };
@@ -358,10 +356,10 @@
             }
             selectedListKeySet.add(assetKey);
         }
-        externalLists = this.arrayFrom(importedSet).sort().join('\n');
+        externalLists = Array.from(importedSet).sort().join('\n');
     }
 
-    var result = this.arrayFrom(selectedListKeySet);
+    var result = Array.from(selectedListKeySet);
     if ( externalLists !== this.userSettings.externalLists ) {
         this.userSettings.externalLists = externalLists;
         vAPI.storage.set({ externalLists: externalLists });
@@ -387,7 +385,7 @@
         }
         out.add(location);
     }
-    return this.arrayFrom(out);
+    return Array.from(out);
 };
 
 /******************************************************************************/
@@ -600,7 +598,7 @@
             if ( entries.hasOwnProperty(assetKey) === false ) { continue; }
             entry = entries[assetKey];
             if ( entry.content !== 'filters' ) { continue; }
-            newAvailableLists[assetKey] = objectAssign({}, entry);
+            newAvailableLists[assetKey] = Object.assign({}, entry);
         }
 
         // Load set of currently selected filter lists.
@@ -789,7 +787,7 @@
     // https://github.com/gorhill/uBlock/issues/313
     // Always try to fetch the name if this is an external filter list.
     if ( listEntry.title === '' || listEntry.group === 'custom' ) {
-        matches = head.match(/(?:^|\n)(?:!|# )[\t ]*Title:([^\n]+)/i);
+        matches = head.match(/(?:^|\n)(?:!|# )[\t ]*Title[\t ]*:([^\n]+)/i);
         if ( matches !== null ) {
             // https://bugs.chromium.org/p/v8/issues/detail?id=2869
             // JSON.stringify/JSON.parse is to work around String.slice()
@@ -799,9 +797,12 @@
         }
     }
     // Extract update frequency information
-    matches = head.match(/(?:^|\n)(?:!|# )[\t ]*Expires:[\t ]*(\d+)[\t ]*day/i);
+    matches = head.match(/(?:^|\n)(?:!|# )[\t ]*Expires[\t ]*:[\t ]*(\d+)[\t ]*(h)?/i);
     if ( matches !== null ) {
         v = Math.max(parseInt(matches[1], 10), 1);
+        if ( matches[2] !== undefined ) {
+            v = Math.ceil(v / 24);
+        }
         if ( v !== listEntry.updateAfter ) {
             this.assets.registerAssetSource(assetKey, { updateAfter: v });
         }
@@ -831,7 +832,7 @@
         staticExtFilteringEngine = this.staticExtFilteringEngine,
         reIsWhitespaceChar = /\s/,
         reMaybeLocalIp = /^[\d:f]/,
-        reIsLocalhostRedirect = /\s+(?:0\.0\.0\.0|broadcasthost|ip6-all(?:nodes|routers)|local|localhost|localhost\.localdomain)\b/,
+        reIsLocalhostRedirect = /\s+(?:0\.0\.0\.0|broadcasthost|localhost|local|ip6-\w+)\b/,
         reLocalIp = /^(?:0\.0\.0\.0|127\.0\.0\.1|::1|fe80::1%lo0)/,
         line, c, pos,
         lineIter = new this.LineIterator(this.processDirectives(rawText));
@@ -1140,24 +1141,28 @@
 // some set time.
 
 µBlock.selfieManager = (function() {
-    var timer = null;
+    let µb = µBlock;
+    let timer = null;
 
-    var create = function() {
+    // As of 2018-05-31:
+    // JSON.stringify-ing ourselves results in a better baseline
+    // memory usage at selfie-load time. For some reasons.
+
+    let create = function() {
         timer = null;
-        var selfie = {
-            magic: this.systemSettings.selfieMagic,
-            availableFilterLists: this.availableFilterLists,
-            staticNetFilteringEngine: this.staticNetFilteringEngine.toSelfie(),
-            redirectEngine: this.redirectEngine.toSelfie(),
-            staticExtFilteringEngine: this.staticExtFilteringEngine.toSelfie(),
-            userCosmeticFilters: this.userCosmeticFilters.toSelfie()
+        let selfie = {
+            magic: µb.systemSettings.selfieMagic,
+            availableFilterLists: JSON.stringify(µb.availableFilterLists),
+            staticNetFilteringEngine: JSON.stringify(µb.staticNetFilteringEngine.toSelfie()),
+            redirectEngine: JSON.stringify(µb.redirectEngine.toSelfie()),
+            staticExtFilteringEngine: JSON.stringify(µb.staticExtFilteringEngine.toSelfie()),
+            userCosmeticFilters: µb.userCosmeticFilters.toSelfie()
         };
         vAPI.cacheStorage.set({ selfie: selfie });
-    }.bind(µBlock);
+    };
 
-    var load = function(callback) {
+    let load = function(callback) {
         vAPI.cacheStorage.get('selfie', function(bin) {
-            var µb = µBlock;
             if (
                 bin instanceof Object === false ||
                 bin.selfie instanceof Object === false ||
@@ -1167,16 +1172,16 @@
             ) {
                 return callback(false);
             }
-            µb.availableFilterLists = bin.selfie.availableFilterLists;
-            µb.staticNetFilteringEngine.fromSelfie(bin.selfie.staticNetFilteringEngine);
-            µb.redirectEngine.fromSelfie(bin.selfie.redirectEngine);
-            µb.staticExtFilteringEngine.fromSelfie(bin.selfie.staticExtFilteringEngine);
+            µb.availableFilterLists = JSON.parse(bin.selfie.availableFilterLists);
+            µb.staticNetFilteringEngine.fromSelfie(JSON.parse(bin.selfie.staticNetFilteringEngine));
+            µb.redirectEngine.fromSelfie(JSON.parse(bin.selfie.redirectEngine));
+            µb.staticExtFilteringEngine.fromSelfie(JSON.parse(bin.selfie.staticExtFilteringEngine));
             µb.userCosmeticFilters.fromSelfie(bin.selfie.userCosmeticFilters);
             callback(true);
         });
     };
 
-    var destroy = function(after) {
+    let destroy = function(after) {
         if ( timer !== null ) {
             clearTimeout(timer);
             timer = null;
@@ -1184,10 +1189,10 @@
         vAPI.cacheStorage.remove('selfie');
 
         if ( typeof after !== 'number' ) {
-            after = this.selfieAfter;
+            after = µb.selfieAfter;
         }
         timer = vAPI.setTimeout(create, after);
-    }.bind(µBlock);
+    };
 
     return {
         load: load,

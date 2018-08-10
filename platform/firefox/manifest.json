@@ -1,0 +1,88 @@
+{
+  "applications": {
+    "gecko": {
+      "id": "privacycontrol@findx.com",
+      "strict_min_version": "52.0"
+    }
+  },
+  "author": "All Findx Privacy Control and uBlock contributors",
+  "background": {
+    "page": "background.html"
+  },
+  "browser_action": {
+    "browser_style": false,
+    "default_icon": {
+      "16": "img/icon_16.png",
+      "32": "img/icon_32.png"
+    },
+    "default_title": "Findx Privacy Control",
+    "default_popup": "popup-privacycontrol.html"
+  },
+  "commands": {
+    "launch-element-picker": {
+      "description": "__MSG_popupTipPicker__"
+    },
+    "launch-logger": {
+      "description": "__MSG_popupTipLog__"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "file://*/*"
+      ],
+      "js": [
+        "/js/vapi.js",
+        "/js/vapi-client.js",
+        "/js/contentscript.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "/js/scriptlets/subscriber.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "default_locale": "en",
+  "description": "__MSG_extShortDesc__",
+  "icons": {
+    "16":"img/findx_privacy_control.svg",
+    "48":"img/findx_privacy_control.svg",
+    "96":"img/findx_privacy_control.svg"
+  },
+  "manifest_version": 2,
+  "name": "Findx Privacy Control",
+  "options_ui": {
+    "page": "dashboard.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "contextMenus",
+    "privacy",
+    "storage",
+    "tabs",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>",
+    "cookies"
+  ],
+  "short_name": "Findx Privacy Control",
+  "version": "1.9.15.101",
+  "web_accessible_resources": [
+    "/web_accessible_resources/*",
+    "/img/popup/*.svg",
+    "/img/nudging/*.svg",
+    "/css/fonts/*.ttf"
+  ]
+}

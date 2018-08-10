@@ -20,7 +20,6 @@
 */
 
 
-/* global objectAssign */
 
 
 'use strict';
@@ -47,14 +46,28 @@ var µBlock = (function() { // jshint ignore:line
         assetFetchTimeout: 30,
         autoUpdateAssetFetchPeriod: 120, // sec
         autoUpdatePeriod: 7, // hours
+        debugScriptlets: false,
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
-        streamScriptInjectFilters: false,
         manualUpdateAssetFetchPeriod: 500,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false,
         userResourcesLocation: 'unset'
     };
+
+    var whitelistDefault = [
+        'about-scheme',
+        'chrome-extension-scheme',
+        'chrome-scheme',
+        'moz-extension-scheme',
+        'opera-scheme',
+        'vivaldi-scheme',
+        'wyciwyg-scheme',   // Firefox's "What-You-Cache-Is-What-You-Get"
+    ];
+    // https://github.com/gorhill/uBlock/issues/3693#issuecomment-379782428
+    if ( vAPI.webextFlavor.soup.has('webext') === false ) {
+        whitelistDefault.push('behind-the-scene');
+    }
 
     return {
         firstInstall: false,
@@ -87,7 +100,7 @@ var µBlock = (function() { // jshint ignore:line
 
         hiddenSettingsDefault: hiddenSettingsDefault,
         hiddenSettings: (function() {
-            var out = objectAssign({}, hiddenSettingsDefault),
+            var out = Object.assign({}, hiddenSettingsDefault),
                 json = vAPI.localStorage.getItem('immediateHiddenSettings');
             if ( typeof json === 'string' ) {
                 try {
@@ -113,21 +126,13 @@ var µBlock = (function() { // jshint ignore:line
         // cloudStorageSupported: vAPI.cloud instanceof Object,
         cloudStorageSupported: false, // 25.01.17 Igor
         canFilterResponseBody: vAPI.net.canFilterResponseBody === true,
+        canInjectScriptletsNow: vAPI.webextFlavor.soup.has('chromium'),
 
         // https://github.com/chrisaljoudi/uBlock/issues/180
         // Whitelist directives need to be loaded once the PSL is available
         netWhitelist: {},
         netWhitelistModifyTime: 0,
-        netWhitelistDefault: [
-            'about-scheme',
-            'chrome-extension-scheme',
-            'chrome-scheme',
-            'moz-extension-scheme',
-            'opera-scheme',
-            'vivaldi-scheme',
-            'wyciwyg-scheme',   // Firefox's "What-You-Cache-Is-What-You-Get"
-            ''
-        ].join('\n'),
+        netWhitelistDefault: whitelistDefault.join('\n'),
 
         localSettings: {
             blockedRequestCount: 0,
@@ -139,10 +144,10 @@ var µBlock = (function() { // jshint ignore:line
         localSettingsLastModified: 0,
         localSettingsLastSaved: 0,
 
-        // read-only
+        // Read-only
         systemSettings: {
-            compiledMagic: 1,
-            selfieMagic: 1
+            compiledMagic: 3,   // Increase when compiled format changes
+            selfieMagic: 3      // Increase when selfie format changes
         },
 
         restoreBackupSettings: {
@@ -152,10 +157,13 @@ var µBlock = (function() { // jshint ignore:line
             lastBackupTime: 0
         },
 
+
         // 25.01.17 Igor.
         // EasyList, EasyPrivacy and many others have an 4-day update period,
         // as per list headers.
         updateAssetsEvery: 4 * oneDay,
+
+        commandShortcuts: new Map(),
 
         // Allows to fully customize uBO's assets, typically set through admin
         // settings. The content of 'assets.json' will also tell which filter
