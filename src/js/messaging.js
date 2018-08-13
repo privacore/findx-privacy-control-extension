@@ -1720,6 +1720,10 @@ vAPI.messaging.listen('onboarding', onMessage);
                     vAPI.openGoogleActivity();
                 break;
 
+            case 'saveState':
+                µb.nudging.saveState(request.service, request.minimized);
+                break;
+
             default:
                 return vAPI.messaging.UNHANDLED;
         }

@@ -223,8 +223,6 @@
 
         popupBody = frameDoc.body;
 
-        updatePopupSize();
-
         elMenu = popupBody.querySelector('.header .menu');
 
         handleSearch();
@@ -236,6 +234,14 @@
         if (vAPI.nudging.serviceName() === 'google') {
             handleGoogleActivityBtn();
         }
+
+        // We must wait while texts render complete.
+        // If text is longer then one line - bottom border of the popup will be hidden
+        //      because we can't resize popup correctly.
+        setTimeout(function () {
+            popupBody.closest('html').classList.add('visible');
+            updatePopupSize();
+        }, 200);
     };
 
     /******************************************************************************/
@@ -275,7 +281,10 @@
     };
 
     var onMenuBtnClick = function (ev) {
-        openMenu();
+        if (isMenuOpened())
+            closeMenu();
+        else
+            openMenu();
     };
 
     var onBodyClick = function (ev) {
@@ -388,12 +397,27 @@
     };
 
     var minimizeWnd = function () {
-        popupBody.querySelector('.section[data-section="expanded"]').classList.toggle('section__hidden');
-        popupBody.querySelector('.section[data-section="minimized"]').classList.toggle('section__hidden');
+        popupBody.classList.toggle('minimized');
 
         updatePopupSize();
+
+        savePopupState();
     };
 
+    var isMinimized = function () {
+        return popupBody.classList.contains('minimized');
+    };
+
+    var savePopupState = function () {
+        vAPI.messaging.send(
+            'nudging',
+            {
+                what: 'saveState',
+                minimized: isMinimized(),
+                service: vAPI.nudging.serviceName()
+            }
+        );
+    };
 
     /******************************************************************************/
 
@@ -402,7 +426,10 @@
      * Size must be updated after each changes on a page (menu open/close, minimize/expand, ...)
      */
     var updatePopupSize = function () {
-        var activeSection = popupBody.querySelector('.section:not(.section__hidden)');
+        var selector = isMinimized() ?
+            '.section[data-section="minimized"]' :
+            '.section[data-section="expanded"]';
+        var activeSection = popupBody.querySelector(selector);
         elPopup.width  = activeSection.scrollWidth + 10;
         elPopup.height = activeSection.scrollHeight + 10;
     };

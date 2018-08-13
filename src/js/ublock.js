@@ -747,6 +747,8 @@ var matchBucket = function(url, hostname, bucket, start) {
             }
         }
 
+        i18n.minimized = ub.nudgingMinimizeStates[service] ? 'minimized' : '';
+
 
         var reStrings = /\{\{(\w+)\}\}/g;
         var replacer = function(a0, string) {
@@ -799,9 +801,18 @@ var matchBucket = function(url, hostname, bucket, start) {
 
     /******************************************************************************/
 
+    var saveMinimizedState = function (service, isMinimized) {
+        ub.nudgingMinimizeStates[service] = isMinimized;
+
+        vAPI.storage.set({ 'nudgingMinimizeStates': ub.nudgingMinimizeStates });
+    };
+
+    /******************************************************************************/
+
     return {
         insert: injectScriptlet,
-        getPopupData: getNudgingPopupHtml
+        getPopupData: getNudgingPopupHtml,
+        saveState: saveMinimizedState
     };
 })();
 
