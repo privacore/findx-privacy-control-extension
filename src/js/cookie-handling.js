@@ -890,7 +890,7 @@
     /**
      * Find and returns a service with all its domains and their cookies
      * @param {string} hostname
-     * @returns {{name: <string>, domains: <object[]>, hostnames: <string[]>}}
+     * @returns {{name: <string>, domains: {domain: <string>, cookies: <string[]>}[], hostnames: <string[]>}}
      */
     CookieHandling.prototype.getRemLoginServiceByHost = function (hostname) {
         var services = ub.cookiesSettings.rememberLoginServices,
@@ -930,20 +930,87 @@
      * Find a service in a cookiesSettings.rememberLoginServices.
      * Check service status in a cookiesSettings.rememberLoginStatuses
      * @param {string} hostname
+     * @param {Function<boolean>} callback
      */
-    CookieHandling.prototype.mustRemLoginShow = function (hostname) {
-        if (ub.isSafari())
-            return false;
+    CookieHandling.prototype.mustRemLoginShow = function (hostname, callback) {
+        if (ub.isSafari()) {
+            if (callback) callback(false);
+        }
 
         var service = this.getRemLoginServiceByHost(hostname);
-        if (!service)
-            return false;
+        if (!service) {
+            if (callback) callback(false);
+        }
 
         var status = this.getRemLoginServiceStatus(service.name);
-        if (status === 0 || status === 1) // Already handled
-            return false;
+        if (status === 0) {// Don't ask again
+            if (callback) callback(false);
+        }
+        else if (status === 1) { // Whitelisted login cookies
+            // Check if cookies are still exists or they were removed from browser
+            this.checkRememberedCookies(service, hostname, function (isExists) {
+                if (!isExists) {
+                    this.setRemLoginServiceStatus(service.name, -1);
+                    if (callback) callback(true);
+                }
+                else {
+                    if (callback) callback(false);
+                }
+            }.bind(this));
+        }
+        else {
+            if (callback) callback(true);
+        }
+    };
 
-        return true;
+    /**
+     * Here we check service cookies existance in browser.
+     * If service was checked as whitelisted and after that user removes all cookies from this domain
+     * even protected cookies - we must show Remember login window again.
+     * @param {{name: string, domains: {domain: string, cookies: string[]}[], hostnames: string[]}} service
+     * @param {string} hostname
+     * @param {Function} callback
+     *                      true: cookies exists or service has a '*' wildcart
+     *                      false: expected service cookies was removed
+     */
+    CookieHandling.prototype.checkRememberedCookies = function (service, hostname, callback) {
+        let serviceCookies = [];
+        let domain = '';
+
+        for (let key in service.domains) {
+            let domainData = service.domains[key];
+            domain = trimDots(domainData.name);
+            if (domain !== hostname && domain !== prepareRootDomain(hostname))
+                continue;
+
+            if (domainData.cookies.length && domainData.cookies[0] === '*')
+                continue;
+
+            serviceCookies = [...domainData.cookies];
+            break;
+        }
+
+        if (!serviceCookies.length)
+            callback(true);
+
+        // Get all domain cookies from browser
+        this.getDomainInitCookies(domain, function (domainCookies) {
+            // If domain has no cookies - it means that whitelisted cookies was removed
+            if (!domainCookies || !domainCookies.length) {
+                if (callback) callback(false);
+            }
+
+            for (let cookie of domainCookies) {
+                let index = serviceCookies.indexOf(cookie.name);
+                if (index === -1)
+                    continue;
+
+                serviceCookies.splice(index, 1);
+            }
+
+            // If cookies array still has some cookies in it - that means that some cookies are absent in a browser.
+            callback(!serviceCookies.length);
+        });
     };
 
     /**
@@ -967,12 +1034,19 @@
      * @param {number} status -
      *          0 : don't ask again
      *          1 : whitelisted
+     *          -1: clear previous status
      */
     CookieHandling.prototype.setRemLoginServiceStatus = function (serviceName, status) {
-        if ((status !== 0 && status !== 1) || !serviceName)
+        if ((status !== 0 && status !== 1 && status !== -1) || !serviceName)
             return;
 
-        ub.cookiesSettings.rememberLoginStatuses[serviceName] = status;
+        if (status === -1) { // Clear prious saved status
+            delete ub.cookiesSettings.rememberLoginStatuses[serviceName];
+        }
+        else {
+            ub.cookiesSettings.rememberLoginStatuses[serviceName] = status;
+        }
+
         this.saveSettings();
     };
 
@@ -1020,7 +1094,7 @@
         if ( typeof vAPI.tabs.select === 'function' ) {
             vAPI.tabs.select(tabId);
         }
-    }
+    };
 
 
     /****************************************************************************/

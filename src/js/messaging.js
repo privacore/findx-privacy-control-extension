@@ -837,10 +837,11 @@ var onMessage = function(request, sender, callback) {
 
     case 'showRememberLoginPopup':
         if (!µb.isSafari() && request.isRootFrame) {
-            var mustBeShown = µb.cookieHandling.mustRemLoginShow(request.hostname);
-            if (mustBeShown) {
-                µb.cookieHandling.showRemLoginPopup(tabId);
-            }
+            µb.cookieHandling.mustRemLoginShow(request.hostname, function (mustBeShown) {
+                if (mustBeShown) {
+                    µb.cookieHandling.showRemLoginPopup(tabId);
+                }
+            });
         }
         break;
 
