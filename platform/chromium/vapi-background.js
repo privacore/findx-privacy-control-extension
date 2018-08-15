@@ -731,7 +731,7 @@ vAPI.openOptionsPage = function () {
 };
 
 vAPI.openHelpPage = function () {
-    var helpPageUrl = µBlock.aboutPageUrl;
+    var helpPageUrl = vAPI.i18n('linkAboutFindx');
     vAPI.tabs.open({url: helpPageUrl, select: true});
 };
 

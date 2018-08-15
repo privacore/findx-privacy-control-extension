@@ -254,7 +254,6 @@ var µBlock = (function() { // jshint ignore:line
 
 
         optionsUrl: "dashboard.html",
-        aboutPageUrl: "https://get.findx.com",
         findxMobileUrl: "https://get.findx.com/mobile",
         trackingMonitorUrl: "logger-ui.html#tab_",
         helpPageUrl: "https://help.privacontrol.com",
