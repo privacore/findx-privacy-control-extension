@@ -318,6 +318,8 @@ var onFirstFetchReady = function(fetched) {
         onVersionReady(fetched.version);
         onCommandShortcutsReady(fetched.commandShortcuts);
 
+        µb.nudgingMinimizeStates = fetched.nudgingMinimizeStates;
+
         µb.loadPublicSuffixList(onPSLReady);
         µb.loadRedirectResources();
     });
@@ -379,7 +381,8 @@ var onSelectedFilterListsLoaded = function() {
         'lastBackupTime': 0,
         'netWhitelist': µb.netWhitelistDefault,
         'selfieMagic': '',
-        'version': '0.0.0.0'
+        'version': '0.0.0.0',
+        'nudgingMinimizeStates': µb.nudgingMinimizeStates
     };
 
     toFetch(µb.localSettings, fetchableProps);

@@ -256,6 +256,13 @@ uDom('[data-i18n-tip]').forEach(function(elem) {
     );
 });
 
+uDom('[data-i18n-href]').forEach(function(elem) {
+    elem.attr(
+        'href',
+        vAPI.i18n.prepareTemplateText(vAPI.i18n(elem.attr('data-i18n-href'))).replace(/<br>/g, '\n').replace(/\n{3,}/g, '\n\n')
+    );
+});
+
 
 /******************************************************************************/
 
