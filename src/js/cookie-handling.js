@@ -657,7 +657,7 @@
         }
     };
 
-    CookieHandling.prototype.clearAllCookiesForce = function () {
+    CookieHandling.prototype.clearAllCookiesForce = function (callback) {
         console.groupCollapsed("%cClear all cookies (force)", 'color: red');
         try {
             vAPI.cookies.getAllCookies(function (cookies) {
@@ -672,6 +672,9 @@
                     vAPI.cookies.removeCookie(cookie, urlFromCookieDomain(cookie));
                 }.bind(this));
                 console.groupEnd();
+
+                if (callback)
+                    callback();
             }.bind(this), null);
         }
         catch (exception) {
@@ -935,11 +938,13 @@
     CookieHandling.prototype.mustRemLoginShow = function (hostname, callback) {
         if (ub.isSafari()) {
             if (callback) callback(false);
+            return;
         }
 
         var service = this.getRemLoginServiceByHost(hostname);
         if (!service) {
             if (callback) callback(false);
+            return;
         }
 
         var status = this.getRemLoginServiceStatus(service.name);

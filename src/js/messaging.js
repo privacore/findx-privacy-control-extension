@@ -1117,14 +1117,16 @@ var restoreUserData = function(request) {
 };
 
 var resetUserData = function() {
-    vAPI.cacheStorage.clear();
-    vAPI.storage.clear();
-    vAPI.localStorage.removeItem('immediateHiddenSettings');
+    µBlock.cookieHandling.clearAllCookiesForce(function () {
+        vAPI.cacheStorage.clear();
+        vAPI.storage.clear();
+        vAPI.localStorage.removeItem('immediateHiddenSettings');
 
-    // Keep global counts, people can become quite attached to numbers
-    µb.saveLocalSettings();
+        // Keep global counts, people can become quite attached to numbers
+        µb.saveLocalSettings();
 
-    vAPI.app.restart();
+        vAPI.app.restart();
+    });
 };
 
 /******************************************************************************/
