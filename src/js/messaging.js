@@ -77,6 +77,16 @@ var onMessage = function(request, sender, callback) {
             callback
         );
         return;
+
+    // Findx. Current case was moved from sync to async block
+    //  because we need to wait while hostname removed from My Filters strict blocking
+    case 'toggleHostnameSwitch':
+        µBlock.rmStrictBlockingHostname(request.hostname, function () {
+            µb.toggleHostnameSwitch(request);
+            if (callback)
+                callback();
+        });
+        return;
 ///// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     case 'reloadAllFilters':
         µb.loadFilterLists(callback);
@@ -183,10 +193,6 @@ var onMessage = function(request, sender, callback) {
     case 'setWhitelist':
         µb.netWhitelist = µb.whitelistFromString(request.whitelist);
         µb.saveWhitelist();
-        break;
-
-    case 'toggleHostnameSwitch':
-        µb.toggleHostnameSwitch(request);
         break;
 
     case 'closeTabId':
@@ -584,6 +590,17 @@ var onMessage = function(request, sender, callback) {
 
     case 'strictBlocking':
         µb.strictBlockingHostname(request.hostname, callback);
+        // When user wants to block domain - we should remove this domain
+        //      from temporary and permanent whitelists. Because if we don't do it - page (html) will load
+        //      but scripts and styles willn't because domain is allowed
+        //      and has a higher priority then rule from My filters.
+        µb.webRequest.rmTemporarilyWhitelistDocument(request.hostname);
+        µb.toggleHostnameSwitch({
+            name: 'no-strict-blocking',
+            hostname: request.hostname,
+            deep: true,
+            state: false
+        });
         return;
 
     case 'resetFiltersListsForSite':
@@ -824,10 +841,11 @@ var onMessage = function(request, sender, callback) {
 
     case 'showRememberLoginPopup':
         if (!µb.isSafari() && request.isRootFrame) {
-            var mustBeShown = µb.cookieHandling.mustRemLoginShow(request.hostname);
-            if (mustBeShown) {
-                µb.cookieHandling.showRemLoginPopup(tabId);
-            }
+            µb.cookieHandling.mustRemLoginShow(request.hostname, function (mustBeShown) {
+                if (mustBeShown) {
+                    µb.cookieHandling.showRemLoginPopup(tabId);
+                }
+            });
         }
         break;
 
@@ -1103,14 +1121,16 @@ var restoreUserData = function(request) {
 };
 
 var resetUserData = function() {
-    vAPI.cacheStorage.clear();
-    vAPI.storage.clear();
-    vAPI.localStorage.removeItem('immediateHiddenSettings');
+    µBlock.cookieHandling.clearAllCookiesForce(function () {
+        vAPI.cacheStorage.clear();
+        vAPI.storage.clear();
+        vAPI.localStorage.removeItem('immediateHiddenSettings');
 
-    // Keep global counts, people can become quite attached to numbers
-    µb.saveLocalSettings();
+        // Keep global counts, people can become quite attached to numbers
+        µb.saveLocalSettings();
 
-    vAPI.app.restart();
+        vAPI.app.restart();
+    });
 };
 
 /******************************************************************************/
@@ -1446,6 +1466,17 @@ vAPI.messaging.listen('loggerUI', onMessage);
 var onMessage = function(request, sender, callback) {
     // Async
     switch ( request.what ) {
+
+    // Findx. Current case was moved from sync to async block
+    //  because we need to wait while hostname removed from My Filters strict blocking
+    case 'temporarilyWhitelistDocument':
+        µBlock.rmStrictBlockingHostname(request.hostname, function () {
+            µBlock.webRequest.temporarilyWhitelistDocument(request.hostname);
+            if (callback)
+                callback();
+        });
+        return;
+
     default:
         break;
     }
@@ -1454,10 +1485,6 @@ var onMessage = function(request, sender, callback) {
     var response;
 
     switch ( request.what ) {
-    case 'temporarilyWhitelistDocument':
-        µBlock.webRequest.temporarilyWhitelistDocument(request.hostname);
-        break;
-
     default:
         return vAPI.messaging.UNHANDLED;
     }
@@ -1698,6 +1725,10 @@ vAPI.messaging.listen('onboarding', onMessage);
                     vAPI.openOptionsPage();
                 else if (request.action === 'google_activity')
                     vAPI.openGoogleActivity();
+                break;
+
+            case 'saveState':
+                µb.nudging.saveState(request.service, request.minimized);
                 break;
 
             default:

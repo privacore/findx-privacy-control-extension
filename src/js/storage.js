@@ -1871,6 +1871,59 @@
     this.loadUserFilters(onLoaded);
 };
 
+µBlock.rmStrictBlockingHostname = function (hostname, callback) {
 
+    var onSaved = function() {
+        µBlock.loadFilterLists(callback);
+    };
+
+    var rmHostnameBlocking = function (content) {
+        let hostRule = '||' + hostname + '^';
+        let domainRule = '||' + µBlock.URI.domainFromHostnameNoCache(hostname) + '^';
+
+        let lines = content.split('\n');
+        for (var i = 0; i < lines.length;) {
+            let line = lines[i];
+
+            if (line === hostRule || line === domainRule) {
+                lines.splice(i, 1);
+                // remove comment lines before current rule line
+                for (var j = i - 1; j >= 0; j--) {
+                    let commLine = lines[j];
+                    if (commLine.indexOf("!") === 0 || commLine === "") {
+                        lines.splice(j, 1);
+                        i--;
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else
+                i++;
+        }
+        return lines.join('\n');
+    };
+
+    var onLoaded = function(details) {
+        if ( details.error ) {
+            if (callback) callback();
+            return;
+        }
+        let updatedContent = rmHostnameBlocking(details.content);
+
+        // If current host wasn't in "My Filters" - we shouldn't update filter and just call the callback
+        if (updatedContent === details.content) {
+            if (callback)
+                callback();
+        }
+        else { // Hostname was removed from My Filters - we must update filter
+            details.content = updatedContent;
+            µBlock.saveUserFilters(details.content.trim(), onSaved.bind(this, details));
+        }
+    };
+
+    this.loadUserFilters(onLoaded);
+};
 
 /******************************************************************************/

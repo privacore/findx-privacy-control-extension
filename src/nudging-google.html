@@ -23,6 +23,12 @@ html, body {
     overflow: hidden;
     width: 100%;
 }
+html {
+    visibility: hidden;
+}
+html.visible {
+    visibility: visible;
+}
 
 .section {
     display: flex;
@@ -30,9 +36,12 @@ html, body {
     cursor: default;
     margin: 0 auto;
 }
-.section.section__hidden {
+
+body.minimized .section[data-section="expanded"],
+body:not(.minimized) .section[data-section="minimized"] {
     display: none;
 }
+
 .section[data-section="expanded"] {
     width: 340px;
 }
@@ -238,7 +247,7 @@ html, body {
 </style>
 </head>
 
-<body>
+<body class="{{minimized}}">
 
 <div class="section" data-section="expanded">
     <div class="section-inner">
@@ -290,7 +299,7 @@ html, body {
     </div>
 </div>
 
-<div class="section section__hidden" data-section="minimized">
+<div class="section" data-section="minimized">
     <div class="section-inner">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="7008 -4275 24 24">
             <defs>
