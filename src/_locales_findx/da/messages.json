@@ -906,5 +906,37 @@
   "nudgingDynamicText1":{
     "message":"Intet at skjule - overhovedet?",
     "description":"Nudging popup displays randomly one of these texts"
+  },
+  "linkPrivacore":{
+    "message": "https://www.privacore.com/",
+    "description": "Link to a Privacore in a footer on a dashboard page"
+  },
+  "linkTwitter":{
+    "message": "https://www.twitter.com/privacore",
+    "description": "Link to a Twitter in a footer on a dashboard page"
+  },
+  "linkGithub":{
+    "message": "https://github.com/privacore/",
+    "description": "Link to a Github in a footer on a dashboard page"
+  },
+  "linkLinkedin":{
+    "message": "https:/www.linkedin.com/company/privacore",
+    "description": "Link to a Linkedin in a footer on a dashboard page"
+  },
+  "linkBasedOnWork":{
+    "message": "https://github.com/gorhill/uBlock",
+    "description": "Link in a footer on a dashboard page"
+  },
+  "linkLicenseCreativeCommons":{
+    "message": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "description": "Link in a footer on a dashboard page"
+  },
+  "linkLicensePrivacore":{
+    "message": "https://www.privacore.com/privacontrol/license",
+    "description": "Link in a footer on a dashboard page"
+  },
+  "linkAboutFindx":{
+    "message": "https://get.findx.com",
+    "description": "Link in a nudge popup. Link in extension's popup sidebar menu."
   }
 }

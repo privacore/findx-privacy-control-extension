@@ -924,11 +924,11 @@
     "description": "Link to a Linkedin in a footer on a dashboard page"
   },
   "linkBasedOnWork":{
-    "message": "http://github.com/privacore/privacontrol/",
+    "message": "https://github.com/gorhill/uBlock",
     "description": "Link in a footer on a dashboard page"
   },
   "linkLicenseCreativeCommons":{
-    "message": "http://creativecommons.org/licenses/by-sa/4.0/",
+    "message": "https://creativecommons.org/licenses/by-sa/4.0/",
     "description": "Link in a footer on a dashboard page"
   },
   "linkLicensePrivacore":{
