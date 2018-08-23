@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2018 Raymond Hill
+    Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global objectAssign, punycode, publicSuffixList */
+/* global punycode, publicSuffixList */
 
 'use strict';
 
@@ -52,24 +52,22 @@
 /******************************************************************************/
 
 µBlock.saveLocalSettings = (function() {
-    var saveAfter = 4 * 60 * 1000;
+    let saveAfter = 4 * 60 * 1000;
 
-    var save = function() {
-        this.localSettingsLastSaved = Date.now();
-        vAPI.storage.set(this.localSettings);
-    };
-
-    var onTimeout = function() {
-        var µb = µBlock;
+    let onTimeout = ( ) => {
+        let µb = µBlock;
         if ( µb.localSettingsLastModified > µb.localSettingsLastSaved ) {
-            save.call(µb);
+            µb.saveLocalSettings();
         }
         vAPI.setTimeout(onTimeout, saveAfter);
     };
 
     vAPI.setTimeout(onTimeout, saveAfter);
 
-    return save;
+    return function(callback) {
+        this.localSettingsLastSaved = Date.now();
+        vAPI.storage.set(this.localSettings, callback);
+    };
 })();
 
 /******************************************************************************/
@@ -146,7 +144,7 @@
 /******************************************************************************/
 
 µBlock.hiddenSettingsFromString = function(raw) {
-    var out = objectAssign({}, this.hiddenSettingsDefault),
+    var out = Object.assign({}, this.hiddenSettingsDefault),
         lineIter = new this.LineIterator(raw),
         line, matches, name, value;
     while ( lineIter.eot() === false ) {
@@ -278,7 +276,7 @@
             this.removeFilterList(oldKeys[i]);
         }
     }
-    newKeys = this.arrayFrom(newSet);
+    newKeys = Array.from(newSet);
     var bin = {
         selectedFilterLists: newKeys
     };
@@ -358,10 +356,10 @@
             }
             selectedListKeySet.add(assetKey);
         }
-        externalLists = this.arrayFrom(importedSet).sort().join('\n');
+        externalLists = Array.from(importedSet).sort().join('\n');
     }
 
-    var result = this.arrayFrom(selectedListKeySet);
+    var result = Array.from(selectedListKeySet);
     if ( externalLists !== this.userSettings.externalLists ) {
         this.userSettings.externalLists = externalLists;
         vAPI.storage.set({ externalLists: externalLists });
@@ -387,7 +385,7 @@
         }
         out.add(location);
     }
-    return this.arrayFrom(out);
+    return Array.from(out);
 };
 
 /******************************************************************************/
@@ -600,7 +598,7 @@
             if ( entries.hasOwnProperty(assetKey) === false ) { continue; }
             entry = entries[assetKey];
             if ( entry.content !== 'filters' ) { continue; }
-            newAvailableLists[assetKey] = objectAssign({}, entry);
+            newAvailableLists[assetKey] = Object.assign({}, entry);
         }
 
         // Load set of currently selected filter lists.
@@ -698,6 +696,8 @@
         µb.selfieManager.destroy();
         µb.staticFilteringReverseLookup.resetLists();
 
+        µb.userCosmeticFilters.reset();
+
         // We need to build a complete list of assets to pull first: this is
         // because it *may* happens that some load operations are synchronous:
         // This happens for assets which do not exist, ot assets with no
@@ -730,7 +730,7 @@
         rawContent;
 
     var onCompiledListLoaded2 = function(details) {
-        if ( details.content === '' ) {
+        if ( details.content === '' || assetKey === µb.userFiltersPath ) {
             details.content = µb.compileFilters(rawContent, assetKey);
             µb.assets.put(compiledPath, details.content);
         }
@@ -758,6 +758,14 @@
             µb.assets.get(assetKey, onRawListLoaded);
             return;
         }
+        // Findx.
+        // For displaying userFilters rules in a popup we always need to load them from file
+        //     and not from compiled. Because compiled data hasn't raws but already parsed/compiled data.
+        else if (assetKey === µb.userFiltersPath) {
+            details.content = '';
+            µb.assets.get(assetKey, onRawListLoaded);
+            return;
+        }
         details.assetKey = assetKey;
         callback(details);
     };
@@ -779,7 +787,7 @@
     // https://github.com/gorhill/uBlock/issues/313
     // Always try to fetch the name if this is an external filter list.
     if ( listEntry.title === '' || listEntry.group === 'custom' ) {
-        matches = head.match(/(?:^|\n)(?:!|# )[\t ]*Title:([^\n]+)/i);
+        matches = head.match(/(?:^|\n)(?:!|# )[\t ]*Title[\t ]*:([^\n]+)/i);
         if ( matches !== null ) {
             // https://bugs.chromium.org/p/v8/issues/detail?id=2869
             // JSON.stringify/JSON.parse is to work around String.slice()
@@ -789,9 +797,12 @@
         }
     }
     // Extract update frequency information
-    matches = head.match(/(?:^|\n)(?:!|# )[\t ]*Expires:[\t ]*(\d+)[\t ]*day/i);
+    matches = head.match(/(?:^|\n)(?:!|# )[\t ]*Expires[\t ]*:[\t ]*(\d+)[\t ]*(h)?/i);
     if ( matches !== null ) {
         v = Math.max(parseInt(matches[1], 10), 1);
+        if ( matches[2] !== undefined ) {
+            v = Math.ceil(v / 24);
+        }
         if ( v !== listEntry.updateAfter ) {
             this.assets.registerAssetSource(assetKey, { updateAfter: v });
         }
@@ -821,7 +832,7 @@
         staticExtFilteringEngine = this.staticExtFilteringEngine,
         reIsWhitespaceChar = /\s/,
         reMaybeLocalIp = /^[\d:f]/,
-        reIsLocalhostRedirect = /\s+(?:0\.0\.0\.0|broadcasthost|ip6-all(?:nodes|routers)|local|localhost|localhost\.localdomain)\b/,
+        reIsLocalhostRedirect = /\s+(?:0\.0\.0\.0|broadcasthost|localhost|local|ip6-\w+)\b/,
         reLocalIp = /^(?:0\.0\.0\.0|127\.0\.0\.1|::1|fe80::1%lo0)/,
         line, c, pos,
         lineIter = new this.LineIterator(this.processDirectives(rawText));
@@ -894,6 +905,95 @@
         skipCosmetic: !firstparty && !this.userSettings.parseAllABPHideFilters
     }, filterPath);
 };
+
+/******************************************************************************/
+
+/**
+ * Cosmetic rules of "User filters" filter.
+ * Used for displaying cosmetic rules of "User filters" in a popup.
+ * Also used for adding/removing separate rules to a whitelist
+ *      (rules added to exceptions of 'User filters' for a domain)
+ * @type {{rules, addRule, reset, toSelfie, fromSelfie}}
+ */
+µBlock.userCosmeticFilters = (function () {
+
+    /**
+     * List of rules data.
+     * @type {{raw: string, rule: string, hostname: string}}
+     */
+    var rules = {};
+
+    var addRule = function (raw, hostnames, rule) {
+        var data = {
+            raw: raw,             // full raw from filter: domain.com##.header
+            rule: rule,             // only rule: ##.header
+            hostname: ""       // only domain: domain.com
+        };
+
+        if(typeof hostnames === 'string') {
+            var hostname = this.URI.domainFromHostnameNoCache(hostnames);
+            data.hostname = hostname;
+            if (!rules.hasOwnProperty(hostname))
+                rules[hostname] = [];
+            rules[hostname].push(data);
+        }
+        else if (typeof hostnames === 'object' && hostnames.length) { // string[]
+            // If rule contains multiple hostnames
+            hostnames.forEach(function (name) {
+                var hostname = this.URI.domainFromHostnameNoCache(name);
+                data.hostname = hostname;
+                if (!rules.hasOwnProperty(hostname))
+                    rules[hostname] = [];
+                rules[hostname].push(data);
+            }.bind(this));
+        }
+        else { // Global
+            if (!rules.hasOwnProperty(""))
+                rules[""] = [];
+            rules[""].push(data);
+        }
+    }.bind(µBlock);
+
+    var clear = function () {
+        rules = {};
+    };
+
+    var toSelfie = function () {
+        try {
+            return JSON.stringify(rules);
+        }
+        catch (exception) {
+            console.error("Exception in 'userCosmeticFilters -> toSelfie' (storage.js) :" +
+                "\n\trules: ", rules,
+                "\n\texception: ", exception);
+            return "";
+        }
+    };
+
+    var fromSelfie = function (data) {
+        try {
+            rules = JSON.parse(data) || {};
+        }
+        catch (exception) {
+            console.error("Exception in 'userCosmeticFilters -> fromSelfie' (storage.js) :" +
+                "\n\tdata: ", data,
+                "\n\texception: ", exception);
+            rules = {};
+        }
+    };
+
+
+    return {
+        get rules() {
+            return rules;
+        },
+        addRule: addRule,
+        reset: clear,
+        toSelfie: toSelfie,
+        fromSelfie: fromSelfie
+    };
+})();
+
 
 /******************************************************************************/
 
@@ -1041,40 +1141,47 @@
 // some set time.
 
 µBlock.selfieManager = (function() {
-    var timer = null;
+    let µb = µBlock;
+    let timer = null;
 
-    var create = function() {
+    // As of 2018-05-31:
+    // JSON.stringify-ing ourselves results in a better baseline
+    // memory usage at selfie-load time. For some reasons.
+
+    let create = function() {
         timer = null;
-        var selfie = {
-            magic: this.systemSettings.selfieMagic,
-            availableFilterLists: this.availableFilterLists,
-            staticNetFilteringEngine: this.staticNetFilteringEngine.toSelfie(),
-            redirectEngine: this.redirectEngine.toSelfie(),
-            staticExtFilteringEngine: this.staticExtFilteringEngine.toSelfie()
+        let selfie = {
+            magic: µb.systemSettings.selfieMagic,
+            availableFilterLists: JSON.stringify(µb.availableFilterLists),
+            staticNetFilteringEngine: JSON.stringify(µb.staticNetFilteringEngine.toSelfie()),
+            redirectEngine: JSON.stringify(µb.redirectEngine.toSelfie()),
+            staticExtFilteringEngine: JSON.stringify(µb.staticExtFilteringEngine.toSelfie()),
+            userCosmeticFilters: µb.userCosmeticFilters.toSelfie()
         };
         vAPI.cacheStorage.set({ selfie: selfie });
-    }.bind(µBlock);
+    };
 
-    var load = function(callback) {
+    let load = function(callback) {
         vAPI.cacheStorage.get('selfie', function(bin) {
-            var µb = µBlock;
             if (
                 bin instanceof Object === false ||
                 bin.selfie instanceof Object === false ||
                 bin.selfie.magic !== µb.systemSettings.selfieMagic ||
-                bin.selfie.redirectEngine === undefined
+                bin.selfie.redirectEngine === undefined ||
+                bin.selfie.userCosmeticFilters === undefined
             ) {
                 return callback(false);
             }
-            µb.availableFilterLists = bin.selfie.availableFilterLists;
-            µb.staticNetFilteringEngine.fromSelfie(bin.selfie.staticNetFilteringEngine);
-            µb.redirectEngine.fromSelfie(bin.selfie.redirectEngine);
-            µb.staticExtFilteringEngine.fromSelfie(bin.selfie.staticExtFilteringEngine);
+            µb.availableFilterLists = JSON.parse(bin.selfie.availableFilterLists);
+            µb.staticNetFilteringEngine.fromSelfie(JSON.parse(bin.selfie.staticNetFilteringEngine));
+            µb.redirectEngine.fromSelfie(JSON.parse(bin.selfie.redirectEngine));
+            µb.staticExtFilteringEngine.fromSelfie(JSON.parse(bin.selfie.staticExtFilteringEngine));
+            µb.userCosmeticFilters.fromSelfie(bin.selfie.userCosmeticFilters);
             callback(true);
         });
     };
 
-    var destroy = function(after) {
+    let destroy = function(after) {
         if ( timer !== null ) {
             clearTimeout(timer);
             timer = null;
@@ -1082,10 +1189,10 @@
         vAPI.cacheStorage.remove('selfie');
 
         if ( typeof after !== 'number' ) {
-            after = this.selfieAfter;
+            after = µb.selfieAfter;
         }
         timer = vAPI.setTimeout(create, after);
-    }.bind(µBlock);
+    };
 
     return {
         load: load,
@@ -1330,7 +1437,7 @@
         }
         if ( this.userSettings.autoUpdate ) {
             //this.scheduleAssetUpdater(this.hiddenSettings.autoUpdatePeriod * 3600000 || 25200000);
-            this.scheduleAssetUpdater(25200000); // 7 min. Set by igor. 25.01.17
+            this.scheduleAssetUpdater(25200000); // 7 hours. Set by igor. 25.01.17
             //this.scheduleAssetUpdater(this.updateAssetsEvery);
         } else {
             this.scheduleAssetUpdater(0);
@@ -1494,6 +1601,334 @@
     };
     // Save changed state
     vAPI.storage.set({ 'availableFilterLists': filterLists }, onFilterListsReady);
+};
+
+/**
+ * Reset all filters lists to default state for domain.
+ * Filters white/black listing.
+ * Separate urls white/black listing.
+ * My filters cosmetic whitelisted rules.
+ * My filters cosmetic rules removing (only rules for this domain).
+ * @param {string} domain - here must be a full host name (www.example.com) but not a root domain (example.com)
+ * @param {Function} callback
+ */
+µBlock.resetFiltersListsForSite = function (domain, callback) {
+    var filterLists = this.availableFilterLists;
+    var rootDomain = this.URI.domainFromHostnameNoCache(domain);
+
+    for (var filterName in filterLists) {
+        if (!filterLists.hasOwnProperty(filterName))
+            break;
+
+        if (filterLists[filterName].hasOwnProperty('exceptions')) {
+
+            // Remove whitelist/blacklist status of filter on this domain
+            if (filterLists[filterName].exceptions.hasOwnProperty('domains')
+                && filterLists[filterName].exceptions.domains.hasOwnProperty(rootDomain))
+            {
+                delete filterLists[filterName].exceptions.domains[rootDomain];
+            }
+
+            // Remove whitelist/blacklist status of separate urls on this domain
+            if (filterLists[filterName].exceptions.hasOwnProperty('links')) {
+                for (var link in filterLists[filterName].exceptions.links) {
+                    // If url whitelisted/blacklisted on this domain
+                    if (filterLists[filterName].exceptions.links[link].hasOwnProperty(rootDomain)) {
+                        // If url has exceptions only for one domain - remove url from list
+                        if (Object.keys(filterLists[filterName].exceptions.links[link]).length === 1) {
+                            delete filterLists[filterName].exceptions.links[link];
+                        }
+                        // Otherwise just remove domain
+                        else {
+                            delete filterLists[filterName].exceptions.links[link][rootDomain];
+                        }
+                    }
+                }
+            }
+
+            // Remove whitelisted cosmetic rules from "My filters" filter
+            if (filterLists[filterName].exceptions.hasOwnProperty('rules')) {
+                for (var rule in filterLists[filterName].exceptions.rules) {
+                    if (filterLists[filterName].exceptions.rules[rule].indexOf(rootDomain) !== -1) {
+                        // If current rule has only one domain in a list - remove this rule from exceptions
+                        if (filterLists[filterName].exceptions.rules[rule].length === 1) {
+                            delete filterLists[filterName].exceptions.rules[rule];
+                        }
+                        // Otherwise just remove domain from the list of domains for current rule
+                        else {
+                            filterLists[filterName].exceptions.rules[rule].splice(filterLists[filterName].exceptions.rules[rule].indexOf(rootDomain), 1);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    vAPI.storage.set({ 'availableFilterLists': this.availableFilterLists }, function() {
+        µBlock.selfieManager.destroy(0);
+
+        // Remove all cosmetic rules for this domain from "My filters" filter
+        µBlock.rmFromUserFilters(null, domain, function () {
+            if (callback) callback();
+        });
+    });
+};
+
+
+/**
+ * Add/remove separate rule of User Filters (My filters) to a whitelist.
+ * Used for enabling/disabling blocking some rule from popup.
+ * @param {{raw: string, rule: string, hostname: string, fullData: string}} rule
+ * @param {string} domain
+ * @param {boolean} newState
+ */
+µBlock.setUserCosmeticRuleWhitelistState = function (rule, domain, newState) {
+    var filter = this.availableFilterLists[this.userFiltersPath];
+    var isChanged = false;
+
+    if (!filter.hasOwnProperty('exceptions')) {
+        filter.exceptions = {rules: {}};
+    }
+    if (!filter.exceptions.hasOwnProperty('rules')) {
+        filter.exceptions.rules = {};
+    }
+
+    var isWhitelisted = this.isUserCosmeticRuleWhitelisted(rule.rule, domain);
+
+    if (isWhitelisted && !newState) { // Remove from whitelist
+        filter.exceptions.rules[rule.rule].splice(filter.exceptions.rules[rule.rule].indexOf(domain), 1);
+        if (!filter.exceptions.rules[rule.rule].length) { // if current rule not whitelisted at any domain
+            delete filter.exceptions.rules[rule.rule];
+        }
+        isChanged = true;
+    }
+    else if (newState && !isWhitelisted) { // Add to whitelist
+        if (!filter.exceptions.rules[rule.rule]) {
+            filter.exceptions.rules[rule.rule] = [];
+        }
+
+        filter.exceptions.rules[rule.rule].push(domain);
+
+        isChanged = true;
+    }
+
+
+    var onFilterListsReady = function() {
+        µBlock.selfieManager.destroy(0);
+    };
+    // Save changed state
+    if (isChanged) {
+        vAPI.storage.set({ 'availableFilterLists': this.availableFilterLists }, onFilterListsReady);
+    }
+};
+
+/**
+ * Check is cosmetic rule from User Filters is whitelisted.
+ * @param {string} rule - element id/selector
+ * @param {string} domain
+ * @returns {boolean}
+ */
+µBlock.isUserCosmeticRuleWhitelisted = function (rule, domain) {
+    var filter = this.availableFilterLists[µBlock.userFiltersPath];
+
+    if (!filter.hasOwnProperty('exceptions') || !filter.exceptions.hasOwnProperty('rules')) {
+        filter.exceptions = {rules: {}};
+        return false;
+    }
+
+    return filter.exceptions.rules.hasOwnProperty(rule) && filter.exceptions.rules[rule].indexOf(domain) !== -1
+};
+
+
+µBlock.rmUserCosmeticRule = function (rule, domain) {
+    this.rmFromUserFilters(rule.raw, null, function () {});
+
+    domain = this.URI.domainFromHostname(domain);
+    // Remove rule from filter whitelist
+    if (this.isUserCosmeticRuleWhitelisted(rule.rule, domain)) {
+        var filter = this.availableFilterLists[this.userFiltersPath];
+        filter.exceptions.rules[rule.rule].splice(filter.exceptions.rules[rule.rule].indexOf(domain), 1);
+        if (!filter.exceptions.rules[rule.rule].length) { // if current rule not whitelisted at any domain
+            delete filter.exceptions.rules[rule.rule];
+        }
+        vAPI.storage.set({ 'availableFilterLists': this.availableFilterLists }, function() {
+            µBlock.selfieManager.destroy(0);
+        });
+    }
+};
+
+
+/**
+ * Remove rule from "User filters". Remove from variables and file.
+ * After removing filter will be reloaded.
+ * @param {string} [rule] - rule can be found by full rule raw (all line)
+ * @param {string} [domain] - rule can be found by domain (domain.com## at the beginning of line)
+ * @param {Function} callback
+ */
+µBlock.rmFromUserFilters = function(rule, domain, callback) {
+    if ( !rule && !domain) {
+        if (callback) callback();
+        return;
+    }
+
+    var µb = this;
+    var onSaved = function(details) {
+        µb.loadFilterLists(callback);
+    };
+
+    var findAndRemove = function (content) {
+        var lines = content.split('\n');
+        for (var i = 0; i < lines.length;) {
+            var line = lines[i];
+            if ((rule && line === rule) // found by rule
+                || (domain &&
+                    (line.indexOf(domain + "##") === 0 // found by domain (full hostname)
+                    || line.indexOf(µBlock.URI.domainFromHostnameNoCache(domain) + "##") === 0))) // found by domain (root domain)
+            {
+                lines.splice(i, 1);
+                // remove comment lines before current rule line
+                for (var j = i-1; j >= 0; j--) {
+                    var commLine = lines[j];
+                    if (commLine.indexOf("!") === 0 || commLine === "") {
+                        lines.splice(j, 1);
+                        i--;
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else
+                i++;
+        }
+        return lines.join('\n');
+    };
+
+    var onLoaded = function(details) {
+        if ( details.error ) {
+            if (callback) callback();
+            return;
+        }
+
+        details.content = findAndRemove(details.content);
+
+        // https://github.com/chrisaljoudi/uBlock/issues/976
+        // If we reached this point, the filter quite probably needs to be
+        // added for sure: do not try to be too smart, trying to avoid
+        // duplicates at this point may lead to more issues.
+        µb.saveUserFilters(details.content.trim(), onSaved.bind(this, details));
+    };
+
+    this.loadUserFilters(onLoaded);
+};
+
+
+/**
+ * Make hostname as "strict blocked".
+ * Add "||example.com^" rule to the "My filters"
+ * @param {string} hostname
+ * @param {Function} [callback]
+ */
+µBlock.strictBlockingHostname = function (hostname, callback) {
+
+    var onSaved = function() {
+        µBlock.loadFilterLists(callback);
+    };
+
+    var addHostnameBlocking = function (content) {
+        var rule = '||' + hostname + '^';
+        var lines = content.split('\n');
+        var isAlreadyExists = false;
+
+        // Check if current rule is already exists in a list.
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            if (line === rule) {
+                isAlreadyExists = true;
+                break;
+            }
+        }
+
+        if (!isAlreadyExists) {
+            lines.push(rule);
+            content = lines.join('\n');
+        }
+
+        return content;
+    };
+
+    var onLoaded = function(details) {
+        if ( details.error ) {
+            if (callback) callback();
+            return;
+        }
+
+        details.content = addHostnameBlocking(details.content);
+
+        // https://github.com/chrisaljoudi/uBlock/issues/976
+        // If we reached this point, the filter quite probably needs to be
+        // added for sure: do not try to be too smart, trying to avoid
+        // duplicates at this point may lead to more issues.
+        µBlock.saveUserFilters(details.content.trim(), onSaved.bind(this, details));
+    };
+
+    this.loadUserFilters(onLoaded);
+};
+
+µBlock.rmStrictBlockingHostname = function (hostname, callback) {
+
+    var onSaved = function() {
+        µBlock.loadFilterLists(callback);
+    };
+
+    var rmHostnameBlocking = function (content) {
+        let hostRule = '||' + hostname + '^';
+        let domainRule = '||' + µBlock.URI.domainFromHostnameNoCache(hostname) + '^';
+
+        let lines = content.split('\n');
+        for (var i = 0; i < lines.length;) {
+            let line = lines[i];
+
+            if (line === hostRule || line === domainRule) {
+                lines.splice(i, 1);
+                // remove comment lines before current rule line
+                for (var j = i - 1; j >= 0; j--) {
+                    let commLine = lines[j];
+                    if (commLine.indexOf("!") === 0 || commLine === "") {
+                        lines.splice(j, 1);
+                        i--;
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else
+                i++;
+        }
+        return lines.join('\n');
+    };
+
+    var onLoaded = function(details) {
+        if ( details.error ) {
+            if (callback) callback();
+            return;
+        }
+        let updatedContent = rmHostnameBlocking(details.content);
+
+        // If current host wasn't in "My Filters" - we shouldn't update filter and just call the callback
+        if (updatedContent === details.content) {
+            if (callback)
+                callback();
+        }
+        else { // Hostname was removed from My Filters - we must update filter
+            details.content = updatedContent;
+            µBlock.saveUserFilters(details.content.trim(), onSaved.bind(this, details));
+        }
+    };
+
+    this.loadUserFilters(onLoaded);
 };
 
 /******************************************************************************/

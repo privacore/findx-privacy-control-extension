@@ -21,13 +21,11 @@
 
 'use strict';
 
-// For content pages
+// Packaging this file is optional: it is not necessary to package it if the
+// platform is known to not support user stylesheets.
 
-if (
-    typeof vAPI === 'object' &&
-    vAPI.userStylesheet === undefined
-) {
 // >>>>>>>> start of HUGE-IF-BLOCK
+if ( typeof vAPI === 'object' && vAPI.supportsUserStylesheets ) {
 
 /******************************************************************************/
 /******************************************************************************/
@@ -67,6 +65,7 @@ vAPI.DOMFilterer = function() {
     this.filterset = new Set();
     this.excludedNodeSet = new WeakSet();
     this.addedCSSRules = new Set();
+    this.userFilterCosmeticRules = [];
 
     if ( this.domIsReady !== true ) {
         document.addEventListener('DOMContentLoaded', () => {
@@ -235,11 +234,51 @@ vAPI.DOMFilterer.prototype = {
 
     getAllSelectors: function() {
         return this.getAllSelectors_(false);
+    },
+
+    /**
+     * Returns all cosmetic rules from "User filters" used on current page.
+     * @returns {{raw: string, rule: string, hostname: string}[]}
+     */
+    getUserFiltersCosmeticRules: function () {
+        let rules = [];
+
+        this.userFilterCosmeticRules.forEach(function (ruleData) {
+            let selector = ruleData.rule;
+            let qty = document.querySelectorAll(selector).length;
+            if (qty) {
+                ruleData.qty = qty;
+                rules.push(ruleData);
+            }
+        });
+
+        return rules;
     }
+
 };
 
 /******************************************************************************/
 /******************************************************************************/
 
-// <<<<<<<< end of HUGE-IF-BLOCK
 }
+// <<<<<<<< end of HUGE-IF-BLOCK
+
+
+
+
+
+
+
+
+/*******************************************************************************
+
+    DO NOT:
+    - Remove the following code
+    - Add code beyond the following code
+    Reason:
+    - https://github.com/gorhill/uBlock/pull/3721
+    - uBO never uses the return value from injected content scripts
+
+**/
+
+void 0;

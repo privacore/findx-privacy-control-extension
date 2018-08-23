@@ -214,10 +214,18 @@
                                      data-position="bottom" data-delay="50" data-tooltip="popupTipElPicker">
                                     <img src="img/popup/flash.svg" alt=""/>
                                 </div>
+                                <div class="waves-effect waves-custom-grey plate-footer-btn user-filters-btn tooltipped"
+                                     data-position="bottom" data-delay="50" data-tooltip="popupTipUserFilters">
+                                    <img src="img/popup/eye.svg" alt=""/>
+                                </div>
+                                <div class="waves-effect waves-custom-grey plate-footer-btn strict-blocking-btn tooltipped"
+                                     data-position="bottom" data-delay="50" data-tooltip="popupTipStrictBlocking">
+                                    <img src="img/popup/strict_blocking.svg" alt=""/>
+                                </div>
                             </div>
-                            <a id="protection_status_btn" class="btn-floating btn-large waves-effect waves-light tooltipped"
-                               data-position="bottom" data-delay="50" data-tooltip="popupTipPauseOnSite">
-                                <img src="img/popup/on_off_button.svg" alt=""/>
+                            <a id="protection_status_btn" class="btn-floating btn-large waves-effect waves-light tooltipped">
+                                <img class="protection-icon-on" src="img/popup/pause.svg" alt=""  data-position="bottom" data-delay="50" data-tooltip="popupTipPauseOnSite"/>
+                                <img class="protection-icon-off" src="img/popup/on_off_button.svg" alt=""  data-position="bottom" data-delay="50" data-tooltip="popupTipStartOnSite"/>
                             </a>
                         </div>
                     </div>
@@ -329,8 +337,21 @@
                         </li>
                     </ul>
 
+                    <div class="items-list items-list__no-padding">
+                        <div class="waves-effect waves-custom-grey list-item clickable-item all-sites-cookies-btn">
+                            <div class="list-item-content">
+                                <div class="list-item-title" data-i18n="popupCookieControlSitesTitle"></div>
+                                <div class="list-item-subtitle" data-i18n="popupCookieControlSitesSubTitle"></div>
+                            </div>
+                            <div class="list-item-control">
+                                <img src="img/popup/chevron_down.svg" alt=""/>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="items-list settings-container">
+
+                    <div class="items-list no-top-border settings-container">
+                        <div class="items-list_title" data-i18n="popupCookiesSettingsListTitle"></div>
                         <div class="list-item third-party-blocking-setting">
                             <div class="list-item-icon">
                                 <img src="img/popup/cookies_cross_site.svg" alt=""/>
@@ -490,6 +511,18 @@
         <div class="mCustomScrollbar protection-lists-page-content">
             <ul class="collapsible protection-lists"></ul>
 
+            <div class="items-list items-list__no-padding">
+                <div class="list-item reset-protection-lists">
+                    <div class="list-item-content">
+                        <div class="list-item-title" data-i18n="popupResetProtectionListsTitle"></div>
+                        <div class="list-item-subtitle" data-i18n="popupResetProtectionListsSubTitle"></div>
+                    </div>
+                    <div class="waves-effect waves-custom-grey list-item-control reset-protection-lists_btn">
+                        <img src="img/popup/reset_button.png" alt=""/>
+                    </div>
+                </div>
+            </div>
+
             <div class="adding-more-lists-block">
                 <div class="adding-more-lists-title" data-i18n="popupAddMore"></div>
                 <div class="adding-more-lists-content" data-i18n="popupAddMoreText"></div>
@@ -507,6 +540,44 @@
 
     </div>
 
+    <div class="page" id="user_filters_page">
+        <div class="header">
+            <a id="close_user_filters"  class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
+            <span class="header-title" data-i18n="popupUserFiltersPageTitle"></span>
+            <a class="header-btn open-search-tab-btn"><i class="material-icons">search</i></a>
+            <a class="header-btn settings-btn">
+                <img src="img/popup/settings-icon.svg" alt=""/>
+            </a>
+        </div>
+
+        <div class="mCustomScrollbar user-filters-page-content">
+            <div class="user-filters-content">
+                <div class="user-filters-content_title" data-i18n="popupUserFiltersContentTitle"></div>
+                <div class="user-filters-content_subtitle" data-i18n="popupUserFiltersContentSubTitle"></div>
+            </div>
+
+
+            <ul class="user-filters-lists"></ul>
+
+        </div>
+
+        <div class="fixed-action-btn">
+            <a class="btn-floating btn-large tooltipped" data-position="left" data-delay="50" data-tooltip="popupTipElPicker">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="7472 -5295 24 24">
+                    <g id="flash" transform="translate(-1825 -2172)">
+                        <g transform="translate(9299.113 -3123)">
+                            <g id="Group_499" data-name="Group 499">
+                                <path id="Path_498" d="M10.913 24L25.03 9h-7.862l2.584-9L5.634 15h7.859l.542-1.871H9.972l5.845-6.208-1.137 3.957h6.013l-8.648 9.172z" style="fill:#fff" data-name="Path 498" transform="translate(-5.634)"/>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+                <i class="large material-icons content-refresh-icon">autorenew</i>
+            </a>
+        </div>
+
+    </div>
+
     <div class="page" id="cookie_control_page">
         <div class="header">
             <a id="close_cookie_control_page"  class="header-btn back-btn"><i class="material-icons">keyboard_arrow_left</i></a>
@@ -519,15 +590,6 @@
 
 
         <div class="items-list no-top-border">
-            <div class="waves-effect waves-custom-grey list-item clickable-item" data-item-type="all">
-                <div class="list-item-content">
-                    <div class="list-item-title" data-i18n="popupCookieControlSitesTitle"></div>
-                    <div class="list-item-subtitle" data-i18n="popupCookieControlSitesSubTitle"></div>
-                </div>
-                <div class="list-item-control">
-                    <img src="img/popup/chevron_down.svg" alt=""/>
-                </div>
-            </div>
             <div class="waves-effect waves-custom-grey list-item clickable-item" data-item-type="whitelisted">
                 <div class="list-item-content">
                     <div class="list-item-title" data-i18n="popupCookieControlWhitelistedSitesTitle"></div>
@@ -651,9 +713,9 @@
         <div class="mCustomScrollbar collapsible-body">
             {{#trackedUrls}}
                 <div class="collapsible-item-body-row filter-rule">
-                    <div class="rule-radio" data-url="{{url}}">
+                    <div class="rule-checkbox" data-url="{{url}}">
                         <label>
-                            <input class="with-gap" type="radio"  {{#isBlocked}}checked{{/isBlocked}}/>
+                            <input class="filled-in" type="checkbox"  {{#isBlocked}}checked{{/isBlocked}}/>
                             <span></span>
                         </label>
                     </div>
@@ -665,11 +727,54 @@
     </li>
 </script>
 
+<script id="user_filter_template" type="text/html">
+    <li class="collapsible-item protection-filter user-filter">
+        <div class="collapsible-header">
+            <div class="filter-switcher-wrapper">
+                <div class="switch">
+                    <label>
+                        <input {{#isEnabled}}checked{{/isEnabled}} type="checkbox">
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="truncate collapsible-item-header-content filter-header-content">
+                <div class="truncate collapsible-item-title filter-title" data-tooltip="{{title}}">{{title}}</div>
+                <div class="truncate collapsible-item-subtitle filter-subtitle">{{group}}</div>
+            </div>
+            <div class="filter-counts">
+                <span class="rules-blocked-count">0</span>
+                (<span class="rules-total-count">0</span>)
+            </div>
+            <div class="collapsible-item-chevron-icon filter-chevron-icon">
+                <img src="img/popup/chevron_down.svg" alt=""/>
+            </div>
+        </div>
+        <div class="collapsible-body"></div>
+    </li>
+</script>
+
 <script id="cookie_item_template" type="text/html">
     <div class="collapsible-item-body-row cookie-item {{#whitelisted}}whitelisted-cookie{{/whitelisted}} {{#blacklisted}}blacklisted-cookie{{/blacklisted}}">
         <div class="truncate cookie-name" title="{{name}}">{{name}}</div>
-        <div class="waves-effect waves-custom-grey cookie-control cookie-details-btn">
-            <img src="img/popup/dots-vertical.svg" alt="Details"/>
+        <div class="cookie-control cookie-details-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g id="popout" transform="translate(-9255 3586)">
+                    <g id="Group_1435" data-name="Group 1435" transform="translate(1387 -54)">
+                        <g id="Group_1393" data-name="Group 1393" transform="translate(1393 -191)">
+                            <rect id="Rectangle_928" data-name="Rectangle 928" style="fill: none" width="24" height="24" transform="translate(6475 -3341)"/>
+                        </g>
+                        <g id="Group_1441" data-name="Group 1441" transform="translate(7870.495 -3529.511)">
+                            <g id="Group_1437" data-name="Group 1437">
+                                <g id="Group_1436" data-name="Group 1436">
+                                    <path id="Path_1239" data-name="Path 1239" d="M0,0V14.322l1.91-1.986V1.91h14.9V16.576H6.875l-1.8,1.91H18.715V0Z"/>
+                                </g>
+                            </g>
+                            <path id="Path_1240" data-name="Path 1240" d="M12.492,21.3,5.5,21.491l.038,1.91,3.628-.076L2.6,29.893,3.937,31.23l6.569-6.569-.115,3.628,1.91.038Z" transform="translate(-1.607 -13.165)"/>
+                        </g>
+                    </g>
+                </g>
+            </svg>
         </div>
     </div>
 </script>
@@ -756,28 +861,72 @@
         <div class="listed-site__quantity">(<span>{{quantity}}</span>)</div>
         <div class="listed-site__domain truncate">{{domain}}</div>
         <div class="waves-effect waves-custom-grey listed-site__btn listed-site__clear_btn" data-position="bottom">
-            <img src="img/popup/trash_grey.svg"/>
+            <img src="img/popup/trash_black.svg"/>
         </div>
         <div class="listed-site__btn listed-site__more_btn">
             <img src="img/popup/dots-vertical.svg"/>
         </div>
         <div class="listed-site__menu">
-            <div class="listed-site__menu__header">
-                <div class="listed-site__menu__header__close_btn">
-                    <img src="img/popup/close_black.svg"/>
-                </div>
-            </div>
             <div class="waves-effect waves-custom-grey listed-site__menu_item" data-action="blacklisted" data-domain="{{domain}}">
-                <div class="listed-site__menu_item_icon">
-                    <img src="img/popup/block.svg"/>
-                </div>
-                <div class="listed-site__menu_item_title" data-i18n="popupCookiesBlacklist"></div>
+                <div class="listed-site__menu_item_title" data-i18n="popupCookiesBlacklistDomain"></div>
             </div>
             <div class="waves-effect waves-custom-grey listed-site__menu_item" data-action="whitelisted" data-domain="{{domain}}">
-                <div class="listed-site__menu_item_icon">
-                    <img src="img/popup/done.svg"/>
-                </div>
-                <div class="listed-site__menu_item_title" data-i18n="popupCookiesWhitelist"></div>
+                <div class="listed-site__menu_item_title" data-i18n="popupCookiesWhitelistDomain"></div>
+            </div>
+        </div>
+    </li>
+</script>
+
+<script id="cosmetic_rule_template" type="text/html">
+    <li class="cosmetic-rule {{#whitelisted}}cosmetic-rule__whitelisted{{/whitelisted}}" data-rule="{{raw}}">
+        <div class="cosmetic-rule_raw truncate" title="{{raw}}">{{raw}}</div>
+        <div class="waves-effect waves-custom-grey cosmetic-rule_btn cosmetic-rule_whitelist_btn">
+
+            <div class="cosmetic-rule_hidden-icon" data-tooltip="popupTipViewEl" data-position="bottom" data-delay="50">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g id="Eye-grey" transform="translate(-259 -234)">
+                        <g transform="translate(259 234)">
+                            <g>
+                                <rect style="fill: none;" width="24" height="24"/>
+                            </g>
+                            <g transform="translate(2.083 4.149)">
+                                <path d="M10.567,0C4.906,0,0,5.321,0,7.926s4.906,7.926,10.567,7.926S21.135,10.53,21.135,7.926,16.228,0,10.567,0Zm0,13.964c-4.869,0-8.68-4.831-8.68-6.039S5.7,1.887,10.567,1.887s8.68,4.831,8.68,6.039S15.436,13.964,10.567,13.964Zm2.378-7.208a2.645,2.645,0,1,1-5.02,1.17,2.6,2.6,0,0,1,2.642-2.642V3.4A4.448,4.448,0,0,0,6.039,7.926a4.529,4.529,0,0,0,9.058,0,4.765,4.765,0,0,0-.491-2.038Z"/>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="cosmetic-rule_visible-icon" data-tooltip="popupTipHideEl" data-position="bottom" data-delay="50">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g id="crossed_eye-grey" transform="translate(-136 -67)">
+                        <g transform="translate(136 67)">
+                            <g>
+                                <rect style="fill: none;" width="24" height="24"/>
+                            </g>
+                            <g transform="translate(1 0.778)">
+                                <path d="M17.434,5.925,22,1.321,20.679,0l-4.83,4.83a10.984,10.984,0,0,0-5.283-1.472C4.906,3.358,0,8.679,0,11.283c0,1.472,1.547,3.774,3.887,5.509L.113,20.566l1.321,1.321,4.075-4.075a10.547,10.547,0,0,0,5.057,1.358c5.66,0,10.566-5.321,10.566-7.925C21.132,9.849,19.66,7.66,17.434,5.925ZM1.887,11.283c0-1.208,3.811-6.038,8.679-6.038a8.976,8.976,0,0,1,3.887.981L8.3,12.377a2.046,2.046,0,0,1-.226-.943,2.607,2.607,0,0,1,2.642-2.755V6.792a4.519,4.519,0,0,0-3.774,7.019l-1.66,1.66C3.17,13.962,1.887,12,1.887,11.283Zm8.981,2.642A2.651,2.651,0,0,1,9.66,13.7l1.849-1.849,1.623-1.623A2.66,2.66,0,0,1,10.868,13.925Zm-.3,3.4a7.96,7.96,0,0,1-3.66-.906L7.321,16l.906-.906a4.258,4.258,0,0,0,2.566.717,4.619,4.619,0,0,0,4.415-4.34,4.483,4.483,0,0,0-.491-2.226L13.4,9.887l2.642-2.642c1.962,1.472,3.17,3.321,3.17,4C19.245,12.528,15.434,17.321,10.566,17.321Z"/>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+
+        </div>
+        <div class="waves-effect waves-custom-grey cosmetic-rule_btn cosmetic-rule_remove_btn" data-tooltip="popupTipDelRule" data-position="bottom" data-delay="50">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g id="trash_grey">
+                        <g>
+                            <rect style="fill: none;" width="24" height="24"/>
+                        </g>
+                        <g transform="translate(3.75 1.875)">
+                            <g>
+                                <path  d="M22.64,8.375,21.505,5H14.963L13.829,8.375H10V10.25H26.5V8.375Zm-6.833,0,.5-1.5h3.846l.5,1.5ZM23.5,23H13V11.75H11.125V24.875h14.25V11.75H23.5ZM15.25,11.75v9.375h1.875V11.75Zm4.125,0v9.375H21.25V11.75Z" transform="translate(-10 -5)"/>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
             </div>
         </div>
     </li>

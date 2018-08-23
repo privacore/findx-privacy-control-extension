@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2017 Raymond Hill
+    Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -349,11 +349,18 @@ vAPI.matchesProp = (function() {
 
 vAPI.injectScriptlet = function(doc, text) {
     if ( !doc ) { return; }
+    let script;
     try {
-        var script = doc.createElement('script');
+        script = doc.createElement('script');
         script.appendChild(doc.createTextNode(text));
         (doc.head || doc.documentElement).appendChild(script);
     } catch (ex) {
+    }
+    if ( script ) {
+        if ( script.parentNode ) {
+            script.parentNode.removeChild(script);
+        }
+        script.textContent = '';
     }
 };
 
@@ -874,30 +881,28 @@ vAPI.domCollapser = (function() {
         attributeFilter: [ 'src' ]
     };
 
+    // The injected scriptlets are those which were injected in the current
+    // document, from within `bootstrapPhase1`, and which scriptlets are
+    // selectively looked-up from:
+    // https://github.com/uBlockOrigin/uAssets/blob/master/filters/resources.txt
     var primeLocalIFrame = function(iframe) {
-        // Should probably also copy injected styles.
-        // The injected scripts are those which were injected in the current
-        // document, from within the `contentscript-start.js / injectScripts`,
-        // and which scripts are selectively looked-up from:
-        // https://github.com/gorhill/uBlock/blob/master/assets/ublock/resources.txt
         if ( vAPI.injectedScripts ) {
             vAPI.injectScriptlet(iframe.contentDocument, vAPI.injectedScripts);
         }
     };
 
+    // https://github.com/gorhill/uBlock/issues/162
+    // Be prepared to deal with possible change of src attribute.
     var addIFrame = function(iframe, dontObserve) {
-        // https://github.com/gorhill/uBlock/issues/162
-        // Be prepared to deal with possible change of src attribute.
         if ( dontObserve !== true ) {
             iframeSourceObserver.observe(iframe, iframeSourceObserverOptions);
         }
-
         var src = iframe.src;
         if ( src === '' || typeof src !== 'string' ) {
             primeLocalIFrame(iframe);
             return;
         }
-        if ( src.lastIndexOf('http', 0) !== 0 ) { return; }
+        if ( src.startsWith('http') === false ) { return; }
         toFilter[toFilter.length] = {
             type: 'sub_frame',
             url: iframe.src
@@ -1261,6 +1266,64 @@ vAPI.domSurveyor = (function() {
 /******************************************************************************/
 /******************************************************************************/
 
+vAPI.nudging = (function () {
+    var hostname = window.location.hostname;
+    var services = [
+        {
+            name: 'google',
+            wildcarts: ['^www[/.]google[/.].*', '^google[/.].*']
+        }
+    ];
+    var actualService = null;
+
+    /**
+     * Check do we need to show a nudging window on this page.
+     * @returns {boolean}
+     */
+    var isNudgingNeed = function () {
+        for (var i = 0; i < services.length; i++) {
+            var wildcarts = services[i].wildcarts;
+            for (var j = 0; j < wildcarts.length; j++) {
+                var wildcart = wildcarts[j];
+                if (hostname.match(wildcart) && hostname.match(wildcart).length) {
+                    actualService = services[i];
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    var start = function () {
+        // Show "Nudging" popup if it is need
+        vAPI.messaging.send(
+            'contentscript',
+            {
+                what: 'startNudgingPopup',
+                hostname: hostname,
+                isRootFrame: window === window.top,
+                service: actualService.name
+            }
+        );
+    };
+
+
+
+    var getServiceName = function () {
+        return actualService ? actualService.name : "";
+    };
+
+    return {
+        serviceName: getServiceName,
+        check: isNudgingNeed,
+        start: start
+    };
+})();
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+
 // Bootstrapping allows all components of the content script to be launched
 // if/when needed.
 
@@ -1363,6 +1426,7 @@ vAPI.domSurveyor = (function() {
                 { injected: true }
             );
             domFilterer.addProceduralSelectors(cfeDetails.proceduralFilters);
+            domFilterer.userFilterCosmeticRules = response.userCosmeticFilters;
         }
 
         if ( cfeDetails.networkFilters.length !== 0 ) {
@@ -1419,6 +1483,11 @@ vAPI.domSurveyor = (function() {
             isRootFrame: window === window.top
         }
     );
+
+
+    if (vAPI.nudging.check()) {
+        vAPI.nudging.start();
+    }
 })();
 
 /******************************************************************************/

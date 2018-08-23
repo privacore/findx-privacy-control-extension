@@ -355,8 +355,9 @@ var matchBucket = function(url, hostname, bucket, start) {
     return whitelist;
 };
 
-µBlock.reWhitelistBadHostname = /[^a-z0-9.\-\[\]:]/;
-µBlock.reWhitelistHostnameExtractor = /([a-z0-9\[][a-z0-9.\-]*[a-z0-9\]])(?::[\d*]+)?\/(?:[^\x00-\x20\/]|$)[^\x00-\x20]*$/;
+// https://github.com/gorhill/uBlock/issues/3717
+µBlock.reWhitelistBadHostname = /[^a-z0-9.\-_\[\]:]/;
+µBlock.reWhitelistHostnameExtractor = /([a-z0-9.\-_\[\]]+)(?::[\d*]+)?\/(?:[^\x00-\x20\/]|$)[^\x00-\x20]*$/;
 
 /******************************************************************************/
 
@@ -484,15 +485,14 @@ var matchBucket = function(url, hostname, bucket, start) {
 /******************************************************************************/
 
 µBlock.elementPickerExec = function(tabId, targetElement, zap) {
-    if ( vAPI.isBehindTheSceneTabId(tabId) ) {
-        return;
-    }
+    if ( vAPI.isBehindTheSceneTabId(tabId) ) { return; }
+
     this.epickerTarget = targetElement || '';
     this.epickerZap = zap || false;
-    this.scriptlets.inject(tabId, 'element-picker');
-    if ( typeof vAPI.tabs.select === 'function' ) {
-        vAPI.tabs.select(tabId);
-    }
+    vAPI.tabs.injectScript(tabId, {
+        file: '/js/scriptlets/element-picker.js',
+        runAt: 'document_end'
+    });
 };
 
 /******************************************************************************/
@@ -594,24 +594,14 @@ var matchBucket = function(url, hostname, bucket, start) {
 
 /******************************************************************************/
 
-µBlock.logCosmeticFilters = (function() {
-    var tabIdToTimerMap = new Map();
-
-    var injectNow = function(tabId) {
-        tabIdToTimerMap.delete(tabId);
-        µBlock.scriptlets.injectDeep(tabId, 'cosmetic-logger');
-    };
-
-    var injectAsync = function(tabId) {
-        if ( tabIdToTimerMap.has(tabId) ) { return; }
-        tabIdToTimerMap.set(
-            tabId,
-            vAPI.setTimeout(injectNow.bind(null, tabId), 100)
-        );
-    };
-
-    return injectAsync;
-})();
+µBlock.logCosmeticFilters = function(tabId, frameId) {
+    if ( this.logger.isEnabled() ) {
+        vAPI.tabs.injectScript(tabId, {
+            file: '/js/scriptlets/cosmetic-logger.js',
+            frameId: frameId
+        });
+    }
+};
 
 /******************************************************************************/
 
@@ -680,3 +670,142 @@ var matchBucket = function(url, hostname, bucket, start) {
         report: report
     };
 })();
+
+/******************************************************************************/
+
+// FINDX custom methods
+
+/******** Nudging ********/
+
+µBlock.nudging = (function () {
+    var ub = µBlock;
+
+    var injectScriptlet = function (tabId) {
+        if ( vAPI.isBehindTheSceneTabId(tabId) ) {
+            return;
+        }
+        ub.scriptlets.inject(tabId, 'nudging');
+        if ( typeof vAPI.tabs.select === 'function' ) {
+            vAPI.tabs.select(tabId);
+        }
+    };
+
+
+    /******************************************************************************/
+
+    /**
+     * Return html content of nudging popup for selected service
+     * @param {string} service - each service has their own html
+     * @param {string} query - query string scraped from url
+     * @param {Function} callback - <string>
+     */
+    var getNudgingPopupHtml = function (service, query, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'nudging-' + service + '.html', true);
+        xhr.overrideMimeType('text/html;charset=utf-8');
+        xhr.responseType = 'text';
+        xhr.onload = function() {
+            this.onload = null;
+
+            var html = replaceNudgingContent(service, query, this.responseText);
+
+            callback(html);
+        };
+        xhr.send();
+    };
+
+    /******************************************************************************/
+
+    var replaceNudgingContent = function (service, query, html) {
+
+        var i18n = {
+            logo_url: vAPI.getURL("img/nudging/findx-logo-nudging.svg"),
+            menu_btn_url: vAPI.getURL("img/nudging/More.svg"),
+            minimize_btn_url: vAPI.getURL("img/nudging/Minimize.svg"),
+            roboto_url: vAPI.getURL("css/fonts/Roboto-Regular.ttf"),
+            roboto_medium_url: vAPI.getURL("css/fonts/Roboto-Medium.ttf"),
+            searchQuery: query || '',
+            nudgingMenuMinimize: vAPI.i18n('nudgingMenuMinimize'),
+            nudgingMenuSettings: vAPI.i18n('nudgingMenuSettings'),
+            nudgingMenuAbout: vAPI.i18n('nudgingMenuAbout')
+        };
+
+        var specific = getServiceSpecificData(service);
+        for (var key in specific) {
+            if (specific.hasOwnProperty(key)) {
+                i18n[key] = specific[key];
+            }
+        }
+
+        i18n.minimized = ub.nudgingMinimizeStates[service] ? 'minimized' : '';
+
+
+        var reStrings = /\{\{(\w+)\}\}/g;
+        var replacer = function(a0, string) {
+            return i18n[string];
+        };
+
+        return html.replace(reStrings, replacer);
+    };
+
+    /******************************************************************************/
+
+    var nudgingServiceData = {
+        'google': {
+            searchSubTitle: 'nudgingSearchPrivately',
+            googleActivityBtn: 'nudgingGoogleActivityCheck',
+            nudgingMenuGActivity: 'nudgingMenuGActivity'
+        }
+    };
+
+    var nudgingDynamicTexts = [
+        'nudgingDynamicText1'
+    ];
+    var nudgingDynamicImages = [
+        'img/nudging/Hushed.svg',
+        'img/nudging/Rolling-eyes.svg',
+        'img/nudging/Smirking.svg',
+        'img/nudging/Thinking.svg',
+        'img/nudging/Winking.svg',
+        'img/nudging/Zipper-Mouth.svg'
+    ];
+
+    var getServiceSpecificData = function (service) {
+        var data = {};
+
+        var serviceSpecific = nudgingServiceData[service];
+        for (var key in serviceSpecific) {
+            if (serviceSpecific.hasOwnProperty(key)) {
+                data[key] = vAPI.i18n(serviceSpecific[key]);
+            }
+        }
+
+        var dynamicText = nudgingDynamicTexts[Math.floor(Math.random()*nudgingDynamicTexts.length)]
+        data.dynamicText = vAPI.i18n(dynamicText);
+
+        var dynamicImg = nudgingDynamicImages[Math.floor(Math.random()*nudgingDynamicImages.length)]
+        data.dynamicImg = vAPI.getURL(dynamicImg);
+
+        return data;
+    };
+
+    /******************************************************************************/
+
+    var saveMinimizedState = function (service, isMinimized) {
+        ub.nudgingMinimizeStates[service] = isMinimized;
+
+        vAPI.storage.set({ 'nudgingMinimizeStates': ub.nudgingMinimizeStates });
+    };
+
+    /******************************************************************************/
+
+    return {
+        insert: injectScriptlet,
+        getPopupData: getNudgingPopupHtml,
+        saveState: saveMinimizedState
+    };
+})();
+
+
+
+/******************************************************************************/

@@ -133,9 +133,12 @@
 
     var initializeTooltips = function () {
         // Whitelist buttons (shield icon and floating button in Protection tab)
-        M.Tooltip.init(document.querySelector("#protection_status_btn"), {enterDelay: 300});
+        M.Tooltip.init(document.querySelector("#protection_status_btn .protection-icon-on"), {enterDelay: 300});
+        M.Tooltip.init(document.querySelector("#protection_status_btn .protection-icon-off"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector("#pause_site_btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".element-picker-btn"), {enterDelay: 300});
+        M.Tooltip.init(document.querySelector(".user-filters-btn"), {enterDelay: 300});
+        M.Tooltip.init(document.querySelector(".strict-blocking-btn"), {enterDelay: 300});
         M.Tooltip.init(document.querySelector(".open-protection-lists-btn"), {enterDelay: 300});
 
         M.Tooltip.init(document.querySelector(".domain-cookies-reset-btn"), {enterDelay: 300});
@@ -194,6 +197,8 @@
         handleWhitelistBtn();
         handleProtectionListsBtn();
         handleElementPickerBtn();
+        handleMyFiltersBtn();
+        handleStrictBlockingBtn();
 
         handleStartProtectionBtn();
 
@@ -211,9 +216,13 @@
 
         handleSocialBlocking();
 
-        handleCloseProtectionListsBtn();
+        handleUserFiltersPage();
+
         handleOpenSearchTabBtn();
 
+        // Protection lists page
+        handleCloseProtectionListsBtn();
+        handleResetFiltersListsForSite();
         handleFloatingActionBtn();
 
         handleShareDialog();
@@ -279,6 +288,7 @@
     var PAGES = {
         'main': 'main_page',
         'protection_lists': 'protection_lists_page',
+        'user_filters': 'user_filters_page',
         'cookie_control': 'cookie_control_page',
         'whitelisted_sites': 'listed_sites_page',
         'blacklisted_sites': 'listed_sites_page',
@@ -289,6 +299,9 @@
     var openPage = function (pageId) {
         $(".page").removeClass('active');
         $("#" + pageId).addClass('active');
+
+        // Hide all tooltips
+        $('.material-tooltip').css('opacity', 0);
     };
 
     /***************************************************************************/
@@ -499,13 +512,53 @@
 
     /***************************************************************************/
 
+    /**
+     * "My filters" button in a Protection tab.
+     * Used to open "User filters" page.
+     */
+    var handleMyFiltersBtn = function () {
+        $(".user-filters-btn").off("click");
+        $(".user-filters-btn").on("click", function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            openPage(PAGES.user_filters);
+        });
+    };
+
+    /****************************** Strict blocking *********************************/
+
+    var handleStrictBlockingBtn = function () {
+        $(".strict-blocking-btn").off("click");
+        $(".strict-blocking-btn").on("click", function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            if (popupData.canElementPicker === true) {// if not a system page
+                messager.send(
+                    'popupPanel',
+                    {
+                        what: 'strictBlocking',
+                        tabId: popupData.tabId,
+                        hostname: popupData.pageHostname
+                    },
+                    function () {
+                        reloadTab();
+                        vAPI.closePopup();
+                    }
+                );
+            }
+        });
+    };
+
+    /***************************************************************************/
+
     var showWhitelistStatus = function () {
-        let status = (popupData.pageURL === '' || !popupData.netFilteringSwitch);
+        var status = (popupData.pageURL === '' || !popupData.netFilteringSwitch);
         $('body').toggleClass('protection-off', status);
 
-        $("#protection_status_btn, #pause_site_btn").attr('data-tooltip', status ?
+        $("#pause_site_btn").attr('data-tooltip', status ?
             vAPI.i18n('popupTipStartOnSite') : vAPI.i18n('popupTipPauseOnSite'));
-        M.Tooltip.init($("#protection_status_btn")[0], {enterDelay: 300});
         M.Tooltip.init($("#pause_site_btn")[0], {enterDelay: 300});
     };
 
@@ -683,7 +736,9 @@
         return filters;
     };
 
-    /***************************************************************************/
+
+
+    /**************************** Protection lists page *****************************/
 
     var renderTrackedUrls = function () {
         popupData.trackedUrls = {};
@@ -928,7 +983,11 @@
             if (!filterItemTmplt)
                 return;
 
-            elFilter = $(Mustache.render(filterItemTmplt, filterData));
+            if (filterData.id === 'user-filters') {
+                elFilter = $(Mustache.render($('#user_filter_template').text(), filterData));
+            }
+            else
+                elFilter = $(Mustache.render(filterItemTmplt, filterData));
             handleFilterElement();
         };
 
@@ -950,23 +1009,29 @@
                         $(elFilter).find(".collapsible-body").mCustomScrollbar("destroy");
                     }
                 }, 400);
+
+                // Open User filters page if "My filters" item was clicked
+                if (filterData.id === 'user-filters') {
+                    openPage(PAGES.user_filters);
+                }
             });
             elFilter.find(".collapsible-header .switch").on('click', function (ev) {
                 ev.stopPropagation();
             });
             elFilter.find(".collapsible-header .switch input").on('change', onFilterStateChange);
 
-            elFilter.find(".collapsible-body .filter-rule .rule-radio").on('click', function (ev) {
-                ev.preventDefault();
-                ev.stopPropagation();
+            elFilter.find(".collapsible-body .filter-rule .rule-checkbox").on('click', function (ev) {
+                if (ev.target.nodeName === 'INPUT') {
+                    var isChecked = ev.target.checked;
+                    var url = $(ev.currentTarget).attr("data-url");
 
-                var isChecked = $(ev.currentTarget).find('input.with-gap').attr('checked');
-                $(ev.currentTarget).find('input.with-gap').attr('checked', !isChecked);
+                    onFilterUpdated();
 
-                var url = $(ev.currentTarget).attr("data-url");
-                switchUrlBlocking(url, !isChecked);
-
-                onFilterUpdated();
+                    // Timeout is set here because checkbox animation (realized by Materialize) looks delayed
+                    setTimeout(function () {
+                        switchUrlBlocking(url, isChecked);
+                    }, 300);
+                }
             });
         };
 
@@ -1011,14 +1076,10 @@
                 }
             };
 
-            function response (result) {
-
-            }
-
             messager.send('popupPanel', {
                 what:  'updateFilter',
                 updates: updates
-            }, response);
+            });
         };
 
 
@@ -1039,7 +1100,7 @@
         var removeFilter = function () {
             elFilter.find(".collapsible-header .switch").off('click')
             elFilter.find(".collapsible-header .switch input").off('change', onFilterStateChange);
-            elFilter.find(".collapsible-body .filter-rule .rule-radio").off('click');
+            elFilter.find(".collapsible-body .filter-rule .rule-checkbox").off('click');
         };
 
 
@@ -1100,13 +1161,202 @@
         messager.send('popupPanel', {what: 'reloadTab', tabId: popupData.tabId});
     };
 
+    /**************** Reset lists for this site *****************/
+
+    var handleResetFiltersListsForSite = function () {
+        $('#protection_lists_page .protection-lists-page-content .reset-protection-lists_btn').off('click');
+        $('#protection_lists_page .protection-lists-page-content .reset-protection-lists_btn').on('click', function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            messager.send('popupPanel', {
+                what: 'resetFiltersListsForSite',
+                tabId: popupData.tabId,
+                domain: popupData.pageHostname
+            }, function () {
+                reloadTab();
+                vAPI.closePopup();
+            });
+        });
+    };
 
 
 
+    /**************************** User filters page *********************************/
+
+    var cosmeticRulesData = [];
+
+    var renderUserFiltersCosmetic = function (rules) {
+        cosmeticRulesData = [];
+        var userFilter = popupData.usedFilters['user-filters'];
+
+        if (isFilterEnabled(userFilter)) {
+            cosmeticRulesData = rules;
+        }
+
+        setUserFiltersQty();
+
+        clearUserCosmeticRulesList();
+        renderUserCosmeticRules()
+    };
+
+    var handleUserFiltersPage = function () {
+        $('#user_filters_page .header .back-btn').off("click");
+        $('#user_filters_page .header .back-btn').on("click", function (ev) {
+            openPage(PAGES.protection_lists);
+        });
+
+        var floatingBtn = $('#user_filters_page .btn-floating');
+        M.Tooltip.init(floatingBtn, {enterDelay: 500});
+        floatingBtn.off("click");
+        floatingBtn.on("click", function (ev) {
+            if (ev.currentTarget.classList.contains('btn-floating__refresh')) {
+                // If some changes was made on a page.
+                reloadTab();
+                vAPI.closePopup();
+            }
+            else {
+                if (popupData.canElementPicker === true)
+                    gotoPick();
+            }
+        });
+    };
+
+    var setUserFiltersQty = function () {
+        var blockedQty = cosmeticRulesData.filter(function (rule) {
+            return !rule.whitelisted;
+        }).length;
+        $('.user-filter .filter-counts .rules-blocked-count').html(blockedQty);
+        $('.user-filter .filter-counts .rules-total-count').html(cosmeticRulesData.length);
+    };
+
+    var clearUserCosmeticRulesList = function () {
+        cosmeticRules.forEach(function (cosmeticRule) {
+            cosmeticRule.destroy();
+        });
+        cosmeticRules = [];
+        $('.user-filters-lists').html('');
+    };
+
+    var cosmeticRules = [];
+
+    var CosmeticRule = function (ruleData, filterName) {
+        this.elItem = null;
+        this.elParent = null;
+        this.ruleData = ruleData || {};
+        this.ruleData.fullData = JSON.stringify(this.ruleData);
+        this.filterName = filterName || "";
+        this.template = $('#cosmetic_rule_template').text();
+
+        this.btnHide = null;
+        this.btnRemove = null;
+    };
+
+    CosmeticRule.prototype.createElement = function () {
+        this.elItem = $(Mustache.render(this.template, this.ruleData));
+    };
+
+    CosmeticRule.prototype.appendTo = function (elParent) {
+        if (!this.elParent) {
+            this.elParent = $(elParent);
+        }
+        if (!this.elItem)
+            this.createElement();
+
+        $(elParent).append(this.elItem);
+        setTimeout(function () {
+            this.elItem = $(this.elParent).find(".cosmetic-rule[data-rule='" + this.ruleData.raw + "']");
+            this.btnHide = this.elItem.find('.cosmetic-rule_whitelist_btn');
+            this.btnRemove = this.elItem.find('.cosmetic-rule_remove_btn');
+            this.setControlsHandlers();
+            this.setTooltips();
+        }.bind(this), 300);
+    };
+
+    CosmeticRule.prototype.setTooltips = function () {
+        this.elItem.find('[data-tooltip]').each(function(index, elem) {
+            var tooltip = vAPI.i18n.prepareTemplateText(vAPI.i18n($(elem).attr('data-tooltip')));
+            if ( tooltip ) {
+                $(elem).attr('data-tooltip', tooltip);
+            }
+
+            M.Tooltip.init(elem, {enterDelay: 300});
+        });
+    };
+
+    CosmeticRule.prototype.setControlsHandlers = function () {
+        $(this.btnHide).off('click');
+        $(this.btnHide).on('click', this.onHideClick.bind(this));
+
+        $(this.btnRemove).off('click');
+        $(this.btnRemove).on('click', this.onRemoveClick.bind(this));
+    };
+
+    CosmeticRule.prototype.onHideClick = function (ev) {
+        this.ruleData.whitelisted = !this.ruleData.whitelisted;
+
+        messager.send('popupPanel', {
+            what:  'setUserCosmeticRuleWhitelistState',
+            filterPath: this.filterName,
+            domain: popupData.pageDomain,
+            rule: this.ruleData,
+            whitelist: this.ruleData.whitelisted
+        });
+
+        $(this.elItem).toggleClass('cosmetic-rule__whitelisted');
+        onUserCosmeticRuleUpdated();
+    };
+
+    CosmeticRule.prototype.onRemoveClick = function (ev) {
+        messager.send('popupPanel', {
+            what:  'rmUserCosmeticRule',
+            filterPath: this.filterName,
+            domain: popupData.pageDomain,
+            rule: this.ruleData,
+            whitelist: this.ruleData.whitelisted
+        });
+
+        onUserCosmeticRuleUpdated();
+        // Hide tooltip
+        $('.material-tooltip').css('opacity', 0);
+        this.destroy();
+    };
+
+    CosmeticRule.prototype.destroy = function () {
+        this.elParent = null;
+        $(this.btnHide).off('click');
+        this.btnHide = null;
+        $(this.btnRemove).off('click');
+        this.btnRemove = null;
+        this.filterName = null;
+
+        this.elItem.remove();
+        this.elItem = null;
+    };
 
 
 
+    var renderUserCosmeticRules = function () {
+        var elRulesList = $('.user-filters-lists');
 
+        cosmeticRulesData.forEach(function (ruleData) {
+            var rule = new CosmeticRule(ruleData, 'user-filters');
+            rule.appendTo(elRulesList);
+
+            cosmeticRules.push(rule);
+        });
+    };
+
+    var onUserCosmeticRuleUpdated = function () {
+        $('#user_filters_page').toggleClass('content-changed', true);
+
+        var floatingBtn = $('#user_filters_page .btn-floating');
+        floatingBtn.toggleClass('btn-floating__refresh', true);
+        if (floatingBtn[0].hasAttribute('data-tooltip')) {
+            $(floatingBtn).attr('data-tooltip', vAPI.i18n('popupTipRefreshBtn'));
+            M.Tooltip.init(floatingBtn, {enterDelay: 500});
+        }
+    };
 
 
 
@@ -1123,6 +1373,8 @@
         handleResetCookiesDomainBtn();
 
         handleNoCookiesListOpening();
+
+        handleAllSitesCookiesBtn();
 
         handleAdvancedSettingsBtn();
         handleCookiesSettings();
@@ -1199,13 +1451,18 @@
         });
     };
 
+    var handleAllSitesCookiesBtn = function () {
+        $("#cookies_tab .all-sites-cookies-btn").off('click');
+        $("#cookies_tab .all-sites-cookies-btn").on('click', function (ev) {
+            renderListedSitesPage('all');
+            openPage(PAGES.all_sites);
+        });
+    };
+
 
     /***************************************************************************/
 
     var renderCookiesTab = function () {
-        console.log ("renderCookiesTab ()            popup-privacycontrol.js" +
-                        "\n\t popupData: ", popupData);
-
         showCookiesDomain();
 
         if (!isSafari) {
@@ -1220,7 +1477,7 @@
             document.querySelector('body').classList.add('platform-safari');
             $('.safari-cookies-dialog-btn').off('click');
             $('.safari-cookies-dialog-btn').on('click', function (ev) {
-                let type = ev.currentTarget.getAttribute('data-type') || "";
+                var type = ev.currentTarget.getAttribute('data-type') || "";
                 messager.send('popupPanel', {what: 'openGetExtensionPage', type: type});
                 vAPI.closePopup();
             });
@@ -1594,7 +1851,7 @@
     };
 
     CookieItem.prototype.handleDetailsBtn = function () {
-        var btnDetails = $(this.divElement).find('.cookie-control.cookie-details-btn');
+        var btnDetails = $(this.divElement);
         btnDetails.off('click');
         btnDetails.on('click', function (ev) {
             this.createDetailsWnd();
@@ -1918,7 +2175,12 @@
     var handleListedSitesPage = function () {
         $('#listed_sites_page .header .back-btn').off("click");
         $('#listed_sites_page .header .back-btn').on("click", function (ev) {
-            openPage(PAGES.cookie_control);
+            if (isAllSitesPageType()) {
+                openPage(PAGES.main);
+            }
+            else {
+                openPage(PAGES.cookie_control);
+            }
         });
 
         handleListedSitesPageFloatingBtn();
@@ -1956,8 +2218,8 @@
 
 
     var renderListedSitesPage = function (type) {
-        let headerTitle = type === 'whitelist' ? 'popupCookieControlWhitelistedSitesTitle'
-            : (type === 'all' ? 'popupCookieControlSitesTitle' : 'popupCookieControlBlacklistedSitesTitle');
+        var headerTitle = type === 'whitelist' ? 'popupCookieControlWhitelistedSitesTitle'
+            : (type === 'all' ? 'popupCookiesAllSitesPageTitle' : 'popupCookieControlBlacklistedSitesTitle');
 
         setListedSitesPageHeader(vAPI.i18n(headerTitle));
         setListedSitesPageType(type);
@@ -2053,12 +2315,6 @@
         // Set list item popup menu texts
         divSitesList.find('.listed-site__menu [data-i18n]').each(function(index, elem) {
             $(elem).html(vAPI.i18n.prepareTemplateText(vAPI.i18n($(elem).attr('data-i18n'))));
-        });
-
-        // Handle menu popup "close" buttons
-        divSitesList.find('.listed-site__menu .listed-site__menu__header__close_btn').off('click');
-        divSitesList.find('.listed-site__menu .listed-site__menu__header__close_btn').on('click', function (ev) {
-            closeListedSitePopupMenu();
         });
 
         // Close menu popup if user clicks outside popup
@@ -2492,6 +2748,16 @@
             }
         });
 
+        $(".user-filters-page-content").mCustomScrollbar({
+            // scrollInertia: 0,
+            autoHideScrollbar: false,
+            scrollButtons:{ enable: false },
+            advanced:{ updateOnContentResize: true },
+            mouseWheel:{
+                scrollAmount: 150
+            }
+        });
+
         $(".listed-sites-page-content").mCustomScrollbar({
             // scrollInertia: 0,
             autoHideScrollbar: false,
@@ -2502,6 +2768,29 @@
             }
         });
     };
+
+
+    /******************************************************************************/
+
+    var renderPopupLazy = function() {
+        messager.send(
+            'popupPanel',
+            { what: 'getPopupLazyData', tabId: popupData.tabId }
+        );
+    };
+
+    var onPopupMessage = function(data) {
+        if ( !data ) { return; }
+        if ( data.tabId !== popupData.tabId ) { return; }
+
+        switch ( data.what ) {
+            case 'cosmeticallyFilteredElementCountChanged':
+                renderUserFiltersCosmetic(data.userFiltersCosmeticRules);
+                break;
+        }
+    };
+
+    messager.addChannelListener('popup', onPopupMessage);
 
     /***************************************************************************/
 
@@ -2523,6 +2812,7 @@
         var onDataReceived = function (response) {
             cachePopupData(response);
             renderPopup(isInitial);
+            renderPopupLazy(); // UserFilters cosmetics rules receiving
             pollForContentChange();
         };
         messager.send('popupPanel',

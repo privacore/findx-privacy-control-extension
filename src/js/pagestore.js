@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2018 Raymond Hill
+    Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -333,7 +333,11 @@ PageStore.prototype.init = function(tabId, context) {
     this.largeMediaTimer = null;
     this.netFilteringCache = NetFilteringResultCache.factory();
     this.internalRedirectionCount = 0;
-    
+
+    // Findx. Rules from UserFilters used in a page (only used, but not all possible)
+    // Current list used for displaying blocked cosmetic in a popup.
+    this.userFiltersCosmeticRules = [];
+
     this.noCosmeticFiltering = (µb.hnSwitches.evaluateZ(
                 'no-cosmetic-filtering',
                 tabContext.rootHostname
@@ -358,10 +362,8 @@ PageStore.prototype.init = function(tabId, context) {
     // Support `generichide` filter option.
     this.noGenericCosmeticFiltering = this.noCosmeticFiltering;
     if ( this.noGenericCosmeticFiltering !== true ) {
-        var result = µb.staticNetFilteringEngine.matchStringExactType(
-            this.createContextFromPage(),
-            tabContext.normalURL,
-            'generichide'
+        let result = µb.staticNetFilteringEngine.matchStringGenericHide(
+            tabContext.normalURL
         );
         this.noGenericCosmeticFiltering = result === 2;
         if (
@@ -658,7 +660,7 @@ PageStore.prototype.journalProcess = function(fromTimer) {
     // https://github.com/chrisaljoudi/uBlock/issues/905#issuecomment-76543649
     //   No point updating the badge if it's not being displayed.
     if ( (aggregateCounts & 0xFFFF) && µb.userSettings.showIconBadge ) {
-        µb.updateBadgeAsync(this.tabId);
+        µb.updateToolbarIcon(this.tabId, 0x02);
     }
 
     // Everything before pivot does not originate from current page -- we still

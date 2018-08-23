@@ -21,21 +21,11 @@
 
 'use strict';
 
-// For content pages
+// Packaging this file is optional: it is not necessary to package it if the
+// platform is known to support user stylesheets.
 
-// Abort execution if our global vAPI object does not exist.
-//   https://github.com/chrisaljoudi/uBlock/issues/456
-//   https://github.com/gorhill/uBlock/issues/2029
-
-// https://github.com/gorhill/uBlock/issues/3588
-//   Chromium 66+ supports user stylesheets. Testing support against a regex is
-//   (unfortunately) necessary from content scripts.
-
-if (
-    typeof vAPI === 'object' &&
-    /\bEdge\/\d+|\bChrom(?:e|ium)\/(?:[45][0-9]|6[0-5])/.test(navigator.userAgent)
-) {
 // >>>>>>>> start of HUGE-IF-BLOCK
+if ( typeof vAPI === 'object' && vAPI.userStylesheet === undefined ) {
 
 /******************************************************************************/
 /******************************************************************************/
@@ -545,11 +535,50 @@ vAPI.DOMFilterer.prototype = {
 
     getAllSelectors: function() {
         return this.getAllSelectors_(false);
+    },
+
+    /**
+     * Returns all cosmetic rules from "User filters" used on current page.
+     * @returns {{raw: string, rule: string, hostname: string}[]}
+     */
+    getUserFiltersCosmeticRules: function () {
+        var rules = [];
+
+        this.userFilterCosmeticRules.forEach(function (ruleData) {
+            var selector = ruleData.rule;
+            var qty = document.querySelectorAll(selector).length;
+            if (qty) {
+                ruleData.qty = qty;
+                rules.push(ruleData);
+            }
+        });
+
+        return rules;
     }
 };
 
 /******************************************************************************/
 /******************************************************************************/
 
-// <<<<<<<< end of HUGE-IF-BLOCK
 }
+// <<<<<<<< end of HUGE-IF-BLOCK
+
+
+
+
+
+
+
+
+/*******************************************************************************
+
+    DO NOT:
+    - Remove the following code
+    - Add code beyond the following code
+    Reason:
+    - https://github.com/gorhill/uBlock/pull/3721
+    - uBO never uses the return value from injected content scripts
+
+**/
+
+void 0;

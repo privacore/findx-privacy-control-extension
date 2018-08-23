@@ -119,6 +119,10 @@
     "message": "Select element",
     "description": ""
   },
+  "popupTipUserFilters":{
+    "message": "My filters",
+    "description": ""
+  },
   "popupTipManageLists":{
     "message": "Manage lists",
     "description": ""
@@ -147,6 +151,22 @@
     "message": "Clear all cookies",
     "description": ""
   },
+  "popupTipDelRule":{
+    "message": "Delete rule",
+    "description": ""
+  },
+  "popupTipViewEl":{
+    "message": "View element",
+    "description": ""
+  },
+  "popupTipHideEl":{
+    "message": "Hide element",
+    "description": ""
+  },
+  "popupTipStrictBlocking":{
+    "message": "Block access to site",
+    "description": ""
+  },
   "popupCookiesPlateTitle":{
     "message": "Cookies from",
     "description": ""
@@ -165,6 +185,14 @@
   },
   "popupCookiesWhitelist":{
     "message": "Whitelist",
+    "description": ""
+  },
+  "popupCookiesBlacklistDomain":{
+    "message": "Blacklist domain",
+    "description": ""
+  },
+  "popupCookiesWhitelistDomain":{
+    "message": "Whitelist domain",
     "description": ""
   },
   "popupCookieDetailsName":{
@@ -203,6 +231,10 @@
     "message": "When the browsing session ends",
     "description": ""
   },
+  "popupCookiesSettingsListTitle":{
+    "message": "Settings that will protect you on all sites",
+    "description": ""
+  },
   "popupCookiesThirdPartyTitle":{
     "message": "Prevent cross-site tracking",
     "description": "Third party cookies blocking setting title"
@@ -232,7 +264,7 @@
     "description": ""
   },
   "popupCookiesControlSettingSubTitle":{
-    "message": "See domains with cookies, and control white- and blacklisted sites",
+    "message": "White- and blacklisted sites",
     "description": ""
   },
   "popupCookiesAdvSettings":{
@@ -243,12 +275,16 @@
     "message": "You can adjust more advanced settings in the settings page",
     "description": ""
   },
-  "popupCookieControlSitesTitle":{
+  "popupCookiesAllSitesPageTitle":{
     "message": "Sites with cookies set",
     "description": ""
   },
+  "popupCookieControlSitesTitle":{
+    "message": "All sites with cookies set",
+    "description": ""
+  },
   "popupCookieControlSitesSubTitle":{
-    "message": "Clear cookies and add to white- or blacklist",
+    "message": "See all domains registered in your browser",
     "description": ""
   },
   "popupCookieControlWhitelistedSitesTitle":{
@@ -355,6 +391,26 @@
     "message": "Rate this add-on",
     "description": ""
   },
+  "popupUserFiltersPageTitle":{
+    "message": "My filters on this site",
+    "description": "'My filters' page in a popup"
+  },
+  "popupUserFiltersContentTitle":{
+    "message": "Filter rules created on this site",
+    "description": "'My filters' page in a popup"
+  },
+  "popupUserFiltersContentSubTitle":{
+    "message": "You can add your own rules by using the lightning icon and select the elements you want to hide.",
+    "description": "'My filters' page in a popup"
+  },
+  "popupResetProtectionListsTitle":{
+    "message": "Reset protection lists for this site",
+    "description": "'"
+  },
+  "popupResetProtectionListsSubTitle":{
+    "message": "Click to go back to default values",
+    "description": "'"
+  },
   "docBlockedTabTitle":{
     "message": "Blocked by Findx privacy protection",
     "description": "Document blocked page"
@@ -399,6 +455,78 @@
     "message": "GO BACK",
     "description": "Document blocked page"
   },
+  "dashbPageTitle":{
+    "message": "Findx Privacy Control options",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbHeader":{
+    "message": "Privacy control",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabProtection":{
+    "message": "Protection lists",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabMyFilter":{
+    "message": "My tracking filter",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabMyRules":{
+    "message": "My detailed rules",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabWhitelist":{
+    "message": "My Whitelist",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbTabSettings":{
+    "message": "Settings",
+    "description": "Dashboard (settings) page"
+  },
+  "dashbFooterTitle":{
+    "message": "Content on this page",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterBy":{
+    "message": "by",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterPrivacore":{
+    "message": "Privacore",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterLicensedUnder":{
+    "message": "is licensed under a",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterLicenseName":{
+    "message": "Creative Commons Attribution-ShareAlike 4.0 International License",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterBasedOn":{
+    "message": "Based on a work at",
+    "description": "Dashboard (settings) page footer"
+  },
+  "dashbFooterPermissions":{
+    "message": "Permissions beyond the scope of this license may be available at",
+    "description": "Dashboard (settings) page footer"
+  },
+  "3pPageTitle":{
+    "message": "Findx Privacy Control - Protection lists",
+    "description": "Settings Protection tab page"
+  },
+  "3pHeaderTitle":{
+    "message": "Protection lists",
+    "description": "Settings Protection tab page"
+  },
+  "3pHeaderText":{
+    "message": "Enable only the filter lists you need. Too many can make your browser unresponsive.",
+    "description": "Settings Protection tab page"
+  },
+  "3pHeaderTextUpdatedPeriodically":{
+    "message": "Out-of-date lists are updated periodically.",
+    "description": "Settings Protection tab page"
+  },
   "3pParseAllABPHideFiltersInfo":{
     "message":"<p>This option enables the parsing and enforcing of <a href=\"https:\/\/adblockplus.org\/en\/faq_internal#elemhide\">Adblock Plus-compatible &ldquo;element hiding&rdquo; filters<\/a>. These filters are essentially cosmetic, they serve to hide elements in a web page which are deemed to be a visual nuisance, and which can't be blocked by the net request-based filtering engine.<\/p><p>Enabling this feature increases Findx Privacy Control's memory footprint.<\/p>",
     "description":"Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
@@ -410,6 +538,74 @@
   "3pExternalListsHint":{
     "message":"One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored.",
     "description":"English: One URL per line. Lines prefixed with &lsquo;!&rsquo; will be ignored. Invalid URLs will be silently ignored."
+  },
+  "3pFiltersListColDelete":{
+    "message":"Delete",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColInUse":{
+    "message":"In Use",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColDefault":{
+    "message":"Default on/off",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColName":{
+    "message":"Name",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColGroup":{
+    "message":"Group",
+    "description":"Settings Protection tab page"
+  },
+  "3pFiltersListColUpdate":{
+    "message":"Latest update",
+    "description":"Settings Protection tab page"
+  },
+  "3pAddSubscriptionBtn":{
+    "message":"Add filter subscription",
+    "description":"Settings Protection tab page"
+  },
+  "3pAddSubscriptionTitle":{
+    "message":"Please choose a filter subscription from the list:",
+    "description":"Settings Protection tab page"
+  },
+  "3pAddBtn":{
+    "message":"Add",
+    "description":"Settings Protection tab page"
+  },
+  "3pCustomSubscrTitle":{
+    "message":"Title",
+    "description":"Settings Protection tab page"
+  },
+  "3pCustomSubscrGroup":{
+    "message":"Group",
+    "description":"Settings Protection tab page"
+  },
+  "3pCustomSubscrLocation":{
+    "message":"Location",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserTitle":{
+    "message":"Do you find it hard to protect your self?",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserLine1":{
+    "message":"Do you feel in control?",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserLine2":{
+    "message":"Do you find it hard to control tracking?",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserLine3":{
+    "message":"Have you found tools to prevent tracking?",
+    "description":"Settings Protection tab page"
+  },
+  "dashbTeaserLinkFindOut":{
+    "message":"Find out what people do to control behavioural tracking",
+    "description":"Settings Protection tab page"
   },
   "1pFormatHint":{
     "message":"One filter per line. A filter can be a plain hostname, or an Adblock Plus-compatible filter. Lines prefixed with &lsquo;!&rsquo; will be ignored.",
@@ -430,6 +626,42 @@
   "whitelistExportFilename" : {
     "message": "my-privacycontrol-whitelist_{{datetime}}.txt",
     "description": "English: my-privacycontrol-whitelist_{{datetime}}.txt"
+  },
+  "settingsCookies" : {
+    "message": "Cookies",
+    "description": ""
+  },
+  "settingsCookiesClearOnTabClose" : {
+    "message": "Clear domain cookies on tab close",
+    "description": ""
+  },
+  "settingsCookiesThirdParty" : {
+    "message": "Third party cookies blocking",
+    "description": ""
+  },
+  "settingsCookiesPeriodical" : {
+    "message": "Periodical cookies clearing every",
+    "description": ""
+  },
+  "settingsCookiesPeriodicalTime" : {
+    "message": "min",
+    "description": ""
+  },
+  "settingsCookiesBrowserStart" : {
+    "message": "Clear cookies on browser start",
+    "description": ""
+  },
+  "settingsBackupToFile" : {
+    "message": "backup to file",
+    "description": ""
+  },
+  "settingsRestoreFromFile" : {
+    "message": "restore from file",
+    "description": ""
+  },
+  "settingsResetDefault" : {
+    "message": "reset to default settings",
+    "description": ""
   },
   "aboutBackupFilename" : {
     "message": "my-privacycontrol-backup_{{datetime}}.txt",
@@ -564,7 +796,7 @@
     "description":"Onboarding page"
   },
   "onbItemPrivacyProtectionSubTitle":{
-    "message":"Use well-known lists to avoid collection of behavourial information and block malware",
+    "message":"Use well-known lists to avoid collection of behavioural information and block malware",
     "description":"Onboarding page"
   },
   "onbItemFbGoogleTrackingTitle":{
@@ -646,5 +878,65 @@
   "remLoginDontAskBtn":{
     "message":"Don't ask again",
     "description":"Remember login popup inserted to a page"
+  },
+  "nudgingSearchPrivately":{
+    "message":"Search privately with Findx",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingGoogleActivityCheck":{
+    "message":"CHECK WHAT GOOGLE KNOWS ABOUT YOU",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuMinimize":{
+    "message":"Minimize",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuGActivity":{
+    "message":"Your Google Activity",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuSettings":{
+    "message":"Advanced settings",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingMenuAbout":{
+    "message":"About Findx",
+    "description":"Nudging popup inserted to a page"
+  },
+  "nudgingDynamicText1":{
+    "message":"Nothing to hide - at all?",
+    "description":"Nudging popup displays randomly one of these texts"
+  },
+  "linkPrivacore":{
+    "message": "https://www.privacore.com/",
+    "description": "Link to a Privacore in a footer on a dashboard page"
+  },
+  "linkTwitter":{
+    "message": "https://www.twitter.com/privacore",
+    "description": "Link to a Twitter in a footer on a dashboard page"
+  },
+  "linkGithub":{
+    "message": "https://github.com/privacore/",
+    "description": "Link to a Github in a footer on a dashboard page"
+  },
+  "linkLinkedin":{
+    "message": "https:/www.linkedin.com/company/privacore",
+    "description": "Link to a Linkedin in a footer on a dashboard page"
+  },
+  "linkBasedOnWork":{
+    "message": "https://github.com/gorhill/uBlock",
+    "description": "Link in a footer on a dashboard page"
+  },
+  "linkLicenseCreativeCommons":{
+    "message": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "description": "Link in a footer on a dashboard page"
+  },
+  "linkLicensePrivacore":{
+    "message": "https://www.privacore.com/privacontrol/license",
+    "description": "Link in a footer on a dashboard page"
+  },
+  "linkAboutFindx":{
+    "message": "https://get.findx.com",
+    "description": "Link in a nudge popup. Link in extension's popup sidebar menu."
   }
 }

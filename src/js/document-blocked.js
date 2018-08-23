@@ -1,7 +1,7 @@
 /*******************************************************************************
 
-    uBlock - a browser extension to block requests.
-    Copyright (C) 2015 Raymond Hill
+    uBlock Origin - a browser extension to block requests.
+    Copyright (C) 2015-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
 
 /* global uDom */
 
+'use strict';
+
 /******************************************************************************/
 
 (function() {
-
-'use strict';
 
 /******************************************************************************/
 
@@ -42,66 +42,58 @@ var details = {};
 
 /******************************************************************************/
 
-//03.06.16 Igor
-//(function() {
-//    var onReponseReady = function(response) {
-//        if ( typeof response !== 'object' ) {
-//            return;
-//        }
-//        var lists;
-//        for ( var rawFilter in response ) {
-//            if ( response.hasOwnProperty(rawFilter) === false ) {
-//                continue;
-//            }
-//            lists = response[rawFilter];
-//            break;
-//        }
-//
-//        if ( Array.isArray(lists) === false || lists.length === 0 ) {
-//            return;
-//        }
-//        var parent = uDom.nodeFromSelector('#whyex > span:nth-of-type(2)');
-//        var separator = '';
-//        var entry, url, node;
-//        for ( var i = 0; i < lists.length; i++ ) {
-//            entry = lists[i];
-//            if ( separator !== '' ) {
-//                parent.appendChild(document.createTextNode(separator));
-//            }
-//            url = entry.supportURL;
-//            if ( typeof url === 'string' && url !== '' ) {
-//                node = document.createElement('a');
-//                node.textContent = entry.title;
-//                node.setAttribute('href', url);
-//                node.setAttribute('target', '_blank');
-//            } else {
-//                node = document.createTextNode(entry.title);
-//            }
-//            parent.appendChild(node);
-//            separator = ' \u2022 ';
-//        }
-//        uDom.nodeFromId('whyex').style.removeProperty('display');
-//    };
-//
-//    messaging.send(
-//        'documentBlocked',
-//        {
-//            what: 'listsFromNetFilter',
-//            compiledFilter: details.fc,
-//            rawFilter: details.fs
-//        },
-//        onReponseReady
-//    );
-//})();
+(function() {
+    var onReponseReady = function(response) {
+        if ( response instanceof Object === false ) { return; }
+
+        let lists;
+        for ( let rawFilter in response ) {
+            if ( response.hasOwnProperty(rawFilter) === false ) { continue; }
+            lists = response[rawFilter];
+            break;
+        }
+        
+        if ( Array.isArray(lists) === false || lists.length === 0 ) {
+            return;
+        }
+
+        let parent = uDom.nodeFromSelector('#whyex > span:nth-of-type(2)');
+        for ( let list of lists ) {
+            let elem = document.querySelector('#templates .filterList')
+                               .cloneNode(true);
+            let source = elem.querySelector('.filterListSource');
+            source.href += encodeURIComponent(list.assetKey);
+            source.textContent = list.title;
+            if (
+                typeof list.supportURL === 'string' &&
+                list.supportURL !== ''
+            ) {
+                elem.querySelector('.filterListSupport')
+                    .setAttribute('href', list.supportURL);
+            }
+            parent.appendChild(elem);
+        }
+        uDom.nodeFromId('whyex').style.removeProperty('display');
+    };
+
+    messaging.send(
+        'documentBlocked',
+        {
+            what: 'listsFromNetFilter',
+            compiledFilter: details.fc,
+            rawFilter: details.fs
+        },
+        onReponseReady
+    );
+})();
 
 /******************************************************************************/
 
 var getTargetHostname = function() {
     var hostname = details.hn;
-    //var elem = document.querySelector('#proceed select'); //03.06.16 Igor
-    var elem = document.querySelector('#disable_blocking');
+    var elem = document.querySelector('#proceed select');
     if ( elem !== null ) {
-        hostname = elem.innerHTML;
+        hostname = elem.value;
     }
     return hostname;
 };
@@ -143,33 +135,31 @@ var proceedPermanent = function() {
 
 /******************************************************************************/
 
-//03.06.16 Igor
-//(function() {
-//    var matches = /^(.*)\{\{hostname\}\}(.*)$/.exec(vAPI.i18n('docblockedProceed'));
-//    if ( matches === null ) {
-//        return;
-//    }
-//    var proceed = uDom('#proceedTemplate').clone();
-//    proceed.descendants('span:nth-of-type(1)').text(matches[1]);
-//    proceed.descendants('span:nth-of-type(4)').text(matches[2]);
-//
-//    if ( details.hn === details.dn ) {
-//        proceed.descendants('span:nth-of-type(2)').remove();
-//        proceed.descendants('.hn').text(details.hn);
-//    } else {
-//        proceed.descendants('span:nth-of-type(3)').remove();
-//        proceed.descendants('.hn').text(details.hn).attr('value', details.hn);
-//        proceed.descendants('.dn').text(details.dn).attr('value', details.dn);
-//    }
-//
-//    uDom('#proceed').append(proceed);
-//})();
+(function() {
+    var matches = /^(.*)\{\{hostname\}\}(.*)$/.exec(vAPI.i18n('docblockedProceed'));
+    if ( matches === null ) {
+        return;
+    }
+    var proceed = uDom('#templates .proceed').clone();
+    proceed.descendants('span:nth-of-type(1)').text(matches[1]);
+    proceed.descendants('span:nth-of-type(4)').text(matches[2]);
+
+    if ( details.hn === details.dn ) {
+        proceed.descendants('span:nth-of-type(2)').remove();
+        proceed.descendants('.hn').text(details.hn);
+    } else {
+        proceed.descendants('span:nth-of-type(3)').remove();
+        proceed.descendants('.hn').text(details.hn).attr('value', details.hn);
+        proceed.descendants('.dn').text(details.dn).attr('value', details.dn);
+    }
+
+    uDom('#proceed').append(proceed);
+})();
 
 /******************************************************************************/
 
-uDom.nodeFromSelector('#theURL').textContent = details.url;
-//uDom.nodeFromId('why').textContent = details.fs;
-uDom.nodeFromId('disable_blocking').textContent = details.hn || details.dn;
+uDom.nodeFromSelector('#theURL > p').textContent = details.url;
+uDom.nodeFromId('why').textContent = details.fs;
 
 /******************************************************************************/
 
@@ -177,121 +167,112 @@ uDom.nodeFromId('disable_blocking').textContent = details.hn || details.dn;
 // Parse URL to extract as much useful information as possible. This is useful
 // to assist the user in deciding whether to navigate to the web page.
 
-//03.06.16 Igor
-//(function() {
-//
-//    if ( typeof URL !== 'function' ) {
-//        return;
-//    }
-//
-//    var reURL = /^https?:\/\//;
-//
-//    var liFromParam = function(name, value) {
-//        if ( value === '' ) {
-//            value = name;
-//            name = '';
-//        }
-//        var li = document.createElement('li');
-//        var span = document.createElement('span');
-//        span.textContent = name;
-//        li.appendChild(span);
-//        if ( name !== '' && value !== '' ) {
-//            li.appendChild(document.createTextNode(' = '));
-//        }
-//        span = document.createElement('span');
-//        if ( reURL.test(value) ) {
-//            var a = document.createElement('a');
-//            a.href = a.textContent = value;
-//            span.appendChild(a);
-//        } else {
-//            span.textContent = value;
-//        }
-//        li.appendChild(span);
-//        return li;
-//    };
-//
-//    var safeDecodeURIComponent = function(s) {
-//        try {
-//            s = decodeURIComponent(s);
-//        } catch (ex) {
-//        }
-//        return s;
-//    };
-//
-//    var renderParams = function(parentNode, rawURL) {
-//        var a = document.createElement('a');
-//        a.href = rawURL;
-//        if ( a.search.length === 0 ) {
-//            return false;
-//        }
-//
-//        var pos = rawURL.indexOf('?');
-//        var li = liFromParam(
-//            vAPI.i18n('docblockedNoParamsPrompt'),
-//            rawURL.slice(0, pos)
-//        );
-//        parentNode.appendChild(li);
-//
-//        var params = a.search.slice(1).split('&');
-//        var param, name, value, ul;
-//        for ( var i = 0; i < params.length; i++ ) {
-//            param = params[i];
-//            pos = param.indexOf('=');
-//            if ( pos === -1 ) {
-//                pos = param.length;
-//            }
-//            name = safeDecodeURIComponent(param.slice(0, pos));
-//            value = safeDecodeURIComponent(param.slice(pos + 1));
-//            li = liFromParam(name, value);
-//            if ( reURL.test(value) ) {
-//                ul = document.createElement('ul');
-//                renderParams(ul, value);
-//                li.appendChild(ul);
-//            }
-//            parentNode.appendChild(li);
-//        }
-//        return true;
-//    };
-//
-//    if ( renderParams(uDom.nodeFromId('parsed'), details.url) === false ) {
-//        return;
-//    }
-//
-//    var toggler = document.createElement('span');
-//    toggler.className = 'fa';
-//    uDom('#theURL > p').append(toggler);
-//
-//    uDom(toggler).on('click', function() {
-//        var cl = uDom.nodeFromId('theURL').classList;
-//        cl.toggle('collapsed');
-//        vAPI.localStorage.setItem(
-//            'document-blocked-expand-url',
-//            (cl.contains('collapsed') === false).toString()
-//        );
-//    });
-//
-//    uDom.nodeFromId('theURL').classList.toggle(
-//        'collapsed',
-//        vAPI.localStorage.getItem('document-blocked-expand-url') !== 'true'
-//    );
-//})();
+(function() {
+    if ( typeof URL !== 'function' ) {
+        return;
+    }
+
+    var reURL = /^https?:\/\//;
+
+    var liFromParam = function(name, value) {
+        if ( value === '' ) {
+            value = name;
+            name = '';
+        }
+        var li = document.createElement('li');
+        var span = document.createElement('span');
+        span.textContent = name;
+        li.appendChild(span);
+        if ( name !== '' && value !== '' ) {
+            li.appendChild(document.createTextNode(' = '));
+        }
+        span = document.createElement('span');
+        if ( reURL.test(value) ) {
+            var a = document.createElement('a');
+            a.href = a.textContent = value;
+            span.appendChild(a);
+        } else {
+            span.textContent = value;
+        }
+        li.appendChild(span);
+        return li;
+    };
+
+    var safeDecodeURIComponent = function(s) {
+        try {
+            s = decodeURIComponent(s);
+        } catch (ex) {
+        }
+        return s;
+    };
+
+    var renderParams = function(parentNode, rawURL) {
+        var a = document.createElement('a');
+        a.href = rawURL;
+        if ( a.search.length === 0 ) {
+            return false;
+        }
+
+        var pos = rawURL.indexOf('?');
+        var li = liFromParam(
+            vAPI.i18n('docblockedNoParamsPrompt'),
+            rawURL.slice(0, pos)
+        );
+        parentNode.appendChild(li);
+
+        var params = a.search.slice(1).split('&');
+        var param, name, value, ul;
+        for ( var i = 0; i < params.length; i++ ) {
+            param = params[i];
+            pos = param.indexOf('=');
+            if ( pos === -1 ) {
+                pos = param.length;
+            }
+            name = safeDecodeURIComponent(param.slice(0, pos));
+            value = safeDecodeURIComponent(param.slice(pos + 1));
+            li = liFromParam(name, value);
+            if ( reURL.test(value) ) {
+                ul = document.createElement('ul');
+                renderParams(ul, value);
+                li.appendChild(ul);
+            }
+            parentNode.appendChild(li);
+        }
+        return true;
+    };
+
+    if ( renderParams(uDom.nodeFromId('parsed'), details.url) === false ) {
+        return;
+    }
+
+    var toggler = document.createElement('span');
+    toggler.className = 'fa';
+    uDom('#theURL > p').append(toggler);
+
+    uDom(toggler).on('click', function() {
+        var cl = uDom.nodeFromId('theURL').classList;
+        cl.toggle('collapsed');
+        vAPI.localStorage.setItem(
+            'document-blocked-expand-url',
+            (cl.contains('collapsed') === false).toString()
+        );
+    });
+
+    uDom.nodeFromId('theURL').classList.toggle(
+        'collapsed',
+        vAPI.localStorage.getItem('document-blocked-expand-url') !== 'true'
+    );
+})();
 
 /******************************************************************************/
 
-//03.06.16 Igor
-//if ( window.history.length > 1 ) {
-//    //uDom('#back').on('click', function() { window.history.back(); });
-//    uDom('#bye').css('display', 'none');
-//} else {
-//    uDom('#bye').on('click', function() { window.close(); });
-//    uDom('#back').css('display', 'none');
-//}
-
-uDom('#bye').on('click', function() { window.close(); });
-uDom('#teaser_btn').on('click', function() {
-    var win = window.open("https://www.privacore.com/takecontrol", '_blank');
-    win.focus();
-});
+if ( window.history.length > 1 ) {
+    uDom('#back').on('click', function() { window.history.back(); });
+    uDom('#bye').css('display', 'none');
+} else {
+    uDom('#bye').on('click', function() { window.close(); });
+    uDom('#back').css('display', 'none');
+}
 
 uDom('#proceedTemporary').attr('href', details.url).on('click', proceedTemporary);
 uDom('#proceedPermanent').attr('href', details.url).on('click', proceedPermanent);

@@ -49,6 +49,12 @@ vAPI.resetLastError = function() {
 };
 
 vAPI.supportsUserStylesheets = vAPI.webextFlavor.soup.has('user_stylesheet');
+// The real actual webextFlavor value may not be set in stone, so listen
+// for possible future changes.
+window.addEventListener('webextFlavor', function() {
+    vAPI.supportsUserStylesheets =
+        vAPI.webextFlavor.soup.has('user_stylesheet');
+}, { once: true });
 
 vAPI.insertCSS = function(tabId, details) {
     return chrome.tabs.insertCSS(tabId, details, vAPI.resetLastError);
@@ -58,10 +64,19 @@ var noopFunc = function(){};
 
 /******************************************************************************/
 
-vAPI.app = {
-    name: manifest.name.replace(' dev build', ''),
-    version: manifest.version
-};
+vAPI.app = (function() {
+    let version = manifest.version;
+    let match = /(\d+\.\d+\.\d+)(?:\.(\d+))?/.exec(version);
+    if ( match && match[2] ) {
+        let v = parseInt(match[2], 10);
+        version = match[1] + (v < 100 ? 'b' + v : 'rc' + (v - 100));
+    }
+
+    return {
+        name: manifest.name.replace(/ dev\w+ build/, ''),
+        version: version
+    };
+})();
 
 /******************************************************************************/
 
@@ -103,12 +118,10 @@ vAPI.browserSettings = (function() {
         // only for Chromium proper (because it can be compiled without the
         // WebRTC feature): hence avoid overhead of the evaluation (which uses
         // an iframe) for platforms where it's a non-issue.
+        // https://github.com/uBlockOrigin/uBlock-issues/issues/9
+        //   Some Chromium builds are made to look like a Chrome build.
         webRTCSupported: (function() {
-            var flavor = vAPI.webextFlavor.soup;
-            if ( 
-                flavor.has('chromium') === false ||
-                flavor.has('google') || flavor.has('opera')
-            ) {
+            if ( vAPI.webextFlavor.soup.has('chromium') === false ) {
                 return true;
             }
         })(),
@@ -344,16 +357,7 @@ vAPI.tabs.registerListeners = function() {
         }
     };
 
-    var onBeforeNavigate = function(details) {
-        if ( details.frameId !== 0 ) {
-            return;
-        }
-    };
-
     var onCommitted = function(details) {
-        if ( details.frameId !== 0 ) {
-            return;
-        }
         details.url = sanitizeURL(details.url);
         onNavigationClient(details);
     };
@@ -376,7 +380,6 @@ vAPI.tabs.registerListeners = function() {
         onUpdatedClient(tabId, changeInfo, tab);
     };
 
-    chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate);
     chrome.webNavigation.onCommitted.addListener(onCommitted);
     // Not supported on Firefox WebExtensions yet.
     if ( chrome.webNavigation.onCreatedNavigationTarget instanceof Object ) {
@@ -731,7 +734,7 @@ vAPI.openOptionsPage = function () {
 };
 
 vAPI.openHelpPage = function () {
-    var helpPageUrl = µBlock.aboutPageUrl;
+    var helpPageUrl = vAPI.i18n('linkAboutFindx');
     vAPI.tabs.open({url: helpPageUrl, select: true});
 };
 
@@ -750,6 +753,11 @@ vAPI.openFindxMobile = function () {
     vAPI.tabs.open({url: findxMobileUrl, select: true});
 };
 
+vAPI.openGoogleActivity = function () {
+    var googleActivityUrl = µBlock.googleActivityUrl;
+    vAPI.tabs.open({url: googleActivityUrl, select: true});
+};
+
 vAPI.openTrackingMonitor = function (tabId) {
     var trackingMonitorUrl = µBlock.trackingMonitorUrl + tabId;
     vAPI.tabs.open({url: trackingMonitorUrl, select: true});
@@ -760,7 +768,9 @@ vAPI.openFeedback = function (tabId) {
     vAPI.tabs.open({url: feedbackEmail, select: true});
 };
 
-vAPI.openSearch = function (query, type) {
+vAPI.openSearch = function (query, type, tabId) {
+    tabId = tabId || null;
+
     var locale = "default";
     if (chrome.i18n.getUILanguage() === "da") {
         locale = "da";
@@ -775,7 +785,11 @@ vAPI.openSearch = function (query, type) {
 
     searchUrl = searchUrl.replace(/\{\{query\}\}/, query || '');
 
-    vAPI.tabs.open({url: searchUrl, select: true});
+    var details = {url: searchUrl, select: true};
+    if (tabId)
+        details.tabId = tabId;
+
+    vAPI.tabs.open(details);
 };
 
 vAPI.openSharePage = function (social) {
@@ -812,39 +826,102 @@ vAPI.saveActiveTabState = function (tabName) {
 
 // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/browserAction#Browser_compatibility
 //   Firefox for Android does no support browser.browserAction.setIcon().
+//   Performance: use ImageData for platforms supporting it.
+
+// https://github.com/uBlockOrigin/uBlock-issues/issues/32
+//   Ensure ImageData for toolbar icon is valid before use.
 
 vAPI.setIcon = (function() {
-    var browserAction = chrome.browserAction,
-        titleTemplate = chrome.runtime.getManifest().name + ' ({badge})';
-    var iconPaths = [
+    let browserAction = chrome.browserAction,
+        titleTemplate =
+            chrome.runtime.getManifest().browser_action.default_title +
+            ' ({badge})';
+    let icons = [
         {
-            '19': 'img/browsericons/icon19-off.png',
-            '38': 'img/browsericons/icon38-off.png'
+            path: { '16': 'img/icon_16-off.png', '32': 'img/icon_32-off.png' }
         },
         {
-            '19': 'img/browsericons/icon19.png',
-            '38': 'img/browsericons/icon38.png'
+            path: { '16': 'img/icon_16.png', '32': 'img/icon_32.png' }
         }
     ];
 
-    var onTabReady = function(tab, status, badge) {
+    (function() {
+        if ( browserAction.setIcon === undefined ) { return; }
+
+        // The global badge background color.
+        if ( browserAction.setBadgeBackgroundColor !== undefined ) {
+            browserAction.setBadgeBackgroundColor({
+                color: [ 0x66, 0x66, 0x66, 0xFF ]
+            });
+        }
+
+        // As of 2018-05, benchmarks show that only Chromium benefits for sure
+        // from using ImageData.
+        //
+        // Chromium creates a new ImageData instance every call to setIcon
+        // with paths:
+        // https://cs.chromium.org/chromium/src/extensions/renderer/resources/set_icon.js?l=56&rcl=99be185c25738437ecfa0dafba72a26114196631
+        //
+        // Firefox uses an internal cache for each setIcon's paths:
+        // https://searchfox.org/mozilla-central/rev/5ff2d7683078c96e4b11b8a13674daded935aa44/browser/components/extensions/parent/ext-browserAction.js#631
+        if ( vAPI.webextFlavor.soup.has('chromium') === false ) { return; }
+
+        let imgs = [];
+        for ( let i = 0; i < icons.length; i++ ) {
+            let path = icons[i].path;
+            for ( let key in path ) {
+                if ( path.hasOwnProperty(key) === false ) { continue; }
+                imgs.push({ i: i, p: key });
+            }
+        }
+        let onLoaded = function() {
+            for ( let img of imgs ) {
+                if ( img.r.complete === false ) { return; }
+            }
+            let ctx = document.createElement('canvas').getContext('2d');
+            let iconData = [ null, null ];
+            for ( let img of imgs ) {
+                let w = img.r.naturalWidth, h = img.r.naturalHeight;
+                ctx.width = w; ctx.height = h;
+                ctx.clearRect(0, 0, w, h);
+                ctx.drawImage(img.r, 0, 0);
+                if ( iconData[img.i] === null ) { iconData[img.i] = {}; }
+                let imgData = ctx.getImageData(0, 0, w, h);
+                if (
+                    imgData instanceof Object === false ||
+                    imgData.data instanceof Uint8ClampedArray === false ||
+                    imgData.data[0] !== 0 ||
+                    imgData.data[1] !== 0 ||
+                    imgData.data[2] !== 0 ||
+                    imgData.data[3] !== 0
+                ) {
+                    return;
+                }
+                iconData[img.i][img.p] = imgData;
+            }
+            for ( let i = 0; i < iconData.length; i++ ) {
+                if ( iconData[i] ) {
+                    icons[i] = { imageData: iconData[i] };
+                }
+            }
+        };
+        for ( let img of imgs ) {
+            img.r = new Image();
+            img.r.addEventListener('load', onLoaded, { once: true });
+            img.r.src = icons[img.i].path[img.p];
+        }
+    })();
+
+    var onTabReady = function(tab, state, badge, parts) {
         if ( vAPI.lastError() || !tab ) { return; }
 
         if ( browserAction.setIcon !== undefined ) {
-            browserAction.setIcon({
-                tabId: tab.id,
-                path: iconPaths[status === 'on' ? 1 : 0]
-            });
-            browserAction.setBadgeText({
-                tabId: tab.id,
-                text: badge
-            });
-            if ( badge !== '' ) {
-                browserAction.setBadgeBackgroundColor({
-                    tabId: tab.id,
-                    color: '#666'
-                });
+            if ( parts === undefined || (parts & 0x01) !== 0 ) {
+                browserAction.setIcon(
+                    Object.assign({ tabId: tab.id }, icons[state])
+                );
             }
+            browserAction.setBadgeText({ tabId: tab.id, text: badge });
         }
 
         if ( browserAction.setTitle !== undefined ) {
@@ -852,18 +929,21 @@ vAPI.setIcon = (function() {
                 tabId: tab.id,
                 title: titleTemplate.replace(
                     '{badge}',
-                    status === 'on' ? (badge !== '' ? badge : '0') : 'off'
+                    state === 1 ? (badge !== '' ? badge : '0') : 'off'
                 )
             });
         }
     };
 
-    return function(tabId, iconStatus, badge) {
+    // parts: bit 0 = icon
+    //        bit 1 = badge
+
+    return function(tabId, state, badge, parts) {
         tabId = toChromiumTabId(tabId);
         if ( tabId === 0 ) { return; }
 
         chrome.tabs.get(tabId, function(tab) {
-            onTabReady(tab, iconStatus, badge);
+            onTabReady(tab, state, badge, parts);
         });
 
         if ( vAPI.contextMenu instanceof Object ) {
@@ -875,7 +955,7 @@ vAPI.setIcon = (function() {
 chrome.browserAction.onClicked.addListener(function(tab) {
     vAPI.tabs.open({
         select: true,
-        url: 'popup-privacycontrol.html?tabId=' + tab.id + '&mobile=1'
+        url: 'popup-privacycontrol.html?tabId=' + tab.id + '&responsive=1'
     });
 });
 
@@ -899,8 +979,7 @@ vAPI.messaging.listen = function(listenerName, callback) {
 /******************************************************************************/
 
 vAPI.messaging.onPortMessage = (function() {
-    var messaging = vAPI.messaging,
-        supportsUserStylesheets = vAPI.supportsUserStylesheets;
+    var messaging = vAPI.messaging;
 
     // Use a wrapper to avoid closure and to allow reuse.
     var CallbackWrapper = function(port, request) {
@@ -984,7 +1063,7 @@ vAPI.messaging.onPortMessage = (function() {
                 frameId: sender.frameId,
                 matchAboutBlank: true
             };
-            if ( supportsUserStylesheets ) {
+            if ( vAPI.supportsUserStylesheets ) {
                 details.cssOrigin = 'user';
             }
             if ( msg.add ) {

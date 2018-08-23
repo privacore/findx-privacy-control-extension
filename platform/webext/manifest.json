@@ -19,9 +19,6 @@
       "default_popup":"popup-privacycontrol.html"
    },
    "commands":{
-      "launch-element-zapper":{
-         "description":"__MSG_popupTipZapper__"
-      },
       "launch-element-picker":{
          "description":"__MSG_popupTipPicker__"
       },
@@ -85,6 +82,7 @@
    "web_accessible_resources": [
       "/web_accessible_resources/*",
       "/img/popup/*.svg",
+      "/img/nudging/*.svg",
       "/css/fonts/*.ttf"
    ]
 }

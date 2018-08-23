@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-2 {
+        fill: none;
+      }
+    </style>
+  </defs>
+  <g id="trash_grey" class="cls-1">
+    <g id="_x36_4px_boxes">
+      <rect id="Rectangle_39" data-name="Rectangle 39" class="cls-2" width="24" height="24"/>
+    </g>
+    <g id="Production" transform="translate(3.75 1.875)">
+      <g id="Group_39" data-name="Group 39">
+        <path id="Path_39" data-name="Path 39" d="M22.64,8.375,21.505,5H14.963L13.829,8.375H10V10.25H26.5V8.375Zm-6.833,0,.5-1.5h3.846l.5,1.5ZM23.5,23H13V11.75H11.125V24.875h14.25V11.75H23.5ZM15.25,11.75v9.375h1.875V11.75Zm4.125,0v9.375H21.25V11.75Z" transform="translate(-10 -5)"/>
+      </g>
+    </g>
+  </g>
+</svg>
