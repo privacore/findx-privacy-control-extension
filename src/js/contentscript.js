@@ -1263,6 +1263,7 @@ vAPI.domSurveyor = (function() {
 
 vAPI.nudging = (function () {
     var hostname = window.location.hostname;
+    var path = window.location.pathname;
     var services = [
         {
             name: 'google',
@@ -1281,6 +1282,9 @@ vAPI.nudging = (function () {
             for (var j = 0; j < wildcarts.length; j++) {
                 var wildcart = wildcarts[j];
                 if (hostname.match(wildcart) && hostname.match(wildcart).length) {
+                    if (path && path !== '/' && !path.match(/^\/search.*/))
+                        continue;
+
                     actualService = services[i];
                     return true;
                 }

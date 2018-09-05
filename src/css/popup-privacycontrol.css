@@ -1686,7 +1686,7 @@ ul.sites-list {
     height: 40px;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
 }
 #footer .footer-btn {
     height: 36px;

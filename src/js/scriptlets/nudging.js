@@ -457,7 +457,21 @@
     var getSearchQuery = function () {
         var url = new URL(window.location.href);
         try {
-            return url.searchParams.get('q');
+            if (url.searchParams) {
+                return url.searchParams.get('q');
+            }
+            else if (url.search) {
+                var params = url.search.replace(/^\?/, '').split('&');
+                for (var i = 0; i < params.length; i++) {
+                    var data = params[i].split('=');
+                    if (data[0] === 'q') {
+                        return data[1];
+                    }
+                }
+            }
+            else {
+                return '';
+            }
         }
         catch (exception) {
             console.error("Exception in 'getSearchQuery' (nudging.js) :\n\t", exception);

@@ -287,7 +287,11 @@ var onUserSettingsReceived = function(details) {
 /******************************************************************************/
 
 var onCookiesSettingsReceived = function (details) {
-    uDom('[data-setting-type="bool"]').forEach(function(uNode) {
+    if (isSafari()) {
+        return;
+    }
+    
+    uDom('.cookies-settings [data-setting-type="bool"]').forEach(function(uNode) {
         toggleCheckbox(uNode.nodes[0], details[uNode.attr('data-setting-name')] === true);
         uNode.on('click', function() {
             changeCookiesSettings(
