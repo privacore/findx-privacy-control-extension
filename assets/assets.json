@@ -653,7 +653,10 @@
         "off": true,
         "title": "NOR: Dandelion Sprouts norske filtre",
         "lang": "nb",
-        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dandelionsprout.adfilt.master.norwegianlist.txt",
+        "contentURL": [
+            "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dandelionsprout.adfilt.master.norwegianlist.txt",
+            "http://download.privacontrol.com/filters/https.repo.or.cz.filtermirrorrepo.git.blob.plain.refs.heads.master.norwegianlist.txt"
+        ],
         "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2FDandelionSprout%2Fadfilt",
         "defaultOff": true,
         "inUse": true
