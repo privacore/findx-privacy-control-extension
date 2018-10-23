@@ -250,7 +250,7 @@
         "group": "malware",
         "off": true,
         "title": "Spam404",
-        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.dawsey21.lists.master.adblock.list.txt",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.spam404.lists.master.adblock.list.txt",
         "supportURL": "http://download.privacontrol.com/redir.html?u=http%3A%2F%2Fwww.spam404.com%2F",
         "defaultOff": true,
         "inUse": true
