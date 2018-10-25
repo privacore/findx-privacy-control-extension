@@ -457,17 +457,6 @@
         "defaultOff": true,
         "inUse": true
     },
-    "FIN-0": {
-        "content": "filters",
-        "group": "regions",
-        "off": true,
-        "title": "FIN: Finnish Addition to Easylist",
-        "lang": "fi",
-        "contentURL": "http://download.privacontrol.com/filters/https.adb.juvander.net.finland.adb.txt",
-        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fwww.juvander.fi%2FAdblockFinland",
-        "defaultOff": true,
-        "inUse": true
-    },
     "FRA-0": {
         "content": "filters",
         "group": "regions",
