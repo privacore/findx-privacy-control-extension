@@ -457,6 +457,17 @@
         "defaultOff": true,
         "inUse": true
     },
+    "FIN-0": {
+        "content": "filters",
+        "group": "regions",
+        "off": true,
+        "title": "FIN: Adblock List for Finland",
+        "lang": "fi",
+        "contentURL": "http://download.privacontrol.com/filters/https.raw.githubusercontent.com.finnish.easylist.addition.finnish.easylist.addition.master.finland.adb.txt",
+        "supportURL": "http://download.privacontrol.com/redir.html?u=https%3A%2F%2Fgithub.com%2Ffinnish-easylist-addition%2Ffinnish-easylist-addition",
+        "defaultOff": true,
+        "inUse": true
+    },
     "FRA-0": {
         "content": "filters",
         "group": "regions",
